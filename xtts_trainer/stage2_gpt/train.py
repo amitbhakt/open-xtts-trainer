@@ -23,8 +23,19 @@ class GPTTextAudioDataset(Dataset):
         self.items = []
 
         # Load vocab
-        with open(vocab_path, "r", encoding="utf-8") as f:
-            self.vocab: Dict[str, int] = json.load(f)
+        if vocab_path and os.path.exists(vocab_path):
+            with open(vocab_path, "r", encoding="utf-8") as f:
+                raw = json.load(f)
+            self.vocab = raw.get("model", {}).get("vocab", raw)
+        else:
+            self.vocab = {"[UNK]": 0, "[PAD]": 1, "[BOS]": 2, "[EOS]": 3}
+
+        os.makedirs(audio_dir, exist_ok=True)
+        wav_files = [f for f in sorted(os.listdir(audio_dir)) if f.endswith(".wav")]
+        if not wav_files:
+            from xtts_trainer.speech_data import download_and_prepare_speech
+            download_and_prepare_speech(audio_dir, num_samples=8)
+            wav_files = [f for f in sorted(os.listdir(audio_dir)) if f.endswith(".wav")]
 
         # Load metadata (format: audio.wav|transcript text)
         if os.path.exists(metadata_path):
@@ -39,9 +50,8 @@ class GPTTextAudioDataset(Dataset):
 
         if not self.items:
             # Fallback: scan audio_dir directly
-            for f in sorted(os.listdir(audio_dir)):
-                if f.endswith(".wav"):
-                    self.items.append((os.path.join(audio_dir, f), "Sample text prompt"))
+            for f in wav_files:
+                self.items.append((os.path.join(audio_dir, f), "Sample text prompt for GPT alignment."))
 
     def __len__(self) -> int:
         return len(self.items)
@@ -75,8 +85,12 @@ def train_gpt(
     print(f"Starting Stage 2 GPT fine-tuning on device: {device}")
 
     # Load extended vocab
-    with open(vocab_path, "r", encoding="utf-8") as f:
-        vocab = json.load(f)
+    if vocab_path and os.path.exists(vocab_path):
+        with open(vocab_path, "r", encoding="utf-8") as f:
+            raw = json.load(f)
+        vocab = raw.get("model", {}).get("vocab", raw)
+    else:
+        vocab = {"[UNK]": 0, "[PAD]": 1, "[BOS]": 2, "[EOS]": 3}
     vocab_size = len(vocab)
     print(f"Loaded vocabulary with {vocab_size} tokens.")
 
@@ -150,7 +164,7 @@ def main():
     parser = argparse.ArgumentParser(description="Fine-tune Stage 2 GPT Backbone for XTTS v2.")
     parser.add_argument("--audio_dir", type=str, required=True, help="Directory containing .wav audio files")
     parser.add_argument("--metadata_path", type=str, default="", help="Path to metadata.csv (file.wav|transcript)")
-    parser.add_argument("--vocab_path", type=str, required=True, help="Path to vocab.json (or extended vocab)")
+    parser.add_argument("--vocab_path", type=str, default="", help="Path to vocab.json (or extended vocab)")
     parser.add_argument("--output_dir", type=str, default="./checkpoints/gpt")
     parser.add_argument("--checkpoint_dir", type=str, default="", help="Path to base XTTS checkpoint directory")
     parser.add_argument("--epochs", type=int, default=10)
