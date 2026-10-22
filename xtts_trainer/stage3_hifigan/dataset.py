@@ -60,10 +60,17 @@ class LatentHiFiGANDataset(Dataset):
         latent_data = torch.load(latent_path, map_location="cpu")
         # latent_data expected format: {"gpt_latents": Tensor[B, C, T_lat], "speaker_embedding": Tensor[B, D]}
         if isinstance(latent_data, dict):
-            gpt_latents = latent_data["gpt_latents"].squeeze(0)  # [C, T_lat]
+            gpt_latents = latent_data["gpt_latents"].squeeze(0)
             speaker_emb = latent_data.get("speaker_embedding", torch.zeros(512)).squeeze(0)
         else:
             gpt_latents = latent_data.squeeze(0)
+            speaker_emb = torch.zeros(512)
+
+        # Ensure latent shape is [1024, T_lat]
+        if gpt_latents.ndim == 2 and gpt_latents.shape[0] != 1024 and gpt_latents.shape[1] == 1024:
+            gpt_latents = gpt_latents.t()
+        speaker_emb = speaker_emb.view(-1)
+        if speaker_emb.shape[0] != 512:
             speaker_emb = torch.zeros(512)
 
         # 3. Synchronized Segment Slicing
