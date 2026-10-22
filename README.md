@@ -4,6 +4,7 @@
 > Train or fine-tune all 3 components of XTTS v2: **Discrete VAE (DVAE)**, **GPT Backbone**, and the **Latent HiFi-GAN Vocoder**.
 
 [![DOI](https://zenodo.org/badge/1430098641.svg)](https://doi.org/10.5281/zenodo.23573887)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/amitbhakt/open-xtts-trainer/blob/main/notebooks/open_xtts_train_demo.ipynb)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch 2.1+](https://img.shields.io/badge/PyTorch-2.1+-red.svg)](https://pytorch.org/)
