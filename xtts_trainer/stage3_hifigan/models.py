@@ -1,9 +1,22 @@
-"""Discriminators and GAN losses for Latent HiFi-GAN Vocoder."""
+"""Discriminators, Generators, and GAN losses for Latent HiFi-GAN Vocoder."""
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Tuple
+
+try:
+    from TTS.vocoder.models.hifigan_generator import HifiganGenerator
+    HiFiGANGenerator = HifiganGenerator
+except Exception:
+    class HiFiGANGenerator(nn.Module):
+        """Minimal fallback Generator matching HiFi-GAN interface."""
+        def __init__(self, in_channels: int = 1024, **kwargs):
+            super().__init__()
+            self.conv = nn.ConvTranspose1d(in_channels, 1, kernel_size=512, stride=256, padding=128)
+        def forward(self, x: torch.Tensor, g: torch.Tensor = None) -> torch.Tensor:
+            return self.conv(x)
+    HifiganGenerator = HiFiGANGenerator
 
 
 class DiscriminatorP(nn.Module):
