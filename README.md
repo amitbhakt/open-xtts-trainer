@@ -3,7 +3,7 @@
 > **Complete 3-Stage Training Suite for XTTS v2**  
 > Train or fine-tune all 3 components of XTTS v2: **Discrete VAE (DVAE)**, **GPT Backbone**, and the **Latent HiFi-GAN Vocoder**.
 
-[![DOI](https://zenodo.org/badge/1430098641.svg)](https://doi.org/10.5281/zenodo.23573887)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23573888.svg)](https://zenodo.org/records/23573888)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/amitbhakt/open-xtts-trainer/blob/main/notebooks/open_xtts_train_demo.ipynb)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -115,8 +115,8 @@ If you use this training suite in your academic work or project, please cite:
   author = {Bhakt, Amit},
   title = {open-xtts-trainer: Complete 3-Stage Training Suite for XTTS v2},
   year = {2026},
-  doi = {10.5281/zenodo.23573887},
-  url = {https://doi.org/10.5281/zenodo.23573887}
+  doi = {10.5281/zenodo.23573888},
+  url = {https://zenodo.org/records/23573888}
 }
 ```
 
