@@ -27,14 +27,21 @@ def extend_vocab(
     target_text_path: str,
     output_vocab_path: str,
 ) -> Dict[str, int]:
-    """Adds missing characters from target text to base vocab.json without changing old token IDs."""
+    """Adds missing characters from target text to base vocab.json without changing old token IDs.
+
+    Supports both Hugging Face Tokenizer JSON format (official XTTS v2) and flat dicts.
+    """
     if not os.path.exists(base_vocab_path):
         raise FileNotFoundError(f"Base vocab not found at: {base_vocab_path}")
 
     with open(base_vocab_path, "r", encoding="utf-8") as f:
-        vocab: Dict[str, int] = json.load(f)
+        data = json.load(f)
 
-    print(f"Loaded base vocabulary with {len(vocab)} tokens.")
+    # Detect if it is a HuggingFace tokenizer JSON or flat dictionary
+    is_hf_tokenizer = isinstance(data, dict) and "model" in data and "vocab" in data["model"]
+    vocab: Dict[str, int] = data["model"]["vocab"] if is_hf_tokenizer else data
+
+    print(f"Loaded base vocabulary ({'HuggingFace Tokenizer' if is_hf_tokenizer else 'Flat Dict'}) with {len(vocab)} tokens.")
 
     corpus_chars = extract_characters_from_corpus(target_text_path)
     print(f"Found {len(corpus_chars)} unique characters in target corpus.")
@@ -45,12 +52,22 @@ def extend_vocab(
     for char in sorted(corpus_chars):
         if char not in vocab and not char.isspace():
             vocab[char] = next_id
+            if is_hf_tokenizer and "added_tokens" in data and isinstance(data["added_tokens"], list):
+                data["added_tokens"].append({
+                    "id": next_id,
+                    "special": False,
+                    "content": char,
+                    "single_word": False,
+                    "lstrip": False,
+                    "rstrip": False,
+                    "normalized": False,
+                })
             next_id += 1
             added_tokens += 1
 
     os.makedirs(os.path.dirname(os.path.abspath(output_vocab_path)), exist_ok=True)
     with open(output_vocab_path, "w", encoding="utf-8") as f:
-        json.dump(vocab, f, ensure_ascii=False, indent=2)
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
     print(f"Successfully added {added_tokens} new tokens.")
     print(f"New total vocabulary size: {len(vocab)}")

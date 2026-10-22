@@ -48,15 +48,9 @@ class MelDataset(Dataset):
         return len(self.audio_files)
 
     def __getitem__(self, index: int) -> torch.Tensor:
+        from xtts_trainer.config import load_audio
         path = self.audio_files[index]
-        waveform, sr = torchaudio.load(path)
-
-        if sr != self.sample_rate:
-            resampler = torchaudio.transforms.Resample(sr, self.sample_rate)
-            waveform = resampler(waveform)
-
-        if waveform.shape[0] > 1:
-            waveform = torch.mean(waveform, dim=0, keepdim=True)
+        waveform, sr = load_audio(path, self.sample_rate)
 
         # Compute log-mel spectrogram [1, n_mels, time]
         mel = self.mel_transform(waveform)

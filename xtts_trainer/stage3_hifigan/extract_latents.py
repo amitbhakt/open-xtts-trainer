@@ -43,13 +43,8 @@ def extract_latents(
         if os.path.exists(output_path):
             continue
 
-        waveform, sr = torchaudio.load(audio_path)
-        if sr != 24000:
-            resampler = torchaudio.transforms.Resample(sr, 24000)
-            waveform = resampler(waveform)
-
-        if waveform.shape[0] > 1:
-            waveform = torch.mean(waveform, dim=0, keepdim=True)
+        from xtts_trainer.config import load_audio
+        waveform, sr = load_audio(audio_path, 24000)
 
         if model is not None:
             with torch.no_grad():

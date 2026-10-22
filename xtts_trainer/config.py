@@ -49,3 +49,29 @@ class DVAEConfig:
     temp_decay: float = 0.99995
     batch_size: int = 32
     epochs: int = 100
+
+
+def load_audio(path: str, target_sr: int = 24000):
+    """Loads audio file safely using soundfile or torchaudio, returns [1, T] tensor."""
+    import torch
+    import torchaudio
+    try:
+        import soundfile as sf
+        data, sr = sf.read(path)
+        waveform = torch.from_numpy(data).float()
+        if waveform.ndim == 1:
+            waveform = waveform.unsqueeze(0)
+        else:
+            waveform = waveform.t()
+    except Exception:
+        waveform, sr = torchaudio.load(path)
+
+    if sr != target_sr:
+        resampler = torchaudio.transforms.Resample(sr, target_sr)
+        waveform = resampler(waveform)
+
+    if waveform.shape[0] > 1:
+        waveform = torch.mean(waveform, dim=0, keepdim=True)
+
+    return waveform, target_sr
+

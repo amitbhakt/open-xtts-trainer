@@ -19,15 +19,18 @@ from xtts_trainer.stage3_hifigan.train import train_hifigan
 
 def generate_synthetic_audio(dir_path: str, num_files: int = 4, duration_sec: float = 1.0, sr: int = 24000):
     """Generates short synthetic sine waves for testing."""
+    import numpy as np
+    from scipy.io import wavfile
+
     os.makedirs(dir_path, exist_ok=True)
     num_samples = int(duration_sec * sr)
-    t = torch.linspace(0, duration_sec, num_samples)
+    t = np.linspace(0, duration_sec, num_samples, endpoint=False)
 
     for i in range(num_files):
         freq = 220.0 * (i + 1)
-        waveform = 0.5 * torch.sin(2 * 3.14159 * freq * t).unsqueeze(0)  # [1, T]
+        audio = (0.5 * np.sin(2 * np.pi * freq * t)).astype(np.float32)
         file_path = os.path.join(dir_path, f"sample_{i+1:03d}.wav")
-        torchaudio.save(file_path, waveform, sr)
+        wavfile.write(file_path, sr, audio)
     print(f"Generated {num_files} synthetic audio files in: {dir_path}")
 
 

@@ -43,17 +43,11 @@ class LatentHiFiGANDataset(Dataset):
         return len(self.items)
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        from xtts_trainer.config import load_audio
         audio_path, latent_path = self.items[index]
 
-        # 1. Load Audio
-        waveform, sr = torchaudio.load(audio_path)
-        if sr != self.sample_rate:
-            resampler = torchaudio.transforms.Resample(sr, self.sample_rate)
-            waveform = resampler(waveform)
-
-        # Ensure single channel [1, T]
-        if waveform.shape[0] > 1:
-            waveform = torch.mean(waveform, dim=0, keepdim=True)
+        # 1. Load Audio safely
+        waveform, sr = load_audio(audio_path, self.sample_rate)
 
         # 2. Load Latents
         latent_data = torch.load(latent_path, map_location="cpu")
