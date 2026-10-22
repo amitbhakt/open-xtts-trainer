@@ -11,6 +11,8 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from typing import Optional, Dict
 
+os.environ["COQUI_TOS_AGREED"] = "1"
+
 
 class GPTTextAudioDataset(Dataset):
     """Dataset pairing text transcriptions with audio files for GPT fine-tuning."""

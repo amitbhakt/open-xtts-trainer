@@ -6,6 +6,9 @@ import torch
 import torchaudio
 from tqdm import tqdm
 
+# Auto-agree to non-commercial CPML to prevent blocking interactive prompts
+os.environ["COQUI_TOS_AGREED"] = "1"
+
 
 def extract_latents(
     audio_dir: str,
