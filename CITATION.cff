@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this training pipeline in your research or project, please cite it as below."
+authors:
+  - family-names: "Bhakt"
+    given-names: "Amit"
+title: "open-xtts-trainer: Complete 3-Stage Training Suite for XTTS v2"
+version: 0.1.0
+date-released: 2026-10-22
+url: "https://github.com/amitbhakt/open-xtts-trainer"
+keywords:
+  - text-to-speech
+  - xtts-v2
+  - dvae
+  - hifigan
+  - speech-synthesis
+  - voice-cloning

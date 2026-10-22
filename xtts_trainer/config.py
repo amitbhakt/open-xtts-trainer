@@ -1,0 +1,51 @@
+"""Audio and model configuration defaults for XTTS v2 training."""
+
+from dataclasses import dataclass, field
+from typing import List
+
+
+@dataclass
+class AudioConfig:
+    """Standard audio configuration matching XTTS v2."""
+    sample_rate: int = 24000
+    n_fft: int = 1024
+    hop_length: int = 256
+    win_length: int = 1024
+    n_mels: int = 80
+    mel_fmin: float = 0.0
+    mel_fmax: float = 8000.0
+
+
+@dataclass
+class HiFiGANConfig:
+    """Configuration for Stage 3: Latent HiFi-GAN Vocoder training."""
+    audio: AudioConfig = field(default_factory=AudioConfig)
+    segment_size: int = 16384  # ~0.68 seconds at 24kHz
+    upsample_rates: List[int] = field(default_factory=lambda: [8, 8, 2, 2])
+    upsample_kernel_sizes: List[int] = field(default_factory=lambda: [16, 16, 4, 4])
+    upsample_initial_channel: int = 512
+    resblock_kernel_sizes: List[int] = field(default_factory=lambda: [3, 7, 11])
+    resblock_dilation_sizes: List[List[int]] = field(
+        default_factory=lambda: [[1, 3, 5], [1, 3, 5], [1, 3, 5]]
+    )
+    learning_rate: float = 0.0002
+    discriminator_learning_rate: float = 0.0001
+    lr_decay: float = 0.999
+    warmup_steps: int = 500
+    batch_size: int = 16
+    epochs: int = 50
+
+
+@dataclass
+class DVAEConfig:
+    """Configuration for Stage 1: Discrete VAE training."""
+    audio: AudioConfig = field(default_factory=AudioConfig)
+    num_tokens: int = 8192
+    codebook_dim: int = 512
+    hidden_dim: int = 512
+    learning_rate: float = 0.0001
+    temp_start: float = 1.0
+    temp_min: float = 0.5
+    temp_decay: float = 0.99995
+    batch_size: int = 32
+    epochs: int = 100
