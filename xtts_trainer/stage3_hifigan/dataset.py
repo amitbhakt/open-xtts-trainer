@@ -26,6 +26,13 @@ class LatentHiFiGANDataset(Dataset):
         self.hop_length = hop_length
         self.sample_rate = sample_rate
 
+        # Ensure latents exist, or auto-extract
+        os.makedirs(latents_dir, exist_ok=True)
+        if not any(f.endswith(".pt") for f in os.listdir(latents_dir)):
+            print(f"Notice: No .pt latents found in {latents_dir}. Automatically extracting latents from {audio_dir}...")
+            from xtts_trainer.stage3_hifigan.extract_latents import extract_latents
+            extract_latents(audio_dir, latents_dir)
+
         # Match audio files with extracted latent files
         self.items = []
         for file in sorted(os.listdir(latents_dir)):

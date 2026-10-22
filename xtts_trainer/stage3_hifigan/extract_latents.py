@@ -39,7 +39,13 @@ def extract_latents(
         model = None
 
     audio_files = [f for f in sorted(os.listdir(audio_dir)) if f.endswith(".wav")]
-    print(f"Found {len(audio_files)} audio files to process.")
+    if len(audio_files) == 0:
+        print(f"Notice: No .wav files found in {audio_dir}. Generating synthetic demo audio...")
+        from scripts.run_mini_test import generate_synthetic_audio
+        generate_synthetic_audio(audio_dir, num_files=8, duration_sec=1.5)
+        audio_files = [f for f in sorted(os.listdir(audio_dir)) if f.endswith(".wav")]
+
+    print(f"Found {len(audio_files)} audio files to process in {audio_dir}.")
 
     for filename in tqdm(audio_files):
         base_name = os.path.splitext(filename)[0]

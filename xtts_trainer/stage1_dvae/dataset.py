@@ -32,6 +32,15 @@ class MelDataset(Dataset):
             if f.endswith(".wav")
         ]
         if not self.audio_files:
+            print(f"Notice: No .wav files found in {audio_dir}. Generating synthetic demo audio...")
+            from scripts.run_mini_test import generate_synthetic_audio
+            generate_synthetic_audio(audio_dir, num_files=8, duration_sec=1.5)
+            self.audio_files = [
+                os.path.join(audio_dir, f)
+                for f in sorted(os.listdir(audio_dir))
+                if f.endswith(".wav")
+            ]
+        if not self.audio_files:
             raise ValueError(f"No .wav audio files found in: {audio_dir}")
 
         self.mel_transform = torchaudio.transforms.MelSpectrogram(
