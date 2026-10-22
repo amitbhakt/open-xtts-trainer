@@ -5,8 +5,9 @@ authors:
     given-names: "Amit"
 title: "open-xtts-trainer: Complete 3-Stage Training Suite for XTTS v2"
 version: 0.1.0
+doi: 10.5281/zenodo.23573887
 date-released: 2026-10-22
-url: "https://github.com/amitbhakt/open-xtts-trainer"
+url: "https://doi.org/10.5281/zenodo.23573887"
 keywords:
   - text-to-speech
   - xtts-v2
