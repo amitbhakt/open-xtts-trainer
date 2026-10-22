@@ -61,6 +61,10 @@ def train_hifigan(
     if config is None:
         config = HiFiGANConfig()
 
+    if device == "cuda" and not torch.cuda.is_available():
+        print("Notice: CUDA is not available in this PyTorch build. Falling back to CPU.")
+        device = "cpu"
+
     os.makedirs(output_dir, exist_ok=True)
     print(f"Starting HiFi-GAN Vocoder training on device: {device}")
 

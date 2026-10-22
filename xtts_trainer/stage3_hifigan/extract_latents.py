@@ -17,8 +17,11 @@ def extract_latents(
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
 ):
     """Extracts GPT latents and speaker embeddings from audio files using XTTS."""
-    os.makedirs(output_dir, exist_ok=True)
+    if device == "cuda" and not torch.cuda.is_available():
+        print("Notice: CUDA is not available in this PyTorch build. Falling back to CPU.")
+        device = "cpu"
 
+    os.makedirs(output_dir, exist_ok=True)
     print(f"Loading XTTS model for latent extraction on device: {device}...")
     try:
         from TTS.tts.models.xtts import Xtts, XttsArgs

@@ -67,6 +67,10 @@ def train_gpt(
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
 ):
     """Executes GPT backbone fine-tuning."""
+    if device == "cuda" and not torch.cuda.is_available():
+        print("Notice: CUDA is not available in this PyTorch build. Falling back to CPU.")
+        device = "cpu"
+
     os.makedirs(output_dir, exist_ok=True)
     print(f"Starting Stage 2 GPT fine-tuning on device: {device}")
 

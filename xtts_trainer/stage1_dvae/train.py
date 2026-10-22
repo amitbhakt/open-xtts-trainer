@@ -25,6 +25,10 @@ def train_dvae(
     if config is None:
         config = DVAEConfig()
 
+    if device == "cuda" and not torch.cuda.is_available():
+        print("Notice: CUDA is not available in this PyTorch build. Falling back to CPU.")
+        device = "cpu"
+
     os.makedirs(output_dir, exist_ok=True)
     print(f"Starting DVAE training on device: {device}")
 
