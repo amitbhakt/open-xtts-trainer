@@ -185,16 +185,17 @@ def collate_gpt_batch(batch: List[Dict[str, torch.Tensor]], stop_audio_token: in
 
 def build_gpt_model(
     vocab_size: int,
-    start_text_token: int = 2,
-    stop_text_token: int = 1,
+    start_text_token: int = 261,
+    stop_text_token: int = 0,
     layers: int = 30,
     model_dim: int = 1024,
     heads: int = 16,
     num_audio_tokens: int = 1026,
     start_audio_token: int = 1024,
     stop_audio_token: int = 1025,
+    use_perceiver_resampler: bool = True,
 ) -> GPT:
-    """Builds native XTTS-v2 autoregressive GPT module (defaulting to 1024 DVAE codebook tokens + 2 special tokens)."""
+    """Builds native XTTS-v2 autoregressive GPT module (with Perceiver Resampler for XTTS-v2)."""
     return GPT(
         layers=layers,
         model_dim=model_dim,
@@ -208,7 +209,7 @@ def build_gpt_model(
         num_audio_tokens=num_audio_tokens,
         start_audio_token=start_audio_token,
         stop_audio_token=stop_audio_token,
-        use_perceiver_resampler=False,
+        use_perceiver_resampler=use_perceiver_resampler,
         code_stride_len=1024,
     )
 
@@ -358,6 +359,16 @@ def train_gpt(
                     logger.info(f"Pretrained checkpoint vocab size is {orig_vocab_size}. Building base model at {orig_vocab_size} before expansion.")
                     init_vocab_size = orig_vocab_size
 
+    # Check if config.json specifies use_perceiver_resampler
+    use_perceiver_resampler = True
+    if checkpoint_dir and os.path.exists(os.path.join(checkpoint_dir, "config.json")):
+        try:
+            with open(os.path.join(checkpoint_dir, "config.json"), "r", encoding="utf-8") as f:
+                cfg_data = json.load(f)
+                use_perceiver_resampler = cfg_data.get("model_args", {}).get("gpt_use_perceiver_resampler", True)
+        except Exception:
+            pass
+
     # 5. Initialize GPT Model
     gpt = build_gpt_model(
         vocab_size=init_vocab_size,
@@ -369,6 +380,7 @@ def train_gpt(
         num_audio_tokens=num_audio_tokens,
         start_audio_token=start_audio_token,
         stop_audio_token=stop_audio_token,
+        use_perceiver_resampler=use_perceiver_resampler,
     ).to(device)
 
     # 6. Load Pretrained Weights with Strict Validation and Expand Vocabulary
@@ -483,7 +495,7 @@ def train_gpt(
         combined_model_dict = {}
         if base_model_weights:
             for k, v in base_model_weights.items():
-                if k.startswith("hifigan_decoder."):
+                if not k.startswith("gpt."):
                     combined_model_dict[k] = v
         for k, v in gpt_state_dict.items():
             combined_model_dict[f"gpt.{k}"] = v.cpu()
