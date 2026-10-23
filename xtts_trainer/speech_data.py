@@ -91,6 +91,12 @@ def prepare_speech_from_file(
         tensor = F.resample(tensor, orig_sr, sample_rate)
     resampled = tensor.squeeze(0).numpy()
 
+    # Trim leading silence so speech_001.wav starts with active speech
+    non_silent = np.where(np.abs(resampled) > 0.01)[0]
+    if len(non_silent) > 0:
+        lead_offset = max(0, non_silent[0] - int(0.05 * sample_rate))
+        resampled = resampled[lead_offset:]
+
     chunk_size = int(max_duration_sec * sample_rate)
     total_clips = max(1, len(resampled) // chunk_size)
     created_files = []
@@ -168,6 +174,12 @@ def download_and_prepare_speech(
             if orig_sr != sample_rate:
                 tensor = F.resample(tensor, orig_sr, sample_rate)
             resampled = tensor.squeeze(0).numpy()
+
+            # Trim leading silence so clips begin immediately with active speech
+            non_silent = np.where(np.abs(resampled) > 0.01)[0]
+            if len(non_silent) > 0:
+                lead_offset = max(0, non_silent[0] - int(0.05 * sample_rate))
+                resampled = resampled[lead_offset:]
 
             chunk_size = int(max_duration_sec * sample_rate)
             max_available = len(resampled) // chunk_size

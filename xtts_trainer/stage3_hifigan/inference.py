@@ -22,25 +22,16 @@ def synthesize_audio(
     print(f"Loading HiFi-GAN checkpoint: {checkpoint_path} on {device}...")
     ckpt = safe_torch_load(checkpoint_path, map_location=device)
 
-    # 1. Initialize Generator matching training config
-    config = HiFiGANConfig()
-    try:
-        from TTS.vocoder.models.hifigan_generator import HifiganGenerator
-        generator = HifiganGenerator(
-            in_channels=1024,
-            out_channels=1,
-            resblock_type="1",
-            resblock_dilation_sizes=config.resblock_dilation_sizes,
-            resblock_kernel_sizes=config.resblock_kernel_sizes,
-            upsample_kernel_sizes=config.upsample_kernel_sizes,
-            upsample_initial_channel=config.upsample_initial_channel,
-            upsample_factors=config.upsample_rates,
-        ).to(device)
-    except Exception:
-        from xtts_trainer.stage3_hifigan.models import HiFiGANGenerator
-        generator = HiFiGANGenerator(in_channels=1024).to(device)
+    # 1. Initialize Generator matching native XTTS architecture
+    from xtts_trainer.stage3_hifigan.models import build_hifigan_decoder
+    generator = build_hifigan_decoder().to(device)
 
-    generator.load_state_dict(ckpt["generator"])
+    if "hifigan_decoder" in ckpt:
+        generator.load_state_dict(ckpt["hifigan_decoder"], strict=False)
+    elif "generator" in ckpt:
+        generator.waveform_decoder.load_state_dict(ckpt["generator"], strict=False)
+    else:
+        generator.load_state_dict(ckpt, strict=False)
     generator.eval()
 
     # 2. Load latent
@@ -58,19 +49,16 @@ def synthesize_audio(
     else:
         raise ValueError("Unrecognized latent file structure.")
 
-    # HiFi-GAN expects [B, Channels, Time]
+    # Shape expected: [B, T_frames, 1024]
     if latents.ndim == 2:
         latents = latents.unsqueeze(0)
-    if latents.shape[1] != 1024 and latents.shape[2] == 1024:
+    if latents.shape[1] == 1024 and latents.shape[2] != 1024:
         latents = latents.transpose(1, 2)
 
-    # 3. Vocoder synthesis forward pass
+    # 3. Vocoder synthesis forward pass with speaker conditioning
     print("Synthesizing audio waveform...")
     with torch.no_grad():
-        try:
-            waveform = generator(latents, g=speaker_emb)
-        except Exception:
-            waveform = generator(latents)
+        waveform = generator(latents, g=speaker_emb)
 
     audio = waveform.squeeze().cpu().numpy()
 
