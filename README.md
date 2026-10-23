@@ -210,6 +210,13 @@ python scripts/verify_pipeline_proof.py \
 
 Execution outputs and verification metrics are automatically recorded to `proof_outputs/pipeline_proof_manifest.json`.
 
+### Verified Audio Proof Samples:
+Listen to the audio produced directly by the fine-tuned Stage 3 decoder on Hugging Face:
+- 🔊 [**s1_sibilant_stage3_verified.wav**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/s1_sibilant_stage3_verified.wav) — Sibilance friction test (*"She sells sea shells by the seashore with fresh sunshine."*)
+- 🔊 [**s2_fluent_stage3_verified.wav**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/s2_fluent_stage3_verified.wav) — Fluent continuous speech (*"Artificial intelligence is rapidly transforming how we communicate..."*)
+- 🔊 [**s3_benchmark_stage3_verified.wav**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/s3_benchmark_stage3_verified.wav) — Decoder benchmark sentence
+- 📊 [**pipeline_proof_manifest.json**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/pipeline_proof_manifest.json) — Full verification telemetry & metrics
+
 ---
 
 ## Citation
