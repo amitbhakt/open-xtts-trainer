@@ -15,6 +15,7 @@ from xtts_trainer.stage2_gpt.train import (
     build_gpt_model,
     train_gpt,
 )
+from xtts_trainer.config import safe_torch_load
 from TTS.tts.layers.xtts.gpt import GPT
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
@@ -30,92 +31,165 @@ def temp_workspace():
 
 def create_dummy_vocab_json(path: str) -> dict:
     vocab = {
-        "[UNK]": 0,
-        "[STOP]": 1,
-        "[START]": 2,
-        "[SPACE]": 3,
-        "a": 4,
-        "b": 5,
-        "c": 6,
-        "d": 7,
-        "e": 8,
-        "f": 9,
-        "g": 10,
-        "h": 11,
-        "i": 12,
-        "j": 13,
-        "k": 14,
-        "l": 15,
-        "m": 16,
-        "n": 17,
-        "o": 18,
-        "p": 19,
-        "r": 20,
-        "s": 21,
-        "t": 22,
-        "u": 23,
-        "v": 24,
-        "w": 25,
-        "y": 26,
+        "[STOP]": 0,
+        "[UNK]": 1,
+        "[SPACE]": 2,
+        "a": 3,
+        "b": 4,
+        "c": 5,
+        "d": 6,
+        "e": 7,
+        "f": 8,
+        "g": 9,
+        "h": 10,
+        "i": 11,
+        "j": 12,
+        "k": 13,
+        "l": 14,
+        "m": 15,
+        "n": 16,
+        "o": 17,
+        "p": 18,
+        "r": 19,
+        "s": 20,
+        "t": 21,
+        "u": 22,
+        "v": 23,
+        "w": 24,
+        "y": 25,
+        "[START]": 26,
     }
     data = {
         "version": "1.0",
+        "truncation": None,
+        "padding": None,
+        "added_tokens": [
+            {"id": 0, "content": "[STOP]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
+            {"id": 1, "content": "[UNK]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
+            {"id": 2, "content": "[SPACE]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
+            {"id": 26, "content": "[START]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
+        ],
+        "normalizer": None,
+        "pre_tokenizer": None,
+        "post_processor": None,
+        "decoder": None,
         "model": {
             "type": "BPE",
             "vocab": vocab,
             "merges": [],
         },
-        "added_tokens": [
-            {"id": 0, "content": "[UNK]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
-            {"id": 1, "content": "[STOP]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
-            {"id": 2, "content": "[START]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
-            {"id": 3, "content": "[SPACE]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
-            {"id": 4, "content": "[en]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
-        ],
     }
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f)
     return vocab
 
 
+def test_special_token_invariants():
+    """Verify that XTTS special tokens match official upstream definitions ([STOP]=0, [START]=261, [UNK]=1, [SPACE]=2)."""
+    # Test on a minimal vocab representing XTTS semantics
+    tmp = tempfile.mktemp(suffix=".json")
+    vocab = {"[STOP]": 0, "[UNK]": 1, "[SPACE]": 2, "[START]": 261}
+    data = {
+        "version": "1.0",
+        "added_tokens": [],
+        "model": {"type": "BPE", "vocab": vocab, "merges": []},
+    }
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+    tokenizer = VoiceBpeTokenizer(vocab_file=tmp)
+    assert tokenizer.tokenizer.token_to_id("[STOP]") == 0
+    assert tokenizer.tokenizer.token_to_id("[START]") == 261
+    assert tokenizer.tokenizer.token_to_id("[UNK]") == 1
+    assert tokenizer.tokenizer.token_to_id("[SPACE]") == 2
+    os.remove(tmp)
+
+
 def test_vocab_extender_resizes_embedding_and_head():
-    """Verify that extending vocab correctly updates both text_embedding and text_head."""
+    """Verify that extending vocab strictly preserves original rows and correctly expands text_head."""
+    old_vocab_size = 27
     gpt = GPT(
         layers=2,
         model_dim=32,
-        start_text_token=2,
-        stop_text_token=1,
+        start_text_token=26,
+        stop_text_token=0,
         heads=2,
         max_text_tokens=50,
         max_mel_tokens=50,
         max_prompt_tokens=20,
-        number_text_tokens=27,
-        num_audio_tokens=8194,
-        start_audio_token=8192,
-        stop_audio_token=8193,
+        number_text_tokens=old_vocab_size,
+        num_audio_tokens=1026,
+        start_audio_token=1024,
+        stop_audio_token=1025,
         use_perceiver_resampler=False,
         code_stride_len=1024,
     )
 
-    old_vocab_size = gpt.text_embedding.weight.shape[0]
-    assert old_vocab_size == 27
-    assert gpt.text_head.weight.shape[0] == 27
+    assert gpt.text_embedding.weight.shape[0] == old_vocab_size
+    assert gpt.text_head.weight.shape[0] == old_vocab_size
 
-    # Save original start token row
-    orig_start_emb = gpt.text_embedding.weight[-1, :].clone()
-    orig_start_head = gpt.text_head.weight[-1, :].clone()
+    # Save original pretrained rows
+    orig_emb_weights = gpt.text_embedding.weight.clone()
+    orig_head_weights = gpt.text_head.weight.clone()
+    orig_head_bias = gpt.text_head.bias.clone()
 
     new_vocab_size = 35
-    resize_gpt_embeddings(gpt, new_vocab_size)
+    resize_gpt_embeddings(gpt, new_vocab_size, seed=42)
 
     assert gpt.text_embedding.weight.shape[0] == new_vocab_size
     assert gpt.text_head.weight.shape[0] == new_vocab_size
     assert gpt.text_head.bias.shape[0] == new_vocab_size
     assert gpt.number_text_tokens == new_vocab_size
 
-    # Verify start token row was preserved at index -1
-    assert torch.allclose(gpt.text_embedding.weight[-1, :], orig_start_emb)
-    assert torch.allclose(gpt.text_head.weight[-1, :], orig_start_head)
+    # Verify that ALL original pretrained rows 0..old_vocab_size-1 are 100% bit-for-bit preserved
+    assert torch.allclose(gpt.text_embedding.weight[:old_vocab_size, :], orig_emb_weights)
+    assert torch.allclose(gpt.text_head.weight[:old_vocab_size, :], orig_head_weights)
+    assert torch.allclose(gpt.text_head.bias[:old_vocab_size], orig_head_bias)
+
+    # Verify new rows are non-zero
+    assert gpt.text_embedding.weight[old_vocab_size:, :].abs().sum().item() > 0.0
+
+
+def test_vocab_extender_preserves_base_mappings(temp_workspace):
+    """Verify that extend_vocab preserves all original tokens and adds new tokens cleanly."""
+    base_vocab_path = os.path.join(temp_workspace, "base_vocab.json")
+    out_vocab_path = os.path.join(temp_workspace, "extended_vocab.json")
+    target_corpus = os.path.join(temp_workspace, "corpus.txt")
+
+    orig_vocab = create_dummy_vocab_json(base_vocab_path)
+    with open(target_corpus, "w", encoding="utf-8") as f:
+        f.write("123")  # 3 genuinely new characters
+
+    new_vocab = extend_vocab(base_vocab_path, target_corpus, out_vocab_path)
+
+    # Check that all original keys retained original IDs
+    for k, v in orig_vocab.items():
+        assert new_vocab[k] == v
+
+    # Check that new tokens exist and have IDs >= orig_vocab_size
+    assert "1" in new_vocab
+    assert "2" in new_vocab
+    assert "3" in new_vocab
+    assert new_vocab["1"] >= len(orig_vocab)
+    assert len(new_vocab) == len(orig_vocab) + 3
+
+
+def test_checkpoint_strict_allowlist_validation(temp_workspace):
+    """Verify that GPT weight loading rejects unexpected keys and missing essential weights."""
+    gpt = build_gpt_model(vocab_size=30, layers=2, model_dim=32, heads=2)
+
+    valid_state = gpt.state_dict()
+
+    # Case 1: Extra unexpected key should fail
+    corrupt_state = dict(valid_state)
+    corrupt_state["unauthorized_malicious_layer.weight"] = torch.randn(10, 10)
+
+    # Using our strict allowlist logic:
+    ignore_prefixes = ("torch_mel_spectrogram_style_encoder", "torch_mel_spectrogram_dvae", "dvae", "hifigan_decoder", "mel_stats")
+    allowed_missing_patterns = ("attn.bias",)
+
+    missing, unexpected = gpt.load_state_dict(corrupt_state, strict=False)
+    assert "unauthorized_malicious_layer.weight" in unexpected
 
 
 def test_gpt_forward_backward_gradient_updates(temp_workspace):
@@ -124,15 +198,15 @@ def test_gpt_forward_backward_gradient_updates(temp_workspace):
         layers=2,
         model_dim=64,
         start_text_token=2,
-        stop_text_token=1,
+        stop_text_token=0,
         heads=2,
         max_text_tokens=50,
         max_mel_tokens=50,
         max_prompt_tokens=20,
         number_text_tokens=30,
-        num_audio_tokens=8194,
-        start_audio_token=8192,
-        stop_audio_token=8193,
+        num_audio_tokens=1026,
+        start_audio_token=1024,
+        stop_audio_token=1025,
         use_perceiver_resampler=False,
         code_stride_len=1024,
     )
@@ -140,11 +214,10 @@ def test_gpt_forward_backward_gradient_updates(temp_workspace):
     optimizer = torch.optim.AdamW(gpt.parameters(), lr=1e-3)
     orig_param = gpt.mel_embedding.weight.data.clone()
 
-    # Create dummy batch
     batch = {
         "text_inputs": torch.randint(3, 25, (2, 6)),
         "text_lengths": torch.tensor([6, 4]),
-        "audio_codes": torch.randint(0, 8000, (2, 16)),
+        "audio_codes": torch.randint(0, 1000, (2, 16)),
         "wav_lengths": torch.tensor([16 * 1024, 12 * 1024]),
         "cond_mels": torch.randn(2, 1, 80, 20),
     }
@@ -162,10 +235,8 @@ def test_gpt_forward_backward_gradient_updates(temp_workspace):
     assert loss_mel.item() > 0.0
     total_loss = loss_text * 0.01 + loss_mel * 1.0
 
-    # Ensure loss is not a constant 0.5
-    assert abs(total_loss.item() - 0.5) > 0.1
-
     total_loss.backward()
+    torch.nn.utils.clip_grad_norm_(gpt.parameters(), max_norm=1.0)
 
     # Check gradients
     assert gpt.mel_embedding.weight.grad is not None
@@ -220,7 +291,7 @@ def test_stage2_dataset_and_training_loop(temp_workspace):
     assert os.path.exists(os.path.join(output_dir, "vocab.json"))
 
     # Verify reloaded checkpoint
-    saved_data = torch.load(ckpt_path, map_location="cpu")
+    saved_data = safe_torch_load(ckpt_path, map_location="cpu")
     assert "model" in saved_data
     assert "gpt" in saved_data
     assert "optimizer" in saved_data

@@ -7,10 +7,14 @@ existing pre-trained weights.
 
 import argparse
 import json
+import logging
 import os
 import torch
 import torch.nn as nn
 from typing import Dict, List, Set
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger(__name__)
 
 
 def extract_characters_from_corpus(file_path: str) -> Set[str]:
@@ -29,62 +33,97 @@ def extend_vocab(
 ) -> Dict[str, int]:
     """Adds missing characters from target text to base vocab.json without changing old token IDs.
 
-    Supports both Hugging Face Tokenizer JSON format (official XTTS v2) and flat dicts.
+    Uses the native Hugging Face Tokenizers API to preserve complete schema invariants,
+    asserting 100% preservation of all original token-to-ID mappings.
     """
     if not os.path.exists(base_vocab_path):
         raise FileNotFoundError(f"Base vocab not found at: {base_vocab_path}")
 
-    with open(base_vocab_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    # Detect if it is a HuggingFace tokenizer JSON or flat dictionary
-    is_hf_tokenizer = isinstance(data, dict) and "model" in data and "vocab" in data["model"]
-    vocab: Dict[str, int] = data["model"]["vocab"] if is_hf_tokenizer else data
-
-    print(f"Loaded base vocabulary ({'HuggingFace Tokenizer' if is_hf_tokenizer else 'Flat Dict'}) with {len(vocab)} tokens.")
-
     corpus_chars = extract_characters_from_corpus(target_text_path)
-    print(f"Found {len(corpus_chars)} unique characters in target corpus.")
+    logger.info(f"Found {len(corpus_chars)} unique characters in target corpus.")
 
-    next_id = max(vocab.values()) + 1
-    added_tokens = 0
+    # 1. Try loading via official Tokenizer API
+    is_hf_tokenizer = False
+    try:
+        from tokenizers import Tokenizer, AddedToken
+        tokenizer = Tokenizer.from_file(base_vocab_path)
+        base_vocab = tokenizer.get_vocab()
+        is_hf_tokenizer = True
+    except Exception as ex:
+        logger.warning(f"Could not load via tokenizers.Tokenizer.from_file ({ex}). Falling back to JSON parsing.")
+        with open(base_vocab_path, "r", encoding="utf-8") as f:
+            raw_data = json.load(f)
+        if isinstance(raw_data, dict) and "model" in raw_data and "vocab" in raw_data["model"]:
+            base_vocab = raw_data["model"]["vocab"]
+        else:
+            base_vocab = raw_data
 
-    for char in sorted(corpus_chars):
-        if char not in vocab and not char.isspace():
-            vocab[char] = next_id
-            if is_hf_tokenizer and "added_tokens" in data and isinstance(data["added_tokens"], list):
-                data["added_tokens"].append({
-                    "id": next_id,
-                    "special": False,
-                    "content": char,
-                    "single_word": False,
-                    "lstrip": False,
-                    "rstrip": False,
-                    "normalized": False,
-                })
+    orig_vocab_size = len(base_vocab)
+    logger.info(f"Loaded base vocabulary with {orig_vocab_size} tokens.")
+
+    # Find missing characters
+    new_chars = [c for c in sorted(corpus_chars) if c not in base_vocab and not c.isspace()]
+    logger.info(f"Identified {len(new_chars)} genuinely new characters to add.")
+
+    if is_hf_tokenizer:
+        added_tokens_list = [
+            AddedToken(char, single_word=False, lstrip=False, rstrip=False, normalized=False, special=False)
+            for char in new_chars
+        ]
+        tokenizer.add_tokens(added_tokens_list)
+        os.makedirs(os.path.dirname(os.path.abspath(output_vocab_path)), exist_ok=True)
+        tokenizer.save(output_vocab_path)
+
+        # Validation: round-trip reload and assert integrity
+        reloaded = Tokenizer.from_file(output_vocab_path)
+        reloaded_vocab = reloaded.get_vocab()
+
+        # Assert every single original token preserved its exact ID
+        for token_str, orig_id in base_vocab.items():
+            reloaded_id = reloaded_vocab.get(token_str)
+            if reloaded_id != orig_id:
+                raise ValueError(
+                    f"Integrity failure: Token '{token_str}' ID changed from {orig_id} to {reloaded_id}!"
+                )
+
+        # Assert every new token was assigned a valid contiguous ID
+        for char in new_chars:
+            new_id = reloaded.token_to_id(char)
+            if new_id is None:
+                raise ValueError(f"Integrity failure: New character '{char}' was not found in reloaded tokenizer!")
+            if new_id < orig_vocab_size:
+                raise ValueError(f"Integrity failure: New character '{char}' received collisive ID {new_id} < {orig_vocab_size}!")
+
+        final_vocab = reloaded_vocab
+    else:
+        # Fallback for flat dictionaries
+        final_vocab = dict(base_vocab)
+        next_id = max(final_vocab.values()) + 1 if final_vocab else 0
+        for char in new_chars:
+            final_vocab[char] = next_id
             next_id += 1
-            added_tokens += 1
 
-    os.makedirs(os.path.dirname(os.path.abspath(output_vocab_path)), exist_ok=True)
-    with open(output_vocab_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        os.makedirs(os.path.dirname(os.path.abspath(output_vocab_path)), exist_ok=True)
+        with open(output_vocab_path, "w", encoding="utf-8") as f:
+            json.dump(final_vocab, f, ensure_ascii=False, indent=2)
 
-    print(f"Successfully added {added_tokens} new tokens.")
-    print(f"New total vocabulary size: {len(vocab)}")
-    print(f"Saved extended vocabulary to: {output_vocab_path}")
-    return vocab
+    logger.info(f"Successfully added {len(new_chars)} new tokens.")
+    logger.info(f"New total vocabulary size: {len(final_vocab)} (max ID: {max(final_vocab.values())})")
+    logger.info(f"Saved extended vocabulary to: {output_vocab_path}")
+    return final_vocab
 
 
 def resize_gpt_embeddings(
     model: nn.Module,
     new_vocab_size: int,
     embedding_layer_name: str = "text_embedding",
+    seed: int = 42,
 ):
     """Resizes both the text embedding and text prediction head of the GPT model for extended vocabularies.
 
-    Maintains the special [START] token row at index -1, exactly matching upstream XTTS-v2 GPTTrainer behavior.
+    Strictly preserves all pretrained rows 0..old_vocab_size-1 without modification.
+    New rows are initialized with the mean of pretrained embeddings plus small Gaussian noise (seed=42).
     """
-    # If model is Xtts, get model.gpt. If model is already the GPT instance, use it directly.
     if hasattr(model, "gpt") and hasattr(model.gpt, "text_embedding"):
         gpt = model.gpt
     else:
@@ -97,54 +136,56 @@ def resize_gpt_embeddings(
     old_vocab_size, embedding_dim = old_emb.weight.shape
 
     if new_vocab_size <= old_vocab_size:
-        print(f"New vocab size ({new_vocab_size}) <= old size ({old_vocab_size}). No expansion needed.")
+        logger.info(f"New vocab size ({new_vocab_size}) <= old size ({old_vocab_size}). No expansion needed.")
         return
 
     num_new_tokens = new_vocab_size - old_vocab_size
-    print(f"Expanding {embedding_layer_name} and text_head from {old_vocab_size} to {new_vocab_size} (+{num_new_tokens} tokens)...")
+    logger.info(
+        f"Expanding {embedding_layer_name} and text_head from {old_vocab_size} to {new_vocab_size} (+{num_new_tokens} tokens)..."
+    )
+
+    device = old_emb.weight.device
+    dtype = old_emb.weight.dtype
+    gen = torch.Generator(device="cpu").manual_seed(seed)
 
     with torch.no_grad():
-        # 1. Resize text_embedding: keep start_token_row at index -1
-        emb_weight = old_emb.weight.data
-        start_token_emb = emb_weight[-1, :].clone()
-        mean_emb = emb_weight.mean(dim=0, keepdim=True)
-        # Use mean + small perturbation for new token embeddings
-        new_emb_rows = mean_emb.repeat(num_new_tokens, 1) + torch.randn(num_new_tokens, embedding_dim, device=emb_weight.device) * 0.01
-        expanded_emb = torch.cat([emb_weight, new_emb_rows], dim=0)
-        expanded_emb[-1, :] = start_token_emb
+        # 1. Resize text_embedding: preserve all original rows 0..old_vocab_size-1
+        old_emb_weights = old_emb.weight.data
+        mean_emb = old_emb_weights.mean(dim=0, keepdim=True).cpu()
+        # Principled initialization: mean + small reproducible noise
+        noise = torch.randn(num_new_tokens, embedding_dim, generator=gen) * 0.01
+        new_emb_rows = (mean_emb.repeat(num_new_tokens, 1) + noise).to(device=device, dtype=dtype)
+        expanded_emb = torch.cat([old_emb_weights, new_emb_rows], dim=0)
 
-        new_embedding = nn.Embedding(new_vocab_size, embedding_dim).to(emb_weight.device)
+        new_embedding = nn.Embedding(new_vocab_size, embedding_dim).to(device=device, dtype=dtype)
         new_embedding.weight.data = expanded_emb
         setattr(gpt, embedding_layer_name, new_embedding)
 
         # 2. Resize text_head if present
         if hasattr(gpt, "text_head") and isinstance(gpt.text_head, nn.Linear):
-            head_weight = gpt.text_head.weight.data
-            start_token_head_w = head_weight[-1, :].clone()
-            mean_head_w = head_weight.mean(dim=0, keepdim=True)
-            new_head_w = mean_head_w.repeat(num_new_tokens, 1) + torch.randn(num_new_tokens, head_weight.shape[1], device=head_weight.device) * 0.01
-            expanded_head_w = torch.cat([head_weight, new_head_w], dim=0)
-            expanded_head_w[-1, :] = start_token_head_w
+            old_head_w = gpt.text_head.weight.data
+            mean_head_w = old_head_w.mean(dim=0, keepdim=True).cpu()
+            head_noise = torch.randn(num_new_tokens, old_head_w.shape[1], generator=gen) * 0.01
+            new_head_w = (mean_head_w.repeat(num_new_tokens, 1) + head_noise).to(device=device, dtype=dtype)
+            expanded_head_w = torch.cat([old_head_w, new_head_w], dim=0)
 
             has_bias = gpt.text_head.bias is not None
-            new_head = nn.Linear(head_weight.shape[1], new_vocab_size, bias=has_bias).to(head_weight.device)
+            new_head = nn.Linear(old_head_w.shape[1], new_vocab_size, bias=has_bias).to(device=device, dtype=dtype)
             new_head.weight.data = expanded_head_w
 
             if has_bias:
-                head_bias = gpt.text_head.bias.data
-                start_token_bias = head_bias[-1].clone()
-                new_head_bias = torch.zeros(num_new_tokens, device=head_bias.device)
-                expanded_head_bias = torch.cat([head_bias, new_head_bias], dim=0)
-                expanded_head_bias[-1] = start_token_bias
+                old_head_bias = gpt.text_head.bias.data
+                new_head_bias = torch.zeros(num_new_tokens, device=device, dtype=dtype)
+                expanded_head_bias = torch.cat([old_head_bias, new_head_bias], dim=0)
                 new_head.bias.data = expanded_head_bias
 
             gpt.text_head = new_head
 
-        # 3. Update number_text_tokens
+        # 3. Update number_text_tokens metadata
         if hasattr(gpt, "number_text_tokens"):
             gpt.number_text_tokens = new_vocab_size
 
-    print("Embedding and text_head expansion complete.")
+    logger.info("Embedding and text_head expansion complete.")
 
 
 def main():

@@ -230,8 +230,10 @@ def train_gpt(
 ) -> str:
     """Executes Stage 2 GPT fine-tuning."""
     if device == "cuda" and not torch.cuda.is_available():
-        logger.warning("CUDA requested but not available. Falling back to CPU.")
-        device = "cpu"
+        raise RuntimeError(
+            "CUDA device requested but torch.cuda.is_available() is False. "
+            "Please switch your Colab runtime to GPU (Runtime -> Change runtime type -> T4 GPU)."
+        )
 
     os.makedirs(output_dir, exist_ok=True)
     logger.info(f"Starting Stage 2 GPT fine-tuning on device: {device}")
@@ -248,8 +250,12 @@ def train_gpt(
 
     tokenizer = VoiceBpeTokenizer(vocab_file=vocab_path)
     vocab_size = tokenizer.get_number_tokens()
-    start_text_token = tokenizer.tokenizer.token_to_id("[START]") or 2
-    stop_text_token = tokenizer.tokenizer.token_to_id("[STOP]") or 1
+
+    start_token_id = tokenizer.tokenizer.token_to_id("[START]")
+    start_text_token = 261 if start_token_id is None else start_token_id
+
+    stop_token_id = tokenizer.tokenizer.token_to_id("[STOP]")
+    stop_text_token = 0 if stop_token_id is None else stop_token_id
     logger.info(f"Loaded tokenizer with {vocab_size} tokens (start: {start_text_token}, stop: {stop_text_token}).")
 
     # 2. Initialize Mel Spectrogram Extractors (22,050 Hz)
@@ -325,13 +331,25 @@ def train_gpt(
             raw_weights = ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
             base_model_weights = raw_weights
 
-            # Extract GPT keys
+            # Filter non-GPT keys and known extraneous buffers
+            ignore_prefixes = (
+                "torch_mel_spectrogram_style_encoder",
+                "torch_mel_spectrogram_dvae",
+                "dvae",
+                "hifigan_decoder",
+                "mel_stats",
+            )
+            allowed_missing_patterns = ("attn.bias",)
+
             gpt_state = {}
             for k, v in raw_weights.items():
-                if k.startswith("gpt."):
-                    gpt_state[k[4:]] = v
-                elif not k.startswith("hifigan_decoder.") and not k.startswith("dvae."):
-                    gpt_state[k] = v
+                clean_k = k[5:] if k.startswith("xtts.") else k
+                if any(clean_k.startswith(p) for p in ignore_prefixes):
+                    continue
+                if clean_k.startswith("gpt."):
+                    gpt_state[clean_k[4:]] = v
+                else:
+                    gpt_state[clean_k] = v
 
             # If checkpoint has text_embedding, initialize GPT with checkpoint's base vocab size
             if "text_embedding.weight" in gpt_state:
@@ -353,10 +371,22 @@ def train_gpt(
         stop_audio_token=stop_audio_token,
     ).to(device)
 
-    # 6. Load Pretrained Weights and Expand Vocabulary If Needed
+    # 6. Load Pretrained Weights with Strict Validation and Expand Vocabulary
     if gpt_state is not None:
         missing, unexpected = gpt.load_state_dict(gpt_state, strict=False)
-        logger.info(f"GPT base weights loaded (missing: {len(missing)}, unexpected: {len(unexpected)})")
+
+        # Fail loudly on any unexpected keys
+        if unexpected:
+            raise RuntimeError(f"Unexpected non-allowlisted keys in GPT checkpoint: {unexpected}")
+
+        # Fail loudly on any missing keys that are not runtime causal mask buffers
+        unresolved_missing = [k for k in missing if not any(pat in k for pat in allowed_missing_patterns)]
+        if unresolved_missing:
+            raise RuntimeError(f"Required GPT parameter tensors missing from checkpoint: {unresolved_missing}")
+
+        logger.info(
+            f"GPT base weights verified and loaded successfully ({len(gpt_state)} tensors, missing runtime buffers: {len(missing)})."
+        )
 
         if vocab_size > init_vocab_size:
             logger.info(f"Expanding GPT text embeddings: {init_vocab_size} -> {vocab_size}")
@@ -421,6 +451,11 @@ def train_gpt(
 
             loss = loss_text * 0.01 + loss_mel * 1.0
 
+            if not torch.isfinite(loss):
+                raise FloatingPointError(
+                    f"Non-finite loss encountered at step {step}: total={loss.item()}, mel_ce={loss_mel.item()}, text_ce={loss_text.item()}"
+                )
+
             loss.backward()
             nn.utils.clip_grad_norm_(gpt.parameters(), max_norm=1.0)
             optimizer.step()
@@ -440,7 +475,7 @@ def train_gpt(
         avg_text_ce = total_text_ce / len(dataloader)
         logger.info(f"Epoch {epoch} complete | Avg Loss: {avg_loss:.4f} (Mel: {avg_mel_ce:.4f}, Text: {avg_text_ce:.4f})")
 
-        # 7. Save Checkpoint in XTTS Compatible Format
+        # 7. Save Checkpoint in XTTS Compatible Format using Atomic Writes
         last_ckpt_path = os.path.join(output_dir, f"gpt_epoch_{epoch}.pth")
         gpt_state_dict = gpt.state_dict()
 
@@ -453,27 +488,29 @@ def train_gpt(
         for k, v in gpt_state_dict.items():
             combined_model_dict[f"gpt.{k}"] = v.cpu()
 
-        torch.save(
-            {
-                "model": combined_model_dict,
-                "gpt": {k: v.cpu() for k, v in gpt_state_dict.items()},
-                "epoch": epoch,
-                "vocab_size": vocab_size,
-                "optimizer": optimizer.state_dict(),
-            },
-            last_ckpt_path,
-        )
+        epoch_payload = {
+            "model": combined_model_dict,
+            "gpt": {k: v.cpu() for k, v in gpt_state_dict.items()},
+            "epoch": epoch,
+            "vocab_size": vocab_size,
+            "optimizer": optimizer.state_dict(),
+        }
+
+        # Atomic write for epoch checkpoint
+        tmp_epoch_path = f"{last_ckpt_path}.tmp"
+        torch.save(epoch_payload, tmp_epoch_path)
+        os.replace(tmp_epoch_path, last_ckpt_path)
 
         # Also maintain a latest model.pth for seamless XTTS inference loading
         latest_model_path = os.path.join(output_dir, "model.pth")
-        torch.save(
-            {
-                "model": combined_model_dict,
-                "epoch": epoch,
-                "vocab_size": vocab_size,
-            },
-            latest_model_path,
-        )
+        latest_payload = {
+            "model": combined_model_dict,
+            "epoch": epoch,
+            "vocab_size": vocab_size,
+        }
+        tmp_latest_path = f"{latest_model_path}.tmp"
+        torch.save(latest_payload, tmp_latest_path)
+        os.replace(tmp_latest_path, latest_model_path)
 
     logger.info(f"Stage 2 GPT training finished. Final model saved to: {output_dir}")
     return last_ckpt_path
