@@ -131,3 +131,65 @@ def test_extract_latents_standalone(temp_workspace):
     assert "speaker_embedding" in data
     assert data["gpt_latents"].shape[-1] == 1024
     assert data["speaker_embedding"].shape == (1, 512, 1)
+
+
+def test_stage3_silence_rejection_and_amplitude_stability(temp_workspace):
+    """Verify silence rejection in dataset and that output amplitude remains stable after training."""
+    audio_dir = os.path.join(temp_workspace, "audio")
+    latents_dir = os.path.join(temp_workspace, "latents")
+    output_dir = os.path.join(temp_workspace, "checkpoints")
+    os.makedirs(audio_dir, exist_ok=True)
+    os.makedirs(latents_dir, exist_ok=True)
+
+    # Audio with 1s of silence followed by 1s of speech
+    silence = torch.zeros(1, 24000)
+    speech = torch.sin(torch.linspace(0, 440, 24000)).unsqueeze(0) * 0.2
+    mixed_audio = torch.cat([silence, speech], dim=-1)
+
+    for i in range(2):
+        wav_path = os.path.join(audio_dir, f"sample_{i}.wav")
+        torchaudio.save(wav_path, mixed_audio, 24000)
+
+        lat_path = os.path.join(latents_dir, f"sample_{i}.pt")
+        torch.save(
+            {
+                "gpt_latents": torch.randn(1, 32, 1024),
+                "speaker_embedding": torch.randn(1, 512, 1),
+            },
+            lat_path,
+        )
+
+    # Test dataset silence rejection
+    dataset = LatentHiFiGANDataset(audio_dir, latents_dir, latent_frames_slice=16)
+    waveform_slice, latents_slice, _ = dataset[0]
+    slice_rms = torch.sqrt(torch.mean(waveform_slice ** 2)).item()
+    # Verified: selected slice is active speech, not leading silence
+    assert slice_rms >= 0.015
+
+    # Run 1 epoch of training with gradient clipping and fine-tuning LR
+    ckpt_path = train_hifigan(
+        audio_dir=audio_dir,
+        latents_dir=latents_dir,
+        output_dir=output_dir,
+        epochs=1,
+        batch_size=2,
+        latent_frames_slice=16,
+        learning_rate=2e-5,
+        device="cpu",
+    )
+
+    # Check that trained decoder output amplitude is healthy and hasn't collapsed
+    trained_ckpt = safe_torch_load(ckpt_path, map_location="cpu")
+    decoder = build_hifigan_decoder()
+    decoder.load_state_dict(trained_ckpt["hifigan_decoder"])
+    decoder.eval()
+
+    test_latents = torch.randn(1, 16, 1024)
+    test_spk = torch.randn(1, 512, 1)
+    with torch.no_grad():
+        out_wav = decoder(test_latents, g=test_spk)
+        out_rms = torch.sqrt(torch.mean(out_wav ** 2)).item()
+
+    # RMS must remain robust (e.g. > 0.01), not collapse to 0.000008
+    assert out_rms > 0.01
+

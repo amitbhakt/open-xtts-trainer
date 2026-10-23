@@ -39,6 +39,7 @@ def train_hifigan(
     epochs: int = 50,
     batch_size: int = 16,
     latent_frames_slice: int = 16,
+    learning_rate: Optional[float] = None,
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
 ) -> str:
     """Executes dual-optimizer fine-tuning for native XTTS HiFi-GAN Vocoder."""
@@ -113,11 +114,16 @@ def train_hifigan(
         f_max=8000,
     ).to(device)
 
-    # 5. Optimizers with AdamW
-    optim_g = torch.optim.AdamW(generator.parameters(), lr=config.learning_rate, betas=(0.8, 0.99))
+    # 5. Optimizers with AdamW and fine-tuning learning rate
+    is_finetuning = bool(model_pth_path and os.path.exists(model_pth_path))
+    lr_g = learning_rate if learning_rate is not None else (2e-5 if is_finetuning else config.learning_rate)
+    lr_d = (lr_g * 0.5) if is_finetuning else config.discriminator_learning_rate
+    logger.info(f"HiFi-GAN learning rates | Generator LR: {lr_g} | Discriminator LR: {lr_d}")
+
+    optim_g = torch.optim.AdamW(generator.parameters(), lr=lr_g, betas=(0.8, 0.99))
     optim_d = torch.optim.AdamW(
         itertools.chain(mpd.parameters(), msd.parameters()),
-        lr=config.discriminator_learning_rate,
+        lr=lr_d,
         betas=(0.8, 0.99),
     )
 
@@ -172,6 +178,7 @@ def train_hifigan(
 
             loss_d = loss_disc_f + loss_disc_s
             loss_d.backward()
+            torch.nn.utils.clip_grad_norm_(itertools.chain(mpd.parameters(), msd.parameters()), max_norm=1.0)
             optim_d.step()
 
             # ---------------------------
@@ -190,7 +197,11 @@ def train_hifigan(
 
             loss_g = loss_gen_f + loss_gen_s + loss_fm_f + loss_fm_s + loss_mel
             loss_g.backward()
+            grad_norm_g = torch.nn.utils.clip_grad_norm_(generator.parameters(), max_norm=1.0)
             optim_g.step()
+
+            with torch.no_grad():
+                gen_rms = torch.sqrt(torch.mean(y_g_hat ** 2)).item()
 
             total_loss_g += loss_g.item()
             total_loss_d += loss_d.item()
@@ -199,7 +210,8 @@ def train_hifigan(
             if (i + 1) % max(1, len(dataloader) // 5) == 0 or (i + 1) == len(dataloader):
                 logger.info(
                     f"Epoch [{epoch}/{epochs}] Step [{i+1}/{len(dataloader)}] | "
-                    f"Loss Gen: {loss_g.item():.4f} (Mel: {loss_mel.item():.4f}) | Loss Disc: {loss_d.item():.4f}"
+                    f"Loss Gen: {loss_g.item():.4f} (Mel: {loss_mel.item():.4f}) | Loss Disc: {loss_d.item():.4f} | "
+                    f"Gen RMS: {gen_rms:.5f} | Grad Norm: {grad_norm_g.item():.2f}"
                 )
 
         scheduler_g.step()
@@ -241,6 +253,7 @@ def main():
     parser.add_argument("--continue_path", type=str, default="", help="Path to vocoder checkpoint to resume from")
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--batch_size", type=int, default=4)
+    parser.add_argument("--learning_rate", type=float, default=None, help="Generator LR (default: 2e-5 for fine-tuning, 2e-4 for scratch)")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     args = parser.parse_args()
 
@@ -252,6 +265,7 @@ def main():
         continue_path=args.continue_path,
         epochs=args.epochs,
         batch_size=args.batch_size,
+        learning_rate=args.learning_rate,
         device=args.device,
     )
 

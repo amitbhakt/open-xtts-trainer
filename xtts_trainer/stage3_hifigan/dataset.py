@@ -89,16 +89,30 @@ class LatentHiFiGANDataset(Dataset):
             waveform = torch.nn.functional.pad(waveform, (0, pad_audio))
             audio_len = self.audio_samples_slice
 
-        # Compute valid random slice offsets
+        # Compute valid random slice offsets with silence rejection
         max_latent_start = max(0, latent_len - self.latent_frames_slice)
-        latent_start = random.randint(0, max_latent_start)
-        audio_start = int(latent_start * 4 * (24000 / 22050)) * 256
+        best_slice = None
+        best_rms = -1.0
 
-        # Guard audio boundary
-        if audio_start + self.audio_samples_slice > audio_len:
-            audio_start = max(0, audio_len - self.audio_samples_slice)
+        # Try up to 8 random windows to sample active speech rather than silence
+        for _ in range(8):
+            latent_start = random.randint(0, max_latent_start) if max_latent_start > 0 else 0
+            audio_start = int(latent_start * 4 * (24000 / 22050)) * 256
 
-        waveform_slice = waveform[:, audio_start : audio_start + self.audio_samples_slice]
-        latents_slice = gpt_latents[latent_start : latent_start + self.latent_frames_slice, :]
+            if audio_start + self.audio_samples_slice > audio_len:
+                audio_start = max(0, audio_len - self.audio_samples_slice)
 
+            waveform_slice = waveform[:, audio_start : audio_start + self.audio_samples_slice]
+            latents_slice = gpt_latents[latent_start : latent_start + self.latent_frames_slice, :]
+
+            rms = torch.sqrt(torch.mean(waveform_slice ** 2)).item()
+            if rms > best_rms:
+                best_rms = rms
+                best_slice = (waveform_slice, latents_slice)
+
+            # Accept immediately if above speech RMS threshold (0.015)
+            if rms >= 0.015:
+                break
+
+        waveform_slice, latents_slice = best_slice
         return waveform_slice, latents_slice, speaker_emb
