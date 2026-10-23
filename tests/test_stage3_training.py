@@ -193,3 +193,35 @@ def test_stage3_silence_rejection_and_amplitude_stability(temp_workspace):
     # RMS must remain robust (e.g. > 0.01), not collapse to 0.000008
     assert out_rms > 0.01
 
+
+def test_stage3_inference_synthesize_audio(temp_workspace):
+    """Verify that synthesize_audio runs end-to-end and outputs valid WAV file."""
+    import soundfile as sf
+    from xtts_trainer.stage3_hifigan.inference import synthesize_audio
+
+    ckpt_path = os.path.join(temp_workspace, "hifigan.pth")
+    latent_path = os.path.join(temp_workspace, "latent.pt")
+    out_wav = os.path.join(temp_workspace, "out.wav")
+
+    decoder = build_hifigan_decoder()
+    torch.save({"hifigan_decoder": decoder.state_dict()}, ckpt_path)
+    torch.save(
+        {
+            "gpt_latents": torch.randn(1, 16, 1024),
+            "speaker_embedding": torch.randn(1, 512, 1),
+        },
+        latent_path,
+    )
+
+    synthesize_audio(
+        checkpoint_path=ckpt_path,
+        latent_path=latent_path,
+        output_path=out_wav,
+        device="cpu",
+    )
+    assert os.path.exists(out_wav)
+    data, sr = sf.read(out_wav)
+    assert sr == 24000
+    assert len(data) > 0
+
+
