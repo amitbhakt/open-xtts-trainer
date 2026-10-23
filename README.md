@@ -185,6 +185,33 @@ python xtts_trainer/stage1_dvae/train.py \
 
 ---
 
+## 5-Point End-to-End Pipeline Verification Proof
+
+To establish reproducible execution proof across all three trained components, run the instrumented integration proof suite:
+
+```bash
+python scripts/verify_pipeline_proof.py \
+    --dvae_checkpoint checkpoints/dvae/dvae.pth \
+    --gpt_checkpoint checkpoints/gpt/model.pth \
+    --hifigan_checkpoint checkpoints/hifigan/hifigan.pth \
+    --reference_audio sample_audio/speech_003.wav \
+    --output_dir proof_outputs
+```
+
+### What It Verifies:
+
+| Proof Gate | Execution Assertion | What It Establishes |
+| :--- | :--- | :--- |
+| **Gate 1: Stage 1 (DVAE)** | Encodes audio $\to$ discrete codebook IDs $\in [0, 1023]$ $\to$ decodes mel | Verifies acoustic tokenizer and reconstruction fidelity |
+| **Gate 2: Stage 2 (GPT)** | Loads compatible trained parameters & extracts reference latents | Confirms conditioning flow with zero random-latent fallbacks |
+| **Gate 3: Stage 3 (HiFi-GAN)** | Loads trained decoder with `strict=True` ($100\%$ parameter match) | Guarantees audio is decoded by your checkpoint (zero bypass) |
+| **Gate 4: Multi-Sentence Suite** | Synthesizes sibilant (`s1_sibilant`), fluent (`s2_fluent`), and benchmark (`s3_benchmark`) sentences | Evaluates phonetic stability across continuous text |
+| **Gate 5: Audio Quality Proof** | Asserts finite waveform, healthy amplitude ($\text{RMS} \ge 0.02$), non-clipping peak ($\le 1.05$), and measures $>4\text{ kHz}$ sibilant energy | Eliminates vocoder amplitude collapse and validates phase health |
+
+Execution outputs and verification metrics are automatically recorded to `proof_outputs/pipeline_proof_manifest.json`.
+
+---
+
 ## Citation
 
 If you use this training suite in your academic work or project, please cite:
