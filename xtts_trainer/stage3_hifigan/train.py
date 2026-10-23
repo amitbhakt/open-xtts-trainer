@@ -59,8 +59,16 @@ def train_hifigan(
         latent_frames_slice=latent_frames_slice,
         sample_rate=config.audio.sample_rate,
     )
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True)
-    logger.info(f"Loaded {len(dataset)} audio-latent paired samples for vocoder training.")
+    if len(dataset) == 0:
+        raise ValueError(f"No valid audio-latent paired samples found in {audio_dir} and {latents_dir}")
+    effective_batch_size = max(1, min(batch_size, len(dataset)))
+    dataloader = DataLoader(
+        dataset,
+        batch_size=effective_batch_size,
+        shuffle=True,
+        drop_last=(len(dataset) >= effective_batch_size * 2),
+    )
+    logger.info(f"Loaded {len(dataset)} audio-latent paired samples for vocoder training (batch size: {effective_batch_size}, steps per epoch: {len(dataloader)}).")
 
     # 2. Native Generator & Discriminators
     generator: HifiDecoder = build_hifigan_decoder().to(device)

@@ -414,9 +414,10 @@ def train_gpt(
         mel_spectrogram_style=mel_extractor_style,
         device=device,
     )
+    effective_batch_size = max(1, min(batch_size, len(dataset)))
     dataloader = DataLoader(
         dataset,
-        batch_size=batch_size,
+        batch_size=effective_batch_size,
         shuffle=True,
         drop_last=False,
         collate_fn=collate_gpt_batch,

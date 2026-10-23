@@ -61,6 +61,64 @@ SAMPLE_SPEECH_SOURCES = [
 ]
 
 
+def prepare_speech_from_file(
+    input_file: str,
+    output_dir: str = "sample_audio",
+    sample_rate: int = 24000,
+    max_duration_sec: float = 3.0,
+) -> list[str]:
+    """Slice a user-provided recording into normalized 24kHz mono training clips.
+
+    Args:
+        input_file: Path to local audio file (e.g. 30-second recording).
+        output_dir: Directory to save processed .wav clips.
+        sample_rate: Target sample rate (default 24000 Hz).
+        max_duration_sec: Duration in seconds per training clip.
+
+    Returns:
+        List of generated WAV file paths.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    if not os.path.exists(input_file):
+        raise FileNotFoundError(f"Input audio file not found: {input_file}")
+
+    audio, orig_sr = sf.read(input_file)
+    if audio.ndim > 1:
+        audio = np.mean(audio, axis=-1)
+
+    tensor = torch.from_numpy(audio).float().unsqueeze(0)
+    if orig_sr != sample_rate:
+        tensor = F.resample(tensor, orig_sr, sample_rate)
+    resampled = tensor.squeeze(0).numpy()
+
+    chunk_size = int(max_duration_sec * sample_rate)
+    total_clips = max(1, len(resampled) // chunk_size)
+    created_files = []
+
+    print(f"\n==================================================")
+    print(f"Preparing speech from user recording: {input_file}")
+    print(f"Total audio length: {len(resampled) / sample_rate:.2f}s -> {total_clips} clips ({max_duration_sec}s each)")
+    print(f"Target format: {sample_rate}Hz 16-bit PCM mono WAV -> '{output_dir}'")
+    print(f"==================================================")
+
+    for i in range(total_clips):
+        out_filename = f"speech_{i+1:03d}.wav"
+        out_path = os.path.join(output_dir, out_filename)
+        clip = resampled[i * chunk_size : (i + 1) * chunk_size]
+        if len(clip) < chunk_size:
+            clip = np.pad(clip, (0, chunk_size - len(clip)))
+
+        peak = np.max(np.abs(clip))
+        if peak > 0:
+            clip = clip * (0.9 / peak)
+
+        sf.write(out_path, clip, sample_rate, subtype="PCM_16")
+        created_files.append(out_path)
+
+    print(f"Successfully created {len(created_files)} clips from {input_file} in '{output_dir}'.")
+    return created_files
+
+
 def download_and_prepare_speech(
     output_dir: str = "sample_audio",
     num_samples: int = 8,
@@ -137,7 +195,7 @@ def download_and_prepare_speech(
     # Micro mode (<= 8 samples)
     sources = SAMPLE_SPEECH_SOURCES[:min(num_samples, len(SAMPLE_SPEECH_SOURCES))]
     for idx, item in enumerate(sources):
-        out_filename = f"speech_{idx+1:02d}_{item['name']}.wav"
+        out_filename = f"speech_{idx+1:03d}.wav"
         out_path = os.path.join(output_dir, out_filename)
 
         try:
@@ -176,20 +234,29 @@ def download_and_prepare_speech(
 
 def main():
     parser = argparse.ArgumentParser(description="Download and prepare human speech dataset for XTTS training")
+    parser.add_argument("--input_file", "-i", type=str, default=None, help="Path to local audio recording file to slice and prepare")
     parser.add_argument("--output_dir", type=str, default="sample_audio", help="Target output folder")
     parser.add_argument("--num_samples", type=int, default=8, help="Number of speech samples (e.g. 8 for quick, 100 for 5 min)")
-    parser.add_argument("--minutes", type=float, default=None, help="Target duration in minutes (e.g. 5.0 or 10.0)")
+    parser.add_argument("--minutes", type=float, default=None, help="Target duration in minutes (e.g. 0.5 for 30s test, 5.0 for 5 min)")
     parser.add_argument("--sample_rate", type=int, default=24000, help="Target sample rate (default: 24000)")
     parser.add_argument("--duration", type=float, default=3.0, help="Clip duration in seconds (default: 3.0)")
     args = parser.parse_args()
 
-    download_and_prepare_speech(
-        output_dir=args.output_dir,
-        num_samples=args.num_samples,
-        sample_rate=args.sample_rate,
-        max_duration_sec=args.duration,
-        target_minutes=args.minutes,
-    )
+    if args.input_file:
+        prepare_speech_from_file(
+            input_file=args.input_file,
+            output_dir=args.output_dir,
+            sample_rate=args.sample_rate,
+            max_duration_sec=args.duration,
+        )
+    else:
+        download_and_prepare_speech(
+            output_dir=args.output_dir,
+            num_samples=args.num_samples,
+            sample_rate=args.sample_rate,
+            max_duration_sec=args.duration,
+            target_minutes=args.minutes,
+        )
 
 
 if __name__ == "__main__":

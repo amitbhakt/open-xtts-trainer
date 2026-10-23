@@ -63,8 +63,16 @@ def train_dvae(
         sample_rate=getattr(config, "sample_rate", 22050),
         n_mels=getattr(config, "n_mels", 80),
     )
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True)
-    logger.info(f"Loaded {len(dataset)} audio files for DVAE training.")
+    if len(dataset) == 0:
+        raise ValueError(f"No valid audio files found in {audio_dir}")
+    effective_batch_size = max(1, min(batch_size, len(dataset)))
+    dataloader = DataLoader(
+        dataset,
+        batch_size=effective_batch_size,
+        shuffle=True,
+        drop_last=(len(dataset) >= effective_batch_size * 2),
+    )
+    logger.info(f"Loaded {len(dataset)} audio files for DVAE training (batch size: {effective_batch_size}, steps per epoch: {len(dataloader)}).")
 
     # 2. Checkpoint inspection for dynamic codebook size
     state_dict = None
