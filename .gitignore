@@ -43,7 +43,10 @@ extracted_latents/
 audio/
 sample_audio/
 
-# IDE & OS
+# Logs & Proof Artifacts
+logs/
+*.zip
+*.log
 .DS_Store
 .idea/
 .vscode/

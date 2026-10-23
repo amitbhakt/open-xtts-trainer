@@ -1,3 +1,24 @@
+---
+language:
+- en
+- multilingual
+license: mpl-2.0
+tags:
+- text-to-speech
+- tts
+- xtts
+- xtts-v2
+- voice-cloning
+- pytorch
+- speech-synthesis
+datasets:
+- reach-vb/random-audios
+metrics:
+- loss
+pipeline_tag: text-to-speech
+library_name: coqui-tts
+---
+
 # Open-XTTS-Trainer
 
 > **Reproducible 3-Component Training Suite for XTTS v2**  
