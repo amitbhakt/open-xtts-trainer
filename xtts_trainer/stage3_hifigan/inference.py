@@ -5,7 +5,7 @@ import argparse
 import torch
 import soundfile as sf
 import numpy as np
-from xtts_trainer.config import HiFiGANConfig
+from xtts_trainer.config import HiFiGANConfig, safe_torch_load
 
 
 def synthesize_audio(
@@ -20,7 +20,7 @@ def synthesize_audio(
         device = "cpu"
 
     print(f"Loading HiFi-GAN checkpoint: {checkpoint_path} on {device}...")
-    ckpt = torch.load(checkpoint_path, map_location=device)
+    ckpt = safe_torch_load(checkpoint_path, map_location=device)
 
     # 1. Initialize Generator matching training config
     config = HiFiGANConfig()
@@ -45,7 +45,7 @@ def synthesize_audio(
 
     # 2. Load latent
     print(f"Loading latent file: {latent_path}...")
-    latent_data = torch.load(latent_path, map_location=device)
+    latent_data = safe_torch_load(latent_path, map_location=device)
 
     if isinstance(latent_data, dict) and "gpt_latents" in latent_data:
         latents = latent_data["gpt_latents"].to(device)

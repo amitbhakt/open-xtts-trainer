@@ -11,7 +11,7 @@ import torchaudio
 from torch.utils.data import DataLoader
 from typing import Optional
 
-from xtts_trainer.config import HiFiGANConfig
+from xtts_trainer.config import HiFiGANConfig, safe_torch_load
 from xtts_trainer.stage3_hifigan.dataset import LatentHiFiGANDataset
 from xtts_trainer.stage3_hifigan.models import (
     build_hifigan_decoder,
@@ -72,7 +72,7 @@ def train_hifigan(
     model_pth_path = continue_path or (os.path.join(checkpoint_dir, "model.pth") if checkpoint_dir else "")
     if model_pth_path and os.path.exists(model_pth_path):
         logger.info(f"Loading pretrained vocoder weights from: {model_pth_path}")
-        ckpt = torch.load(model_pth_path, map_location=device)
+        ckpt = safe_torch_load(model_pth_path, map_location=device)
         raw_model = ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
 
         # Filter hifigan_decoder keys

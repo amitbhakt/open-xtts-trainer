@@ -24,6 +24,7 @@ from TTS.tts.layers.xtts.tokenizer import VoiceBpeTokenizer
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from TTS.tts.layers.xtts.gpt import GPT
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
+from xtts_trainer.config import safe_torch_load
 from xtts_trainer.stage2_gpt.vocab_extender import resize_gpt_embeddings
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -189,8 +190,11 @@ def build_gpt_model(
     layers: int = 30,
     model_dim: int = 1024,
     heads: int = 16,
+    num_audio_tokens: int = 1026,
+    start_audio_token: int = 1024,
+    stop_audio_token: int = 1025,
 ) -> GPT:
-    """Builds native XTTS-v2 autoregressive GPT module."""
+    """Builds native XTTS-v2 autoregressive GPT module (defaulting to 1024 DVAE codebook tokens + 2 special tokens)."""
     return GPT(
         layers=layers,
         model_dim=model_dim,
@@ -201,9 +205,9 @@ def build_gpt_model(
         max_mel_tokens=605,
         max_prompt_tokens=70,
         number_text_tokens=vocab_size,
-        num_audio_tokens=8194,
-        start_audio_token=8192,
-        stop_audio_token=8193,
+        num_audio_tokens=num_audio_tokens,
+        start_audio_token=start_audio_token,
+        stop_audio_token=stop_audio_token,
         use_perceiver_resampler=False,
         code_stride_len=1024,
     )
@@ -272,11 +276,22 @@ def train_gpt(
     ).to(device)
 
     # 3. Initialize DVAE Tokenizer (for target audio code extraction)
+    dvae_path = dvae_checkpoint or (os.path.join(checkpoint_dir, "dvae.pth") if checkpoint_dir else "")
+    dvae_tokens = 1024
+    state_dvae = None
+    if dvae_path and os.path.exists(dvae_path):
+        logger.info(f"Loading pretrained DVAE from: {dvae_path}")
+        ckpt_dvae = safe_torch_load(dvae_path, map_location=device)
+        state_dvae = ckpt_dvae["dvae"] if isinstance(ckpt_dvae, dict) and "dvae" in ckpt_dvae else (ckpt_dvae["model"] if isinstance(ckpt_dvae, dict) and "model" in ckpt_dvae else ckpt_dvae)
+        if state_dvae and "codebook.embed" in state_dvae:
+            dvae_tokens = state_dvae["codebook.embed"].shape[1]
+            logger.info(f"Inferred DVAE codebook tokens: {dvae_tokens}")
+
     dvae = DiscreteVAE(
         channels=80,
         normalization=None,
         positional_dims=1,
-        num_tokens=8192,
+        num_tokens=dvae_tokens,
         codebook_dim=512,
         hidden_dim=512,
         num_resnet_blocks=3,
@@ -285,17 +300,17 @@ def train_gpt(
         use_transposed_convs=False,
     ).to(device)
 
-    dvae_path = dvae_checkpoint or (os.path.join(checkpoint_dir, "dvae.pth") if checkpoint_dir else "")
-    if dvae_path and os.path.exists(dvae_path):
-        logger.info(f"Loading pretrained DVAE from: {dvae_path}")
-        ckpt_dvae = torch.load(dvae_path, map_location=device)
-        state_dvae = ckpt_dvae["dvae"] if isinstance(ckpt_dvae, dict) and "dvae" in ckpt_dvae else (ckpt_dvae["model"] if isinstance(ckpt_dvae, dict) and "model" in ckpt_dvae else ckpt_dvae)
+    if state_dvae is not None:
         missing, unexpected = dvae.load_state_dict(state_dvae, strict=False)
         logger.info(f"DVAE restored (missing: {len(missing)}, unexpected: {len(unexpected)})")
     else:
-        logger.warning("No DVAE checkpoint specified or found. Using initialized DVAE weights.")
+        logger.info(f"Using initialized DVAE with {dvae_tokens} tokens.")
 
     dvae.eval()
+
+    num_audio_tokens = dvae_tokens + 2
+    start_audio_token = dvae_tokens
+    stop_audio_token = dvae_tokens + 1
 
     # 4. Initialize GPT Model
     gpt = build_gpt_model(
@@ -305,6 +320,9 @@ def train_gpt(
         layers=gpt_layers,
         model_dim=gpt_model_dim,
         heads=gpt_heads,
+        num_audio_tokens=num_audio_tokens,
+        start_audio_token=start_audio_token,
+        stop_audio_token=stop_audio_token,
     ).to(device)
 
     # 5. Load Pretrained GPT Weights if Available
@@ -313,7 +331,7 @@ def train_gpt(
         model_path = os.path.join(checkpoint_dir, "model.pth")
         if os.path.exists(model_path):
             logger.info(f"Loading pretrained XTTS GPT weights from {model_path}...")
-            ckpt = torch.load(model_path, map_location="cpu")
+            ckpt = safe_torch_load(model_path, map_location="cpu")
             raw_weights = ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
             base_model_weights = raw_weights
 

@@ -235,6 +235,9 @@ def test_stage2_dataset_and_training_loop(temp_workspace):
     config.model_args.gpt_layers = 2
     config.model_args.gpt_n_model_channels = 64
     config.model_args.gpt_n_heads = 2
+    config.model_args.gpt_num_audio_tokens = 1026
+    config.model_args.gpt_start_audio_token = 1024
+    config.model_args.gpt_stop_audio_token = 1025
     config.model_args.tokenizer_file = vocab_path
 
     xtts_model = Xtts(config)

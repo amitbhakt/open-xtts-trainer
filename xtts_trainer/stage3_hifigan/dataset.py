@@ -6,6 +6,7 @@ import torch
 import torchaudio
 from torch.utils.data import Dataset
 from typing import List, Tuple, Optional
+from xtts_trainer.config import safe_torch_load, load_audio
 
 
 class LatentHiFiGANDataset(Dataset):
@@ -51,14 +52,10 @@ class LatentHiFiGANDataset(Dataset):
         audio_path, latent_path = self.items[index]
 
         # 1. Load Audio at 24000 Hz
-        waveform, sr = torchaudio.load(audio_path)
-        if waveform.shape[0] > 1:
-            waveform = waveform.mean(dim=0, keepdim=True)
-        if sr != self.sample_rate:
-            waveform = torchaudio.transforms.Resample(sr, self.sample_rate)(waveform)
+        waveform, _ = load_audio(audio_path, target_sr=self.sample_rate)
 
         # 2. Load Latents
-        latent_data = torch.load(latent_path, map_location="cpu")
+        latent_data = safe_torch_load(latent_path, map_location="cpu")
         if isinstance(latent_data, dict):
             gpt_latents = latent_data["gpt_latents"]
             speaker_emb = latent_data.get("speaker_embedding", torch.zeros(1, 512, 1))

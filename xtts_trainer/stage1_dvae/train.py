@@ -8,7 +8,7 @@ import torch
 from torch.utils.data import DataLoader
 from typing import Optional
 
-from xtts_trainer.config import DVAEConfig
+from xtts_trainer.config import DVAEConfig, safe_torch_load
 from xtts_trainer.stage1_dvae.dataset import MelDataset
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 
@@ -18,11 +18,11 @@ logger = logging.getLogger(__name__)
 
 def build_dvae_model(
     channels: int = 80,
-    num_tokens: int = 8192,
+    num_tokens: int = 1024,
     codebook_dim: int = 512,
     hidden_dim: int = 512,
 ) -> DiscreteVAE:
-    """Builds the native XTTS-v2 Discrete VAE architecture."""
+    """Builds the native XTTS-v2 Discrete VAE architecture (1024 discrete codebook tokens)."""
     return DiscreteVAE(
         channels=channels,
         normalization=None,
@@ -66,32 +66,20 @@ def train_dvae(
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True)
     logger.info(f"Loaded {len(dataset)} audio files for DVAE training.")
 
-    # 2. Native DVAE Model
-    dvae = build_dvae_model(
-        channels=getattr(config, "n_mels", 80),
-        num_tokens=config.num_tokens,
-        codebook_dim=config.codebook_dim,
-        hidden_dim=config.hidden_dim,
-    ).to(device)
-
-    optimizer = torch.optim.Adam(dvae.parameters(), lr=config.learning_rate)
-
+    # 2. Checkpoint inspection for dynamic codebook size
+    state_dict = None
     start_epoch = 0
     global_step = 0
+    num_tokens = getattr(config, "num_tokens", 1024)
 
     if continue_path:
         if not os.path.exists(continue_path):
             raise FileNotFoundError(f"DVAE checkpoint not found at: {continue_path}")
 
         logger.info(f"Loading pretrained DVAE weights from: {continue_path}")
-        ckpt = torch.load(continue_path, map_location=device)
+        ckpt = safe_torch_load(continue_path, map_location=device)
         if isinstance(ckpt, dict) and "dvae" in ckpt:
             state_dict = ckpt["dvae"]
-            if "optimizer" in ckpt:
-                try:
-                    optimizer.load_state_dict(ckpt["optimizer"])
-                except Exception as ex:
-                    logger.warning(f"Could not load optimizer state ({ex}). Re-initializing optimizer.")
             start_epoch = ckpt.get("epoch", 0)
         elif isinstance(ckpt, dict) and "model" in ckpt:
             state_dict = ckpt["model"]
@@ -100,6 +88,24 @@ def train_dvae(
         else:
             state_dict = ckpt
 
+        # Dynamically infer codebook tokens from checkpoint weights if present
+        if state_dict and "codebook.embed" in state_dict:
+            inferred_tokens = state_dict["codebook.embed"].shape[1]
+            if inferred_tokens != num_tokens:
+                logger.info(f"Setting DVAE codebook tokens to {inferred_tokens} based on checkpoint.")
+                num_tokens = inferred_tokens
+
+    # 3. Native DVAE Model
+    dvae = build_dvae_model(
+        channels=getattr(config, "n_mels", 80),
+        num_tokens=num_tokens,
+        codebook_dim=config.codebook_dim,
+        hidden_dim=config.hidden_dim,
+    ).to(device)
+
+    optimizer = torch.optim.Adam(dvae.parameters(), lr=config.learning_rate)
+
+    if state_dict is not None:
         missing, unexpected = dvae.load_state_dict(state_dict, strict=False)
         logger.info(f"Loaded DVAE weights (Missing: {len(missing)}, Unexpected: {len(unexpected)})")
 

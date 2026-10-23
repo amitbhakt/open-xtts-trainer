@@ -7,7 +7,7 @@ import torch
 import torchaudio
 import pytest
 
-from xtts_trainer.config import HiFiGANConfig
+from xtts_trainer.config import HiFiGANConfig, safe_torch_load
 from xtts_trainer.stage3_hifigan.dataset import LatentHiFiGANDataset
 from xtts_trainer.stage3_hifigan.models import (
     build_hifigan_decoder,
@@ -15,6 +15,7 @@ from xtts_trainer.stage3_hifigan.models import (
     MultiScaleDiscriminator,
 )
 from xtts_trainer.stage3_hifigan.train import train_hifigan
+from xtts_trainer.stage3_hifigan.extract_latents import extract_latents
 
 
 @pytest.fixture
@@ -96,7 +97,7 @@ def test_stage3_dataset_and_training_loop(temp_workspace):
     assert os.path.exists(os.path.join(output_dir, "hifigan.pth"))
 
     # Reload checkpoint
-    ckpt = torch.load(ckpt_path, map_location="cpu")
+    ckpt = safe_torch_load(ckpt_path, map_location="cpu")
     assert "hifigan_decoder" in ckpt
     assert "generator" in ckpt
     assert "optim_g" in ckpt
@@ -108,3 +109,25 @@ def test_stage3_dataset_and_training_loop(temp_workspace):
     missing, unexpected = fresh_decoder.load_state_dict(ckpt["hifigan_decoder"], strict=True)
     assert len(missing) == 0
     assert len(unexpected) == 0
+
+
+def test_extract_latents_standalone(temp_workspace):
+    """Verify that extract_latents processes audio directory and exports valid .pt files."""
+    audio_dir = os.path.join(temp_workspace, "audio")
+    latents_dir = os.path.join(temp_workspace, "latents")
+    os.makedirs(audio_dir, exist_ok=True)
+
+    # Create dummy audio file
+    wav_path = os.path.join(audio_dir, "test.wav")
+    wav = torch.sin(torch.linspace(0, 440, 24000)).unsqueeze(0)
+    torchaudio.save(wav_path, wav, 24000)
+
+    extract_latents(audio_dir=audio_dir, output_dir=latents_dir, checkpoint_dir="", device="cpu")
+
+    out_file = os.path.join(latents_dir, "test.pt")
+    assert os.path.exists(out_file)
+    data = safe_torch_load(out_file, map_location="cpu")
+    assert "gpt_latents" in data
+    assert "speaker_embedding" in data
+    assert data["gpt_latents"].shape[-1] == 1024
+    assert data["speaker_embedding"].shape == (1, 512, 1)

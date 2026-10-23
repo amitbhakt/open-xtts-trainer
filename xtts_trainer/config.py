@@ -41,7 +41,7 @@ class DVAEConfig:
     """Configuration for Stage 1: Discrete VAE training."""
     sample_rate: int = 22050
     n_mels: int = 80
-    num_tokens: int = 8192
+    num_tokens: int = 1024
     codebook_dim: int = 512
     hidden_dim: int = 512
     learning_rate: float = 0.0001
@@ -50,6 +50,15 @@ class DVAEConfig:
     temp_decay: float = 0.99995
     batch_size: int = 32
     epochs: int = 100
+
+
+def safe_torch_load(path: str, map_location="cpu"):
+    """Loads a PyTorch checkpoint safely across PyTorch 2.0 to 2.6+."""
+    import torch
+    try:
+        return torch.load(path, map_location=map_location, weights_only=False)
+    except TypeError:
+        return torch.load(path, map_location=map_location)
 
 
 def load_audio(path: str, target_sr: int = 24000):
