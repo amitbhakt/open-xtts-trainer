@@ -38,6 +38,8 @@ checkpoints/
 *.mp3
 *.flac
 *.ogg
+!proof_outputs/*.wav
+!assets/*.wav
 latents/
 extracted_latents/
 audio/
