@@ -80,26 +80,71 @@ def resize_gpt_embeddings(
     new_vocab_size: int,
     embedding_layer_name: str = "text_embedding",
 ):
-    """Resizes the text embedding layer of the GPT model to accommodate the new vocabulary size."""
-    old_emb: nn.Embedding = getattr(model, embedding_layer_name)
+    """Resizes both the text embedding and text prediction head of the GPT model for extended vocabularies.
+
+    Maintains the special [START] token row at index -1, exactly matching upstream XTTS-v2 GPTTrainer behavior.
+    """
+    # If model is Xtts, get model.gpt. If model is already the GPT instance, use it directly.
+    if hasattr(model, "gpt") and hasattr(model.gpt, "text_embedding"):
+        gpt = model.gpt
+    else:
+        gpt = model
+
+    if not hasattr(gpt, embedding_layer_name):
+        raise AttributeError(f"Model does not contain embedding layer: {embedding_layer_name}")
+
+    old_emb: nn.Embedding = getattr(gpt, embedding_layer_name)
     old_vocab_size, embedding_dim = old_emb.weight.shape
 
     if new_vocab_size <= old_vocab_size:
         print(f"New vocab size ({new_vocab_size}) <= old size ({old_vocab_size}). No expansion needed.")
         return
 
-    print(f"Expanding {embedding_layer_name} from {old_vocab_size} to {new_vocab_size}...")
-    new_emb = nn.Embedding(new_vocab_size, embedding_dim)
+    num_new_tokens = new_vocab_size - old_vocab_size
+    print(f"Expanding {embedding_layer_name} and text_head from {old_vocab_size} to {new_vocab_size} (+{num_new_tokens} tokens)...")
 
     with torch.no_grad():
-        # Copy old weights
-        new_emb.weight[:old_vocab_size] = old_emb.weight
-        # Initialize new weights with mean of old weights
-        mean_weight = old_emb.weight.mean(dim=0, keepdim=True)
-        new_emb.weight[old_vocab_size:] = mean_weight.repeat(new_vocab_size - old_vocab_size, 1)
+        # 1. Resize text_embedding: keep start_token_row at index -1
+        emb_weight = old_emb.weight.data
+        start_token_emb = emb_weight[-1, :].clone()
+        mean_emb = emb_weight.mean(dim=0, keepdim=True)
+        # Use mean + small perturbation for new token embeddings
+        new_emb_rows = mean_emb.repeat(num_new_tokens, 1) + torch.randn(num_new_tokens, embedding_dim, device=emb_weight.device) * 0.01
+        expanded_emb = torch.cat([emb_weight, new_emb_rows], dim=0)
+        expanded_emb[-1, :] = start_token_emb
 
-    setattr(model, embedding_layer_name, new_emb)
-    print("Embedding expansion complete.")
+        new_embedding = nn.Embedding(new_vocab_size, embedding_dim).to(emb_weight.device)
+        new_embedding.weight.data = expanded_emb
+        setattr(gpt, embedding_layer_name, new_embedding)
+
+        # 2. Resize text_head if present
+        if hasattr(gpt, "text_head") and isinstance(gpt.text_head, nn.Linear):
+            head_weight = gpt.text_head.weight.data
+            start_token_head_w = head_weight[-1, :].clone()
+            mean_head_w = head_weight.mean(dim=0, keepdim=True)
+            new_head_w = mean_head_w.repeat(num_new_tokens, 1) + torch.randn(num_new_tokens, head_weight.shape[1], device=head_weight.device) * 0.01
+            expanded_head_w = torch.cat([head_weight, new_head_w], dim=0)
+            expanded_head_w[-1, :] = start_token_head_w
+
+            has_bias = gpt.text_head.bias is not None
+            new_head = nn.Linear(head_weight.shape[1], new_vocab_size, bias=has_bias).to(head_weight.device)
+            new_head.weight.data = expanded_head_w
+
+            if has_bias:
+                head_bias = gpt.text_head.bias.data
+                start_token_bias = head_bias[-1].clone()
+                new_head_bias = torch.zeros(num_new_tokens, device=head_bias.device)
+                expanded_head_bias = torch.cat([head_bias, new_head_bias], dim=0)
+                expanded_head_bias[-1] = start_token_bias
+                new_head.bias.data = expanded_head_bias
+
+            gpt.text_head = new_head
+
+        # 3. Update number_text_tokens
+        if hasattr(gpt, "number_text_tokens"):
+            gpt.number_text_tokens = new_vocab_size
+
+    print("Embedding and text_head expansion complete.")
 
 
 def main():

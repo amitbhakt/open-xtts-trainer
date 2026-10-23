@@ -39,7 +39,8 @@ class HiFiGANConfig:
 @dataclass
 class DVAEConfig:
     """Configuration for Stage 1: Discrete VAE training."""
-    audio: AudioConfig = field(default_factory=AudioConfig)
+    sample_rate: int = 22050
+    n_mels: int = 80
     num_tokens: int = 8192
     codebook_dim: int = 512
     hidden_dim: int = 512

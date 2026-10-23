@@ -5,18 +5,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Tuple
 
-try:
-    from TTS.vocoder.models.hifigan_generator import HifiganGenerator
-    HiFiGANGenerator = HifiganGenerator
-except Exception:
-    class HiFiGANGenerator(nn.Module):
-        """Minimal fallback Generator matching HiFi-GAN interface."""
-        def __init__(self, in_channels: int = 1024, **kwargs):
-            super().__init__()
-            self.conv = nn.ConvTranspose1d(in_channels, 1, kernel_size=512, stride=256, padding=128)
-        def forward(self, x: torch.Tensor, g: torch.Tensor = None) -> torch.Tensor:
-            return self.conv(x)
-    HifiganGenerator = HiFiGANGenerator
+from TTS.tts.layers.xtts.hifigan_decoder import HifiDecoder
+
+HiFiGANGenerator = HifiDecoder
+
+
+def build_hifigan_decoder() -> HifiDecoder:
+    """Builds the native XTTS-v2 HiFi-GAN decoder matching upstream architecture."""
+    return HifiDecoder()
 
 
 class DiscriminatorP(nn.Module):

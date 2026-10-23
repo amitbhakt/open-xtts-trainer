@@ -9,31 +9,29 @@ from typing import List, Tuple, Optional
 
 
 class LatentHiFiGANDataset(Dataset):
-    """Dataset pairing ground-truth audio with pre-extracted GPT latents and speaker embeddings."""
+    """Dataset pairing ground-truth 24kHz audio with temporal GPT latents and speaker embeddings."""
 
     def __init__(
         self,
         audio_dir: str,
         latents_dir: str,
-        segment_size: int = 16384,
-        hop_length: int = 256,
+        latent_frames_slice: int = 16,
         sample_rate: int = 24000,
     ):
         super().__init__()
         self.audio_dir = audio_dir
         self.latents_dir = latents_dir
-        self.segment_size = segment_size
-        self.hop_length = hop_length
+        self.latent_frames_slice = latent_frames_slice
         self.sample_rate = sample_rate
 
-        # Ensure latents exist, or auto-extract
-        os.makedirs(latents_dir, exist_ok=True)
-        if not any(f.endswith(".pt") for f in os.listdir(latents_dir)):
-            print(f"Notice: No .pt latents found in {latents_dir}. Automatically extracting latents from {audio_dir}...")
-            from xtts_trainer.stage3_hifigan.extract_latents import extract_latents
-            extract_latents(audio_dir, latents_dir)
+        # 16 latent frames produces int(16 * 4 * 24000 / 22050) * 256 = 17,664 audio samples @ 24kHz
+        self.audio_samples_slice = int(latent_frames_slice * 4 * (24000 / 22050)) * 256
 
-        # Match audio files with extracted latent files
+        if not os.path.isdir(audio_dir):
+            raise FileNotFoundError(f"Audio directory does not exist: {audio_dir}")
+        if not os.path.isdir(latents_dir):
+            raise FileNotFoundError(f"Latents directory does not exist: {latents_dir}")
+
         self.items = []
         for file in sorted(os.listdir(latents_dir)):
             if file.endswith(".pt"):
@@ -50,54 +48,60 @@ class LatentHiFiGANDataset(Dataset):
         return len(self.items)
 
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        from xtts_trainer.config import load_audio
         audio_path, latent_path = self.items[index]
 
-        # 1. Load Audio safely
-        waveform, sr = load_audio(audio_path, self.sample_rate)
+        # 1. Load Audio at 24000 Hz
+        waveform, sr = torchaudio.load(audio_path)
+        if waveform.shape[0] > 1:
+            waveform = waveform.mean(dim=0, keepdim=True)
+        if sr != self.sample_rate:
+            waveform = torchaudio.transforms.Resample(sr, self.sample_rate)(waveform)
 
         # 2. Load Latents
         latent_data = torch.load(latent_path, map_location="cpu")
-        # latent_data expected format: {"gpt_latents": Tensor[B, C, T_lat], "speaker_embedding": Tensor[B, D]}
         if isinstance(latent_data, dict):
-            gpt_latents = latent_data["gpt_latents"].squeeze(0)
-            speaker_emb = latent_data.get("speaker_embedding", torch.zeros(512)).squeeze(0)
+            gpt_latents = latent_data["gpt_latents"]
+            speaker_emb = latent_data.get("speaker_embedding", torch.zeros(1, 512, 1))
         else:
-            gpt_latents = latent_data.squeeze(0)
-            speaker_emb = torch.zeros(512)
+            gpt_latents = latent_data
+            speaker_emb = torch.zeros(1, 512, 1)
 
-        # Ensure latent shape is [1024, T_lat]
-        if gpt_latents.ndim == 2 and gpt_latents.shape[0] != 1024 and gpt_latents.shape[1] == 1024:
+        # Ensure latent shape is [T_lat, 1024]
+        if gpt_latents.ndim == 3:
+            gpt_latents = gpt_latents.squeeze(0)
+        if gpt_latents.shape[-1] != 1024 and gpt_latents.shape[0] == 1024:
             gpt_latents = gpt_latents.t()
-        speaker_emb = speaker_emb.view(-1)
-        if speaker_emb.shape[0] != 512:
-            speaker_emb = torch.zeros(512)
+
+        if speaker_emb.ndim == 3:
+            speaker_emb = speaker_emb.squeeze(0)  # [512, 1]
+        elif speaker_emb.ndim == 1:
+            speaker_emb = speaker_emb.unsqueeze(-1)  # [512, 1]
 
         # 3. Synchronized Segment Slicing
-        # Latent frames correspond to hop_length audio samples
-        latent_len = gpt_latents.shape[-1]
-        latent_frames_needed = self.segment_size // self.hop_length
-
+        latent_len = gpt_latents.shape[0]
         audio_len = waveform.shape[-1]
 
-        # Pad if audio is shorter than segment_size
-        if audio_len < self.segment_size:
-            pad_amount = self.segment_size - audio_len
-            waveform = torch.nn.functional.pad(waveform, (0, pad_amount))
-            audio_len = self.segment_size
+        # Pad if shorter than required window
+        if latent_len < self.latent_frames_slice:
+            pad_lat = self.latent_frames_slice - latent_len
+            gpt_latents = torch.nn.functional.pad(gpt_latents, (0, 0, 0, pad_lat))
+            latent_len = self.latent_frames_slice
 
-        if latent_len < latent_frames_needed:
-            pad_lat = latent_frames_needed - latent_len
-            gpt_latents = torch.nn.functional.pad(gpt_latents, (0, pad_lat))
-            latent_len = latent_frames_needed
+        if audio_len < self.audio_samples_slice:
+            pad_audio = self.audio_samples_slice - audio_len
+            waveform = torch.nn.functional.pad(waveform, (0, pad_audio))
+            audio_len = self.audio_samples_slice
 
-        # Random crop window
-        max_latent_start = max(0, latent_len - latent_frames_needed)
+        # Compute valid random slice offsets
+        max_latent_start = max(0, latent_len - self.latent_frames_slice)
         latent_start = random.randint(0, max_latent_start)
-        audio_start = latent_start * self.hop_length
+        audio_start = int(latent_start * 4 * (24000 / 22050)) * 256
 
-        # Slice
-        waveform_slice = waveform[:, audio_start : audio_start + self.segment_size]
-        latents_slice = gpt_latents[:, latent_start : latent_start + latent_frames_needed]
+        # Guard audio boundary
+        if audio_start + self.audio_samples_slice > audio_len:
+            audio_start = max(0, audio_len - self.audio_samples_slice)
+
+        waveform_slice = waveform[:, audio_start : audio_start + self.audio_samples_slice]
+        latents_slice = gpt_latents[latent_start : latent_start + self.latent_frames_slice, :]
 
         return waveform_slice, latents_slice, speaker_emb

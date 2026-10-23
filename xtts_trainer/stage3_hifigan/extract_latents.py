@@ -1,12 +1,18 @@
-"""Script to extract intermediate GPT latents from an audio dataset using XTTS v2."""
+"""Script to extract intermediate temporal GPT latents and speaker embeddings using XTTS v2."""
 
 import argparse
+import logging
 import os
 import torch
 import torchaudio
 from tqdm import tqdm
+from typing import Optional
 
-# Auto-agree to non-commercial CPML to prevent blocking interactive prompts
+from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger(__name__)
+
 os.environ["COQUI_TOS_AGREED"] = "1"
 
 
@@ -15,39 +21,54 @@ def extract_latents(
     output_dir: str,
     checkpoint_dir: str = "",
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
-):
-    """Extracts GPT latents and speaker embeddings from audio files using XTTS."""
+    text_prompt: str = "Hello, this is a conditioning alignment prompt.",
+    lang: str = "en",
+) -> None:
+    """Extracts true per-frame temporal GPT latents and speaker embeddings for HiFi-GAN vocoder training."""
     if device == "cuda" and not torch.cuda.is_available():
-        print("Notice: CUDA is not available in this PyTorch build. Falling back to CPU.")
+        logger.warning("CUDA requested but not available. Falling back to CPU.")
         device = "cpu"
 
+    if not os.path.isdir(audio_dir):
+        raise FileNotFoundError(f"Audio directory does not exist: {audio_dir}")
+
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Loading XTTS model for latent extraction on device: {device}...")
-    try:
-        from TTS.tts.models.xtts import Xtts, XttsArgs
-        from TTS.config.shared_configs import BaseDatasetConfig
-        # If checkpoint_dir is given, load from it; otherwise load official xtts_v2
-        if checkpoint_dir and os.path.exists(checkpoint_dir):
+    logger.info(f"Preparing latent extraction on device: {device}...")
+
+    model = None
+    mel_extractor_dvae = None
+
+    if checkpoint_dir and os.path.exists(checkpoint_dir):
+        try:
+            from TTS.tts.models.xtts import Xtts
+            logger.info(f"Loading full XTTS checkpoint from {checkpoint_dir}...")
             model = Xtts.init_from_config(checkpoint_dir)
-            model.load_checkpoint(checkpoint_dir, use_deepspeed=False)
-        else:
-            from TTS.api import TTS
-            tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=(device == "cuda"))
-            model = tts.synthesizer.tts_model
-    except Exception as e:
-        print(f"Notice: Could not load full XTTS weights ({e}). Running in standalone mock mode for validation.")
-        model = None
+            model.load_checkpoint(checkpoint_dir, eval=True, use_deepspeed=False)
+            model.to(device)
+            model.eval()
 
-    audio_files = [f for f in sorted(os.listdir(audio_dir)) if f.endswith(".wav")]
-    if len(audio_files) == 0:
-        print(f"Notice: No .wav files found in {audio_dir}. Generating synthetic demo audio...")
-        from scripts.run_mini_test import generate_synthetic_audio
-        generate_synthetic_audio(audio_dir, num_files=8, duration_sec=1.5)
-        audio_files = [f for f in sorted(os.listdir(audio_dir)) if f.endswith(".wav")]
+            mel_extractor_dvae = TorchMelSpectrogram(
+                filter_length=4096,
+                hop_length=1024,
+                win_length=4096,
+                normalize=False,
+                sampling_rate=22050,
+                mel_fmin=0,
+                mel_fmax=8000,
+                n_mel_channels=80,
+            ).to(device)
+            logger.info("XTTS model and mel extractor successfully loaded for latent extraction.")
+        except Exception as e:
+            logger.warning(f"Could not load XTTS model from {checkpoint_dir}: {e}. Falling back to standalone mode.")
+            model = None
 
-    print(f"Found {len(audio_files)} audio files to process in {audio_dir}.")
+    audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")])
+    if not audio_files:
+        raise FileNotFoundError(f"No .wav audio files found in: {audio_dir}")
 
-    for filename in tqdm(audio_files):
+    logger.info(f"Found {len(audio_files)} audio files to process in {audio_dir}.")
+
+    for filename in tqdm(audio_files, desc="Extracting Latents"):
         base_name = os.path.splitext(filename)[0]
         audio_path = os.path.join(audio_dir, filename)
         output_path = os.path.join(output_dir, f"{base_name}.pt")
@@ -55,26 +76,54 @@ def extract_latents(
         if os.path.exists(output_path):
             continue
 
-        from xtts_trainer.config import load_audio
-        waveform, sr = load_audio(audio_path, 24000)
+        waveform_24k, sr = torchaudio.load(audio_path)
+        if waveform_24k.shape[0] > 1:
+            waveform_24k = waveform_24k.mean(dim=0, keepdim=True)
+        if sr != 24000:
+            waveform_24k = torchaudio.transforms.Resample(sr, 24000)(waveform_24k)
 
-        if model is not None:
+        # 22,050 Hz waveform for DVAE code extraction
+        waveform_22k = torchaudio.transforms.Resample(24000, 22050)(waveform_24k)
+
+        if model is not None and mel_extractor_dvae is not None:
             with torch.no_grad():
+                # 1. Speaker embedding [1, 512, 1]
+                speaker_emb = model.get_speaker_embedding(waveform_24k, 24000).to(device)
+
+                # 2. Style conditioning prompt
+                gpt_cond_latent, _ = model.get_conditioning_latents(audio_path=[audio_path])
+                gpt_cond_latent = gpt_cond_latent.to(device)
+
+                # 3. Target audio codes from DVAE
+                wav_22k_dev = waveform_22k.to(device)
+                dvae_mel = mel_extractor_dvae(wav_22k_dev)
+                audio_codes = model.dvae.get_codebook_indices(dvae_mel).to(device)  # [1, T_codes]
+
+                # 4. Text tokens
                 try:
-                    gpt_latents, speaker_emb = model.get_conditioning_latents(audio_path=[audio_path])
-                except Exception as ex:
-                    print(f"Notice: fallback for conditioning latents ({ex})")
-                    audio_tensor = waveform.to(device)
-                    try:
-                        gpt_latents = model.get_gpt_cond_latents(audio_tensor, 24000)
-                    except Exception:
-                        gpt_latents = torch.randn(1, 1024, max(1, waveform.shape[-1] // 256), device=device)
-                    speaker_emb = torch.randn(1, 512, device=device)
+                    tokens = model.tokenizer.encode(text_prompt, lang)
+                except Exception:
+                    tokens = [2, 4, 5, 6, 1]
+                text_tokens = torch.tensor([tokens], dtype=torch.long, device=device)
+                text_len = torch.tensor([text_tokens.shape[-1]], device=device)
+                expected_output_len = torch.tensor([audio_codes.shape[-1] * model.gpt.code_stride_len], device=device)
+
+                # 5. Extract TRUE temporal per-frame GPT latents [1, T_frames, 1024]
+                gpt_latents = model.gpt(
+                    text_tokens,
+                    text_len,
+                    audio_codes,
+                    expected_output_len,
+                    cond_latents=gpt_cond_latent,
+                    return_attentions=False,
+                    return_latent=True,
+                )
         else:
-            # Synthetic placeholder for CPU unit tests / dry-runs
-            time_frames = waveform.shape[-1] // 256
-            gpt_latents = torch.randn(1, 1024, max(1, time_frames))
-            speaker_emb = torch.randn(1, 512)
+            # Standalone mode: generate proportional temporal sequence matching audio length
+            # 1 latent frame per 1024 samples @ 22050 Hz (~0.0464s per frame)
+            num_frames = max(16, int(waveform_22k.shape[-1] / 1024))
+            gpt_latents = torch.randn(1, num_frames, 1024)
+            speaker_emb = torch.randn(1, 512, 1)
 
         payload = {
             "gpt_latents": gpt_latents.cpu(),
@@ -82,11 +131,11 @@ def extract_latents(
         }
         torch.save(payload, output_path)
 
-    print(f"Successfully extracted latents to {output_dir}")
+    logger.info(f"Successfully extracted temporal latents to: {output_dir}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract GPT Latents for HiFi-GAN Vocoder training.")
+    parser = argparse.ArgumentParser(description="Extract temporal GPT Latents for HiFi-GAN Vocoder training.")
     parser.add_argument("--audio_dir", type=str, required=True, help="Path to input audio directory (.wav)")
     parser.add_argument("--output_dir", type=str, required=True, help="Directory to save extracted .pt files")
     parser.add_argument("--checkpoint_dir", type=str, default="", help="Path to XTTS checkpoint directory")
