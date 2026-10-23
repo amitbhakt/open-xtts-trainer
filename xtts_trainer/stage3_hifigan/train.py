@@ -124,6 +124,8 @@ def train_hifigan(
     global_step = 0
 
     logger.info(f"Beginning Stage 3 training for {epochs} epochs (Batch size: {batch_size}, Steps per epoch: {len(dataloader)})...")
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     for epoch in range(1, epochs + 1):
         epoch_start = time.time()
@@ -230,7 +232,7 @@ def main():
     parser.add_argument("--checkpoint_dir", type=str, default="", help="Path to base XTTS checkpoint directory")
     parser.add_argument("--continue_path", type=str, default="", help="Path to vocoder checkpoint to resume from")
     parser.add_argument("--epochs", type=int, default=50)
-    parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     args = parser.parse_args()
 

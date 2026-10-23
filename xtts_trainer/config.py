@@ -32,7 +32,7 @@ class HiFiGANConfig:
     discriminator_learning_rate: float = 0.0001
     lr_decay: float = 0.999
     warmup_steps: int = 500
-    batch_size: int = 16
+    batch_size: int = 4
     epochs: int = 50
 
 

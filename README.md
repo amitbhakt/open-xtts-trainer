@@ -25,11 +25,17 @@ library_name: coqui-tts
 > A modular framework bringing together training and fine-tuning workflows for all three XTTS v2 components: **Discrete VAE (DVAE)**, **Autoregressive GPT Backbone (with Vocabulary Extension for new scripts)**, and the **Latent HiFi-GAN Vocoder**.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23573888.svg)](https://zenodo.org/records/23573888)
-[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-amitbhakt%2Fopen--xtts--trainer-yellow)](https://huggingface.co/amitbhakt/open-xtts-trainer)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/amitbhakt/open-xtts-trainer/blob/main/notebooks/open_xtts_train_demo.ipynb)
+<a href="https://huggingface.co/amitbhakt/open-xtts-trainer" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-amitbhakt%2Fopen--xtts--trainer-yellow" alt="Hugging Face"></a>
+<a href="https://colab.research.google.com/github/amitbhakt/open-xtts-trainer/blob/main/notebooks/open_xtts_train_demo.ipynb" target="_blank" rel="noopener noreferrer"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch 2.1+](https://img.shields.io/badge/PyTorch-2.1+-red.svg)](https://pytorch.org/)
+
+---
+
+### Quick Links
+- 🚀 **Interactive Demo:** <a href="https://colab.research.google.com/github/amitbhakt/open-xtts-trainer/blob/main/notebooks/open_xtts_train_demo.ipynb" target="_blank" rel="noopener noreferrer">Open in Google Colab (Run End-to-End Verification)</a>
+- 🤗 **Hugging Face Hub:** <a href="https://huggingface.co/amitbhakt/open-xtts-trainer" target="_blank" rel="noopener noreferrer">amitbhakt/open-xtts-trainer</a>
 
 ---
 

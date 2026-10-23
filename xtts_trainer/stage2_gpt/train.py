@@ -312,21 +312,11 @@ def train_gpt(
     start_audio_token = dvae_tokens
     stop_audio_token = dvae_tokens + 1
 
-    # 4. Initialize GPT Model
-    gpt = build_gpt_model(
-        vocab_size=vocab_size,
-        start_text_token=start_text_token,
-        stop_text_token=stop_text_token,
-        layers=gpt_layers,
-        model_dim=gpt_model_dim,
-        heads=gpt_heads,
-        num_audio_tokens=num_audio_tokens,
-        start_audio_token=start_audio_token,
-        stop_audio_token=stop_audio_token,
-    ).to(device)
-
-    # 5. Load Pretrained GPT Weights if Available
+    # 4. Inspect Pretrained GPT Checkpoint to Determine Initial Architecture Shapes
     base_model_weights = {}
+    gpt_state = None
+    init_vocab_size = vocab_size
+
     if checkpoint_dir and os.path.exists(checkpoint_dir):
         model_path = os.path.join(checkpoint_dir, "model.pth")
         if os.path.exists(model_path):
@@ -340,18 +330,37 @@ def train_gpt(
             for k, v in raw_weights.items():
                 if k.startswith("gpt."):
                     gpt_state[k[4:]] = v
-                elif not k.startswith("hifigan_decoder."):
+                elif not k.startswith("hifigan_decoder.") and not k.startswith("dvae."):
                     gpt_state[k] = v
 
-            # Check if vocab was extended
+            # If checkpoint has text_embedding, initialize GPT with checkpoint's base vocab size
             if "text_embedding.weight" in gpt_state:
                 orig_vocab_size = gpt_state["text_embedding.weight"].shape[0]
-                if vocab_size > orig_vocab_size:
-                    logger.info(f"Expanding GPT text embeddings: {orig_vocab_size} -> {vocab_size}")
-                    resize_gpt_embeddings(gpt, vocab_size)
+                if orig_vocab_size != vocab_size:
+                    logger.info(f"Pretrained checkpoint vocab size is {orig_vocab_size}. Building base model at {orig_vocab_size} before expansion.")
+                    init_vocab_size = orig_vocab_size
 
-            missing, unexpected = gpt.load_state_dict(gpt_state, strict=False)
-            logger.info(f"GPT weights loaded (missing: {len(missing)}, unexpected: {len(unexpected)})")
+    # 5. Initialize GPT Model
+    gpt = build_gpt_model(
+        vocab_size=init_vocab_size,
+        start_text_token=start_text_token,
+        stop_text_token=stop_text_token,
+        layers=gpt_layers,
+        model_dim=gpt_model_dim,
+        heads=gpt_heads,
+        num_audio_tokens=num_audio_tokens,
+        start_audio_token=start_audio_token,
+        stop_audio_token=stop_audio_token,
+    ).to(device)
+
+    # 6. Load Pretrained Weights and Expand Vocabulary If Needed
+    if gpt_state is not None:
+        missing, unexpected = gpt.load_state_dict(gpt_state, strict=False)
+        logger.info(f"GPT base weights loaded (missing: {len(missing)}, unexpected: {len(unexpected)})")
+
+        if vocab_size > init_vocab_size:
+            logger.info(f"Expanding GPT text embeddings: {init_vocab_size} -> {vocab_size}")
+            resize_gpt_embeddings(gpt, vocab_size)
 
     # 6. Prepare Dataset & DataLoader
     dataset = GPTTextAudioDataset(
