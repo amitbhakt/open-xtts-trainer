@@ -14,7 +14,8 @@ import soundfile as sf
 import torch
 import torchaudio.functional as F
 
-LONG_SPEECH_URL = "https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669-10.mp3"
+LONG_SPEECH_URL_10M = "https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669-10.mp3"
+LONG_SPEECH_URL_2H = "https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669.mp3"
 
 SAMPLE_SPEECH_SOURCES = [
     {
@@ -93,10 +94,12 @@ def download_and_prepare_speech(
 
     # Scaled training mode (>8 samples or specified minutes)
     if num_samples > 8:
-        print(f"Fetching 10-minute clean human speech audio (2.3 MB)...")
+        speech_url = LONG_SPEECH_URL_2H if ((target_minutes and target_minutes > 10) or num_samples > 200) else LONG_SPEECH_URL_10M
+        url_label = "2-hour corpus (28 MB)" if speech_url == LONG_SPEECH_URL_2H else "10-minute corpus (2.3 MB)"
+        print(f"Fetching clean human speech audio ({url_label})...")
         try:
-            req = urllib.request.Request(LONG_SPEECH_URL, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            req = urllib.request.Request(speech_url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=60) as resp:
                 data = resp.read()
 
             audio, orig_sr = sf.read(io.BytesIO(data))
