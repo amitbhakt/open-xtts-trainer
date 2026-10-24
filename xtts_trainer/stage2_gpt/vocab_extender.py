@@ -30,8 +30,9 @@ def extend_vocab(
     base_vocab_path: str,
     target_text_path: str,
     output_vocab_path: str,
+    new_languages: List[str] = None,
 ) -> Dict[str, int]:
-    """Adds missing characters from target text to base vocab.json without changing old token IDs.
+    """Adds missing characters and language tokens from target text to base vocab.json without changing old token IDs.
 
     Uses the native Hugging Face Tokenizers API to preserve complete schema invariants,
     asserting 100% preservation of all original token-to-ID mappings.
@@ -63,7 +64,12 @@ def extend_vocab(
 
     # Find missing characters
     new_chars = [c for c in sorted(corpus_chars) if c not in base_vocab and not c.isspace()]
-    logger.info(f"Identified {len(new_chars)} genuinely new characters to add.")
+    if new_languages:
+        for lang in new_languages:
+            lang_tok = f"[{lang}]"
+            if lang_tok not in base_vocab and lang_tok not in new_chars:
+                new_chars.append(lang_tok)
+    logger.info(f"Identified {len(new_chars)} genuinely new tokens (characters and language tags) to add.")
 
     if is_hf_tokenizer:
         added_tokens_list = [
@@ -193,9 +199,10 @@ def main():
     parser.add_argument("--base_vocab", type=str, required=True, help="Path to original vocab.json")
     parser.add_argument("--target_text", type=str, required=True, help="Text corpus containing target language script")
     parser.add_argument("--output_vocab", type=str, required=True, help="Path to save extended vocab.json")
+    parser.add_argument("--languages", type=str, nargs="+", default=None, help="New language codes to register tokens for (e.g. bn el fa)")
     args = parser.parse_args()
 
-    extend_vocab(args.base_vocab, args.target_text, args.output_vocab)
+    extend_vocab(args.base_vocab, args.target_text, args.output_vocab, new_languages=args.languages)
 
 
 if __name__ == "__main__":

@@ -125,17 +125,28 @@ def verify_stage2_and_3_pipeline(
         use_deepspeed=False,
     )
 
-    # 1. Provenance check: Stage 2 weights
+    # 1. Provenance check: Stage 2 weights with STRICT verification
     print(f"  Loading Stage 2 GPT weights from: {gpt_ckpt_path}")
     c2 = torch.load(gpt_ckpt_path, map_location="cpu", weights_only=False)
-    current_sd = model.state_dict()
-    gpt_weights = {
-        k: v for k, v in c2.get("model", c2).items()
-        if k in current_sd and current_sd[k].shape == v.shape
-    }
-    assert len(gpt_weights) > 0, "No compatible Stage 2 weights found in checkpoint!"
-    model.load_state_dict(gpt_weights, strict=False)
-    print(f"  [PASS] Loaded {len(gpt_weights)} compatible Stage 2 parameters into XTTS model.")
+    gpt_source = c2.get("gpt", {})
+    if not gpt_source:
+        raw_m = c2.get("model", c2)
+        gpt_source = {k[4:]: v for k, v in raw_m.items() if k.startswith("gpt.")}
+
+    assert len(gpt_source) > 0, "No Stage 2 GPT weights found in checkpoint!"
+
+    # If vocabulary was extended, resize embeddings before strict loading
+    if "text_embedding.weight" in gpt_source:
+        target_vocab_size = gpt_source["text_embedding.weight"].shape[0]
+        current_vocab_size = model.gpt.text_embedding.weight.shape[0]
+        if target_vocab_size > current_vocab_size:
+            from xtts_trainer.stage2_gpt.vocab_extender import resize_gpt_embeddings
+            print(f"  Expanding GPT vocabulary from {current_vocab_size} to {target_vocab_size} to match checkpoint...")
+            resize_gpt_embeddings(model.gpt, target_vocab_size)
+
+    missing, unexpected = model.gpt.load_state_dict(gpt_source, strict=True)
+    assert len(missing) == 0 and len(unexpected) == 0, f"Stage 2 strict load failed: missing={missing}, unexpected={unexpected}"
+    print(f"  [PASS] Stage 2 GPT loaded with strict=True (100% parameter match, zero bypass).")
 
     # 2. Provenance check: Stage 3 weights with STRICT verification
     print(f"  Loading Stage 3 HiFi-GAN decoder from: {hifi_ckpt_path}")
@@ -195,6 +206,13 @@ def verify_stage2_and_3_pipeline(
         hf_energy = np.sum(fft[freqs >= 4000] ** 2)
         total_energy = np.sum(fft ** 2) + 1e-9
         hf_ratio = float(hf_energy / total_energy)
+
+        # Gate on high-frequency energy for sibilant sentence to ensure non-muffled vocoder
+        if tag == "s1_sibilant":
+            assert hf_ratio >= 0.003, (
+                f"Sibilant stress test failed: {tag} produced only {hf_ratio:.6f} energy >4kHz. "
+                f"Output speech is excessively muffled."
+            )
 
         out_path = os.path.join(output_dir, f"{tag}_stage3_verified.wav")
         sf.write(out_path, audio, 24000)

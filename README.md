@@ -130,13 +130,16 @@ python -m xtts_trainer.speech_data --minutes 5 --output_dir sample_audio
    python xtts_trainer/stage2_gpt/vocab_extender.py \
        --target_text /path/to/target_corpus.txt \
        --base_vocab xtts_base/vocab.json \
-       --output_vocab xtts_base/vocab_extended.json
+       --output_vocab xtts_base/vocab_extended.json \
+       --languages bn el
    ```
 
 2. **Fine-tune the Autoregressive GPT Backbone:**
    ```bash
    python xtts_trainer/stage2_gpt/train.py \
        --audio_dir sample_audio \
+       --metadata_path sample_audio/metadata.csv \
+       --checkpoint_dir xtts_base \
        --vocab_path xtts_base/vocab_extended.json \
        --output_dir checkpoints/gpt \
        --epochs 10
@@ -144,19 +147,22 @@ python -m xtts_trainer.speech_data --minutes 5 --output_dir sample_audio
 
 ### 3. Stage 3: Latent HiFi-GAN Vocoder
 
-1. **Extract GPT Latents from your audio dataset:**
+1. **Extract True GPT Latents from Paired Audio and Ground-Truth Transcripts:**
    ```bash
    python xtts_trainer/stage3_hifigan/extract_latents.py \
        --audio_dir sample_audio \
+       --metadata_path sample_audio/metadata.csv \
+       --checkpoint_dir xtts_base \
        --output_dir extracted_latents \
        --device cuda
    ```
 
-2. **Train the HiFi-GAN Vocoder:**
+2. **Fine-Tune the HiFi-GAN Vocoder (with Pretrained Weights & Discriminator Warmup):**
    ```bash
    python xtts_trainer/stage3_hifigan/train.py \
        --audio_dir sample_audio \
        --latents_dir extracted_latents \
+       --checkpoint_dir xtts_base \
        --output_dir checkpoints/hifigan \
        --batch_size 8 \
        --epochs 25 \

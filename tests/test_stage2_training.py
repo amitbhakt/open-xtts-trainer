@@ -220,6 +220,7 @@ def test_gpt_forward_backward_gradient_updates(temp_workspace):
         "audio_codes": torch.randint(0, 1000, (2, 16)),
         "wav_lengths": torch.tensor([16 * 1024, 12 * 1024]),
         "cond_mels": torch.randn(2, 1, 80, 20),
+        "cond_lens": torch.tensor([20 * 256, 16 * 256]),
     }
 
     optimizer.zero_grad()
@@ -229,6 +230,7 @@ def test_gpt_forward_backward_gradient_updates(temp_workspace):
         audio_codes=batch["audio_codes"],
         wav_lengths=batch["wav_lengths"],
         cond_mels=batch["cond_mels"],
+        cond_lens=batch["cond_lens"],
     )
 
     assert loss_text.item() > 0.0
@@ -289,6 +291,7 @@ def test_stage2_dataset_and_training_loop(temp_workspace):
     assert os.path.exists(ckpt_path)
     assert os.path.exists(os.path.join(output_dir, "model.pth"))
     assert os.path.exists(os.path.join(output_dir, "vocab.json"))
+    assert os.path.exists(os.path.join(output_dir, "config.json"))
 
     # Verify reloaded checkpoint
     saved_data = safe_torch_load(ckpt_path, map_location="cpu")

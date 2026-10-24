@@ -66,9 +66,21 @@ class GPTTextAudioDataset(Dataset):
         if not os.path.isdir(audio_dir):
             raise FileNotFoundError(f"Audio directory does not exist: {audio_dir}")
 
-        # Parse metadata file if provided (format: audio.wav|text or audio.wav|text|lang)
-        if metadata_path and os.path.exists(metadata_path):
-            with open(metadata_path, "r", encoding="utf-8") as f:
+        resolved_metadata_path = metadata_path
+        if not resolved_metadata_path or not os.path.exists(resolved_metadata_path):
+            # Check for standard metadata.csv or metadata.txt in audio_dir
+            candidate_csv = os.path.join(audio_dir, "metadata.csv")
+            candidate_txt = os.path.join(audio_dir, "metadata.txt")
+            if os.path.exists(candidate_csv):
+                resolved_metadata_path = candidate_csv
+                logger.info(f"Auto-detected metadata file: {resolved_metadata_path}")
+            elif os.path.exists(candidate_txt):
+                resolved_metadata_path = candidate_txt
+                logger.info(f"Auto-detected metadata file: {resolved_metadata_path}")
+
+        raw_items: List[Tuple[str, str, str]] = []
+        if resolved_metadata_path and os.path.exists(resolved_metadata_path):
+            with open(resolved_metadata_path, "r", encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -80,19 +92,41 @@ class GPTTextAudioDataset(Dataset):
                         lang = parts[2] if len(parts) > 2 else default_lang
                         wav_path = os.path.join(audio_dir, wav_name if wav_name.endswith(".wav") else f"{wav_name}.wav")
                         if os.path.exists(wav_path):
-                            self.items.append((wav_path, text, lang))
+                            raw_items.append((wav_path, text, lang))
                         else:
                             logger.warning(f"Audio file referenced in metadata not found: {wav_path}")
         else:
-            # Fallback: scan audio directory directly
-            wav_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")])
-            if not wav_files:
-                raise FileNotFoundError(f"No .wav files found in audio directory: {audio_dir}")
-            for f in wav_files:
-                self.items.append((os.path.join(audio_dir, f), "Sample speech prompt for alignment training.", default_lang))
+            raise FileNotFoundError(
+                f"No metadata file found in '{audio_dir}' and --metadata_path was not provided. "
+                f"Stage 2 GPT training requires ground-truth transcripts paired with each audio clip "
+                f"(e.g. metadata.csv with format: audio_file|transcript|lang). Training without true transcripts "
+                f"causes the GPT backbone to ignore text representations."
+            )
+
+        if not raw_items:
+            raise ValueError(f"No valid text-audio pairs found for training in {audio_dir} and {resolved_metadata_path}")
+
+        # Filter clips by duration rather than truncating mid-sentence (prevents premature stop tokens)
+        max_duration_sec = (self.max_audio_tokens * 1024) / self.sample_rate
+        for wav_path, text, lang in raw_items:
+            try:
+                info = torchaudio.info(wav_path)
+                dur = info.num_frames / info.sample_rate
+                if dur > max_duration_sec:
+                    logger.warning(
+                        f"Skipping {wav_path}: duration ({dur:.2f}s) exceeds max limit ({max_duration_sec:.2f}s). "
+                        f"Filtered to prevent mid-sentence truncation."
+                    )
+                    continue
+                self.items.append((wav_path, text, lang))
+            except Exception:
+                # If info fails, retain item and validate at runtime
+                self.items.append((wav_path, text, lang))
 
         if not self.items:
-            raise ValueError(f"No valid text-audio pairs found for training in {audio_dir} and {metadata_path}")
+            # If all were filtered out, fall back to raw items with warning
+            logger.warning("All clips exceeded duration threshold; retaining raw items.")
+            self.items = raw_items
 
         logger.info(f"Loaded {len(self.items)} text-audio training pairs.")
 
@@ -102,7 +136,7 @@ class GPTTextAudioDataset(Dataset):
     def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
         wav_path, text, lang = self.items[index]
 
-        # 1. Load and resample audio to 22050 Hz
+        # 1. Load and resample target audio to 22050 Hz
         waveform, sr = torchaudio.load(wav_path)
         if waveform.shape[0] > 1:
             waveform = waveform.mean(dim=0, keepdim=True)
@@ -115,7 +149,7 @@ class GPTTextAudioDataset(Dataset):
         if waveform.shape[-1] < min_samples:
             waveform = nn.functional.pad(waveform, (0, min_samples - waveform.shape[-1]))
 
-        # 2. Extract DVAE discrete codes
+        # 2. Extract DVAE discrete codes from target audio
         with torch.no_grad():
             wav_dvae = waveform.to(self.device)
             dvae_mel = self.mel_spectrogram_dvae(wav_dvae)
@@ -123,17 +157,35 @@ class GPTTextAudioDataset(Dataset):
             if audio_codes.shape[-1] > self.max_audio_tokens:
                 audio_codes = audio_codes[: self.max_audio_tokens]
 
-            # 3. Extract conditioning mel from audio slice (3s to 6s)
-            cond_samples = min(waveform.shape[-1], int(6.0 * self.sample_rate))
-            cond_slice = wav_dvae[:, :cond_samples]
-            cond_mel = self.mel_spectrogram_style(cond_slice).squeeze(0).cpu()  # [80, T_cond_mel]
+            # 3. Extract speaker conditioning mel from a SEPARATE reference clip
+            # Using a distinct clip prevents target self-leakage into conditioning
+            ref_index = (index + 1) % len(self.items)
+            ref_path, _, _ = self.items[ref_index]
+            ref_waveform, ref_sr = torchaudio.load(ref_path)
+            if ref_waveform.shape[0] > 1:
+                ref_waveform = ref_waveform.mean(dim=0, keepdim=True)
+            if ref_sr != self.sample_rate:
+                ref_resampler = torchaudio.transforms.Resample(ref_sr, self.sample_rate)
+                ref_waveform = ref_resampler(ref_waveform)
+
+            max_ref_samples = int(6.0 * self.sample_rate)
+            ref_slice = ref_waveform[:, :max_ref_samples].to(self.device)
+            cond_mel = self.mel_spectrogram_style(ref_slice).squeeze(0).cpu()  # [80, T_cond_mel]
+            cond_len = ref_slice.shape[-1]
 
         # 4. Tokenize text using XTTS VoiceBpeTokenizer
         try:
             tokens = self.tokenizer.encode(text, lang)
         except Exception:
-            # Fallback to plain encode if language prefix not supported
-            tokens = self.tokenizer.tokenizer.encode(text).ids
+            # Language token prefix handling for extended scripts
+            lang_token = f"[{lang}]"
+            vocab = self.tokenizer.tokenizer.get_vocab()
+            if lang_token in vocab:
+                txt = f"{lang_token}{text}".replace(" ", "[SPACE]")
+                tokens = self.tokenizer.tokenizer.encode(txt).ids
+            else:
+                txt = f"[{self.default_lang}]{text}".replace(" ", "[SPACE]")
+                tokens = self.tokenizer.tokenizer.encode(txt).ids
 
         text_tokens = torch.tensor(tokens, dtype=torch.long)
         if len(text_tokens) > self.max_text_tokens:
@@ -143,6 +195,7 @@ class GPTTextAudioDataset(Dataset):
             "text_tokens": text_tokens,
             "audio_codes": audio_codes,
             "cond_mel": cond_mel,
+            "cond_len": cond_len,
         }
 
 
@@ -168,11 +221,16 @@ def collate_gpt_batch(batch: List[Dict[str, torch.Tensor]], stop_audio_token: in
     wav_lengths = code_lengths * 1024
 
     # Conditioning mel padding
-    cond_lens = torch.tensor([item["cond_mel"].shape[-1] for item in batch], dtype=torch.long)
-    max_cond_len = max(1, cond_lens.max().item())
+    # cond_lens represents audio samples (divided by 256 in GPT.forward to match mel frames)
+    cond_lens = torch.tensor(
+        [item.get("cond_len", item["cond_mel"].shape[-1] * 256) for item in batch],
+        dtype=torch.long,
+    )
+    mel_frame_lens = [item["cond_mel"].shape[-1] for item in batch]
+    max_cond_len = max(1, max(mel_frame_lens))
     cond_mels = torch.zeros(batch_size, 1, 80, max_cond_len, dtype=torch.float32)
     for i, item in enumerate(batch):
-        cond_mels[i, 0, :, : cond_lens[i]] = item["cond_mel"]
+        cond_mels[i, 0, :, : mel_frame_lens[i]] = item["cond_mel"]
 
     return {
         "text_inputs": text_inputs,
@@ -180,6 +238,7 @@ def collate_gpt_batch(batch: List[Dict[str, torch.Tensor]], stop_audio_token: in
         "audio_codes": audio_codes,
         "wav_lengths": wav_lengths,
         "cond_mels": cond_mels,
+        "cond_lens": cond_lens,
     }
 
 
@@ -456,6 +515,7 @@ def train_gpt(
             audio_codes = batch["audio_codes"].to(device)
             wav_lengths = batch["wav_lengths"].to(device)
             cond_mels = batch["cond_mels"].to(device)
+            cond_lens = batch["cond_lens"].to(device)
 
             # Native autoregressive forward pass
             loss_text, loss_mel, _ = gpt(
@@ -464,6 +524,7 @@ def train_gpt(
                 audio_codes=audio_codes,
                 wav_lengths=wav_lengths,
                 cond_mels=cond_mels,
+                cond_lens=cond_lens,
             )
 
             loss = loss_text * 0.01 + loss_mel * 1.0
@@ -528,6 +589,32 @@ def train_gpt(
         tmp_latest_path = f"{latest_model_path}.tmp"
         torch.save(latest_payload, tmp_latest_path)
         os.replace(tmp_latest_path, latest_model_path)
+
+        # 8. Save updated config.json with updated gpt_number_text_tokens
+        config_out_path = os.path.join(output_dir, "config.json")
+        base_config_path = os.path.join(checkpoint_dir, "config.json") if checkpoint_dir else ""
+        cfg_dict = {}
+        if base_config_path and os.path.exists(base_config_path):
+            try:
+                with open(base_config_path, "r", encoding="utf-8") as f:
+                    cfg_dict = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not read base config from {base_config_path}: {e}")
+        if "model_args" not in cfg_dict:
+            cfg_dict["model_args"] = {}
+        cfg_dict["model_args"]["gpt_number_text_tokens"] = vocab_size
+        cfg_dict["model_args"]["gpt_layers"] = gpt_layers
+        cfg_dict["model_args"]["gpt_n_model_channels"] = gpt_model_dim
+        cfg_dict["model_args"]["gpt_n_heads"] = gpt_heads
+        cfg_dict["model_args"]["gpt_use_perceiver_resampler"] = use_perceiver_resampler
+        cfg_dict["model_args"]["gpt_num_audio_tokens"] = num_audio_tokens
+        cfg_dict["model_args"]["gpt_start_audio_token"] = start_audio_token
+        cfg_dict["model_args"]["gpt_stop_audio_token"] = stop_audio_token
+        cfg_dict["model_args"]["gpt_code_stride_len"] = 1024
+        tmp_cfg_path = f"{config_out_path}.tmp"
+        with open(tmp_cfg_path, "w", encoding="utf-8") as f:
+            json.dump(cfg_dict, f, indent=2)
+        os.replace(tmp_cfg_path, config_out_path)
 
     logger.info(f"Stage 2 GPT training finished. Final model saved to: {output_dir}")
     return last_ckpt_path

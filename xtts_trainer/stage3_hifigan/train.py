@@ -40,6 +40,7 @@ def train_hifigan(
     batch_size: int = 16,
     latent_frames_slice: int = 16,
     learning_rate: Optional[float] = None,
+    warmup_steps: int = 100,
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
 ) -> str:
     """Executes dual-optimizer fine-tuning for native XTTS HiFi-GAN Vocoder."""
@@ -93,15 +94,18 @@ def train_hifigan(
                 hifi_state[k] = v
 
         if hifi_state:
-            missing, unexpected = generator.load_state_dict(hifi_state, strict=False)
-            logger.info(f"Restored pretrained vocoder weights (missing: {len(missing)}, unexpected: {len(unexpected)})")
+            missing, unexpected = generator.load_state_dict(hifi_state, strict=True)
+            logger.info(f"Restored pretrained vocoder weights with strict=True (missing: {len(missing)}, unexpected: {len(unexpected)})")
         elif "generator" in ckpt:
-            generator.waveform_decoder.load_state_dict(ckpt["generator"], strict=False)
-            logger.info("Restored generator weights from checkpoint.")
+            missing, unexpected = generator.waveform_decoder.load_state_dict(ckpt["generator"], strict=True)
+            logger.info(f"Restored generator weights from checkpoint with strict=True (missing: {len(missing)}, unexpected: {len(unexpected)}).")
         else:
             logger.warning("No hifigan_decoder keys found in checkpoint. Starting from initialized weights.")
     else:
-        logger.info("No pretrained vocoder checkpoint provided. Training from initialized weights.")
+        logger.warning(
+            "No pretrained vocoder checkpoint provided. Training from initialized weights requires "
+            "hundreds of hours of data. For voice cloning, pass --checkpoint_dir xtts_base."
+        )
 
     # 4. Mel-Spectrogram transform for mel-loss (24kHz, 80 mel channels)
     mel_transform = torchaudio.transforms.MelSpectrogram(
@@ -195,7 +199,12 @@ def train_hifigan(
             loss_gen_f = generator_loss(y_df_hat_g)
             loss_gen_s = generator_loss(y_ds_hat_g)
 
-            loss_g = loss_gen_f + loss_gen_s + loss_fm_f + loss_fm_s + loss_mel
+            if is_finetuning and global_step <= warmup_steps:
+                # Discriminator warmup: train generator purely on Mel reconstruction loss
+                # to prevent random discriminator gradients from corrupting pretrained vocoder
+                loss_g = loss_mel
+            else:
+                loss_g = loss_gen_f + loss_gen_s + loss_fm_f + loss_fm_s + loss_mel
             loss_g.backward()
             grad_norm_g = torch.nn.utils.clip_grad_norm_(generator.parameters(), max_norm=1.0)
             optim_g.step()
