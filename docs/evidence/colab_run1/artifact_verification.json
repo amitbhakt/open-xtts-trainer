@@ -1,0 +1,89 @@
+{
+  "lockfile": "artifacts.lock.json",
+  "checked_at_utc": "2026-10-24T13:07:24+00:00",
+  "artifacts": {
+    "mel_stats.pth": {
+      "path": "xtts_base/mel_stats.pth",
+      "size_bytes": 1067,
+      "sha256": "1f69422a8a8f344c4fca2f0c6b8d41d2151d6615b7321e48e6bb15ae949b119c",
+      "size_ok": true,
+      "sha256_ok": true,
+      "action": "downloaded"
+    },
+    "config.json": {
+      "path": "xtts_base/config.json",
+      "size_bytes": 4368,
+      "sha256": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+      "size_ok": true,
+      "sha256_ok": true,
+      "action": "downloaded"
+    },
+    "vocab.json": {
+      "path": "xtts_base/vocab.json",
+      "size_bytes": 361219,
+      "sha256": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a",
+      "size_ok": true,
+      "sha256_ok": true,
+      "action": "downloaded"
+    },
+    "dvae.pth": {
+      "path": "xtts_base/dvae.pth",
+      "size_bytes": 210514388,
+      "sha256": "b29bc227d410d4991e0a8c09b858f77415013eeb9fba9650258e96095557d97a",
+      "size_ok": true,
+      "sha256_ok": true,
+      "action": "downloaded"
+    },
+    "speakers_xtts.pth": {
+      "path": "xtts_base/speakers_xtts.pth",
+      "size_bytes": 7754818,
+      "sha256": "f0f6137c19a4eab0cbbe4c99b5babacf68b1746e50da90807708c10e645b943b",
+      "size_ok": true,
+      "sha256_ok": true,
+      "action": "downloaded"
+    },
+    "model.pth": {
+      "path": "xtts_base/model.pth",
+      "size_bytes": 1867929118,
+      "sha256": "c7ea20001c6a0a841c77e252d8409f6a74fb423e79b3206a0771ba5989776187",
+      "size_ok": true,
+      "sha256_ok": true,
+      "action": "downloaded"
+    }
+  },
+  "mel_stats_check": {
+    "sources_found": [
+      "packaged",
+      "downloaded",
+      "model_pth"
+    ],
+    "shapes": {
+      "packaged": [
+        80
+      ],
+      "downloaded": [
+        80
+      ],
+      "model_pth": [
+        80
+      ]
+    },
+    "pairwise": {
+      "packaged_vs_downloaded": {
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "packaged_vs_model_pth": {
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "downloaded_vs_model_pth": {
+        "equal": true,
+        "max_abs_diff": 0.0
+      }
+    },
+    "complete": true,
+    "all_equal": true,
+    "notes": []
+  }
+}

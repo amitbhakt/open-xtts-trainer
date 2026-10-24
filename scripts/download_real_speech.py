@@ -1,6 +1,6 @@
-"""Download and prepare real human speech dataset for XTTS training."""
+"""Prepare aligned speech data for XTTS training (wrapper around python -m xtts_trainer.speech_data)."""
 
-from xtts_trainer.speech_data import download_and_prepare_speech, main
+from xtts_trainer.speech_data import main
 
 if __name__ == "__main__":
     main()

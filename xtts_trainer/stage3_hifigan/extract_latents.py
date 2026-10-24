@@ -4,12 +4,15 @@ import argparse
 import logging
 import os
 import torch
-import torchaudio
 from tqdm import tqdm
-from typing import Optional
+from typing import List, Optional
 
-from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-from xtts_trainer.config import safe_torch_load, load_audio, DEFAULT_MEL_STATS_PATH, ensure_mel_stats, is_language_code
+from xtts_trainer.config import load_audio
+from xtts_trainer.data import load_validated_dataset
+from xtts_trainer.data.latents import SYNTHETIC_CHECKPOINT, make_latent_payload, sha256_file
+from xtts_trainer.frontend import dvae_mel_extractor
+from xtts_trainer.models import load_dvae
+from xtts_trainer.spec import SPEC
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -17,51 +20,31 @@ logger = logging.getLogger(__name__)
 os.environ["COQUI_TOS_AGREED"] = "1"
 
 
+def latent_filename(audio: str) -> str:
+    """Latent file name for a dataset record's audio path (its stem)."""
+    return os.path.splitext(os.path.basename(audio))[0] + ".pt"
+
+
 def extract_latents(
-    audio_dir: str,
+    dataset_path: str,
     output_dir: str,
     checkpoint_dir: str = "",
-    metadata_path: str = "",
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
-    text_prompt: str = "",
-    lang: str = "en",
     overwrite: bool = True,
     allow_synthetic_fallback: bool = False,
+    extra_languages: Optional[List[str]] = None,
 ) -> None:
-    """Extracts true per-frame temporal GPT latents and speaker embeddings for HiFi-GAN vocoder training."""
+    """Extracts teacher-forced per-frame GPT latents and speaker embeddings for HiFi-GAN vocoder training.
+
+    Every clip in the (validated) dataset is teacher-forced with its own transcript, in eval mode, exactly as
+    Xtts.inference slices latents. Each output file records the audio, checkpoint and spec it came from.
+    """
     if device == "cuda" and not torch.cuda.is_available():
         logger.warning("CUDA requested but not available. Falling back to CPU.")
         device = "cpu"
 
-    if not os.path.isdir(audio_dir):
-        raise FileNotFoundError(f"Audio directory does not exist: {audio_dir}")
-
     os.makedirs(output_dir, exist_ok=True)
     logger.info(f"Preparing latent extraction on device: {device}...")
-
-    # Load metadata mapping if available
-    metadata_map = {}
-    resolved_metadata = metadata_path or os.path.join(audio_dir, "metadata.csv")
-    if os.path.exists(resolved_metadata):
-        logger.info(f"Loading clip transcripts from metadata: {resolved_metadata}")
-        with open(resolved_metadata, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                parts = line.split("|")
-                if len(parts) >= 2:
-                    wav_name = os.path.basename(parts[0])
-                    prompt = parts[1]
-                    # Handle audio|text|speaker|lang or audio|text|lang
-                    if len(parts) >= 4:
-                        item_lang = parts[3].strip().lower()
-                    elif len(parts) == 3:
-                        p2 = parts[2].strip()
-                        item_lang = p2.lower() if is_language_code(p2) else lang
-                    else:
-                        item_lang = lang
-                    metadata_map[wav_name] = (prompt, item_lang)
 
     model = None
     dvae = None
@@ -71,20 +54,22 @@ def extract_latents(
         if not os.path.exists(checkpoint_dir):
             raise FileNotFoundError(f"Specified checkpoint directory does not exist: {checkpoint_dir}")
 
-        from TTS.tts.models.xtts import Xtts
-        from TTS.tts.configs.xtts_config import XttsConfig
-        from TTS.tts.layers.xtts.dvae import DiscreteVAE
+        # Transcripts are teacher-forced, so the dataset must pass the full (text) validation
+        records, dataset_dir, _ = load_validated_dataset(
+            dataset_path, os.path.join(checkpoint_dir, "vocab.json"), extra_languages or (), logger=logger
+        )
 
-        config_path = os.path.join(checkpoint_dir, "config.json")
-        config = XttsConfig()
-        if os.path.exists(config_path):
-            config.load_json(config_path)
+        from xtts_trainer.stage2_gpt.export import check_dvae_pairing, load_for_inference
 
+        check_dvae_pairing(checkpoint_dir)
+
+        # Strict load plus the project tokenizer, so languages registered in Stage 2 tokenize here too (F4)
         logger.info(f"Loading full XTTS checkpoint from {checkpoint_dir}...")
-        model = Xtts(config)
-        model.load_checkpoint(config, checkpoint_dir=checkpoint_dir, eval=True, use_deepspeed=False)
-        model.to(device)
+        model = load_for_inference(checkpoint_dir, device)
         model.eval()
+        # Latents must come from the eval-mode GPT: no dropout, and eval-mode latent trimming (gpt.py "sub")
+        assert not model.gpt.training
+        checkpoint_sha = sha256_file(os.path.join(checkpoint_dir, "model.pth"))
 
         # Discrete VAE for codebook indices extraction
         dvae_path = os.path.join(checkpoint_dir, "dvae.pth")
@@ -92,38 +77,10 @@ def extract_latents(
             raise FileNotFoundError(f"Required DVAE weights not found in checkpoint_dir: {dvae_path}")
 
         logger.info(f"Loading DiscreteVAE from: {dvae_path}")
-        ckpt_dvae = safe_torch_load(dvae_path, map_location=device)
-        state_dvae = ckpt_dvae.get("dvae", ckpt_dvae.get("model", ckpt_dvae))
-        num_tokens = state_dvae["codebook.embed"].shape[1] if state_dvae and "codebook.embed" in state_dvae else 1024
-        dvae = DiscreteVAE(
-            channels=80,
-            normalization=None,
-            positional_dims=1,
-            num_tokens=num_tokens,
-            codebook_dim=512,
-            hidden_dim=512,
-            num_resnet_blocks=3,
-            kernel_size=3,
-            num_layers=2,
-            use_transposed_convs=False,
-        ).to(device)
-        missing, unexpected = dvae.load_state_dict(state_dvae, strict=True)
-        if missing or unexpected:
-            raise RuntimeError(f"DVAE strict load failed: missing={missing}, unexpected={unexpected}")
-        dvae.eval()
+        dvae = load_dvae(dvae_path, device=device)
 
-        # Mel extractor for DVAE (native 1024 FFT / 256 hop / 1024 win matching upstream XTTS)
-        mel_extractor_dvae = TorchMelSpectrogram(
-            filter_length=1024,
-            hop_length=256,
-            win_length=1024,
-            normalize=False,
-            sampling_rate=22050,
-            mel_fmin=0,
-            mel_fmax=8000,
-            n_mel_channels=80,
-            mel_norm_file=ensure_mel_stats(DEFAULT_MEL_STATS_PATH),
-        ).to(device)
+        # Mel extractor for DVAE (xtts_trainer.frontend; matches upstream XTTS)
+        mel_extractor_dvae = dvae_mel_extractor(device)
         logger.info("XTTS model, DVAE, and mel extractor successfully loaded for latent extraction.")
     else:
         if not allow_synthetic_fallback:
@@ -132,26 +89,27 @@ def extract_latents(
                 "Standalone random-latent fallback has been removed to prevent training vocoders on noise."
             )
         logger.warning("Running in synthetic fallback mode for unit testing.")
+        records, dataset_dir, _ = load_validated_dataset(dataset_path, None, require_text=False, logger=logger)
+        checkpoint_sha = SYNTHETIC_CHECKPOINT
 
-    audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")])
-    if not audio_files:
-        raise FileNotFoundError(f"No .wav audio files found in: {audio_dir}")
+    names = [latent_filename(r.audio) for r in records]
+    duplicates = sorted({n for n in names if names.count(n) > 1})
+    if duplicates:
+        raise ValueError(f"Audio files share a stem, so their latent files would collide: {duplicates}")
 
-    logger.info(f"Found {len(audio_files)} audio files to process in {audio_dir}.")
+    logger.info(f"Extracting latents for {len(records)} clips from {dataset_path}.")
 
-    for filename in tqdm(audio_files, desc="Extracting Latents"):
-        base_name = os.path.splitext(filename)[0]
-        audio_path = os.path.join(audio_dir, filename)
-        output_path = os.path.join(output_dir, f"{base_name}.pt")
+    for record, name in tqdm(list(zip(records, names)), desc="Extracting Latents"):
+        audio_path = record.audio_path(dataset_dir)
+        output_path = os.path.join(output_dir, name)
 
         if os.path.exists(output_path) and not overwrite:
             logger.info(f"Skipping existing latent: {output_path}")
             continue
 
-        waveform_24k, _ = load_audio(audio_path, target_sr=24000)
-        waveform_22k, _ = load_audio(audio_path, target_sr=22050)
+        waveform_gpt, _ = load_audio(audio_path, target_sr=SPEC.gpt_sample_rate)
 
-        if model is not None and dvae is not None and mel_extractor_dvae is not None:
+        if model is not None:
             with torch.no_grad():
                 # 1. Conditioning latents and speaker embedding
                 gpt_cond_latent, speaker_emb = model.get_conditioning_latents(audio_path=[audio_path])
@@ -159,36 +117,16 @@ def extract_latents(
                 speaker_emb = speaker_emb.to(device)
 
                 # 2. Target audio codes from DVAE
-                wav_22k_dev = waveform_22k.to(device)
-                dvae_mel = mel_extractor_dvae(wav_22k_dev)
+                dvae_mel = mel_extractor_dvae(waveform_gpt.to(device))
                 audio_codes = dvae.get_codebook_indices(dvae_mel).to(device)  # [1, T_codes]
 
-                # 3. Ground-truth text tokens for this specific clip
-                if filename in metadata_map:
-                    clip_prompt, clip_lang = metadata_map[filename]
-                elif text_prompt:
-                    clip_prompt, clip_lang = text_prompt, lang
-                else:
-                    raise KeyError(
-                        f"Clip '{filename}' not found in metadata '{resolved_metadata}'. "
-                        f"Every audio file must be paired with genuine ground-truth text."
-                    )
-
-                try:
-                    tokens = model.tokenizer.encode(clip_prompt, clip_lang)
-                except Exception:
-                    # Fallback to language prefix if unlisted
-                    lang_tok = f"[{clip_lang}]"
-                    if lang_tok in model.tokenizer.tokenizer.get_vocab():
-                        tokens = model.tokenizer.tokenizer.encode(f"{lang_tok}{clip_prompt}".replace(" ", "[SPACE]")).ids
-                    else:
-                        tokens = model.tokenizer.tokenizer.encode(clip_prompt.replace(" ", "[SPACE]")).ids
-
+                # 3. Ground-truth text tokens for this clip (validated: supported language, no [UNK])
+                tokens = model.tokenizer.encode(record.text.strip(), record.lang.lower())
                 text_tokens = torch.tensor([tokens], dtype=torch.long, device=device)
                 text_len = torch.tensor([text_tokens.shape[-1]], device=device)
                 expected_output_len = torch.tensor([audio_codes.shape[-1] * model.gpt.code_stride_len], device=device)
 
-                # 4. Extract TRUE temporal per-frame GPT latents [1, T_frames, 1024]
+                # 4. Teacher-forced per-frame GPT latents [1, T_frames, model_dim] (eval-mode slicing)
                 gpt_latents = model.gpt(
                     text_tokens,
                     text_len,
@@ -200,14 +138,13 @@ def extract_latents(
                 )
         else:
             # Synthetic testing mode only
-            num_frames = max(16, int(waveform_22k.shape[-1] / 1024))
-            gpt_latents = torch.randn(1, num_frames, 1024)
-            speaker_emb = torch.randn(1, 512, 1)
+            num_frames = max(16, waveform_gpt.shape[-1] // SPEC.gpt.code_stride_len)
+            gpt_latents = torch.randn(1, num_frames, SPEC.gpt.model_dim)
+            speaker_emb = torch.randn(1, SPEC.d_vector_dim, 1)
 
-        payload = {
-            "gpt_latents": gpt_latents.cpu(),
-            "speaker_embedding": speaker_emb.cpu(),
-        }
+        payload = make_latent_payload(
+            gpt_latents, speaker_emb, audio_path, record.text, record.lang, checkpoint_sha
+        )
         torch.save(payload, output_path)
 
     logger.info(f"Successfully extracted temporal latents to: {output_dir}")
@@ -215,21 +152,21 @@ def extract_latents(
 
 def main():
     parser = argparse.ArgumentParser(description="Extract temporal GPT Latents for HiFi-GAN Vocoder training.")
-    parser.add_argument("--audio_dir", type=str, required=True, help="Path to input audio directory (.wav)")
+    parser.add_argument("--dataset", type=str, required=True, help="Path to dataset.jsonl")
     parser.add_argument("--output_dir", type=str, required=True, help="Directory to save extracted .pt files")
     parser.add_argument("--checkpoint_dir", type=str, required=True, help="Path to XTTS checkpoint directory (xtts_base)")
-    parser.add_argument("--metadata_path", type=str, default="", help="Path to metadata.csv pairing audio with transcripts")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--no_overwrite", action="store_true", help="Skip re-extracting existing latents")
+    parser.add_argument("--languages", type=str, nargs="+", default=None, help="Registered extra language codes")
     args = parser.parse_args()
 
     extract_latents(
-        audio_dir=args.audio_dir,
+        dataset_path=args.dataset,
         output_dir=args.output_dir,
         checkpoint_dir=args.checkpoint_dir,
-        metadata_path=args.metadata_path,
         device=args.device,
         overwrite=not args.no_overwrite,
+        extra_languages=args.languages,
     )
 
 

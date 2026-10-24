@@ -1,224 +1,233 @@
-"""Training loop for Stage 1: Discrete VAE (DVAE) Audio Tokenizer."""
+"""Stage 1: train or fine-tune the Discrete VAE audio tokenizer (docs/recipe_design.md §6, phase 7).
+
+Off by default in the recipe (11.3): every training forward pass moves the codebook (F1), so a fine-tuned
+DVAE changes what the GPT's audio tokens mean. What this trainer guarantees:
+- validation on held-out clips, with the DVAE in eval mode (eval-mode get_codebook_indices doesn't touch the
+  codebook, and eval-mode forward decodes from the quantized codes, which is what the GPT actually sees);
+- codebook usage (active codes, perplexity) logged and gated: a collapse fails the run;
+- code drift: the fraction of validation frames whose code differs from the base DVAE's;
+- an optional frozen-codebook mode (quantizer kept in eval mode: only the encoder and decoder adapt);
+- the best checkpoint by validation reconstruction loss, marked requires_gpt_retrain so Stage 2 refuses
+  to pair it with the pretrained GPT unless explicitly retraining for it;
+- seeded runs, warm-up LR schedule, optional mixed precision and full resume (xtts_trainer.training).
+"""
 
 import argparse
+import copy
+import json
 import logging
+import math
 import os
-import time
+from typing import Any, Dict, List, Optional
+
 import torch
 from torch.utils.data import DataLoader
-from typing import Optional
 
-from xtts_trainer.config import DVAEConfig, safe_torch_load
-from xtts_trainer.stage1_dvae.dataset import MelDataset
-from TTS.tts.layers.xtts.dvae import DiscreteVAE
+from xtts_trainer.config import DVAEConfig
+from xtts_trainer.data import load_validated_dataset
+from xtts_trainer.data.latents import sha256_file
+from xtts_trainer.models import (
+    REQUIRES_GPT_RETRAIN_KEY, build_dvae, check_spec_hash, dvae_num_tokens, load_dvae_state, resolve_dvae_state,
+    safe_torch_load, stamp,
+)
+from xtts_trainer.stage1_dvae.dataset import MelDataset, collate_mels
+from xtts_trainer.training import (
+    Precision, decay_per_step, is_improvement, load_training_state, save_training_state, seed_everything,
+    split_records, warmup_lambda,
+)
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+TRAINING_STATE_FILENAME = "training_state.pth"
 
-def build_dvae_model(
-    channels: int = 80,
-    num_tokens: int = 1024,
-    codebook_dim: int = 512,
-    hidden_dim: int = 512,
-) -> DiscreteVAE:
-    """Builds the native XTTS-v2 Discrete VAE architecture (1024 discrete codebook tokens)."""
-    return DiscreteVAE(
-        channels=channels,
-        normalization=None,
-        positional_dims=1,
-        num_tokens=num_tokens,
-        codebook_dim=codebook_dim,
-        hidden_dim=hidden_dim,
-        num_resnet_blocks=3,
-        kernel_size=3,
-        num_layers=2,
-        use_transposed_convs=False,
-    )
+
+class CodebookCollapseError(RuntimeError):
+    """Too few codebook entries are in use on validation data."""
+
+
+def dvae_training_loss(dvae, mels: torch.Tensor):
+    """The Stage 1 objective: native DVAE reconstruction + commitment loss. Returns (loss, recon, commit)."""
+    recon_loss, commitment_loss, _ = dvae(mels)
+    recon, commit = recon_loss.mean(), commitment_loss.mean()
+    return recon + commit, recon, commit
+
+
+def codebook_stats(codes: torch.Tensor, num_tokens: int) -> Dict[str, float]:
+    """Active codes and perplexity (exp of the code-usage entropy) over a flat tensor of code ids."""
+    counts = torch.bincount(codes.flatten().long(), minlength=num_tokens).double()
+    p = counts / counts.sum()
+    entropy = float(-(p[p > 0] * p[p > 0].log()).sum())
+    return {"active_codes": int((counts > 0).sum()), "perplexity": math.exp(entropy)}
+
+
+@torch.no_grad()
+def evaluate_dvae(dvae, val_mels: List[torch.Tensor], base_dvae=None) -> Dict[str, Any]:
+    """Eval-mode reconstruction loss, codebook usage, and drift against base_dvae, over whole val clips."""
+    was_training = dvae.training
+    dvae.eval()
+    recon, codes, drift_num, drift_den = [], [], 0, 0
+    for mel in val_mels:
+        mel = mel.unsqueeze(0)
+        r, _, _ = dvae(mel)
+        recon.append(float(r.mean()))
+        c = dvae.get_codebook_indices(mel)
+        codes.append(c.flatten())
+        if base_dvae is not None:
+            b = base_dvae.get_codebook_indices(mel)
+            drift_num += int((b != c).sum())
+            drift_den += c.numel()
+    dvae.train(was_training)
+    stats = codebook_stats(torch.cat(codes), dvae.num_tokens)
+    stats["val_recon"] = sum(recon) / len(recon)
+    stats["code_drift"] = drift_num / drift_den if base_dvae is not None else None
+    return stats
+
+
+def collapse_floor(config: DVAEConfig, num_tokens: int, base_active: Optional[int]) -> int:
+    """Minimum active codes on validation data. [E5] until ablation A2 calibrates it."""
+    floor = config.min_active_codes
+    if base_active is not None:
+        floor = max(floor, math.ceil(config.min_active_fraction_of_base * base_active))
+    return min(floor, num_tokens)
 
 
 def train_dvae(
-    audio_dir: str,
+    dataset_path: str,
     output_dir: str,
     config: Optional[DVAEConfig] = None,
-    epochs: int = 100,
-    batch_size: int = 32,
+    base_checkpoint: str = "",
+    resume: bool = False,
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
-    continue_path: str = "",
 ) -> str:
-    """Trains or fine-tunes the Discrete VAE audio tokenizer."""
-    if config is None:
-        config = DVAEConfig()
+    """Train, keeping the best checkpoint by validation loss in output_dir/dvae.pth. Returns its path.
 
+    base_checkpoint: the DVAE to fine-tune (the released dvae.pth); empty trains from scratch.
+    resume: continue from output_dir/training_state.pth.
+    """
+    config = config or DVAEConfig()
     if device == "cuda" and not torch.cuda.is_available():
-        logger.warning("CUDA requested but not available. Falling back to CPU.")
-        device = "cpu"
-
+        raise RuntimeError("CUDA requested but not available")
     os.makedirs(output_dir, exist_ok=True)
-    logger.info(f"Starting Stage 1 DVAE training on device: {device}")
+    loader_gen = seed_everything(config.seed)
 
-    # 1. Dataset & Dataloader (native 22,050 Hz mel spectrograms)
-    dataset = MelDataset(
-        audio_dir=audio_dir,
-        sample_rate=getattr(config, "sample_rate", 22050),
-        n_mels=getattr(config, "n_mels", 80),
-    )
-    if len(dataset) == 0:
-        raise ValueError(f"No valid audio files found in {audio_dir}")
-    effective_batch_size = max(1, min(batch_size, len(dataset)))
-    dataloader = DataLoader(
-        dataset,
-        batch_size=effective_batch_size,
-        shuffle=True,
-        drop_last=(len(dataset) >= effective_batch_size * 2),
-    )
-    logger.info(f"Loaded {len(dataset)} audio files for DVAE training (batch size: {effective_batch_size}, steps per epoch: {len(dataloader)}).")
+    records, dataset_dir, _ = load_validated_dataset(dataset_path, None, require_text=False, logger=logger)
+    train_records, val_records = split_records(records, config.val_fraction, config.seed)
+    train_set = MelDataset([r.audio_path(dataset_dir) for r in train_records], config.max_mel_frames)
+    val_mels = [m.to(device) for m in MelDataset([r.audio_path(dataset_dir) for r in val_records],
+                                                 config.max_val_mel_frames, random_crop=False)]
+    batch_size = max(1, min(config.batch_size, len(train_set)))
+    loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_mels,
+                        generator=loader_gen, num_workers=config.num_workers,
+                        drop_last=len(train_set) >= 2 * batch_size)
+    logger.info("Stage 1: %d train / %d val clips, %d steps per epoch", len(train_set), len(val_mels), len(loader))
 
-    # 2. Checkpoint inspection for dynamic codebook size
-    state_dict = None
-    start_epoch = 0
-    global_step = 0
-    num_tokens = getattr(config, "num_tokens", 1024)
-
-    if continue_path:
-        if not os.path.exists(continue_path):
-            raise FileNotFoundError(f"DVAE checkpoint not found at: {continue_path}")
-
-        logger.info(f"Loading pretrained DVAE weights from: {continue_path}")
-        ckpt = safe_torch_load(continue_path, map_location=device)
-        if isinstance(ckpt, dict) and "dvae" in ckpt:
-            state_dict = ckpt["dvae"]
-            start_epoch = ckpt.get("epoch", 0)
-        elif isinstance(ckpt, dict) and "model" in ckpt:
-            state_dict = ckpt["model"]
-        elif isinstance(ckpt, dict) and "state_dict" in ckpt:
-            state_dict = ckpt["state_dict"]
-        else:
-            state_dict = ckpt
-
-        # Dynamically infer codebook tokens from checkpoint weights if present
-        if state_dict and "codebook.embed" in state_dict:
-            inferred_tokens = state_dict["codebook.embed"].shape[1]
-            if inferred_tokens != num_tokens:
-                logger.info(f"Setting DVAE codebook tokens to {inferred_tokens} based on checkpoint.")
-                num_tokens = inferred_tokens
-
-    logger.warning(
-        "\n" + "!" * 70 + "\n"
-        "CRITICAL ARCHITECTURAL NOTICE (DVAE CODEBOOK INVARIANT):\n"
-        "Fine-tuning or retraining the DiscreteVAE alters its codebook indices.\n"
-        "Pretrained XTTS GPT checkpoints rely on stock codebook token meanings.\n"
-        "If you fine-tune or retrain the DVAE, you MUST retrain Stage 2 GPT from scratch\n"
-        "on the new codebook indices. Freezing DVAE is strongly recommended for voice cloning.\n"
-        + "!" * 70
-    )
-
-    # 3. Native DVAE Model
-    dvae = build_dvae_model(
-        channels=getattr(config, "n_mels", 80),
-        num_tokens=num_tokens,
-        codebook_dim=config.codebook_dim,
-        hidden_dim=config.hidden_dim,
-    ).to(device)
+    base_state, base_sha = None, None
+    num_tokens = config.num_tokens
+    if base_checkpoint:
+        ckpt = safe_torch_load(base_checkpoint, map_location="cpu")
+        check_spec_hash(ckpt, base_checkpoint)
+        base_state = resolve_dvae_state(ckpt)
+        num_tokens = dvae_num_tokens(base_state)
+        base_sha = sha256_file(base_checkpoint)
+    dvae = build_dvae(num_tokens=num_tokens, codebook_dim=config.codebook_dim, hidden_dim=config.hidden_dim).to(device)
+    base_dvae = None
+    if base_state is not None:
+        load_dvae_state(dvae, base_state, f"DVAE ({base_checkpoint})")
+        base_dvae = copy.deepcopy(dvae).eval()
 
     optimizer = torch.optim.Adam(dvae.parameters(), lr=config.learning_rate)
+    scheduler = torch.optim.lr_scheduler.LambdaLR(
+        optimizer, warmup_lambda(config.lr_warmup_steps, decay_per_step(config.lr_decay_per_epoch, len(loader))))
+    precision = Precision(device, config.mixed_precision)
+    scaler = precision.scaler()
+    state_path = os.path.join(output_dir, TRAINING_STATE_FILENAME)
+    run = dict(models={"dvae": dvae}, optimizers={"adam": optimizer}, schedulers={"lr": scheduler},
+               scalers={"amp": scaler})
 
-    if state_dict is not None:
-        missing, unexpected = dvae.load_state_dict(state_dict, strict=True)
-        if missing or unexpected:
-            raise RuntimeError(f"DVAE strict load failed: missing={missing}, unexpected={unexpected}")
-        logger.info(f"Loaded DVAE weights with strict=True (100% parameter match)")
+    step, start_epoch, best = 0, 1, None
+    if resume:
+        restored = load_training_state(state_path, **run)
+        step, start_epoch, best = restored["step"], restored["epoch"] + 1, restored["best"]
+        loader_gen.set_state(restored["extra"]["loader_generator"])
+        reference = restored["extra"]["reference"]
+        logger.info("Resumed at epoch %d, step %d (best val %.4f)", start_epoch, step, best)
+    else:
+        reference = evaluate_dvae(dvae, val_mels, base_dvae)  # the starting model's numbers, to beat
+        logger.info("Stage 1 reference before training: %s", reference)
+    base_active = reference["active_codes"] if base_dvae is not None else None
+    floor = collapse_floor(config, dvae.num_tokens, base_active)
+    metrics_path = os.path.join(output_dir, "metrics.jsonl")
+    best_path = os.path.join(output_dir, "dvae.pth")
 
-    dvae.train()
-    last_ckpt = ""
+    def validate(epoch: int) -> None:
+        nonlocal best
+        stats = evaluate_dvae(dvae, val_mels, base_dvae)
+        stats.update(step=step, epoch=epoch, lr=scheduler.get_last_lr()[0])
+        with open(metrics_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(stats) + "\n")
+        logger.info("Validation step %d: recon %.4f, active codes %d (floor %d), perplexity %.1f, drift %s",
+                    step, stats["val_recon"], stats["active_codes"], floor, stats["perplexity"], stats["code_drift"])
+        if stats["active_codes"] < floor:
+            raise CodebookCollapseError(
+                f"only {stats['active_codes']}/{dvae.num_tokens} codes active on validation data (floor {floor}, "
+                f"reference {reference['active_codes']}); the codebook collapsed. See {metrics_path}"
+            )
+        if is_improvement(stats["val_recon"], best):
+            best = stats["val_recon"]
+            torch.save(stamp({
+                "dvae": {k: v.cpu() for k, v in dvae.state_dict().items()},
+                REQUIRES_GPT_RETRAIN_KEY: True, "base_dvae_sha256": base_sha,
+                "codebook_frozen": config.frozen_codebook, "val": stats, "reference": reference,
+            }), best_path + ".tmp")
+            os.replace(best_path + ".tmp", best_path)
 
-    for epoch in range(start_epoch + 1, epochs + 1):
-        epoch_start = time.time()
-        total_loss = 0.0
-        total_recon = 0.0
-        total_commit = 0.0
-
-        for i, mels in enumerate(dataloader):
-            global_step += 1
+    for epoch in range(start_epoch, config.epochs + 1):
+        dvae.train()
+        if config.frozen_codebook:
+            dvae.codebook.eval()  # no EMA codebook updates (F1); encoder/decoder still learn
+        for mels in loader:
             mels = mels.to(device)
-
+            with precision.autocast():
+                loss, recon, commit = dvae_training_loss(dvae, mels)
+            if not torch.isfinite(loss):
+                raise FloatingPointError(f"non-finite DVAE loss at step {step}: recon {recon.item()}, commit {commit.item()}")
             optimizer.zero_grad()
+            scaler.scale(loss).backward()
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(dvae.parameters(), config.grad_clip)
+            scaler.step(optimizer)
+            scaler.update()
+            scheduler.step()
+            step += 1
+            if step % config.val_every_steps == 0:
+                validate(epoch)
+        if step % config.val_every_steps:  # end of epoch, unless that step was just validated
+            validate(epoch)
+        save_training_state(state_path, **run, step=step, epoch=epoch, best=best,
+                            extra={"loader_generator": loader_gen.get_state(), "reference": reference})
 
-            # Native DVAE forward computes reconstruction and commitment losses
-            recon_loss, commitment_loss, recon_mels = dvae(mels)
-            loss = recon_loss.mean() + commitment_loss.mean()
-
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(dvae.parameters(), max_norm=1.0)
-            optimizer.step()
-
-            total_loss += loss.item()
-            total_recon += recon_loss.mean().item()
-            total_commit += commitment_loss.mean().item()
-
-            if (i + 1) % max(1, len(dataloader) // 5) == 0 or (i + 1) == len(dataloader):
-                logger.info(
-                    f"Epoch [{epoch}/{epochs}] Step [{i+1}/{len(dataloader)}] | "
-                    f"Loss: {loss.item():.4f} (Recon: {recon_loss.mean().item():.4f}, Commit: {commitment_loss.mean().item():.4f})"
-                )
-
-        avg_loss = total_loss / len(dataloader)
-        avg_recon = total_recon / len(dataloader)
-        avg_commit = total_commit / len(dataloader)
-        elapsed = time.time() - epoch_start
-        logger.info(f"Epoch {epoch} finished in {elapsed:.2f}s | Avg Loss: {avg_loss:.4f} (Recon: {avg_recon:.4f}, Commit: {avg_commit:.4f})")
-
-        # Save checkpoint
-        last_ckpt = os.path.join(output_dir, f"dvae_epoch_{epoch}.pth")
-        torch.save(
-            {
-                "dvae": dvae.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "epoch": epoch,
-                "step": global_step,
-            },
-            last_ckpt,
-        )
-
-        # Maintain standard dvae.pth for downstream stage consumption
-        torch.save(
-            {
-                "dvae": dvae.state_dict(),
-                "epoch": epoch,
-            },
-            os.path.join(output_dir, "dvae.pth"),
-        )
-
-    logger.info(f"DVAE training finished. Final model saved to: {output_dir}")
-    return last_ckpt
+    logger.info("Stage 1 finished; best checkpoint (val recon %.4f): %s", best, best_path)
+    return best_path
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Train Stage 1 Discrete VAE (DVAE) Audio Tokenizer.")
-    parser.add_argument("--audio_dir", type=str, required=True, help="Directory containing audio (.wav) files")
-    parser.add_argument("--output_dir", type=str, default="./checkpoints/dvae", help="Directory to save checkpoints")
-    parser.add_argument("--continue_path", type=str, default="", help="Path to base dvae.pth to fine-tune from")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+    parser = argparse.ArgumentParser(description="Train or fine-tune the Stage 1 Discrete VAE (DVAE).")
+    parser.add_argument("--dataset", required=True, help="dataset.jsonl (transcripts not required)")
+    parser.add_argument("--output_dir", default="./checkpoints/dvae")
+    parser.add_argument("--base_checkpoint", default="", help="DVAE to fine-tune (e.g. xtts_base/dvae.pth)")
+    parser.add_argument("--resume", action="store_true", help="Continue from output_dir/training_state.pth")
     parser.add_argument("--epochs", type=int, default=100)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--learning_rate", type=float, default=1e-4)
-    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--frozen_codebook", action="store_true", help="Keep the quantizer fixed (encoder-only adaptation)")
+    parser.add_argument("--mixed_precision", action="store_true")
+    parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     args = parser.parse_args()
-
-    config = DVAEConfig(
-        learning_rate=args.learning_rate,
-        batch_size=args.batch_size,
-        epochs=args.epochs,
-    )
-
-    train_dvae(
-        audio_dir=args.audio_dir,
-        output_dir=args.output_dir,
-        config=config,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        device=args.device,
-        continue_path=args.continue_path,
-    )
+    config = DVAEConfig(learning_rate=args.learning_rate, batch_size=args.batch_size, epochs=args.epochs,
+                        frozen_codebook=args.frozen_codebook, mixed_precision=args.mixed_precision, seed=args.seed)
+    train_dvae(args.dataset, args.output_dir, config, args.base_checkpoint, args.resume, args.device)
 
 
 if __name__ == "__main__":

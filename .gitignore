@@ -28,6 +28,8 @@ ENV/
 
 # Checkpoints & Weights
 checkpoints/
+xtts_base/
+eval/reference_voices/
 *.pt
 *.pth
 !xtts_trainer/mel_stats.pth
@@ -51,7 +53,17 @@ logs/
 *.zip
 *.log
 AUDIT.md
+REMEDIATION_PLAN.md
 .DS_Store
 .idea/
 .vscode/
 *.swp
+
+# Raw Colab evidence download (curated copy lives in docs/evidence/colab_run1/)
+phase01_evidence/
+phase01_run2_evidence/
+colab_upload/
+
+# Retired proof outputs and old loss charts: kept locally and on Hugging Face, not in git
+proof_outputs/
+assets/

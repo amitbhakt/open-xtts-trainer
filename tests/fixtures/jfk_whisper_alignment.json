@@ -1,0 +1,161 @@
+{
+  "audio_file": "jfk.flac",
+  "duration_s": 11.0,
+  "full_text": " And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.",
+  "word_chunks": [
+    {
+      "text": " And",
+      "timestamp": [
+        0.0,
+        0.48
+      ]
+    },
+    {
+      "text": " so",
+      "timestamp": [
+        0.48,
+        0.74
+      ]
+    },
+    {
+      "text": " my",
+      "timestamp": [
+        0.74,
+        1.1
+      ]
+    },
+    {
+      "text": " fellow",
+      "timestamp": [
+        1.1,
+        1.5
+      ]
+    },
+    {
+      "text": " Americans,",
+      "timestamp": [
+        1.5,
+        3.12
+      ]
+    },
+    {
+      "text": " ask",
+      "timestamp": [
+        3.12,
+        3.62
+      ]
+    },
+    {
+      "text": " not",
+      "timestamp": [
+        3.62,
+        4.14
+      ]
+    },
+    {
+      "text": " what",
+      "timestamp": [
+        4.14,
+        5.46
+      ]
+    },
+    {
+      "text": " your",
+      "timestamp": [
+        5.46,
+        5.72
+      ]
+    },
+    {
+      "text": " country",
+      "timestamp": [
+        5.72,
+        6.18
+      ]
+    },
+    {
+      "text": " can",
+      "timestamp": [
+        6.18,
+        6.56
+      ]
+    },
+    {
+      "text": " do",
+      "timestamp": [
+        6.56,
+        6.76
+      ]
+    },
+    {
+      "text": " for",
+      "timestamp": [
+        6.76,
+        7.04
+      ]
+    },
+    {
+      "text": " you,",
+      "timestamp": [
+        7.04,
+        7.84
+      ]
+    },
+    {
+      "text": " ask",
+      "timestamp": [
+        7.84,
+        8.36
+      ]
+    },
+    {
+      "text": " what",
+      "timestamp": [
+        8.36,
+        8.7
+      ]
+    },
+    {
+      "text": " you",
+      "timestamp": [
+        8.7,
+        8.98
+      ]
+    },
+    {
+      "text": " can",
+      "timestamp": [
+        8.98,
+        9.3
+      ]
+    },
+    {
+      "text": " do",
+      "timestamp": [
+        9.3,
+        9.52
+      ]
+    },
+    {
+      "text": " for",
+      "timestamp": [
+        9.52,
+        9.74
+      ]
+    },
+    {
+      "text": " your",
+      "timestamp": [
+        9.74,
+        9.9
+      ]
+    },
+    {
+      "text": " country.",
+      "timestamp": [
+        9.9,
+        10.72
+      ]
+    }
+  ]
+}

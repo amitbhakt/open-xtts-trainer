@@ -1,0 +1,86 @@
+{
+  "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+  "created_utc": "2026-10-24T13:12:44+00:00",
+  "voices": {
+    "arctic_slt": {
+      "source_url": "http://festvox.org/cmu_arctic/packed/cmu_us_slt_arctic.tar.bz2",
+      "tarball_sha256": "7c173297916acf3cc7fcab2713be4c60b27312316765a90934651d367226b4ea",
+      "utterances": [
+        "arctic_a0001",
+        "arctic_a0002",
+        "arctic_a0003",
+        "arctic_a0004",
+        "arctic_a0005",
+        "arctic_a0006"
+      ],
+      "sample_rate": 16000,
+      "duration_s": 7.04,
+      "clip_sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82",
+      "license_files": []
+    },
+    "arctic_clb": {
+      "source_url": "http://festvox.org/cmu_arctic/packed/cmu_us_clb_arctic.tar.bz2",
+      "tarball_sha256": "3f16dc3f3b97955ea22623efb33b444341013fc660677b2e170efdcc959fa7c6",
+      "utterances": [
+        "arctic_a0001",
+        "arctic_a0002",
+        "arctic_a0003",
+        "arctic_a0004",
+        "arctic_a0005",
+        "arctic_a0006"
+      ],
+      "sample_rate": 16000,
+      "duration_s": 6.98,
+      "clip_sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b",
+      "license_files": []
+    },
+    "arctic_bdl": {
+      "source_url": "http://festvox.org/cmu_arctic/packed/cmu_us_bdl_arctic.tar.bz2",
+      "tarball_sha256": "26b91aaf48b2799b2956792b4632c2f926cd0542f402b5452d5adecb60942904",
+      "utterances": [
+        "arctic_a0001",
+        "arctic_a0002",
+        "arctic_a0003",
+        "arctic_a0004",
+        "arctic_a0005",
+        "arctic_a0006"
+      ],
+      "sample_rate": 16000,
+      "duration_s": 6.62,
+      "clip_sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627",
+      "license_files": []
+    },
+    "arctic_awb": {
+      "source_url": "http://festvox.org/cmu_arctic/packed/cmu_us_awb_arctic.tar.bz2",
+      "tarball_sha256": "d74a950c9739a65f7bfc4dfa6187f2730fa03de5b8eb3f2da97a51b74df64d3c",
+      "utterances": [
+        "arctic_a0001",
+        "arctic_a0002",
+        "arctic_a0003",
+        "arctic_a0004",
+        "arctic_a0005",
+        "arctic_a0006"
+      ],
+      "sample_rate": 16000,
+      "duration_s": 7.53,
+      "clip_sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94",
+      "license_files": []
+    },
+    "arctic_ksp": {
+      "source_url": "http://festvox.org/cmu_arctic/packed/cmu_us_ksp_arctic.tar.bz2",
+      "tarball_sha256": "8029cafce8296f9bed3022c44ef1e7953332b6bf6943c14b929f468122532717",
+      "utterances": [
+        "arctic_a0001",
+        "arctic_a0002",
+        "arctic_a0003",
+        "arctic_a0004",
+        "arctic_a0005",
+        "arctic_a0006"
+      ],
+      "sample_rate": 16000,
+      "duration_s": 7.14,
+      "clip_sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8",
+      "license_files": []
+    }
+  }
+}

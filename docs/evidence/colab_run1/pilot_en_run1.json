@@ -1,0 +1,2687 @@
+{
+  "description": "Stock base XTTS-v2 baseline, measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-24 13:21:52 UTC",
+  "git": {
+    "commit_sha": "unknown",
+    "is_dirty": false
+  },
+  "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+  "checkpoint_sha256": {
+    "model.pth": "3077a05b879ba5c2bcf336a0cca4ffb493f97980fd1d61f8ab6ee0e6d6f56c9a",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "seeds": [
+    42,
+    123
+  ],
+  "subset_size": 10,
+  "languages": [
+    "en"
+  ],
+  "summary_by_language": {
+    "en": {
+      "wer": {
+        "mean": 0.005,
+        "std": 0.024618298195866545,
+        "ci95": 0.004825186446389842,
+        "min": 0.0,
+        "max": 0.125,
+        "n": 100,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.002105263157894737,
+        "std": 0.01036559924036486,
+        "ci95": 0.0020316574511115124,
+        "min": 0.0,
+        "max": 0.05263157894736842,
+        "n": 100,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.5483540698885918,
+        "std": 0.09253070572579639,
+        "ci95": 0.018136018322256094,
+        "min": 0.3591414988040924,
+        "max": 0.7013217806816101,
+        "n": 100,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 4.1204708027839665,
+        "std": 0.24917142534222103,
+        "ci95": 0.048837599367075324,
+        "min": 3.404289484024048,
+        "max": 4.475553035736084,
+        "n": 100,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 1.0364074652659914,
+        "std": 0.16996328383535514,
+        "ci95": 0.0333128036317296,
+        "min": 0.8016842105263158,
+        "max": 1.984,
+        "n": 100,
+        "n_nan": 0
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 0,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-24 13:18:04 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 10,
+        "num_seeds": 2,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.00625,
+          "std": 0.02795084971874737,
+          "ci95": 0.012249999999999999,
+          "min": 0.0,
+          "max": 0.125,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.002631578947368421,
+          "std": 0.011768778828946261,
+          "ci95": 0.005157894736842105,
+          "min": 0.0,
+          "max": 0.05263157894736842,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.43440060764551164,
+          "std": 0.036661024076214785,
+          "ci95": 0.016067402223997846,
+          "min": 0.3591414988040924,
+          "max": 0.5016404390335083,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.255440294742584,
+          "std": 0.21505148106612001,
+          "ci95": 0.09425046714386724,
+          "min": 3.828871011734009,
+          "max": 4.475553035736084,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9777357302076082,
+          "std": 0.0942608418636988,
+          "ci95": 0.04131163540462334,
+          "min": 0.8231544715447155,
+          "max": 1.163921568627451,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47742220759391785,
+            "utmos": 4.294882297515869,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.8231544715447155,
+            "rms": 0.1537577360868454,
+            "peak": 0.7505782842636108,
+            "hf_ratio": 0.00706390431150794,
+            "synthesis_time_s": 1.6649689674377441,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5016404390335083,
+            "utmos": 4.319789409637451,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.8497777777777777,
+            "rms": 0.14810694754123688,
+            "peak": 0.8341595530509949,
+            "hf_ratio": 0.018010489642620087,
+            "synthesis_time_s": 1.2798750400543213,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4342404305934906,
+            "utmos": 4.4058637619018555,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.9392280701754385,
+            "rms": 0.14231671392917633,
+            "peak": 0.7016690373420715,
+            "hf_ratio": 0.006217890419065952,
+            "synthesis_time_s": 1.2414472103118896,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41642239689826965,
+            "utmos": 4.475553035736084,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.098940170940171,
+            "rms": 0.14028657972812653,
+            "peak": 0.7595878839492798,
+            "hf_ratio": 0.023340212181210518,
+            "synthesis_time_s": 1.5404565334320068,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4603022336959839,
+            "utmos": 4.334299087524414,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 1.0581333333333334,
+            "rms": 0.1416604369878769,
+            "peak": 0.7889996767044067,
+            "hf_ratio": 0.011373261921107769,
+            "synthesis_time_s": 1.3196310997009277,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.39707767963409424,
+            "utmos": 4.427968978881836,
+            "duration_s": 2.453333333333333,
+            "duration_ratio": 0.954074074074074,
+            "rms": 0.14207462966442108,
+            "peak": 0.7479889392852783,
+            "hf_ratio": 0.014915569685399532,
+            "synthesis_time_s": 1.2918174266815186,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4813252389431,
+            "utmos": 4.403466701507568,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 1.163921568627451,
+            "rms": 0.1471925675868988,
+            "peak": 0.8839636445045471,
+            "hf_ratio": 0.003914491273462772,
+            "synthesis_time_s": 1.347355842590332,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4588896930217743,
+            "utmos": 3.8528730869293213,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 0.9317101449275362,
+            "rms": 0.13486243784427643,
+            "peak": 0.7753058671951294,
+            "hf_ratio": 0.007312479428946972,
+            "synthesis_time_s": 1.5082876682281494,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The wagon moved on well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3924742341041565,
+            "utmos": 4.023131370544434,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 1.0992592592592592,
+            "rms": 0.14767251908779144,
+            "peak": 0.787541389465332,
+            "hf_ratio": 0.0019497426692396402,
+            "synthesis_time_s": 1.3719120025634766,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "March the soldiers back across the wide river.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41821756958961487,
+            "utmos": 4.412724018096924,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 0.909274074074074,
+            "rms": 0.1412157267332077,
+            "peak": 0.745315432548523,
+            "hf_ratio": 0.009400462731719017,
+            "synthesis_time_s": 1.5360429286956787,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4518871605396271,
+            "utmos": 3.911471128463745,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.9032845528455286,
+            "rms": 0.145080104470253,
+            "peak": 0.7454496026039124,
+            "hf_ratio": 0.007268683984875679,
+            "synthesis_time_s": 1.34159255027771,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.43652716279029846,
+            "utmos": 4.42466926574707,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.14316220581531525,
+            "peak": 0.8299753069877625,
+            "hf_ratio": 0.015327325090765953,
+            "synthesis_time_s": 1.3017985820770264,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3925010561943054,
+            "utmos": 4.327031135559082,
+            "duration_s": 2.688,
+            "duration_ratio": 0.9903157894736843,
+            "rms": 0.1423502415418625,
+            "peak": 0.7253149747848511,
+            "hf_ratio": 0.00726796081289649,
+            "synthesis_time_s": 1.3356261253356934,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "These days a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3591414988040924,
+            "utmos": 4.466757774353027,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.9496068376068376,
+            "rms": 0.1421349048614502,
+            "peak": 0.7559192180633545,
+            "hf_ratio": 0.019879581406712532,
+            "synthesis_time_s": 1.3005268573760986,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44733449816703796,
+            "utmos": 4.140196323394775,
+            "duration_s": 2.7306666666666666,
+            "duration_ratio": 1.0922666666666667,
+            "rms": 0.15338213741779327,
+            "peak": 0.7960776090621948,
+            "hf_ratio": 0.00580443162471056,
+            "synthesis_time_s": 1.3471262454986572,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.43226927518844604,
+            "utmos": 4.232552528381348,
+            "duration_s": 2.368,
+            "duration_ratio": 0.9208888888888888,
+            "rms": 0.14589008688926697,
+            "peak": 0.628044605255127,
+            "hf_ratio": 0.009961960837244987,
+            "synthesis_time_s": 1.1538925170898438,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4333931803703308,
+            "utmos": 4.418071269989014,
+            "duration_s": 2.506666666666667,
+            "duration_ratio": 1.032156862745098,
+            "rms": 0.13756562769412994,
+            "peak": 0.7943605780601501,
+            "hf_ratio": 0.006277014967054129,
+            "synthesis_time_s": 1.26859450340271,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4793194532394409,
+            "utmos": 3.828871011734009,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 0.8895072463768117,
+            "rms": 0.13824015855789185,
+            "peak": 0.8021897673606873,
+            "hf_ratio": 0.007929359562695026,
+            "synthesis_time_s": 1.4033706188201904,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The wagon moved on well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3897571563720703,
+            "utmos": 4.005465507507324,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 1.0287407407407407,
+            "rms": 0.14741671085357666,
+            "peak": 0.8354557752609253,
+            "hf_ratio": 0.0025605845730751753,
+            "synthesis_time_s": 1.3627803325653076,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "marched the soldiers back across the wide river.",
+            "wer": 0.125,
+            "cer": 0.05263157894736842,
+            "secs": 0.427869588136673,
+            "utmos": 4.403168201446533,
+            "duration_s": 3.3386666666666667,
+            "duration_ratio": 1.0386962962962962,
+            "rms": 0.12633071839809418,
+            "peak": 0.7624562978744507,
+            "hf_ratio": 0.012346567586064339,
+            "synthesis_time_s": 1.676985502243042,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-24 13:18:57 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 10,
+        "num_seeds": 2,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.0125,
+          "std": 0.03847418820319328,
+          "ci95": 0.016862056439486288,
+          "min": 0.0,
+          "max": 0.125,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.005263157894736842,
+          "std": 0.01619965819081822,
+          "ci95": 0.007099813237678437,
+          "min": 0.0,
+          "max": 0.05263157894736842,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6051643013954162,
+          "std": 0.04376055218349265,
+          "ci95": 0.019178907605382416,
+          "min": 0.5379449129104614,
+          "max": 0.6940346360206604,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.224824512004853,
+          "std": 0.1659082929345631,
+          "ci95": 0.0727125153223957,
+          "min": 3.76375150680542,
+          "max": 4.416661739349365,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9601771608668799,
+          "std": 0.1006801203683115,
+          "ci95": 0.044125008252775516,
+          "min": 0.8355555555555556,
+          "max": 1.2970666666666666,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6596813201904297,
+            "utmos": 3.9965648651123047,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.15609820187091827,
+            "peak": 0.6296021938323975,
+            "hf_ratio": 0.004888825584203005,
+            "synthesis_time_s": 1.4740657806396484,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6089125871658325,
+            "utmos": 4.223465442657471,
+            "duration_s": 2.592,
+            "duration_ratio": 0.864,
+            "rms": 0.1407701075077057,
+            "peak": 0.6301515102386475,
+            "hf_ratio": 0.0035431382711976767,
+            "synthesis_time_s": 1.310257911682129,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5464813709259033,
+            "utmos": 4.416661739349365,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.888140350877193,
+            "rms": 0.1457446813583374,
+            "peak": 0.6296876668930054,
+            "hf_ratio": 0.0033354253973811865,
+            "synthesis_time_s": 1.1875238418579102,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5379449129104614,
+            "utmos": 4.25496244430542,
+            "duration_s": 2.688,
+            "duration_ratio": 0.964923076923077,
+            "rms": 0.1553919017314911,
+            "peak": 0.6701086759567261,
+            "hf_ratio": 0.003539135679602623,
+            "synthesis_time_s": 1.3197286128997803,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5909034013748169,
+            "utmos": 4.37598991394043,
+            "duration_s": 2.368,
+            "duration_ratio": 0.9471999999999999,
+            "rms": 0.14982452988624573,
+            "peak": 0.8133642673492432,
+            "hf_ratio": 0.006922940723598003,
+            "synthesis_time_s": 1.158989667892456,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6940346360206604,
+            "utmos": 4.340099334716797,
+            "duration_s": 2.784,
+            "duration_ratio": 1.0826666666666664,
+            "rms": 0.1481035351753235,
+            "peak": 0.6437778472900391,
+            "hf_ratio": 0.00467855017632246,
+            "synthesis_time_s": 1.4060733318328857,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6470907926559448,
+            "utmos": 4.328049182891846,
+            "duration_s": 2.272,
+            "duration_ratio": 0.9355294117647058,
+            "rms": 0.14365479350090027,
+            "peak": 0.7228050231933594,
+            "hf_ratio": 0.003206085180863738,
+            "synthesis_time_s": 1.109222173690796,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6392472982406616,
+            "utmos": 4.3446125984191895,
+            "duration_s": 3.104,
+            "duration_ratio": 0.9446956521739132,
+            "rms": 0.14322739839553833,
+            "peak": 0.7649305462837219,
+            "hf_ratio": 0.00493684271350503,
+            "synthesis_time_s": 1.4994263648986816,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The wagon moved on well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5553956031799316,
+            "utmos": 4.281186580657959,
+            "duration_s": 2.506666666666667,
+            "duration_ratio": 0.9748148148148148,
+            "rms": 0.1532416045665741,
+            "peak": 0.7227672338485718,
+            "hf_ratio": 0.00111692666541785,
+            "synthesis_time_s": 1.2295122146606445,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "marched the soldiers back across the wide river.",
+            "wer": 0.125,
+            "cer": 0.05263157894736842,
+            "secs": 0.5589039325714111,
+            "utmos": 4.34588098526001,
+            "duration_s": 3.1573333333333333,
+            "duration_ratio": 0.9822814814814814,
+            "rms": 0.15089277923107147,
+            "peak": 0.764029324054718,
+            "hf_ratio": 0.003896522568538785,
+            "synthesis_time_s": 1.6052172183990479,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6538995504379272,
+            "utmos": 4.27939510345459,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 0.9979837398373985,
+            "rms": 0.15030796825885773,
+            "peak": 0.5989056825637817,
+            "hf_ratio": 0.005043318960815668,
+            "synthesis_time_s": 1.4011270999908447,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6058529019355774,
+            "utmos": 3.898078680038452,
+            "duration_s": 2.506666666666667,
+            "duration_ratio": 0.8355555555555556,
+            "rms": 0.15289941430091858,
+            "peak": 0.686600387096405,
+            "hf_ratio": 0.0028440491296350956,
+            "synthesis_time_s": 1.2264671325683594,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5804856419563293,
+            "utmos": 4.2414422035217285,
+            "duration_s": 2.272,
+            "duration_ratio": 0.8370526315789473,
+            "rms": 0.13448566198349,
+            "peak": 0.5709478855133057,
+            "hf_ratio": 0.005087145604193211,
+            "synthesis_time_s": 1.1446428298950195,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6246750354766846,
+            "utmos": 4.216763019561768,
+            "duration_s": 2.506666666666667,
+            "duration_ratio": 0.8998290598290599,
+            "rms": 0.15041226148605347,
+            "peak": 0.6453760862350464,
+            "hf_ratio": 0.004273350350558758,
+            "synthesis_time_s": 1.2840030193328857,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5766530632972717,
+            "utmos": 4.317943096160889,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 1.2970666666666666,
+            "rms": 0.13714908063411713,
+            "peak": 0.8268043994903564,
+            "hf_ratio": 0.005080436356365681,
+            "synthesis_time_s": 1.5691068172454834,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6349120736122131,
+            "utmos": 4.177969932556152,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.9914074074074073,
+            "rms": 0.15480877459049225,
+            "peak": 0.6408857107162476,
+            "hf_ratio": 0.0036611086688935757,
+            "synthesis_time_s": 1.2495105266571045,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6316170692443848,
+            "utmos": 4.345634937286377,
+            "duration_s": 2.2186666666666666,
+            "duration_ratio": 0.9135686274509804,
+            "rms": 0.14538900554180145,
+            "peak": 0.7716677784919739,
+            "hf_ratio": 0.002487571444362402,
+            "synthesis_time_s": 1.0891621112823486,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6113700270652771,
+            "utmos": 3.76375150680542,
+            "duration_s": 2.965333333333333,
+            "duration_ratio": 0.9024927536231884,
+            "rms": 0.1454145759344101,
+            "peak": 0.7160745859146118,
+            "hf_ratio": 0.00439861137419939,
+            "synthesis_time_s": 1.5149078369140625,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The wagon moved on well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.603256106376648,
+            "utmos": 4.195259094238281,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 1.0287407407407407,
+            "rms": 0.15768809616565704,
+            "peak": 0.7088441252708435,
+            "hf_ratio": 0.0012817097594961524,
+            "synthesis_time_s": 1.3179409503936768,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "marched the soldiers back across the wide river.",
+            "wer": 0.125,
+            "cer": 0.05263157894736842,
+            "secs": 0.5419687032699585,
+            "utmos": 4.152779579162598,
+            "duration_s": 3.008,
+            "duration_ratio": 0.9358222222222222,
+            "rms": 0.1283930391073227,
+            "peak": 0.7692318558692932,
+            "hf_ratio": 0.004790298640727997,
+            "synthesis_time_s": 1.492403507232666,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-24 13:19:53 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 10,
+        "num_seeds": 2,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6179196983575821,
+          "std": 0.049183147723944116,
+          "ci95": 0.02155546488499801,
+          "min": 0.49259644746780396,
+          "max": 0.6869628429412842,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.123762977123261,
+          "std": 0.2959706828112024,
+          "ci95": 0.12971487095812392,
+          "min": 3.404289484024048,
+          "max": 4.443212032318115,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0158930943062698,
+          "std": 0.1898749144325326,
+          "ci95": 0.08321635031504736,
+          "min": 0.8016842105263158,
+          "max": 1.4848000000000001,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6611821055412292,
+            "utmos": 3.928699254989624,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.11765928566455841,
+            "peak": 0.7613869905471802,
+            "hf_ratio": 0.03218510001897812,
+            "synthesis_time_s": 1.439155101776123,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6528502106666565,
+            "utmos": 3.9651265144348145,
+            "duration_s": 3.3386666666666667,
+            "duration_ratio": 1.1128888888888888,
+            "rms": 0.13179564476013184,
+            "peak": 0.785433828830719,
+            "hf_ratio": 0.006956219207495451,
+            "synthesis_time_s": 1.6526968479156494,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "It is easy to tell the depth of a well",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.538467288017273,
+            "utmos": 4.389368057250977,
+            "duration_s": 2.176,
+            "duration_ratio": 0.8016842105263158,
+            "rms": 0.13612931966781616,
+            "peak": 0.7993193864822388,
+            "hf_ratio": 0.0062255859375,
+            "synthesis_time_s": 1.0916533470153809,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6678231358528137,
+            "utmos": 3.6273012161254883,
+            "duration_s": 2.368,
+            "duration_ratio": 0.850051282051282,
+            "rms": 0.11839253455400467,
+            "peak": 0.6864653825759888,
+            "hf_ratio": 0.01263499166816473,
+            "synthesis_time_s": 1.1616804599761963,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6526013016700745,
+            "utmos": 3.87617826461792,
+            "duration_s": 3.4346666666666668,
+            "duration_ratio": 1.3738666666666668,
+            "rms": 0.12083631008863449,
+            "peak": 0.9114763736724854,
+            "hf_ratio": 0.024381527677178383,
+            "synthesis_time_s": 1.759139060974121,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6008011698722839,
+            "utmos": 3.8732235431671143,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.1905185185185183,
+            "rms": 0.11829040944576263,
+            "peak": 0.8382729887962341,
+            "hf_ratio": 0.02289794385433197,
+            "synthesis_time_s": 1.5041401386260986,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6120748519897461,
+            "utmos": 4.359043121337891,
+            "duration_s": 2.2186666666666666,
+            "duration_ratio": 0.9135686274509804,
+            "rms": 0.12919317185878754,
+            "peak": 0.9106898307800293,
+            "hf_ratio": 0.009987733326852322,
+            "synthesis_time_s": 1.1053664684295654,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6278149485588074,
+            "utmos": 4.420812129974365,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 0.8602898550724638,
+            "rms": 0.13026949763298035,
+            "peak": 0.8798918128013611,
+            "hf_ratio": 0.033405546098947525,
+            "synthesis_time_s": 1.5135829448699951,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The wagon moved on well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.626083493232727,
+            "utmos": 3.404289484024048,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.1905185185185183,
+            "rms": 0.12275061011314392,
+            "peak": 0.9123494029045105,
+            "hf_ratio": 0.009079082868993282,
+            "synthesis_time_s": 1.5120964050292969,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "March the soldiers back across the wide river.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6643702983856201,
+            "utmos": 3.860921859741211,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 1.1117037037037036,
+            "rms": 0.12955954670906067,
+            "peak": 0.783852756023407,
+            "hf_ratio": 0.0188143253326416,
+            "synthesis_time_s": 1.7793495655059814,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6045049428939819,
+            "utmos": 4.29557991027832,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.13250330090522766,
+            "peak": 0.9005576968193054,
+            "hf_ratio": 0.022407464683055878,
+            "synthesis_time_s": 1.4024107456207275,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6022236347198486,
+            "utmos": 4.392915725708008,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.13389210402965546,
+            "peak": 0.7409913539886475,
+            "hf_ratio": 0.0071802460588514805,
+            "synthesis_time_s": 1.3455157279968262,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49259644746780396,
+            "utmos": 4.197879791259766,
+            "duration_s": 2.368,
+            "duration_ratio": 0.8724210526315789,
+            "rms": 0.1309736669063568,
+            "peak": 0.751287579536438,
+            "hf_ratio": 0.005144576076418161,
+            "synthesis_time_s": 1.1613268852233887,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5399476885795593,
+            "utmos": 4.443212032318115,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.9151452991452992,
+            "rms": 0.1234443336725235,
+            "peak": 0.8041976690292358,
+            "hf_ratio": 0.013248627074062824,
+            "synthesis_time_s": 1.2695789337158203,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6869628429412842,
+            "utmos": 4.230055809020996,
+            "duration_s": 3.712,
+            "duration_ratio": 1.4848000000000001,
+            "rms": 0.1190105751156807,
+            "peak": 0.8421483039855957,
+            "hf_ratio": 0.03470151126384735,
+            "synthesis_time_s": 1.8118093013763428,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6154133081436157,
+            "utmos": 4.417237758636475,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.9914074074074073,
+            "rms": 0.12914903461933136,
+            "peak": 0.7928475141525269,
+            "hf_ratio": 0.014884117059409618,
+            "synthesis_time_s": 1.2563073635101318,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6056268811225891,
+            "utmos": 4.366237640380859,
+            "duration_s": 1.9946666666666666,
+            "duration_ratio": 0.8213333333333334,
+            "rms": 0.13204821944236755,
+            "peak": 0.8740796446800232,
+            "hf_ratio": 0.005947084631770849,
+            "synthesis_time_s": 0.9975583553314209,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6020939350128174,
+            "utmos": 4.345900058746338,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.8732753623188406,
+            "rms": 0.12882313132286072,
+            "peak": 0.8920791149139404,
+            "hf_ratio": 0.025221478193998337,
+            "synthesis_time_s": 1.385268211364746,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The wagon moved on, well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6376722455024719,
+            "utmos": 4.019916534423828,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.1905185185185183,
+            "rms": 0.12862075865268707,
+            "peak": 0.8614470362663269,
+            "hf_ratio": 0.00905525591224432,
+            "synthesis_time_s": 1.4986422061920166,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "March the soldiers back across the wide river.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6672832369804382,
+            "utmos": 4.061360836029053,
+            "duration_s": 2.965333333333333,
+            "duration_ratio": 0.922548148148148,
+            "rms": 0.12794767320156097,
+            "peak": 0.7580051422119141,
+            "hf_ratio": 0.014284953474998474,
+            "synthesis_time_s": 1.456493616104126,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-24 13:20:54 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 10,
+        "num_seeds": 2,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.00625,
+          "std": 0.027950849718747367,
+          "ci95": 0.012249999999999997,
+          "min": 0.0,
+          "max": 0.125,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.002631578947368421,
+          "std": 0.011768778828946263,
+          "ci95": 0.005157894736842106,
+          "min": 0.0,
+          "max": 0.05263157894736842,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6195351362228394,
+          "std": 0.049392134987874106,
+          "ci95": 0.02164705759179952,
+          "min": 0.5359300971031189,
+          "max": 0.7013217806816101,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.975456488132477,
+          "std": 0.21141713383776845,
+          "ci95": 0.09265764424240656,
+          "min": 3.466474771499634,
+          "max": 4.265340805053711,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1584711218340753,
+          "std": 0.2412153146648792,
+          "ci95": 0.10571727279771566,
+          "min": 0.8732753623188406,
+          "max": 1.984,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6381174921989441,
+            "utmos": 3.9926598072052,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.1329527199268341,
+            "peak": 0.9270344376564026,
+            "hf_ratio": 0.015978626906871796,
+            "synthesis_time_s": 1.3846197128295898,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6182736158370972,
+            "utmos": 3.736109972000122,
+            "duration_s": 3.8506666666666667,
+            "duration_ratio": 1.2835555555555556,
+            "rms": 0.1357523500919342,
+            "peak": 0.8708477020263672,
+            "hf_ratio": 0.00312649249099195,
+            "synthesis_time_s": 1.8857836723327637,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "it is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5388816595077515,
+            "utmos": 4.1462931632995605,
+            "duration_s": 2.7306666666666666,
+            "duration_ratio": 1.006035087719298,
+            "rms": 0.13418851792812347,
+            "peak": 0.9292398691177368,
+            "hf_ratio": 0.008383802138268948,
+            "synthesis_time_s": 1.3243989944458008,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6630895733833313,
+            "utmos": 3.9503161907196045,
+            "duration_s": 3.7546666666666666,
+            "duration_ratio": 1.3478290598290599,
+            "rms": 0.1273154318332672,
+            "peak": 0.9472522735595703,
+            "hf_ratio": 0.017047394067049026,
+            "synthesis_time_s": 1.8419315814971924,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6986950635910034,
+            "utmos": 3.750812530517578,
+            "duration_s": 3.477333333333333,
+            "duration_ratio": 1.3909333333333334,
+            "rms": 0.13001574575901031,
+            "peak": 0.9616753458976746,
+            "hf_ratio": 0.029810259118676186,
+            "synthesis_time_s": 1.666431188583374,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6037267446517944,
+            "utmos": 3.9098944664001465,
+            "duration_s": 2.7306666666666666,
+            "duration_ratio": 1.0619259259259257,
+            "rms": 0.13096503913402557,
+            "peak": 0.858517050743103,
+            "hf_ratio": 0.013708021491765976,
+            "synthesis_time_s": 1.3918085098266602,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5359300971031189,
+            "utmos": 3.9255247116088867,
+            "duration_s": 2.368,
+            "duration_ratio": 0.9750588235294118,
+            "rms": 0.13732142746448517,
+            "peak": 0.9827338457107544,
+            "hf_ratio": 0.005345865152776241,
+            "synthesis_time_s": 1.1602783203125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.590628981590271,
+            "utmos": 4.2569122314453125,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.8732753623188406,
+            "rms": 0.13974042236804962,
+            "peak": 0.955531656742096,
+            "hf_ratio": 0.02570057287812233,
+            "synthesis_time_s": 1.3938915729522705,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The wagon moved on, well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6155897378921509,
+            "utmos": 3.466474771499634,
+            "duration_s": 3.52,
+            "duration_ratio": 1.3688888888888888,
+            "rms": 0.12924812734127045,
+            "peak": 0.9374372363090515,
+            "hf_ratio": 0.003024224191904068,
+            "synthesis_time_s": 1.7380566596984863,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "marched the soldiers back across the wide river.",
+            "wer": 0.125,
+            "cer": 0.05263157894736842,
+            "secs": 0.5619937181472778,
+            "utmos": 3.990215539932251,
+            "duration_s": 3.7546666666666666,
+            "duration_ratio": 1.1681185185185186,
+            "rms": 0.12139818072319031,
+            "peak": 0.9202029705047607,
+            "hf_ratio": 0.013006957247853279,
+            "synthesis_time_s": 1.8611481189727783,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6523820161819458,
+            "utmos": 3.755486011505127,
+            "duration_s": 3.008,
+            "duration_ratio": 1.0271219512195122,
+            "rms": 0.1393955796957016,
+            "peak": 0.9286853075027466,
+            "hf_ratio": 0.01884295791387558,
+            "synthesis_time_s": 1.4684784412384033,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5993045568466187,
+            "utmos": 3.847311496734619,
+            "duration_s": 3.1573333333333333,
+            "duration_ratio": 1.0524444444444445,
+            "rms": 0.14808373153209686,
+            "peak": 0.9360338449478149,
+            "hf_ratio": 0.0023744392674416304,
+            "synthesis_time_s": 1.5078022480010986,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5824949741363525,
+            "utmos": 4.20207405090332,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.127859649122807,
+            "rms": 0.13793402910232544,
+            "peak": 0.9054684638977051,
+            "hf_ratio": 0.009522061794996262,
+            "synthesis_time_s": 1.5744235515594482,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "These days a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6711236834526062,
+            "utmos": 4.132939338684082,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 1.164034188034188,
+            "rms": 0.12594258785247803,
+            "peak": 0.9064051508903503,
+            "hf_ratio": 0.010511882603168488,
+            "synthesis_time_s": 1.5888190269470215,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7013217806816101,
+            "utmos": 3.7713851928710938,
+            "duration_s": 4.96,
+            "duration_ratio": 1.984,
+            "rms": 0.1273655891418457,
+            "peak": 0.9779067635536194,
+            "hf_ratio": 0.02310866490006447,
+            "synthesis_time_s": 2.428544044494629,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6970431804656982,
+            "utmos": 4.213925838470459,
+            "duration_s": 3.008,
+            "duration_ratio": 1.1697777777777776,
+            "rms": 0.13779741525650024,
+            "peak": 0.931463897228241,
+            "hf_ratio": 0.007803613785654306,
+            "synthesis_time_s": 1.5143959522247314,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6123963594436646,
+            "utmos": 4.120353698730469,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 1.0497254901960784,
+            "rms": 0.1382448822259903,
+            "peak": 0.9752589464187622,
+            "hf_ratio": 0.0031229595188051462,
+            "synthesis_time_s": 1.2500152587890625,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5795193910598755,
+            "utmos": 4.265340805053711,
+            "duration_s": 3.104,
+            "duration_ratio": 0.9446956521739132,
+            "rms": 0.14041543006896973,
+            "peak": 0.924768328666687,
+            "hf_ratio": 0.024657925590872765,
+            "synthesis_time_s": 1.5221905708312988,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The wagon moved on well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.611537516117096,
+            "utmos": 3.954254150390625,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 1.0992592592592592,
+            "rms": 0.13875606656074524,
+            "peak": 0.954353928565979,
+            "hf_ratio": 0.0019796998240053654,
+            "synthesis_time_s": 1.3743925094604492,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "march the soldiers back across the wide river.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6186525821685791,
+            "utmos": 4.120845794677734,
+            "duration_s": 3.52,
+            "duration_ratio": 1.0951111111111111,
+            "rms": 0.1282060593366623,
+            "peak": 0.9673315286636353,
+            "hf_ratio": 0.01079158578068018,
+            "synthesis_time_s": 1.7286381721496582,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-24 13:21:52 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 10,
+        "num_seeds": 2,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4647506058216095,
+          "std": 0.0405411337683056,
+          "ci95": 0.01776793527420533,
+          "min": 0.37804126739501953,
+          "max": 0.5333346724510193,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.022869741916656,
+          "std": 0.23371177827423978,
+          "ci95": 0.10242870297925749,
+          "min": 3.551248550415039,
+          "max": 4.3430705070495605,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0697602191151259,
+          "std": 0.10110463992580039,
+          "ci95": 0.044311062152086876,
+          "min": 0.9154782608695653,
+          "max": 1.3274074074074074,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "the birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4239044487476349,
+            "utmos": 3.9291858673095703,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.0453333333333334,
+            "rms": 0.14476440846920013,
+            "peak": 0.7455404996871948,
+            "hf_ratio": 0.05075057968497276,
+            "synthesis_time_s": 1.4603261947631836,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48388993740081787,
+            "utmos": 4.028311729431152,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 1.0808888888888888,
+            "rms": 0.14256471395492554,
+            "peak": 0.7972605228424072,
+            "hf_ratio": 0.017021549865603447,
+            "synthesis_time_s": 1.5605967044830322,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4558355212211609,
+            "utmos": 3.786531925201416,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.9745964912280701,
+            "rms": 0.15321828424930573,
+            "peak": 0.711195170879364,
+            "hf_ratio": 0.007280261255800724,
+            "synthesis_time_s": 1.3828542232513428,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.439993292093277,
+            "utmos": 4.319592475891113,
+            "duration_s": 3.104,
+            "duration_ratio": 1.1142564102564103,
+            "rms": 0.1370469182729721,
+            "peak": 0.7027262449264526,
+            "hf_ratio": 0.028979197144508362,
+            "synthesis_time_s": 1.560180902481079,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5186348557472229,
+            "utmos": 3.551248550415039,
+            "duration_s": 2.688,
+            "duration_ratio": 1.0752000000000002,
+            "rms": 0.13575851917266846,
+            "peak": 0.6036570072174072,
+            "hf_ratio": 0.043826449662446976,
+            "synthesis_time_s": 1.3129994869232178,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4722862243652344,
+            "utmos": 4.20088005065918,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 1.0287407407407407,
+            "rms": 0.1427280604839325,
+            "peak": 0.7588011026382446,
+            "hf_ratio": 0.03033878095448017,
+            "synthesis_time_s": 1.3403840065002441,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4204087555408478,
+            "utmos": 3.904132604598999,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.9926274509803923,
+            "rms": 0.16151230037212372,
+            "peak": 0.9387491941452026,
+            "hf_ratio": 0.014672582969069481,
+            "synthesis_time_s": 1.176544427871704,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4784957468509674,
+            "utmos": 4.26342248916626,
+            "duration_s": 3.008,
+            "duration_ratio": 0.9154782608695653,
+            "rms": 0.147474467754364,
+            "peak": 0.7656865119934082,
+            "hf_ratio": 0.04425539821386337,
+            "synthesis_time_s": 1.4216933250427246,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The wagon moved on, well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5263301134109497,
+            "utmos": 4.176980495452881,
+            "duration_s": 2.7306666666666666,
+            "duration_ratio": 1.0619259259259257,
+            "rms": 0.1488271802663803,
+            "peak": 0.8510128259658813,
+            "hf_ratio": 0.007163366302847862,
+            "synthesis_time_s": 1.2967338562011719,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "March the soldiers back across the wide river.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4199526309967041,
+            "utmos": 4.1820807456970215,
+            "duration_s": 3.52,
+            "duration_ratio": 1.0951111111111111,
+            "rms": 0.14054137468338013,
+            "peak": 0.7305670976638794,
+            "hf_ratio": 0.04178975895047188,
+            "synthesis_time_s": 1.6952989101409912,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.37804126739501953,
+            "utmos": 4.0831708908081055,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.0453333333333334,
+            "rms": 0.1596268266439438,
+            "peak": 0.8256978988647461,
+            "hf_ratio": 0.04077969491481781,
+            "synthesis_time_s": 1.4977056980133057,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4751284122467041,
+            "utmos": 3.6613593101501465,
+            "duration_s": 3.2,
+            "duration_ratio": 1.0666666666666667,
+            "rms": 0.13303425908088684,
+            "peak": 0.6669244766235352,
+            "hf_ratio": 0.010305557399988174,
+            "synthesis_time_s": 1.5607235431671143,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "It is easy to tell the depth of a well",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.43855470418930054,
+            "utmos": 4.3430705070495605,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.9392280701754385,
+            "rms": 0.1592165231704712,
+            "peak": 0.7521368265151978,
+            "hf_ratio": 0.008522299118340015,
+            "synthesis_time_s": 1.2431128025054932,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_03"
+          },
+          {
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4364944100379944,
+            "utmos": 4.145700454711914,
+            "duration_s": 3.296,
+            "duration_ratio": 1.1831794871794872,
+            "rms": 0.14038726687431335,
+            "peak": 0.7423814535140991,
+            "hf_ratio": 0.019090091809630394,
+            "synthesis_time_s": 1.6750767230987549,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_04"
+          },
+          {
+            "text": "Rice is often served in round bowls.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Rice is often served in round bowls.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5133657455444336,
+            "utmos": 3.7757151126861572,
+            "duration_s": 2.965333333333333,
+            "duration_ratio": 1.1861333333333333,
+            "rms": 0.14513082802295685,
+            "peak": 0.8561891317367554,
+            "hf_ratio": 0.04327557981014252,
+            "synthesis_time_s": 1.4368820190429688,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_05"
+          },
+          {
+            "text": "The juice of lemons makes fine punch.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The juice of lemons makes fine punch.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5333346724510193,
+            "utmos": 3.717844009399414,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 1.1365925925925926,
+            "rms": 0.14697782695293427,
+            "peak": 0.7236740589141846,
+            "hf_ratio": 0.024949923157691956,
+            "synthesis_time_s": 1.4336318969726562,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_06"
+          },
+          {
+            "text": "A box of red pens was on the table.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "A box of red pens was on the table.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44417405128479004,
+            "utmos": 4.273974418640137,
+            "duration_s": 2.368,
+            "duration_ratio": 0.9750588235294118,
+            "rms": 0.16068318486213684,
+            "peak": 0.9025092124938965,
+            "hf_ratio": 0.014958568848669529,
+            "synthesis_time_s": 1.164363145828247,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_07"
+          },
+          {
+            "text": "The salt breeze came through from the open sea.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The salt breeze came through from the open sea.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4873310327529907,
+            "utmos": 4.192543983459473,
+            "duration_s": 3.1573333333333333,
+            "duration_ratio": 0.9609275362318841,
+            "rms": 0.13027915358543396,
+            "peak": 0.8509337902069092,
+            "hf_ratio": 0.08293910324573517,
+            "synthesis_time_s": 1.5344736576080322,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_08"
+          },
+          {
+            "text": "The wagon moved on well oiled wheels.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The wagon moved on, well-oiled wheels.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48642832040786743,
+            "utmos": 4.007245063781738,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.1905185185185183,
+            "rms": 0.14364507794380188,
+            "peak": 0.6373224258422852,
+            "hf_ratio": 0.008119321428239346,
+            "synthesis_time_s": 1.4829237461090088,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_09"
+          },
+          {
+            "text": "March the soldiers back across the wide river.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "March, the soldiers back across the wide river.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4624279737472534,
+            "utmos": 3.9144041538238525,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 1.3274074074074074,
+            "rms": 0.1360156536102295,
+            "peak": 0.6421748995780945,
+            "hf_ratio": 0.04747053608298302,
+            "synthesis_time_s": 2.0694222450256348,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_10"
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

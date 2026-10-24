@@ -1,124 +1,116 @@
-"""Dataset and Dataloader for Latent HiFi-GAN Vocoder training."""
+"""Dataset for Stage 3: ground-truth audio segments paired with the decoder input that produces them.
+
+The GPT latents of each whole clip are interpolated to decoder frames first (hifigan_decoder_input, exactly
+HifiDecoder.forward's input stage), then a window of frames and the matching audio are cut. Each decoder
+frame becomes exactly SPEC.output_hop_length output samples, so frame i <-> samples [i*hop, (i+1)*hop): the
+alignment holds by construction, and the window edges are interpolated with their real neighbours. (Slicing
+latents first and interpolating each slice, as before, interpolated the window edges against nothing.)
+"""
 
 import os
-import random
+from types import SimpleNamespace
+from typing import List, Tuple
+
 import torch
-import torchaudio
 from torch.utils.data import Dataset
-from typing import List, Tuple, Optional
-from xtts_trainer.config import safe_torch_load, load_audio
+
+from xtts_trainer.config import load_audio
+from xtts_trainer.data import DatasetRecord
+from xtts_trainer.data.latents import StaleLatentError, load_latent
+from xtts_trainer.models import hifigan_decoder_input
+from xtts_trainer.spec import SPEC
+from xtts_trainer.stage3_hifigan.extract_latents import latent_filename
+
+SPEECH_RMS = 0.015  # windows quieter than this are re-drawn (up to 8 tries, then a scan)
+
+
+def load_pair(audio_path: str, latent_path: str, checkpoint_sha256: str, allow_synthetic: bool):
+    """(audio [1, T], latents [1, T_lat, C], speaker embedding [512, 1]) for one clip."""
+    waveform, _ = load_audio(audio_path, target_sr=SPEC.output_sample_rate)
+    payload = load_latent(latent_path, audio_path, checkpoint_sha256, allow_synthetic)
+    latents = payload["gpt_latents"]
+    if latents.ndim == 2:
+        latents = latents.unsqueeze(0)
+    speaker = payload["speaker_embedding"].reshape(SPEC.d_vector_dim, 1)
+    return waveform, latents, speaker
 
 
 class LatentHiFiGANDataset(Dataset):
-    """Dataset pairing ground-truth 24kHz audio with temporal GPT latents and speaker embeddings."""
+    """Items: (audio [1, n*hop], decoder frames [C, n], speaker embedding [512, 1]) with n <= segment_frames.
 
-    def __init__(
-        self,
-        audio_dir: str,
-        latents_dir: str,
-        latent_frames_slice: int = 16,
-        sample_rate: int = 24000,
-    ):
+    n is the segment length unless the clip is shorter; collate_segments crops a batch to its shortest item.
+    Records come from a validated dataset.jsonl; every latent file must pass the latent schema and come from
+    one GPT checkpoint.
+    """
+
+    def __init__(self, records: List[DatasetRecord], dataset_dir: str, latents_dir: str, decoder=None,
+                 segment_frames: int = 64, allow_synthetic_latents: bool = False):
         super().__init__()
-        self.audio_dir = audio_dir
-        self.latents_dir = latents_dir
-        self.latent_frames_slice = latent_frames_slice
-        self.sample_rate = sample_rate
-
-        # 16 latent frames produces int(16 * 4 * 24000 / 22050) * 256 = 17,664 audio samples @ 24kHz
-        self.audio_samples_slice = int(latent_frames_slice * 4 * (24000 / 22050)) * 256
-
-        if not os.path.isdir(audio_dir):
-            raise FileNotFoundError(f"Audio directory does not exist: {audio_dir}")
         if not os.path.isdir(latents_dir):
             raise FileNotFoundError(f"Latents directory does not exist: {latents_dir}")
-
-        self.items = []
-        for file in sorted(os.listdir(latents_dir)):
-            if file.endswith(".pt"):
-                base_name = os.path.splitext(file)[0]
-                audio_path = os.path.join(audio_dir, f"{base_name}.wav")
-                latent_path = os.path.join(latents_dir, file)
-                if os.path.exists(audio_path):
-                    self.items.append((audio_path, latent_path))
-
+        # Only the interpolation settings; the module itself (possibly on GPU) stays out of loader workers.
+        # Without a decoder, the spec's values (the ones build_hifigan uses).
+        keys = ("ar_mel_length_compression", "output_hop_length", "input_sample_rate", "output_sample_rate")
+        spec_values = (SPEC.gpt.code_stride_len, SPEC.output_hop_length, SPEC.gpt_sample_rate, SPEC.output_sample_rate)
+        self.decoder = SimpleNamespace(**({k: getattr(decoder, k) for k in keys} if decoder is not None
+                                          else dict(zip(keys, spec_values))))
+        self.segment_frames = segment_frames
+        self.hop = SPEC.output_hop_length
+        self.allow_synthetic_latents = allow_synthetic_latents
+        self.items, missing, checkpoints = [], [], set()
+        for record in records:
+            audio_path = record.audio_path(dataset_dir)
+            latent_path = os.path.join(latents_dir, latent_filename(record.audio))
+            if not os.path.exists(latent_path):
+                missing.append(latent_path)
+                continue
+            checkpoints.add(load_latent(latent_path, audio_path, allow_synthetic=allow_synthetic_latents)["checkpoint_sha256"])
+            self.items.append((audio_path, latent_path))
+        if missing:
+            raise FileNotFoundError(f"{len(missing)} clip(s) have no latent file, e.g. {missing[:3]}; run extract_latents")
+        if len(checkpoints) > 1:
+            raise StaleLatentError(f"Latents come from {len(checkpoints)} different GPT checkpoints; re-extract them all")
         if not self.items:
-            raise ValueError(f"No matching .wav and .pt files found between {audio_dir} and {latents_dir}")
+            raise ValueError(f"No clips to train on in {latents_dir}")
+        self.checkpoint_sha256 = checkpoints.pop()
 
     def __len__(self) -> int:
         return len(self.items)
 
+    def full_clip(self, index: int):
+        """(audio, latents, speaker) of a whole clip, for validation."""
+        return load_pair(*self.items[index], self.checkpoint_sha256, self.allow_synthetic_latents)
+
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        audio_path, latent_path = self.items[index]
+        waveform, latents, speaker = self.full_clip(index)
+        with torch.no_grad():
+            z = hifigan_decoder_input(self.decoder, latents)[0]  # [C, F] for the whole clip
+        n_frames = min(z.shape[-1], waveform.shape[-1] // self.hop)
+        n = min(self.segment_frames, n_frames)
+        max_start = n_frames - n
 
-        # 1. Load Audio at 24000 Hz
-        waveform, _ = load_audio(audio_path, target_sr=self.sample_rate)
+        def window(start):
+            return waveform[:, start * self.hop:(start + n) * self.hop], z[:, start:start + n]
 
-        # 2. Load Latents
-        latent_data = safe_torch_load(latent_path, map_location="cpu")
-        if isinstance(latent_data, dict):
-            gpt_latents = latent_data["gpt_latents"]
-            speaker_emb = latent_data.get("speaker_embedding", torch.zeros(1, 512, 1))
-        else:
-            gpt_latents = latent_data
-            speaker_emb = torch.zeros(1, 512, 1)
-
-        # Ensure latent shape is [T_lat, 1024]
-        if gpt_latents.ndim == 3:
-            gpt_latents = gpt_latents.squeeze(0)
-        if gpt_latents.shape[-1] != 1024 and gpt_latents.shape[0] == 1024:
-            gpt_latents = gpt_latents.t()
-
-        if speaker_emb.ndim == 3:
-            speaker_emb = speaker_emb.squeeze(0)  # [512, 1]
-        elif speaker_emb.ndim == 1:
-            speaker_emb = speaker_emb.unsqueeze(-1)  # [512, 1]
-
-        # 3. Synchronized Segment Slicing
-        latent_len = gpt_latents.shape[0]
-        audio_len = waveform.shape[-1]
-
-        # Pad if shorter than required window
-        if latent_len < self.latent_frames_slice:
-            pad_lat = self.latent_frames_slice - latent_len
-            gpt_latents = torch.nn.functional.pad(gpt_latents, (0, 0, 0, pad_lat))
-            latent_len = self.latent_frames_slice
-
-        if audio_len < self.audio_samples_slice:
-            pad_audio = self.audio_samples_slice - audio_len
-            waveform = torch.nn.functional.pad(waveform, (0, pad_audio))
-            audio_len = self.audio_samples_slice
-
-        # Compute valid synchronized random slice offsets with silence rejection.
-        # Constrain max_latent_start by both latent_len and audio_len to prevent independent clamping
-        # and guarantee 100% temporal alignment between latent frames and waveform samples.
-        samples_per_latent = 4 * (24000 / 22050) * 256
-        max_latent_by_audio = (
-            int((audio_len - self.audio_samples_slice) / samples_per_latent)
-            if audio_len >= self.audio_samples_slice
-            else 0
-        )
-        max_latent_start = max(0, min(latent_len - self.latent_frames_slice, max_latent_by_audio))
-
-        best_slice = None
-        best_rms = -1.0
-
-        # Try up to 8 random windows to sample active speech rather than silence
-        for _ in range(8):
-            latent_start = random.randint(0, max_latent_start) if max_latent_start > 0 else 0
-            audio_start = int(round(latent_start * samples_per_latent))
-
-            waveform_slice = waveform[:, audio_start : audio_start + self.audio_samples_slice]
-            latents_slice = gpt_latents[latent_start : latent_start + self.latent_frames_slice, :]
-
-            rms = torch.sqrt(torch.mean(waveform_slice ** 2)).item()
+        best, best_rms = None, -1.0
+        # torch's RNG, not python's: it is seeded and restored with the run, and DataLoader seeds it per worker
+        starts = torch.randint(0, max_start + 1, (8,)).tolist()
+        starts += list(range(0, max_start + 1, max(1, max_start // 8)))  # deterministic scan as a fallback
+        for start in starts:
+            audio, frames = window(start)
+            rms = float(audio.pow(2).mean().sqrt())
             if rms > best_rms:
-                best_rms = rms
-                best_slice = (waveform_slice, latents_slice)
-
-            # Accept immediately if above speech RMS threshold (0.015)
-            if rms >= 0.015:
+                best, best_rms = (audio, frames), rms
+            if rms >= SPEECH_RMS:
                 break
+        return best[0], best[1], speaker
 
-        waveform_slice, latents_slice = best_slice
-        return waveform_slice, latents_slice, speaker_emb
+
+def collate_segments(batch):
+    """Crop every item to the batch's shortest segment (audio and frames together)."""
+    n = min(frames.shape[-1] for _, frames, _ in batch)
+    hop = SPEC.output_hop_length
+    audio = torch.stack([a[:, :n * hop] for a, _, _ in batch])
+    frames = torch.stack([f[:, :n] for _, f, _ in batch])
+    speakers = torch.stack([s for _, _, s in batch])
+    return audio, frames, speakers

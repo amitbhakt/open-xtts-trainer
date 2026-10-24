@@ -1,0 +1,715 @@
+{
+  "description": "Stock base XTTS-v2 baseline, measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-24 14:54:03 UTC",
+  "git": {
+    "commit_sha": "unknown",
+    "is_dirty": null
+  },
+  "code_fingerprint": {
+    "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+    "n_files": 49
+  },
+  "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+  "checkpoint_sha256": {
+    "model.pth": "3077a05b879ba5c2bcf336a0cca4ffb493f97980fd1d61f8ab6ee0e6d6f56c9a",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "seeds": [
+    42
+  ],
+  "subset_size": 2,
+  "languages": [
+    "en"
+  ],
+  "summary_by_language": {
+    "en": {
+      "wer": {
+        "mean": 0.1,
+        "std": 0.10540925533894599,
+        "ci95": 0.06533333333333334,
+        "min": 0.0,
+        "max": 0.2,
+        "n": 10,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci95": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "n": 10,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.557713407278061,
+        "std": 0.08859403616188387,
+        "ci95": 0.05491115251025948,
+        "min": 0.4239044487476349,
+        "max": 0.6611821055412292,
+        "n": 10,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 4.014990067481994,
+        "std": 0.23294123974276462,
+        "ci95": 0.14437847619981234,
+        "min": 3.63386869430542,
+        "max": 4.33027458190918,
+        "n": 10,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 0.9735804878048782,
+        "std": 0.07623235800934176,
+        "ci95": 0.047249305012120296,
+        "min": 0.8231544715447155,
+        "max": 1.1013333333333333,
+        "n": 10,
+        "n_nan": 0
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 0,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-24 14:53:32 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.1,
+          "std": 0.14142135623730953,
+          "ci95": 0.19600000000000004,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.49435965716838837,
+          "std": 0.02395317090022662,
+          "ci95": 0.03319740116596222,
+          "min": 0.47742220759391785,
+          "max": 0.5112971067428589,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.308567523956299,
+          "std": 0.01935383283620254,
+          "ci95": 0.026823043823242188,
+          "min": 4.294882297515869,
+          "max": 4.3222527503967285,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.8875772357723577,
+          "std": 0.09110754689629588,
+          "ci95": 0.1262686178861787,
+          "min": 0.8231544715447155,
+          "max": 0.952,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47742220759391785,
+            "utmos": 4.294882297515869,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.8231544715447155,
+            "rms": 0.1537577360868454,
+            "peak": 0.7505782842636108,
+            "hf_ratio": 0.00706390431150794,
+            "synthesis_time_s": 1.6417033672332764,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5112971067428589,
+            "utmos": 4.3222527503967285,
+            "duration_s": 3.808,
+            "duration_ratio": 0.952,
+            "rms": 0.139756977558136,
+            "peak": 0.7339085340499878,
+            "hf_ratio": 0.02676631137728691,
+            "synthesis_time_s": 1.8958396911621094,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-24 14:53:40 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.1,
+          "std": 0.14142135623730953,
+          "ci95": 0.19600000000000004,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6176280677318573,
+          "std": 0.059472279968812776,
+          "ci95": 0.08242437481880188,
+          "min": 0.5755748152732849,
+          "max": 0.6596813201904297,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.163419723510742,
+          "std": 0.23596840369491262,
+          "ci95": 0.3270355224609375,
+          "min": 3.9965648651123047,
+          "max": 4.33027458190918,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9765528455284553,
+          "std": 0.00455307781056712,
+          "ci95": 0.006310243902439138,
+          "min": 0.9733333333333334,
+          "max": 0.9797723577235774,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6596813201904297,
+            "utmos": 3.9965648651123047,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.15609820187091827,
+            "peak": 0.6296021938323975,
+            "hf_ratio": 0.004888825584203005,
+            "synthesis_time_s": 1.3695735931396484,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5755748152732849,
+            "utmos": 4.33027458190918,
+            "duration_s": 3.8933333333333335,
+            "duration_ratio": 0.9733333333333334,
+            "rms": 0.1349271684885025,
+            "peak": 0.6807698011398315,
+            "hf_ratio": 0.014371663331985474,
+            "synthesis_time_s": 1.828904390335083,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-24 14:53:47 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.1,
+          "std": 0.14142135623730953,
+          "ci95": 0.19600000000000004,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6069895029067993,
+          "std": 0.07663991362590673,
+          "ci95": 0.10621750116348266,
+          "min": 0.5527969002723694,
+          "max": 0.6611821055412292,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.925800323486328,
+          "std": 0.004099708248351684,
+          "ci95": 0.00568190574645996,
+          "min": 3.9229013919830322,
+          "max": 3.928699254989624,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9365528455284553,
+          "std": 0.061121620305490974,
+          "ci95": 0.0847102439024392,
+          "min": 0.8933333333333333,
+          "max": 0.9797723577235774,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6611821055412292,
+            "utmos": 3.928699254989624,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.11765928566455841,
+            "peak": 0.7613869905471802,
+            "hf_ratio": 0.03218510001897812,
+            "synthesis_time_s": 1.3597674369812012,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5527969002723694,
+            "utmos": 3.9229013919830322,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 0.8933333333333333,
+            "rms": 0.11907739192247391,
+            "peak": 0.7802762389183044,
+            "hf_ratio": 0.03821660950779915,
+            "synthesis_time_s": 1.728344202041626,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-24 14:53:55 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.1,
+          "std": 0.14142135623730953,
+          "ci95": 0.19600000000000004,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6323519051074982,
+          "std": 0.00815377145976607,
+          "ci95": 0.011300550699234007,
+          "min": 0.6265863180160522,
+          "max": 0.6381174921989441,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.81326425075531,
+          "std": 0.2537036289609028,
+          "ci95": 0.3516152906417847,
+          "min": 3.63386869430542,
+          "max": 3.9926598072052,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0405528455284554,
+          "std": 0.08595659018131088,
+          "ci95": 0.11912975609756074,
+          "min": 0.9797723577235774,
+          "max": 1.1013333333333333,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6381174921989441,
+            "utmos": 3.9926598072052,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.1329527199268341,
+            "peak": 0.9270344376564026,
+            "hf_ratio": 0.015978626906871796,
+            "synthesis_time_s": 1.3733594417572021,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.6265863180160522,
+            "utmos": 3.63386869430542,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 1.1013333333333333,
+            "rms": 0.12209731340408325,
+            "peak": 0.9404118061065674,
+            "hf_ratio": 0.047972746193408966,
+            "synthesis_time_s": 2.161269187927246,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-24 14:54:03 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.1,
+          "std": 0.14142135623730953,
+          "ci95": 0.19600000000000004,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4372379034757614,
+          "std": 0.018856352509804202,
+          "ci95": 0.026133571267127988,
+          "min": 0.4239044487476349,
+          "max": 0.45057135820388794,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.863898515701294,
+          "std": 0.09233025809584534,
+          "ci95": 0.12796320915222167,
+          "min": 3.7986111640930176,
+          "max": 3.9291858673095703,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0266666666666668,
+          "std": 0.02639865316429785,
+          "ci95": 0.03658666666666677,
+          "min": 1.008,
+          "max": 1.0453333333333334,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "the birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4239044487476349,
+            "utmos": 3.9291858673095703,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.0453333333333334,
+            "rms": 0.14476440846920013,
+            "peak": 0.7455404996871948,
+            "hf_ratio": 0.05075057968497276,
+            "synthesis_time_s": 1.4793798923492432,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.45057135820388794,
+            "utmos": 3.7986111640930176,
+            "duration_s": 4.032,
+            "duration_ratio": 1.008,
+            "rms": 0.14303584396839142,
+            "peak": 0.6500289440155029,
+            "hf_ratio": 0.06170673295855522,
+            "synthesis_time_s": 1.9488928318023682,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

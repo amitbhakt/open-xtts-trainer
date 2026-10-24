@@ -1,0 +1,691 @@
+{
+  "description": "Stock base XTTS-v2 baseline, measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-24 13:15:57 UTC",
+  "git": {
+    "commit_sha": "unknown",
+    "is_dirty": false
+  },
+  "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+  "checkpoint_sha256": {
+    "model.pth": "3077a05b879ba5c2bcf336a0cca4ffb493f97980fd1d61f8ab6ee0e6d6f56c9a",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "seeds": [
+    42
+  ],
+  "subset_size": 2,
+  "languages": [
+    "en"
+  ],
+  "summary_by_language": {
+    "en": {
+      "wer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci95": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "n": 10,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.0,
+        "std": 0.0,
+        "ci95": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "n": 10,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.5725874364376068,
+        "std": 0.09045636091178937,
+        "ci95": 0.056065433348970024,
+        "min": 0.4239044487476349,
+        "max": 0.6611821055412292,
+        "n": 10,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 4.041479516029358,
+        "std": 0.1837183576905534,
+        "ci95": 0.11386981782438146,
+        "min": 3.736109972000122,
+        "max": 4.319789409637451,
+        "n": 10,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 0.9998915989159893,
+        "std": 0.13956686561168366,
+        "ci95": 0.08650443951981572,
+        "min": 0.8231544715447155,
+        "max": 1.2835555555555556,
+        "n": 10,
+        "n_nan": 0
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 0,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-24 13:15:29 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4895313233137131,
+          "std": 0.017124875679279655,
+          "ci95": 0.023733866810798643,
+          "min": 0.47742220759391785,
+          "max": 0.5016404390335083,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.30733585357666,
+          "std": 0.01761198788094431,
+          "ci95": 0.02440896987915039,
+          "min": 4.294882297515869,
+          "max": 4.319789409637451,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.8364661246612466,
+          "std": 0.018825520375004356,
+          "ci95": 0.026090840108400952,
+          "min": 0.8231544715447155,
+          "max": 0.8497777777777777,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47742220759391785,
+            "utmos": 4.294882297515869,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.8231544715447155,
+            "rms": 0.1537577360868454,
+            "peak": 0.7505782842636108,
+            "hf_ratio": 0.00706390431150794,
+            "synthesis_time_s": 1.6871354579925537,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5016404390335083,
+            "utmos": 4.319789409637451,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.8497777777777777,
+            "rms": 0.14810694754123688,
+            "peak": 0.8341595530509949,
+            "hf_ratio": 0.018010489642620087,
+            "synthesis_time_s": 1.3404080867767334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-24 13:15:36 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6342969536781311,
+          "std": 0.03589891539394208,
+          "ci95": 0.049753358364105216,
+          "min": 0.6089125871658325,
+          "max": 0.6596813201904297,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.110015153884888,
+          "std": 0.16044293703733095,
+          "ci95": 0.22236256599426268,
+          "min": 3.9965648651123047,
+          "max": 4.223465442657471,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9218861788617887,
+          "std": 0.08186341922029636,
+          "ci95": 0.11345691056910584,
+          "min": 0.864,
+          "max": 0.9797723577235774,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6596813201904297,
+            "utmos": 3.9965648651123047,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.15609820187091827,
+            "peak": 0.6296021938323975,
+            "hf_ratio": 0.004888825584203005,
+            "synthesis_time_s": 1.4451324939727783,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6089125871658325,
+            "utmos": 4.223465442657471,
+            "duration_s": 2.592,
+            "duration_ratio": 0.864,
+            "rms": 0.1407701075077057,
+            "peak": 0.6301515102386475,
+            "hf_ratio": 0.0035431382711976767,
+            "synthesis_time_s": 1.3609888553619385,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-24 13:15:43 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6570161581039429,
+          "std": 0.005891539365943833,
+          "ci95": 0.008165256977081297,
+          "min": 0.6528502106666565,
+          "max": 0.6611821055412292,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.9469128847122192,
+          "std": 0.025757962173735865,
+          "ci95": 0.035698714256286616,
+          "min": 3.928699254989624,
+          "max": 3.9651265144348145,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.046330623306233,
+          "std": 0.09412760187502209,
+          "ci95": 0.13045420054200516,
+          "min": 0.9797723577235774,
+          "max": 1.1128888888888888,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6611821055412292,
+            "utmos": 3.928699254989624,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.11765928566455841,
+            "peak": 0.7613869905471802,
+            "hf_ratio": 0.03218510001897812,
+            "synthesis_time_s": 1.461441993713379,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6528502106666565,
+            "utmos": 3.9651265144348145,
+            "duration_s": 3.3386666666666667,
+            "duration_ratio": 1.1128888888888888,
+            "rms": 0.13179564476013184,
+            "peak": 0.785433828830719,
+            "hf_ratio": 0.006956219207495451,
+            "synthesis_time_s": 1.665398359298706,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-24 13:15:50 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6281955540180206,
+          "std": 0.014031739540489396,
+          "ci95": 0.019446998834609985,
+          "min": 0.6182736158370972,
+          "max": 0.6381174921989441,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.864384889602661,
+          "std": 0.18140812818580201,
+          "ci95": 0.25141883850097657,
+          "min": 3.736109972000122,
+          "max": 3.9926598072052,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1316639566395665,
+          "std": 0.21480715919752624,
+          "ci95": 0.29770753387533855,
+          "min": 0.9797723577235774,
+          "max": 1.2835555555555556,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6381174921989441,
+            "utmos": 3.9926598072052,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.1329527199268341,
+            "peak": 0.9270344376564026,
+            "hf_ratio": 0.015978626906871796,
+            "synthesis_time_s": 1.4200620651245117,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6182736158370972,
+            "utmos": 3.736109972000122,
+            "duration_s": 3.8506666666666667,
+            "duration_ratio": 1.2835555555555556,
+            "rms": 0.1357523500919342,
+            "peak": 0.8708477020263672,
+            "hf_ratio": 0.00312649249099195,
+            "synthesis_time_s": 1.964695930480957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-24 13:15:57 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "48a03766807dad268745b89c59ce23504d35ae8ca979e48f0e8d86ca3b435278",
+      "reference_audio": "eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "language": "en",
+      "seeds": [
+        42
+      ],
+      "summary": {
+        "num_sentences": 2,
+        "num_seeds": 1,
+        "total_evaluations": 2,
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 2,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4538971930742264,
+          "std": 0.04241614579945439,
+          "ci95": 0.058785778880119315,
+          "min": 0.4239044487476349,
+          "max": 0.48388993740081787,
+          "n": 2,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.9787487983703613,
+          "std": 0.07009256929713338,
+          "ci95": 0.09714334487915038,
+          "min": 3.9291858673095703,
+          "max": 4.028311729431152,
+          "n": 2,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0631111111111111,
+          "std": 0.025141574442188203,
+          "ci95": 0.034844444444444234,
+          "min": 1.0453333333333334,
+          "max": 1.0808888888888888,
+          "n": 2,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "the birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4239044487476349,
+            "utmos": 3.9291858673095703,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.0453333333333334,
+            "rms": 0.14476440846920013,
+            "peak": 0.7455404996871948,
+            "hf_ratio": 0.05075057968497276,
+            "synthesis_time_s": 1.5057990550994873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48388993740081787,
+            "utmos": 4.028311729431152,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 1.0808888888888888,
+            "rms": 0.14256471395492554,
+            "peak": 0.7972605228424072,
+            "hf_ratio": 0.017021549865603447,
+            "synthesis_time_s": 1.6089363098144531,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

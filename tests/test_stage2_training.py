@@ -8,14 +8,10 @@ import torch
 import torchaudio
 import pytest
 
+from dataset_helpers import write_test_dataset
+
 from xtts_trainer.stage2_gpt.vocab_extender import extend_vocab, resize_gpt_embeddings
-from xtts_trainer.stage2_gpt.train import (
-    GPTTextAudioDataset,
-    collate_gpt_batch,
-    build_gpt_model,
-    train_gpt,
-)
-from xtts_trainer.config import safe_torch_load
+from xtts_trainer.models import build_gpt, safe_torch_load
 from TTS.tts.layers.xtts.gpt import GPT
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
@@ -58,6 +54,7 @@ def create_dummy_vocab_json(path: str) -> dict:
         "w": 24,
         "y": 25,
         "[START]": 26,
+        "[en]": 27,
     }
     data = {
         "version": "1.0",
@@ -68,6 +65,7 @@ def create_dummy_vocab_json(path: str) -> dict:
             {"id": 1, "content": "[UNK]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
             {"id": 2, "content": "[SPACE]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
             {"id": 26, "content": "[START]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
+            {"id": 27, "content": "[en]", "single_word": False, "lstrip": False, "rstrip": False, "normalized": False, "special": True},
         ],
         "normalizer": None,
         "pre_tokenizer": None,
@@ -77,6 +75,7 @@ def create_dummy_vocab_json(path: str) -> dict:
             "type": "BPE",
             "vocab": vocab,
             "merges": [],
+            "unk_token": "[UNK]",
         },
     }
     with open(path, "w", encoding="utf-8") as f:
@@ -146,8 +145,10 @@ def test_vocab_extender_resizes_embedding_and_head():
     assert torch.allclose(gpt.text_head.weight[:old_vocab_size, :], orig_head_weights)
     assert torch.allclose(gpt.text_head.bias[:old_vocab_size], orig_head_bias)
 
-    # Verify new rows are non-zero
-    assert gpt.text_embedding.weight[old_vocab_size:, :].abs().sum().item() > 0.0
+    # New rows start at the mean of the pretrained rows (plus small noise), not at random (docs/recipe_design.md A5)
+    mean = orig_emb_weights.mean(0)
+    assert torch.allclose(gpt.text_embedding.weight[old_vocab_size:], mean.expand(new_vocab_size - old_vocab_size, -1), atol=0.05)
+    assert torch.allclose(gpt.text_head.bias[old_vocab_size:], orig_head_bias.mean().expand(new_vocab_size - old_vocab_size))
 
 
 def test_vocab_extender_preserves_base_mappings(temp_workspace):
@@ -172,24 +173,6 @@ def test_vocab_extender_preserves_base_mappings(temp_workspace):
     assert "3" in new_vocab
     assert new_vocab["1"] >= len(orig_vocab)
     assert len(new_vocab) == len(orig_vocab) + 3
-
-
-def test_checkpoint_strict_allowlist_validation(temp_workspace):
-    """Verify that GPT weight loading rejects unexpected keys and missing essential weights."""
-    gpt = build_gpt_model(vocab_size=30, layers=2, model_dim=32, heads=2)
-
-    valid_state = gpt.state_dict()
-
-    # Case 1: Extra unexpected key should fail
-    corrupt_state = dict(valid_state)
-    corrupt_state["unauthorized_malicious_layer.weight"] = torch.randn(10, 10)
-
-    # Using our strict allowlist logic:
-    ignore_prefixes = ("torch_mel_spectrogram_style_encoder", "torch_mel_spectrogram_dvae", "dvae", "hifigan_decoder", "mel_stats")
-    allowed_missing_patterns = ("attn.bias",)
-
-    missing, unexpected = gpt.load_state_dict(corrupt_state, strict=False)
-    assert "unauthorized_malicious_layer.weight" in unexpected
 
 
 def test_gpt_forward_backward_gradient_updates(temp_workspace):
@@ -249,76 +232,3 @@ def test_gpt_forward_backward_gradient_updates(temp_workspace):
     # Check weights actually updated
     updated_param = gpt.mel_embedding.weight.data
     assert not torch.allclose(orig_param, updated_param)
-
-
-def test_stage2_dataset_and_training_loop(temp_workspace):
-    """End-to-end integration test: dataset creation, batching, and training execution."""
-    audio_dir = os.path.join(temp_workspace, "audio")
-    output_dir = os.path.join(temp_workspace, "checkpoints")
-    metadata_path = os.path.join(temp_workspace, "metadata.csv")
-    vocab_path = os.path.join(temp_workspace, "vocab.json")
-    os.makedirs(audio_dir, exist_ok=True)
-
-    create_dummy_vocab_json(vocab_path)
-
-    # Create 3 synthetic audio files (1s @ 22050)
-    metadata_lines = []
-    for i in range(3):
-        wav_filename = f"sample_{i}.wav"
-        wav_path = os.path.join(audio_dir, wav_filename)
-        wav = torch.sin(torch.linspace(0, 200 * (i + 1), 22050)).unsqueeze(0)
-        torchaudio.save(wav_path, wav, 22050)
-        metadata_lines.append(f"{wav_filename}|hello world from xtts|en")
-
-    with open(metadata_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(metadata_lines))
-
-    # Run train_gpt for 2 epochs with mini architecture for speed
-    ckpt_path = train_gpt(
-        audio_dir=audio_dir,
-        output_dir=output_dir,
-        metadata_path=metadata_path,
-        vocab_path=vocab_path,
-        epochs=2,
-        batch_size=2,
-        learning_rate=1e-3,
-        device="cpu",
-        gpt_layers=2,
-        gpt_model_dim=64,
-        gpt_heads=2,
-    )
-
-    assert os.path.exists(ckpt_path)
-    assert os.path.exists(os.path.join(output_dir, "model.pth"))
-    assert os.path.exists(os.path.join(output_dir, "vocab.json"))
-    assert os.path.exists(os.path.join(output_dir, "config.json"))
-
-    # Verify reloaded checkpoint
-    saved_data = safe_torch_load(ckpt_path, map_location="cpu")
-    assert "model" in saved_data
-    assert "gpt" in saved_data
-    assert "optimizer" in saved_data
-    assert saved_data["epoch"] == 2
-    assert any(k.startswith("gpt.") for k in saved_data["model"].keys())
-
-    # Verify that the saved model.pth can be loaded into native XTTS
-    from TTS.tts.configs.xtts_config import XttsConfig
-    from TTS.tts.models.xtts import Xtts
-
-    config = XttsConfig()
-    config.model_args.gpt_layers = 2
-    config.model_args.gpt_n_model_channels = 64
-    config.model_args.gpt_n_heads = 2
-    config.model_args.gpt_num_audio_tokens = 1026
-    config.model_args.gpt_start_audio_token = 1024
-    config.model_args.gpt_stop_audio_token = 1025
-    config.model_args.gpt_use_perceiver_resampler = True
-    config.model_args.tokenizer_file = vocab_path
-
-    xtts_model = Xtts(config)
-    xtts_model.tokenizer = VoiceBpeTokenizer(vocab_file=vocab_path)
-    xtts_model.init_models()
-    assert xtts_model.gpt is not None
-    missing, unexpected = xtts_model.gpt.load_state_dict(saved_data["gpt"], strict=True)
-    assert len(missing) == 0
-    assert len(unexpected) == 0

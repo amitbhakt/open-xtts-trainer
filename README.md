@@ -51,25 +51,32 @@ When Coqui AI shut down, the community was left without official training recipe
 
 **The contribution of this repository is unifying, repairing, and open-sourcing the separate component-training workflows into one accessible, reproducible, dependency-rot-free suite.**
 
-> [!NOTE]
-> **Component-Level Verification vs. End-to-End Inference:**  
-> The benchmarks presented below demonstrate **component-level training convergence** (gradient flow, stable adversarial discriminator equilibrium, and acoustic reconstruction descent) on real human speech. Full text-to-speech generation integrates these trained components into the standard XTTS inference pipeline.
+## Status and measured results
 
----
+Every number in this README comes from the evaluation harness (`eval/`, `scripts/run_eval_baseline.py`) and
+links to the manifest that produced it. Training losses are not results: the earlier convergence table was
+removed because no manifest backed it (docs/recipe_design.md §6, phase 8).
 
-## Empirical Verification & Component Convergence (Real Human Speech)
+**Measured: stock XTTS-v2 baseline**, English, 12 sentences across 6 categories × 5 CMU ARCTIC voices × 2 seeds
+(Colab T4; [manifest](docs/evidence/colab_run2/pilot_en_metrics_v2.json), [notes](docs/evidence/colab_run2/README.md)):
 
-All components have been empirically verified on an NVIDIA GPU (T4 / CUDA 12) using genuine human speech (LJSpeech benchmark corpus + JFK Inaugural Address). The loss trajectories confirm rapid harmonic adaptation, discriminator balance, and deep acoustic convergence:
+| Metric | Stock XTTS-v2 |
+|---|---|
+| WER (Whisper large-v3) | 0.057 |
+| CER | 0.019 |
+| Speaker similarity, ECAPA2 (clips ≥ 2 s) | 0.571 ± 0.020 |
+| UTMOS | 4.02 |
+| Duration ratio | 1.03 |
 
-![Benchmark Loss Convergence on Real Human Speech](assets/benchmark_human_speech.png)
+**Not yet measured: fine-tuned models.** The three stages run end to end and are covered by tests, but no
+fine-tune has yet been compared against this baseline. That comparison (`scripts/compare_ab.py`) is what will
+say whether a recipe helps; until it runs, no improvement is claimed. Design decisions, evidence and status are in
+`docs/recipe_design.md`.
 
-| Training Component & Objective | Initial Loss | Final Loss | Convergence Behavior on Human Voice |
-| :--- | :---: | :---: | :--- |
-| **Stage 3: Latent HiFi-GAN (Generator)** | 198.66 | 68.25 | **Fast descent** matching natural speech formants |
-| **Stage 3: Latent HiFi-GAN (Mel Loss)** | 190.83 | 63.49 | **67% acoustic error reduction** on human speech |
-| **Stage 3: Discriminators (MPD + MSD)** | 8.02 | 3.62 | **Stable adversarial equilibrium** (no mode collapse) |
-| **Stage 1: Discrete VAE (Mel Recon)** | 8.13 | 2.70 | **67% reconstruction error reduction** |
-| **Stage 1: DVAE Codebook Vector Quantization** | — | — | Stable Nearest-Neighbor Codebook Assignment & Commitment |
+**Licenses:**
+- XTTS-v2 weights: Coqui Public Model License, non-commercial only.
+- MMS_FA aligner and ECAPA2: CC BY-NC 4.0.
+- CMU ARCTIC reference voices: their own license, kept in `eval/reference_voices/licenses/`.
 
 > [!WARNING]
 > **DVAE Codebook Retraining Invariant:**  
@@ -117,14 +124,37 @@ pip install -e .
 
 ### 1. Preparing Speech Data
 
-Download public-domain benchmark human speech (LJSpeech sentences + JFK address resampled to 24kHz mono) or slice a 5-minute continuous speech dataset:
+Transcripts are never guessed from fixed-length cuts. Public sources take their text from the corpus's own
+metadata; recordings are transcribed (Whisper large-v3-turbo, or your transcript), forced-aligned with
+MMS_FA, and cut only at pauses between words, so every clip's text is exactly the words spoken in it.
+The aligner weights (1.26 GB, CC BY-NC 4.0) download on first use.
 
 ```bash
-# 8-sample micro benchmark
-python -m xtts_trainer.speech_data --num_samples 8 --output_dir sample_audio
+# Sample set: 6 LJSpeech clips (text from metadata.csv) + JFK, aligned and cut at pauses
+python -m xtts_trainer.speech_data --source sample --output_dir sample_audio
 
-# Scaled 5-minute speech dataset (100 clean clips)
-python -m xtts_trainer.speech_data --minutes 5 --output_dir sample_audio
+# 10 minutes of continuous English speech, Whisper-transcribed and aligned (--max_minutes to cap it)
+python -m xtts_trainer.speech_data --source long_10m --output_dir sample_audio
+
+# Your own recording: language and speaker are required, never defaulted
+python -m xtts_trainer.speech_data --input_file my_voice.wav --lang en --speaker_name me --output_dir my_data
+```
+
+Each run writes `prep_report.json` (segments, duration histogram, characters per second, alignment scores,
+everything dropped and why) and `validation_report.json`, and fails unless the result passes validation.
+Both write `sample_audio/dataset.jsonl`, the one dataset format every stage reads (schema: `xtts_trainer/data/schema.py`).
+To convert an existing pipe-separated metadata file, declare its columns explicitly:
+
+```bash
+python scripts/convert_metadata_csv.py my_data/metadata.csv --columns audio,text,speaker,lang --transcript_source human
+```
+
+Every stage validates the dataset before training and refuses to start on any error (missing or mismatched audio,
+empty or `[UNK]` text, unregistered language, text/audio length mismatch, single-clip speakers, overlap with the
+eval set). Run the same check yourself first:
+
+```bash
+python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_base/vocab.json
 ```
 
 ### 2. Stage 2: Vocabulary Extender & GPT Backbone Fine-Tuning
@@ -138,94 +168,106 @@ python -m xtts_trainer.speech_data --minutes 5 --output_dir sample_audio
        --languages bn el
    ```
 
-2. **Fine-tune the Autoregressive GPT Backbone:**
+2. **Fine-tune the Autoregressive GPT Backbone** (a thin wrapper over upstream `GPTTrainer`):
    ```bash
-   python xtts_trainer/stage2_gpt/train.py \
-       --audio_dir sample_audio \
-       --metadata_path sample_audio/metadata.csv \
-       --checkpoint_dir xtts_base \
-       --vocab_path xtts_base/vocab_extended.json \
+   python -m xtts_trainer.stage2_gpt.train \
+       --dataset my_data/dataset.jsonl \
+       --base_dir xtts_base \
+       --vocab_path xtts_base/vocab_extended.json --languages bn \
+       --replay en_data/dataset.jsonl \
        --output_dir checkpoints/gpt \
-       --epochs 10
+       --epochs 10 --batch_size 4 --grad_accum_steps 8
    ```
+   Upstream runs the loop; the wrapper fixes what upstream gets wrong:
+   - every sample's own voice prompt is excluded from the loss, not just the last sample's (F2);
+   - new languages get a registered tokenizer in training *and* inference (F4);
+   - base weights and the DVAE load strictly, and new text rows start at the mean of the existing rows (F3, F6);
+   - a clip that fails to load stops the run instead of being silently replaced.
+
+   The best checkpoint by eval loss is exported to `checkpoints/gpt/export/`, a complete checkpoint directory
+   (`model.pth`, `config.json`, `vocab.json`, `dvae.pth`). Load it with
+   `xtts_trainer.stage2_gpt.export.load_for_inference`. Replay data must be in base languages; upstream
+   samples languages uniformly, so with one replay language half of the training draws are replay.
 
 ### 3. Stage 3: Latent HiFi-GAN Vocoder
 
 1. **Extract True GPT Latents from Paired Audio and Ground-Truth Transcripts:**
    ```bash
    python xtts_trainer/stage3_hifigan/extract_latents.py \
-       --audio_dir sample_audio \
-       --metadata_path sample_audio/metadata.csv \
+       --dataset sample_audio/dataset.jsonl \
        --checkpoint_dir xtts_base \
        --output_dir extracted_latents \
        --device cuda
    ```
 
-2. **Fine-Tune the HiFi-GAN Vocoder (with Pretrained Weights & Discriminator Warmup):**
+2. **Fine-Tune the HiFi-GAN Vocoder** (optional; keep it only if it beats the stock decoder in the Phase 8 A/B):
    ```bash
-   python xtts_trainer/stage3_hifigan/train.py \
-       --audio_dir sample_audio \
+   python -m xtts_trainer.stage3_hifigan.train \
+       --dataset sample_audio/dataset.jsonl \
        --latents_dir extracted_latents \
        --checkpoint_dir xtts_base \
        --output_dir checkpoints/hifigan \
-       --batch_size 8 \
-       --epochs 25 \
-       --device cuda
+       --batch_size 8 --epochs 25 --disc_warmup_steps 1000
    ```
+   - **Validation:** held-out clips are scored as whole-clip resynthesis (log-mel L1). The starting decoder is
+     scored first, and that number is the one to beat.
+   - **Best checkpoint:** `checkpoints/hifigan/hifigan.pth` keeps the best by validation error and records
+     whether it beats the starting decoder. Audio samples go to `samples/step_N/`.
+   - **Alignment:** decoder input is interpolated over each whole clip before segments are cut, so audio and
+     latents line up exactly.
+   - **Warm-up:** a run that would never leave the discriminator warm-up is refused (or pass `--mel_only`).
+   - **Options:** `--scl_weight` (Speaker Consistency Loss) and `--full_band_mel`.
+   - **Resume** with `--resume`. Mixed precision is on for CUDA.
 
 3. **Synthesize Waveforms with Trained Vocoder:**
    ```bash
    python -m xtts_trainer.stage3_hifigan.inference \
-       --checkpoint checkpoints/hifigan/hifigan_epoch_25.pt \
+       --checkpoint checkpoints/hifigan/hifigan.pth \
        --latent extracted_latents/speech_001.pt \
        --output synthesized_voice.wav
    ```
 
 ### 4. Stage 1: Discrete VAE (DVAE) Training
 
+Off by default: every training step moves the codebook (docs/recipe_design.md F1), so a trained DVAE no longer
+matches the pretrained GPT.
+
 ```bash
-python xtts_trainer/stage1_dvae/train.py \
-    --audio_dir sample_audio \
+python -m xtts_trainer.stage1_dvae.train \
+    --dataset sample_audio/dataset.jsonl \
     --output_dir checkpoints/dvae \
-    --continue_path xtts_base/dvae.pth \
-    --batch_size 8 \
-    --epochs 25 \
-    --device cuda
+    --base_checkpoint xtts_base/dvae.pth \
+    --batch_size 8 --epochs 25 [--frozen_codebook]
 ```
+
+- **Logged on held-out clips:** validation loss, active codes and perplexity, and *code drift* (the share of
+  frames whose code differs from the base DVAE's).
+- **Collapse gate:** if the codebook collapses, the run fails.
+- **Best checkpoint:** `dvae.pth` keeps the best by validation loss and is marked `requires_gpt_retrain`.
+- **Stage 2 pairing:** Stage 2 refuses to pair a marked DVAE with the pretrained GPT unless given
+  `--retrain_for_new_dvae`, and Stage 3 latent extraction refuses a GPT that wasn't trained on it.
+- **`--frozen_codebook`** keeps the quantizer fixed. The encoder still adapts, so codes still drift; the
+  drift metric shows how much.
 
 ---
 
-## 5-Point End-to-End Pipeline Verification Proof
+## Measuring a fine-tune
 
-To establish reproducible execution proof across all three trained components, run the instrumented integration proof suite:
+Run the harness on the stock model and on yours, then compare them with paired statistics (same sentences,
+voices and seeds) against pre-registered gates:
 
 ```bash
-python scripts/verify_pipeline_proof.py \
-    --dvae_checkpoint checkpoints/dvae/dvae.pth \
-    --gpt_checkpoint checkpoints/gpt/model.pth \
-    --hifigan_checkpoint checkpoints/hifigan/hifigan.pth \
-    --reference_audio sample_audio/speech_003.wav \
-    --output_dir proof_outputs
+python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --output eval/baselines/base.json
+python scripts/run_eval_baseline.py --checkpoint_dir checkpoints/gpt/export --output eval/baselines/tuned.json
+python scripts/compare_ab.py eval/baselines/base.json eval/baselines/tuned.json --gates eval/gates.json
 ```
 
-### What It Verifies:
+The gates are relative to the stock model: for example, word error rate may not get worse beyond a set margin,
+and speaker similarity on the target speaker must improve. They are fixed in `eval/gates.json` before
+results are seen.
 
-| Proof Gate | Execution Assertion | What It Establishes |
-| :--- | :--- | :--- |
-| **Gate 1: Stage 1 (DVAE)** | Encodes audio $\to$ discrete codebook IDs $\in [0, 1023]$ $\to$ decodes mel | Verifies acoustic tokenizer and reconstruction fidelity |
-| **Gate 2: Stage 2 (GPT)** | Loads compatible trained parameters & extracts reference latents | Confirms conditioning flow with zero random-latent fallbacks |
-| **Gate 3: Stage 3 (HiFi-GAN)** | Loads trained decoder with `strict=True` ($100\%$ parameter match) | Guarantees audio is decoded by your checkpoint (zero bypass) |
-| **Gate 4: Multi-Sentence Suite** | Synthesizes sibilant (`s1_sibilant`), fluent (`s2_fluent`), and benchmark (`s3_benchmark`) sentences | Evaluates phonetic stability across continuous text |
-| **Gate 5: Speech Quality & Intelligibility Proof** | Transcribes generated speech using local Whisper ASR to evaluate Word Error Rate (WER); asserts finite waveform, healthy amplitude ($\text{RMS} \ge 0.02$), non-clipping peak ($\le 1.05$), and measures $>4\text{ kHz}$ high-frequency energy | Validates true speech intelligibility, eliminates vocoder amplitude collapse, and proves acoustic clarity |
-
-Execution outputs and verification metrics are automatically recorded to `proof_outputs/pipeline_proof_manifest.json`.
-
-### Verified Audio Proof Samples:
-Listen to the audio produced directly by the fine-tuned Stage 3 decoder on Hugging Face:
-- 🔊 [**s1_sibilant_stage3_verified.wav**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/s1_sibilant_stage3_verified.wav) — Sibilance friction test (*"She sells sea shells by the seashore with fresh sunshine."*)
-- 🔊 [**s2_fluent_stage3_verified.wav**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/s2_fluent_stage3_verified.wav) — Fluent continuous speech (*"Artificial intelligence is rapidly transforming how we communicate..."*)
-- 🔊 [**s3_benchmark_stage3_verified.wav**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/s3_benchmark_stage3_verified.wav) — Decoder benchmark sentence
-- 📊 [**pipeline_proof_manifest.json**](https://huggingface.co/amitbhakt/open-xtts-trainer/blob/main/proof_outputs/pipeline_proof_manifest.json) — Full verification telemetry & metrics
+Earlier proof samples on Hugging Face (`proof_outputs/`) were produced by a retired script that checked absolute
+thresholds without a baseline. They are not harness measurements.
 
 ---
 

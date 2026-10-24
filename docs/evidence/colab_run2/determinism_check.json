@@ -1,0 +1,51 @@
+{
+  "input_mismatches": [],
+  "rows": [
+    {
+      "lang": "en",
+      "metric": "wer",
+      "mean_run1": 0.1,
+      "mean_run2": 0.1,
+      "abs_diff": 0.0,
+      "tolerance": 0.0923952860750422,
+      "agrees": true
+    },
+    {
+      "lang": "en",
+      "metric": "cer",
+      "mean_run1": 0.0,
+      "mean_run2": 0.0,
+      "abs_diff": 0.0,
+      "tolerance": 0.0,
+      "agrees": true
+    },
+    {
+      "lang": "en",
+      "metric": "secs",
+      "mean_run1": 0.557713407278061,
+      "mean_run2": 0.557713407278061,
+      "abs_diff": 0.0,
+      "tolerance": 0.07765609660554638,
+      "agrees": true
+    },
+    {
+      "lang": "en",
+      "metric": "utmos",
+      "mean_run1": 4.014990067481994,
+      "mean_run2": 4.014990067481994,
+      "abs_diff": 0.0,
+      "tolerance": 0.20418199915653573,
+      "agrees": true
+    },
+    {
+      "lang": "en",
+      "metric": "duration_ratio",
+      "mean_run1": 0.9735804878048782,
+      "mean_run2": 0.9735804878048782,
+      "abs_diff": 0.0,
+      "tolerance": 0.06682060796084358,
+      "agrees": true
+    }
+  ],
+  "reproducible": true
+}

@@ -1,455 +1,200 @@
-"""Download and prepare real human speech dataset for XTTS training.
+"""Prepare speech data for XTTS training: public sample sources or your own recording.
 
-Supports:
-- Micro benchmark mode (8 samples, LJSpeech + JFK)
-- Scaled training mode (5-10 minutes of continuous clean human speech: 100-200 clips)
+Every transcript is traceable (docs/recipe_design.md §6, phase 6):
+- corpus clips take their text from the corpus's own metadata (LJSpeech metadata.csv, normalized column);
+- recordings are transcribed (human transcript or Whisper), forced-aligned, and cut only at word gaps,
+  so each clip's text is exactly the words aligned inside it. Alignment is stored in dataset.jsonl.
+Each public source declares its own language; --lang applies only to --input_file.
+The output is validated (xtts_trainer.data.validate) before this command reports success.
+
+    python -m xtts_trainer.speech_data --source sample --output_dir sample_audio
+    python -m xtts_trainer.speech_data --input_file me.wav --lang en --speaker_name me --output_dir my_data
 """
 
-import os
-import io
 import argparse
+import csv
+import io
+import json
+import os
 import urllib.request
-import numpy as np
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Tuple
+
 import soundfile as sf
-import torch
-import torchaudio.functional as F
 
-LONG_SPEECH_URL_10M = "https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669-10.mp3"
-LONG_SPEECH_URL_2H = "https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669.mp3"
+from xtts_trainer.data import DatasetRecord, validate_dataset
+from xtts_trainer.prepare.align import CtcAligner
+from xtts_trainer.prepare.pipeline import PrepConfig, load_mono, prepare_recording, write_prepared
+from xtts_trainer.spec import SPEC
 
-SAMPLE_SPEECH_SOURCES = [
-    {
-        "name": "ljspeech_01",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0001.wav",
-        "description": "LJSpeech (Linda Johnson) - Literary prose",
-        "text": "Printing, in the only sense with which we are at present concerned, differs from most if not from all the arts and crafts represented in the Exhibition",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "ljspeech_02",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0002.wav",
-        "description": "LJSpeech (Linda Johnson) - Short phrase",
-        "text": "in being comparatively modern.",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "ljspeech_03",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0003.wav",
-        "description": "LJSpeech (Linda Johnson) - Multi-clause sentence",
-        "text": "For although the Chinese took impressions from wood blocks engraved in relief for centuries before the Woodcutters of the Netherlands, by a similar process",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "ljspeech_04",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0004.wav",
-        "description": "LJSpeech (Linda Johnson) - Narrative cadence",
-        "text": "produced the block books, which were the immediate predecessors of the true printed book,",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "ljspeech_05",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0005.wav",
-        "description": "LJSpeech (Linda Johnson) - Historical text",
-        "text": "the invention of movable metal letters in the middle of the fifteenth century may justly be considered as the invention of the art of printing.",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "ljspeech_06",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0006.wav",
-        "description": "LJSpeech (Linda Johnson) - Phonetic variety",
-        "text": "And it is worth mention in passing that, as an example of fine typography,",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "jfk_speech_01",
-        "url": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
-        "description": "JFK Presidential Inaugural Address - First clause",
-        "text": "And so, my fellow Americans: ask not what your country can do for you,",
-        "speaker": "jfk",
-        "lang": "en",
-        "time_slice": (0.0, 7.5),
-    },
-    {
-        "name": "jfk_speech_02",
-        "url": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
-        "description": "JFK Presidential Inaugural Address - Second clause",
-        "text": "ask what you can do for your country.",
-        "speaker": "jfk",
-        "lang": "en",
-        "time_slice": (7.5, 11.0),
-    },
-]
+DEFAULT_VOCAB = "xtts_base/vocab.json"
+LJSPEECH_BASE = "https://raw.githubusercontent.com/coqui-ai/TTS/dev/tests/data/ljspeech"
 
 
-def segment_audio_on_silence(
-    audio: np.ndarray,
-    sample_rate: int,
-    min_duration_sec: float = 3.0,
-    max_duration_sec: float = 10.0,
-    silence_thresh_db: float = -35.0,
-) -> list[tuple[int, int]]:
-    """Segment continuous speech audio at natural pauses to avoid slicing words mid-syllable."""
-    frame_len = int(0.02 * sample_rate)  # 20ms
-    hop_len = int(0.01 * sample_rate)    # 10ms
-    num_frames = (len(audio) - frame_len) // hop_len + 1
-    if num_frames <= 0:
-        return [(0, len(audio))]
+@dataclass
+class Source:
+    """A public speech source. lang is the source's own language, never taken from the command line."""
 
-    shape = (num_frames, frame_len)
-    strides = (audio.strides[0] * hop_len, audio.strides[0])
-    frames = np.lib.stride_tricks.as_strided(audio, shape=shape, strides=strides)
-    rms = np.sqrt(np.mean(frames ** 2, axis=-1) + 1e-9)
-    peak_rms = np.max(rms)
-
-    chunk_size = int(max_duration_sec * sample_rate)
-    if peak_rms <= 1e-6:
-        total_chunks = max(1, len(audio) // chunk_size)
-        return [(i * chunk_size, min(len(audio), (i + 1) * chunk_size)) for i in range(total_chunks)]
-
-    db = 20 * np.log10(rms / peak_rms)
-    is_silent = db < silence_thresh_db
-
-    # If there is virtually no silence (e.g. continuous synthetic test tone), chunk evenly
-    if not np.any(is_silent):
-        total_chunks = max(1, len(audio) // chunk_size)
-        return [(i * chunk_size, min(len(audio), (i + 1) * chunk_size)) for i in range(total_chunks)]
-
-    segments = []
-    min_samples = int(min_duration_sec * sample_rate)
-    max_samples = int(max_duration_sec * sample_rate)
-    current_pos = 0
-
-    while current_pos < len(audio):
-        target_end = current_pos + max_samples
-        if target_end >= len(audio):
-            if len(audio) - current_pos >= int(1.0 * sample_rate):
-                segments.append((current_pos, len(audio)))
-            break
-
-        # Search for silence in the window [current_pos + min_samples, target_end]
-        search_start_sample = current_pos + min_samples
-        search_start_frame = search_start_sample // hop_len
-        search_end_frame = min(num_frames - 1, target_end // hop_len)
-
-        split_sample = target_end
-        if search_end_frame > search_start_frame:
-            sub_silent = np.where(is_silent[search_start_frame:search_end_frame])[0]
-            if len(sub_silent) > 0:
-                split_frame = search_start_frame + sub_silent[len(sub_silent) // 2]
-                split_sample = split_frame * hop_len
-
-        segments.append((current_pos, split_sample))
-        current_pos = split_sample
-
-    return segments
+    lang: str
+    speaker: str
+    description: str
+    urls: List[str] = field(default_factory=list)
+    # "corpus_clips": already one utterance per file, text from metadata_url; "recording": align and cut
+    kind: str = "recording"
+    metadata_url: Optional[str] = None
+    # A human transcript of the whole recording; None = Whisper
+    transcript: Optional[str] = None
 
 
-def prepare_speech_from_file(
-    input_file: str,
-    output_dir: str = "sample_audio",
-    sample_rate: int = 24000,
-    max_duration_sec: float = 6.0,
-    lang: str = "en",
-    speaker_name: str = "user_speaker",
-    transcript: str = None,
-    transcript_file: str = None,
-) -> list[str]:
-    """Slice a user-provided recording into normalized 24kHz mono training clips.
-
-    Args:
-        input_file: Path to local audio file (e.g. 30-second recording).
-        output_dir: Directory to save processed .wav clips and metadata.csv.
-        sample_rate: Target sample rate (default 24000 Hz).
-        max_duration_sec: Duration in seconds per training clip (default 6.0s).
-        lang: Language code for transcription and metadata (default 'en').
-        speaker_name: Speaker identifier for conditioning grouping.
-        transcript: Optional single transcript applied to all clips.
-        transcript_file: Optional file containing one transcript per line.
-
-    Returns:
-        List of generated WAV file paths.
-    """
-    os.makedirs(output_dir, exist_ok=True)
-    if not os.path.exists(input_file):
-        raise FileNotFoundError(f"Input audio file not found: {input_file}")
-
-    audio, orig_sr = sf.read(input_file)
-    if audio.ndim > 1:
-        audio = np.mean(audio, axis=-1)
-
-    tensor = torch.from_numpy(audio).float().unsqueeze(0)
-    if orig_sr != sample_rate:
-        tensor = F.resample(tensor, orig_sr, sample_rate)
-    resampled = tensor.squeeze(0).numpy()
-
-    # Trim leading silence so speech_001.wav starts with active speech
-    non_silent = np.where(np.abs(resampled) > 0.01)[0]
-    if len(non_silent) > 0:
-        lead_offset = max(0, non_silent[0] - int(0.05 * sample_rate))
-        resampled = resampled[lead_offset:]
-
-    slices = segment_audio_on_silence(
-        resampled,
-        sample_rate=sample_rate,
-        min_duration_sec=min(2.0, max_duration_sec),
-        max_duration_sec=max_duration_sec,
-    )
-    created_files = []
-
-    print(f"\n==================================================")
-    print(f"Preparing speech from user recording: {input_file}")
-    print(f"Total audio length: {len(resampled) / sample_rate:.2f}s -> {len(slices)} clips")
-    print(f"Target format: {sample_rate}Hz 16-bit PCM mono WAV -> '{output_dir}'")
-    print(f"==================================================")
-
-    for i, (start_idx, end_idx) in enumerate(slices):
-        out_filename = f"speech_{i+1:03d}.wav"
-        out_path = os.path.join(output_dir, out_filename)
-        clip = resampled[start_idx:end_idx]
-
-        peak = np.max(np.abs(clip))
-        if peak > 0:
-            clip = clip * (0.9 / peak)
-
-        sf.write(out_path, clip, sample_rate, subtype="PCM_16")
-        created_files.append(out_path)
-
-    # Write metadata.csv pairing each clip with transcript
-    metadata_csv_path = os.path.join(output_dir, "metadata.csv")
-    transcripts = []
-    if transcript_file and os.path.exists(transcript_file):
-        with open(transcript_file, "r", encoding="utf-8") as tf:
-            transcripts = [line.strip() for line in tf if line.strip()]
-    elif transcript:
-        transcripts = [transcript] * len(created_files)
-    else:
-        # Transcribe clips using local Whisper ASR with correct sample rate and language
-        print(f"Transcribing clips with local Whisper ASR (lang: '{lang}') to produce genuine ground-truth text...")
-        try:
-            from transformers import pipeline
-            asr_model = "openai/whisper-base.en" if lang == "en" else "openai/whisper-base"
-            asr = pipeline("automatic-speech-recognition", model=asr_model, device="cpu")
-            gen_kwargs = {"task": "transcribe"}
-            if lang:
-                gen_kwargs["language"] = lang
-            for path in created_files:
-                clip_audio, sr = sf.read(path)
-                res = asr({"raw": clip_audio, "sampling_rate": sr}, generate_kwargs=gen_kwargs)
-                txt = res.get("text", "").strip()
-                if not txt:
-                    raise RuntimeError(f"Whisper produced empty transcription for {path}")
-                transcripts.append(txt)
-        except Exception as e:
-            raise RuntimeError(
-                f"Automated Whisper speech transcription failed ({e}). "
-                f"Please provide an explicit --transcript or --transcript_file."
-            ) from e
-
-    with open(metadata_csv_path, "w", encoding="utf-8") as f:
-        for i, path in enumerate(created_files):
-            fname = os.path.basename(path)
-            t = transcripts[i]
-            f.write(f"{fname}|{t}|{speaker_name}|{lang}\n")
-
-    print(f"Successfully created {len(created_files)} clips and wrote metadata to '{metadata_csv_path}'.")
-    return created_files
+SOURCES: Dict[str, Source] = {
+    "ljspeech_sample": Source(
+        lang="en", speaker="ljspeech", kind="corpus_clips",
+        description="LJSpeech LJ001-0001..0006 (public domain); text from metadata.csv, normalized column",
+        urls=[f"{LJSPEECH_BASE}/wavs/LJ001-000{i}.wav" for i in range(1, 7)],
+        metadata_url=f"{LJSPEECH_BASE}/metadata.csv",
+    ),
+    "jfk": Source(
+        lang="en", speaker="jfk",
+        description="JFK inaugural address excerpt (public domain, Whisper test clip), human transcript, aligned",
+        urls=["https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"],
+        transcript="And so, my fellow Americans: ask not what your country can do for you, "
+                   "ask what you can do for your country.",
+    ),
+    "long_10m": Source(
+        lang="en", speaker="speaker_1",
+        description="10-minute continuous English speech (reach-vb/random-audios), Whisper transcript, aligned",
+        urls=["https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669-10.mp3"],
+    ),
+    "long_2h": Source(
+        lang="en", speaker="speaker_1",
+        description="2-hour continuous English speech (reach-vb/random-audios), Whisper transcript, aligned",
+        urls=["https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669.mp3"],
+    ),
+}
+# Named bundles of sources
+SOURCE_SETS = {"sample": ["ljspeech_sample", "jfk"]}
 
 
-def download_and_prepare_speech(
-    output_dir: str = "sample_audio",
-    num_samples: int = 8,
-    sample_rate: int = 24000,
-    max_duration_sec: float = 3.0,
-    target_minutes: float = None,
-) -> list[str]:
-    """Download clean public-domain human speech samples, resample to 24kHz mono, and save as WAV.
-
-    Args:
-        output_dir: Directory to save processed .wav files.
-        num_samples: Number of speech files to produce (e.g. 8 for quick test, 100 for 5 mins).
-        sample_rate: Target sample rate (default 24,000 Hz for XTTS).
-        max_duration_sec: Duration in seconds per training clip.
-        target_minutes: If specified, overrides num_samples based on clip duration.
-
-    Returns:
-        List of generated WAV file paths.
-    """
-    os.makedirs(output_dir, exist_ok=True)
-
-    if target_minutes is not None:
-        num_samples = int((target_minutes * 60) / max_duration_sec)
-
-    print(f"\n==================================================")
-    print(f"Preparing {num_samples} Real Human Speech Clips (~{num_samples * max_duration_sec / 60:.1f} mins of audio)")
-    print(f"Target format: {sample_rate}Hz 16-bit PCM mono WAV -> '{output_dir}'")
-    print(f"==================================================")
-
-    created_files = []
-
-    # Scaled training mode (>8 samples or specified minutes)
-    if num_samples > 8:
-        speech_url = LONG_SPEECH_URL_2H if ((target_minutes and target_minutes > 10) or num_samples > 200) else LONG_SPEECH_URL_10M
-        url_label = "2-hour corpus (28 MB)" if speech_url == LONG_SPEECH_URL_2H else "10-minute corpus (2.3 MB)"
-        print(f"Fetching clean human speech audio ({url_label})...")
-        try:
-            req = urllib.request.Request(speech_url, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                data = resp.read()
-
-            audio, orig_sr = sf.read(io.BytesIO(data))
-            if audio.ndim > 1:
-                audio = np.mean(audio, axis=-1)
-
-            tensor = torch.from_numpy(audio).float().unsqueeze(0)
-            if orig_sr != sample_rate:
-                tensor = F.resample(tensor, orig_sr, sample_rate)
-            resampled = tensor.squeeze(0).numpy()
-
-            # Trim leading silence so clips begin immediately with active speech
-            non_silent = np.where(np.abs(resampled) > 0.01)[0]
-            if len(non_silent) > 0:
-                lead_offset = max(0, non_silent[0] - int(0.05 * sample_rate))
-                resampled = resampled[lead_offset:]
-
-            slices = segment_audio_on_silence(
-                resampled,
-                sample_rate=sample_rate,
-                min_duration_sec=min(3.0, max_duration_sec),
-                max_duration_sec=max(6.0, max_duration_sec),
-            )
-            total_to_slice = min(num_samples, len(slices))
-
-            for i in range(total_to_slice):
-                out_filename = f"speech_{i+1:03d}.wav"
-                out_path = os.path.join(output_dir, out_filename)
-                start_idx, end_idx = slices[i]
-                clip = resampled[start_idx:end_idx]
-
-                # Peak normalize
-                peak = np.max(np.abs(clip))
-                if peak > 0:
-                    clip = clip * (0.9 / peak)
-
-                sf.write(out_path, clip, sample_rate, subtype="PCM_16")
-                created_files.append(out_path)
-
-            print(f"Successfully sliced {len(created_files)} clips at natural pause boundaries of human speech!")
-            print(f"Transcribing {len(created_files)} clips with local Whisper ASR for ground-truth alignment...")
-            transcripts = []
-            try:
-                from transformers import pipeline
-                asr = pipeline("automatic-speech-recognition", model="openai/whisper-base.en", device="cpu")
-                for p in created_files:
-                    clip_audio, sr = sf.read(p)
-                    res = asr({"raw": clip_audio, "sampling_rate": sr}, generate_kwargs={"language": "english", "task": "transcribe"})
-                    txt = res.get("text", "").strip()
-                    if not txt:
-                        raise RuntimeError(f"Whisper produced empty transcription for {p}")
-                    transcripts.append(txt)
-            except Exception as e:
-                raise RuntimeError(
-                    f"Automated Whisper speech transcription failed ({e}). "
-                    f"Genuine paired transcripts are required for Stage 2 training."
-                ) from e
-
-            metadata_csv_path = os.path.join(output_dir, "metadata.csv")
-            with open(metadata_csv_path, "w", encoding="utf-8") as f:
-                for i, path in enumerate(created_files):
-                    f.write(f"{os.path.basename(path)}|{transcripts[i]}|speaker_1|en\n")
-            print(f"Wrote metadata index to: {metadata_csv_path}")
-            return created_files
-
-        except Exception as e:
-            print(f"Failed to fetch long audio ({e}). Falling back to multi-source samples.")
-
-    # Micro mode (<= 8 samples)
-    sources = SAMPLE_SPEECH_SOURCES[:min(num_samples, len(SAMPLE_SPEECH_SOURCES))]
-    metadata_entries = []
-    for idx, item in enumerate(sources):
-        out_filename = f"speech_{idx+1:03d}.wav"
-        out_path = os.path.join(output_dir, out_filename)
-
-        try:
-            req = urllib.request.Request(item["url"], headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                data = resp.read()
-
-            audio, orig_sr = sf.read(io.BytesIO(data))
-            if audio.ndim > 1:
-                audio = np.mean(audio, axis=-1)
-
-            tensor = torch.from_numpy(audio).float().unsqueeze(0)
-            if orig_sr != sample_rate:
-                tensor = F.resample(tensor, orig_sr, sample_rate)
-
-            # Apply time slice if specified (e.g. multi-clause utterances)
-            if "time_slice" in item:
-                start_sec, end_sec = item["time_slice"]
-                start_idx = int(start_sec * sample_rate)
-                end_idx = min(tensor.shape[1], int(end_sec * sample_rate))
-                tensor = tensor[:, start_idx:end_idx]
-
-            # Keep complete utterance so text and audio match 1:1; only cap if exceeds XTTS maximum (~25s)
-            max_samples = int(25.0 * sample_rate)
-            if tensor.shape[1] > max_samples:
-                tensor = tensor[:, :max_samples]
-
-            processed_audio = tensor.squeeze(0).numpy()
-            peak = np.max(np.abs(processed_audio))
-            if peak > 0:
-                processed_audio = processed_audio * (0.9 / peak)
-
-            sf.write(out_path, processed_audio, sample_rate, subtype="PCM_16")
-            created_files.append(out_path)
-            metadata_entries.append((out_filename, item["text"], item.get("speaker", "default"), item.get("lang", "en")))
-            duration = len(processed_audio) / sample_rate
-            print(f"  [{idx+1}/{len(sources)}] Saved {out_filename} ({duration:.2f}s) - {item['description']}")
-
-        except Exception as e:
-            print(f"  [Warning] Failed to fetch {item['url']}: {e}.")
-
-    # Write ground-truth metadata.csv
-    metadata_csv_path = os.path.join(output_dir, "metadata.csv")
-    with open(metadata_csv_path, "w", encoding="utf-8") as f:
-        for fname, text, spk, lang in metadata_entries:
-            f.write(f"{fname}|{text}|{spk}|{lang}\n")
-    print(f"Wrote ground-truth paired transcripts to: {metadata_csv_path}")
-
-    print(f"\nPrepared {len(created_files)} speech files in '{output_dir}'.")
-    return created_files
+def _download(url: str, dest_dir: str) -> str:
+    os.makedirs(dest_dir, exist_ok=True)
+    path = os.path.join(dest_dir, os.path.basename(url))
+    if not os.path.exists(path):
+        req = urllib.request.Request(url, headers={"User-Agent": "open-xtts-trainer"})
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = resp.read()
+        with open(path + ".tmp", "wb") as f:
+            f.write(data)
+        os.replace(path + ".tmp", path)
+    return path
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Download and prepare human speech dataset for XTTS training")
-    parser.add_argument("--input_file", "-i", type=str, default=None, help="Path to local audio recording file to slice and prepare")
-    parser.add_argument("--output_dir", type=str, default="sample_audio", help="Target output folder")
-    parser.add_argument("--num_samples", type=int, default=8, help="Number of speech samples (e.g. 8 for quick, 100 for 5 min)")
-    parser.add_argument("--minutes", type=float, default=None, help="Target duration in minutes (e.g. 0.5 for 30s test, 5.0 for 5 min)")
-    parser.add_argument("--sample_rate", type=int, default=24000, help="Target sample rate (default: 24000)")
-    parser.add_argument("--duration", type=float, default=3.0, help="Clip duration in seconds (default: 3.0)")
-    args = parser.parse_args()
+def ljspeech_texts(metadata_csv: str) -> Dict[str, str]:
+    """id -> normalized transcript (column 3) from an LJSpeech metadata.csv."""
+    texts = {}
+    for row in csv.reader(io.StringIO(metadata_csv), delimiter="|", quoting=csv.QUOTE_NONE):
+        if len(row) != 3:
+            raise ValueError(f"LJSpeech metadata row has {len(row)} columns, expected 3: {row}")
+        texts[row[0]] = row[2]
+    return texts
 
+
+def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[List[DatasetRecord], dict]:
+    cache = os.path.join(output_dir, "_downloads")
+    with open(_download(source.metadata_url, cache), "r", encoding="utf-8") as f:
+        texts = ljspeech_texts(f.read())
+    clips_dir = os.path.join(output_dir, "clips")
+    os.makedirs(clips_dir, exist_ok=True)
+    records = []
+    for url in source.urls:
+        clip_id = os.path.splitext(os.path.basename(url))[0]
+        if clip_id not in texts:
+            raise KeyError(f"{clip_id} is not in {source.metadata_url}")
+        audio = load_mono(_download(url, cache), SPEC.output_sample_rate)
+        rel = f"clips/{name}_{clip_id}.wav"
+        sf.write(os.path.join(output_dir, rel), audio, SPEC.output_sample_rate, subtype="PCM_16")
+        records.append(DatasetRecord(audio=rel, text=texts[clip_id], lang=source.lang, speaker=source.speaker,
+                                     duration_s=round(len(audio) / SPEC.output_sample_rate, 4),
+                                     sr=SPEC.output_sample_rate, transcript_source="dataset", source=clip_id))
+    return records, {"input": name, "transcript_source": "dataset", "clips": len(records),
+                     "metadata": source.metadata_url}
+
+
+def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAligner] = None,
+                    config: Optional[PrepConfig] = None, max_seconds: Optional[float] = None) -> str:
+    records, reports = [], []
+    aligner = aligner or CtcAligner()
+    for name in names:
+        source = SOURCES[name]
+        print(f"Preparing '{name}': {source.description}")
+        if source.kind == "corpus_clips":
+            recs, report = prepare_corpus_clips(name, source, output_dir)
+        else:
+            recs, report = [], None
+            for url in source.urls:
+                path = _download(url, os.path.join(output_dir, "_downloads"))
+                recs_i, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
+                                                   transcript=source.transcript, aligner=aligner, config=config,
+                                                   clip_prefix=name, source=url, max_seconds=max_seconds)
+                recs += recs_i
+        records += recs
+        reports.append(report)
+    return write_prepared(output_dir, records, reports)
+
+
+def validate_prepared(dataset_path: str, vocab_path: str, extra_languages: List[str] = ()) -> None:
+    """Phase 6 step 5: a prepared dataset must pass Phase 3 validation; report next to the dataset."""
+    report = validate_dataset(dataset_path, vocab_path, extra_languages)
+    with open(os.path.join(os.path.dirname(dataset_path), "validation_report.json"), "w", encoding="utf-8") as f:
+        json.dump(report.to_json(), f, indent=2, ensure_ascii=False)
+    for warning in report.warnings:
+        print(f"WARNING {warning}")
+    report.raise_for_errors()
+    print(f"Validated {report.stats['clips']} clips ({report.stats['hours'] * 60:.1f} min): {dataset_path}")
+
+
+def main(argv: Optional[List[str]] = None):
+    parser = argparse.ArgumentParser(description="Prepare aligned speech data for XTTS training")
+    parser.add_argument("--source", default=None, choices=sorted(SOURCES) + sorted(SOURCE_SETS),
+                        help="Public source (default: sample = LJSpeech clips + aligned JFK)")
+    parser.add_argument("--input_file", "-i", default=None, help="Your own recording to transcribe, align and cut")
+    parser.add_argument("--lang", default=None, help="Language of --input_file (required with it)")
+    parser.add_argument("--speaker_name", default=None, help="Speaker id for --input_file (required with it)")
+    parser.add_argument("--transcript_file", default=None,
+                        help="Human transcript of the whole --input_file (up to 60 s); default: Whisper")
+    parser.add_argument("--output_dir", default="sample_audio")
+    parser.add_argument("--max_minutes", type=float, default=None, help="Only prepare the first N minutes")
+    parser.add_argument("--fix_pauses", action="store_true", help="Add commas at long unpunctuated pauses (ablation A6)")
+    parser.add_argument("--vocab", default=DEFAULT_VOCAB, help="Tokenizer vocab used to validate the result")
+    parser.add_argument("--languages", nargs="+", default=[], help="Registered extra language codes (validation)")
+    parser.add_argument("--device", default="cpu")
+    args = parser.parse_args(argv)
+
+    if args.input_file and args.source:
+        parser.error("use either --source or --input_file")
+    if not args.input_file and (args.lang or args.speaker_name or args.transcript_file):
+        parser.error("--lang, --speaker_name and --transcript_file apply only to --input_file; "
+                     "public sources declare their own language and speaker")
+    if args.input_file and not (args.lang and args.speaker_name):
+        parser.error("--input_file needs --lang and --speaker_name (no defaults)")
+    if not os.path.exists(args.vocab):
+        parser.error(f"{args.vocab} not found; fetch it with: python scripts/fetch_base_artifacts.py --only vocab.json")
+
+    config = PrepConfig(fix_pauses=args.fix_pauses)
+    aligner = CtcAligner(device=args.device)
+    max_seconds = args.max_minutes * 60 if args.max_minutes else None
     if args.input_file:
-        prepare_speech_from_file(
-            input_file=args.input_file,
-            output_dir=args.output_dir,
-            sample_rate=args.sample_rate,
-            max_duration_sec=args.duration,
-        )
+        transcript = None
+        if args.transcript_file:
+            with open(args.transcript_file, "r", encoding="utf-8") as f:
+                transcript = " ".join(f.read().split())
+        records, report = prepare_recording(args.input_file, args.output_dir, lang=args.lang.lower(),
+                                            speaker=args.speaker_name, transcript=transcript, aligner=aligner,
+                                            config=config, max_seconds=max_seconds)
+        dataset_path = write_prepared(args.output_dir, records, [report])
     else:
-        download_and_prepare_speech(
-            output_dir=args.output_dir,
-            num_samples=args.num_samples,
-            sample_rate=args.sample_rate,
-            max_duration_sec=args.duration,
-            target_minutes=args.minutes,
-        )
+        source = args.source or "sample"
+        dataset_path = prepare_sources(SOURCE_SETS.get(source, [source]), args.output_dir, aligner, config, max_seconds)
+    validate_prepared(dataset_path, args.vocab, args.languages)
 
 
 if __name__ == "__main__":

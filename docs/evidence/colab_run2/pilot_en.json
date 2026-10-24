@@ -1,0 +1,3151 @@
+{
+  "description": "Stock base XTTS-v2 baseline, measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-24 14:52:24 UTC",
+  "git": {
+    "commit_sha": "unknown",
+    "is_dirty": null
+  },
+  "code_fingerprint": {
+    "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+    "n_files": 49
+  },
+  "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+  "checkpoint_sha256": {
+    "model.pth": "3077a05b879ba5c2bcf336a0cca4ffb493f97980fd1d61f8ab6ee0e6d6f56c9a",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "seeds": [
+    42,
+    123
+  ],
+  "subset_size": 12,
+  "languages": [
+    "en"
+  ],
+  "summary_by_language": {
+    "en": {
+      "wer": {
+        "mean": 0.057013888888888885,
+        "std": 0.10922118313599768,
+        "ci95": 0.019542149215256332,
+        "min": 0.0,
+        "max": 0.375,
+        "n": 120,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.01929563492063492,
+        "std": 0.06526324020276852,
+        "ci95": 0.011677075286078554,
+        "min": 0.0,
+        "max": 0.39285714285714285,
+        "n": 120,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.5315512442340453,
+        "std": 0.13401351074454962,
+        "ci95": 0.023978059462781916,
+        "min": 0.1408332735300064,
+        "max": 0.7471862435340881,
+        "n": 120,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 4.020764964818954,
+        "std": 0.3777566840820283,
+        "ci95": 0.067589246659226,
+        "min": 2.5321197509765625,
+        "max": 4.465487480163574,
+        "n": 120,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 1.1743392669375394,
+        "std": 0.35800754894551073,
+        "ci95": 0.06405567803609975,
+        "min": 0.6823966244725738,
+        "max": 2.304,
+        "n": 120,
+        "n_nan": 0
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 1,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-24 14:45:09 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 2,
+        "total_evaluations": 24,
+        "wer": {
+          "mean": 0.05659722222222222,
+          "std": 0.10668985160919905,
+          "ci95": 0.04268483053871277,
+          "min": 0.0,
+          "max": 0.375,
+          "n": 24,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.022569444444444448,
+          "std": 0.07338019560079986,
+          "ci95": 0.02935819261977182,
+          "min": 0.0,
+          "max": 0.32142857142857145,
+          "n": 24,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4393500927835703,
+          "std": 0.12058798474169156,
+          "ci95": 0.04824524184885243,
+          "min": 0.1408332735300064,
+          "max": 0.5628280639648438,
+          "n": 24,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.14187170068423,
+          "std": 0.4393806323187301,
+          "ci95": 0.17578886416691167,
+          "min": 2.6053237915039062,
+          "max": 4.452436923980713,
+          "n": 24,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1226915861383955,
+          "std": 0.37347342620393625,
+          "ci95": 0.14942049002580993,
+          "min": 0.6823966244725738,
+          "max": 2.0602937853107344,
+          "n": 24,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47742220759391785,
+            "utmos": 4.294882297515869,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.8231544715447155,
+            "rms": 0.1537577360868454,
+            "peak": 0.7505782842636108,
+            "hf_ratio": 0.00706390431150794,
+            "synthesis_time_s": 1.4806318283081055,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5112971067428589,
+            "utmos": 4.3222527503967285,
+            "duration_s": 3.808,
+            "duration_ratio": 0.952,
+            "rms": 0.139756977558136,
+            "peak": 0.7339085340499878,
+            "hf_ratio": 0.02676631137728691,
+            "synthesis_time_s": 1.9230430126190186,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.5350661873817444,
+            "utmos": 4.452436923980713,
+            "duration_s": 4.96,
+            "duration_ratio": 1.1769491525423728,
+            "rms": 0.1512223333120346,
+            "peak": 0.8822733759880066,
+            "hf_ratio": 0.00380042870528996,
+            "synthesis_time_s": 2.4240224361419678,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5628280639648438,
+            "utmos": 3.9337007999420166,
+            "duration_s": 9.098666666666666,
+            "duration_ratio": 0.9435654320987654,
+            "rms": 0.14992229640483856,
+            "peak": 0.8804700374603271,
+            "hf_ratio": 0.007356718648225069,
+            "synthesis_time_s": 4.3595945835113525,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5467025637626648,
+            "utmos": 4.337454795837402,
+            "duration_s": 3.8506666666666667,
+            "duration_ratio": 0.6823966244725738,
+            "rms": 0.1474473476409912,
+            "peak": 0.7822908163070679,
+            "hf_ratio": 0.005636708810925484,
+            "synthesis_time_s": 1.898850679397583,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.1408332735300064,
+            "utmos": 4.208532333374023,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.08534569293260574,
+            "peak": 0.6068080067634583,
+            "hf_ratio": 0.03232429176568985,
+            "synthesis_time_s": 0.43052124977111816,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5016405582427979,
+            "utmos": 4.319789409637451,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.8497777777777777,
+            "rms": 0.14810694754123688,
+            "peak": 0.8341595530509949,
+            "hf_ratio": 0.018010489642620087,
+            "synthesis_time_s": 1.2184782028198242,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The sick sick shake six sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.32142857142857145,
+            "secs": 0.25559836626052856,
+            "utmos": 4.349851608276367,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 1.1306666666666667,
+            "rms": 0.1186392530798912,
+            "peak": 0.8168790340423584,
+            "hf_ratio": 0.06971634179353714,
+            "synthesis_time_s": 1.421752691268921,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5209735035896301,
+            "utmos": 4.121481418609619,
+            "duration_s": 7.616,
+            "duration_ratio": 1.807186440677966,
+            "rms": 0.14848916232585907,
+            "peak": 0.7697330713272095,
+            "hf_ratio": 0.0064996154978871346,
+            "synthesis_time_s": 3.6182281970977783,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4823348820209503,
+            "utmos": 4.160219192504883,
+            "duration_s": 10.069333333333333,
+            "duration_ratio": 0.9335805739514348,
+            "rms": 0.1465410441160202,
+            "peak": 0.835390567779541,
+            "hf_ratio": 0.006942556705325842,
+            "synthesis_time_s": 4.772817850112915,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45826518535614014,
+            "utmos": 4.3206000328063965,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8404786324786325,
+            "rms": 0.1443299949169159,
+            "peak": 0.7943084239959717,
+            "hf_ratio": 0.006778402253985405,
+            "synthesis_time_s": 2.284520149230957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.26837316155433655,
+            "utmos": 2.6053237915039062,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.09806392341852188,
+            "peak": 0.6437114477157593,
+            "hf_ratio": 0.022837242111563683,
+            "synthesis_time_s": 0.4389047622680664,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4518871605396271,
+            "utmos": 3.911471128463745,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.9032845528455286,
+            "rms": 0.145080104470253,
+            "peak": 0.7454496026039124,
+            "hf_ratio": 0.007268683984875679,
+            "synthesis_time_s": 1.3090476989746094,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.48087143898010254,
+            "utmos": 4.381651401519775,
+            "duration_s": 3.7546666666666666,
+            "duration_ratio": 0.9386666666666666,
+            "rms": 0.1411035656929016,
+            "peak": 0.8389852643013,
+            "hf_ratio": 0.01585782878100872,
+            "synthesis_time_s": 1.8470432758331299,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.533439576625824,
+            "utmos": 4.427718162536621,
+            "duration_s": 5.152,
+            "duration_ratio": 1.222508474576271,
+            "rms": 0.14421354234218597,
+            "peak": 0.883086085319519,
+            "hf_ratio": 0.0056205070577561855,
+            "synthesis_time_s": 2.526202440261841,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5167357325553894,
+            "utmos": 3.7891337871551514,
+            "duration_s": 8.768,
+            "duration_ratio": 0.9092740740740742,
+            "rms": 0.1520809382200241,
+            "peak": 0.899485170841217,
+            "hf_ratio": 0.008635708130896091,
+            "synthesis_time_s": 4.168379306793213,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5529934763908386,
+            "utmos": 4.39842414855957,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7561181434599156,
+            "rms": 0.14659938216209412,
+            "peak": 0.6719828844070435,
+            "hf_ratio": 0.0069697340950369835,
+            "synthesis_time_s": 2.115921974182129,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.23085573315620422,
+            "utmos": 4.191190242767334,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.10214533656835556,
+            "peak": 0.6217328310012817,
+            "hf_ratio": 0.01979995332658291,
+            "synthesis_time_s": 0.36684751510620117,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.43652716279029846,
+            "utmos": 4.42466926574707,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.14316220581531525,
+            "peak": 0.8299753069877625,
+            "hf_ratio": 0.015327325090765953,
+            "synthesis_time_s": 1.2832691669464111,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The sixth sick shakes, sixth sheep is sick.",
+            "wer": 0.25,
+            "cer": 0.17857142857142858,
+            "secs": 0.3050757944583893,
+            "utmos": 4.366905212402344,
+            "duration_s": 3.989333333333333,
+            "duration_ratio": 1.5957333333333332,
+            "rms": 0.11419560760259628,
+            "peak": 0.8211343884468079,
+            "hf_ratio": 0.05607730522751808,
+            "synthesis_time_s": 1.8860046863555908,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5477657914161682,
+            "utmos": 4.435245037078857,
+            "duration_s": 8.682666666666666,
+            "duration_ratio": 2.0602937853107344,
+            "rms": 0.1513204723596573,
+            "peak": 0.7293201684951782,
+            "hf_ratio": 0.005164456553757191,
+            "synthesis_time_s": 4.123198509216309,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4994427263736725,
+            "utmos": 4.082579612731934,
+            "duration_s": 9.418666666666667,
+            "duration_ratio": 0.8732538631346578,
+            "rms": 0.1517898589372635,
+            "peak": 0.829039990901947,
+            "hf_ratio": 0.009857261553406715,
+            "synthesis_time_s": 4.475480556488037,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4311601519584656,
+            "utmos": 4.445368766784668,
+            "duration_s": 4.085333333333334,
+            "duration_ratio": 0.7332649572649573,
+            "rms": 0.1453969031572342,
+            "peak": 0.7322558164596558,
+            "hf_ratio": 0.008535846136510372,
+            "synthesis_time_s": 2.085925579071045,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.2963124215602875,
+            "utmos": 3.1240386962890625,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.10394410043954849,
+            "peak": 0.6448484659194946,
+            "hf_ratio": 0.020127829164266586,
+            "synthesis_time_s": 0.3578190803527832,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-24 14:46:51 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 2,
+        "total_evaluations": 24,
+        "wer": {
+          "mean": 0.06180555555555556,
+          "std": 0.11889478630007194,
+          "ci95": 0.04756782138702928,
+          "min": 0.0,
+          "max": 0.375,
+          "n": 24,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.010664682539682538,
+          "std": 0.030286737189799698,
+          "ci95": 0.01211721850783475,
+          "min": 0.0,
+          "max": 0.10714285714285714,
+          "n": 24,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5871917357047399,
+          "std": 0.14091447643659963,
+          "ci95": 0.05637753222471507,
+          "min": 0.28809142112731934,
+          "max": 0.7471862435340881,
+          "n": 24,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.029459893703461,
+          "std": 0.37201921302324326,
+          "ci95": 0.14883868358172173,
+          "min": 2.6671104431152344,
+          "max": 4.458873748779297,
+          "n": 24,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1497437298245845,
+          "std": 0.31534146914145783,
+          "ci95": 0.12616286337557592,
+          "min": 0.814717299578059,
+          "max": 1.9058983050847458,
+          "n": 24,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6596813201904297,
+            "utmos": 3.9965648651123047,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.15609820187091827,
+            "peak": 0.6296021938323975,
+            "hf_ratio": 0.004888825584203005,
+            "synthesis_time_s": 1.3453691005706787,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5755748152732849,
+            "utmos": 4.33027458190918,
+            "duration_s": 3.8933333333333335,
+            "duration_ratio": 0.9733333333333334,
+            "rms": 0.1349271684885025,
+            "peak": 0.6807698011398315,
+            "hf_ratio": 0.014371663331985474,
+            "synthesis_time_s": 1.8642725944519043,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.7015096545219421,
+            "utmos": 4.273371696472168,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 1.3642485875706214,
+            "rms": 0.14598722755908966,
+            "peak": 0.7915850877761841,
+            "hf_ratio": 0.0034325493033975363,
+            "synthesis_time_s": 2.755479097366333,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7384195327758789,
+            "utmos": 4.054446220397949,
+            "duration_s": 8.864,
+            "duration_ratio": 0.9192296296296297,
+            "rms": 0.1510961800813675,
+            "peak": 0.7840142250061035,
+            "hf_ratio": 0.0022181153763085604,
+            "synthesis_time_s": 4.217608690261841,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6497291922569275,
+            "utmos": 4.199897289276123,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9791729957805906,
+            "rms": 0.14768633246421814,
+            "peak": 0.6585005521774292,
+            "hf_ratio": 0.005271174944937229,
+            "synthesis_time_s": 2.7291619777679443,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.290391743183136,
+            "utmos": 4.1672797203063965,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.11263425648212433,
+            "peak": 0.6608326435089111,
+            "hf_ratio": 0.019101742655038834,
+            "synthesis_time_s": 0.3968966007232666,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6089125871658325,
+            "utmos": 4.223465442657471,
+            "duration_s": 2.592,
+            "duration_ratio": 0.864,
+            "rms": 0.1407701075077057,
+            "peak": 0.6301515102386475,
+            "hf_ratio": 0.0035431382711976767,
+            "synthesis_time_s": 1.3888182640075684,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The sixth sick sheikh's sixth sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.10714285714285714,
+            "secs": 0.40427684783935547,
+            "utmos": 4.260064601898193,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 1.4293333333333333,
+            "rms": 0.11060222238302231,
+            "peak": 0.6791611909866333,
+            "hf_ratio": 0.019721977412700653,
+            "synthesis_time_s": 1.7496910095214844,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7059037685394287,
+            "utmos": 4.422294616699219,
+            "duration_s": 7.381333333333333,
+            "duration_ratio": 1.751502824858757,
+            "rms": 0.15547017753124237,
+            "peak": 0.7422232031822205,
+            "hf_ratio": 0.0018222208600491285,
+            "synthesis_time_s": 3.597648859024048,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6842619180679321,
+            "utmos": 4.052013397216797,
+            "duration_s": 9.472,
+            "duration_ratio": 0.8781986754966886,
+            "rms": 0.15896715223789215,
+            "peak": 0.7569898366928101,
+            "hf_ratio": 0.00380318658426404,
+            "synthesis_time_s": 4.506600618362427,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.655793309211731,
+            "utmos": 3.5510079860687256,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.9151452991452992,
+            "rms": 0.16071653366088867,
+            "peak": 0.6313537359237671,
+            "hf_ratio": 0.0025778983253985643,
+            "synthesis_time_s": 2.4731454849243164,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36670300364494324,
+            "utmos": 3.5775129795074463,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.11446884274482727,
+            "peak": 0.4852099120616913,
+            "hf_ratio": 0.01130275335162878,
+            "synthesis_time_s": 0.43523097038269043,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6538995504379272,
+            "utmos": 4.27939510345459,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 0.9979837398373985,
+            "rms": 0.15030796825885773,
+            "peak": 0.5989056825637817,
+            "hf_ratio": 0.005043318960815668,
+            "synthesis_time_s": 1.482776165008545,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5931406617164612,
+            "utmos": 4.111644268035889,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 0.8933333333333333,
+            "rms": 0.13708430528640747,
+            "peak": 0.6944265961647034,
+            "hf_ratio": 0.010758341290056705,
+            "synthesis_time_s": 1.7481834888458252,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.6618566513061523,
+            "utmos": 4.458873748779297,
+            "duration_s": 6.4,
+            "duration_ratio": 1.5186440677966102,
+            "rms": 0.1542372852563858,
+            "peak": 0.800338625907898,
+            "hf_ratio": 0.00307452236302197,
+            "synthesis_time_s": 3.1346817016601562,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7471862435340881,
+            "utmos": 4.004807472229004,
+            "duration_s": 9.792,
+            "duration_ratio": 1.0154666666666667,
+            "rms": 0.15429286658763885,
+            "peak": 0.7691670656204224,
+            "hf_ratio": 0.0028708071913570166,
+            "synthesis_time_s": 4.645956993103027,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6135520935058594,
+            "utmos": 3.927593946456909,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.814717299578059,
+            "rms": 0.15129809081554413,
+            "peak": 0.6937190294265747,
+            "hf_ratio": 0.004601221065968275,
+            "synthesis_time_s": 2.194709539413452,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.28809142112731934,
+            "utmos": 4.0008111000061035,
+            "duration_s": 0.736,
+            "duration_ratio": 1.472,
+            "rms": 0.11385475844144821,
+            "peak": 0.5813661813735962,
+            "hf_ratio": 0.0060337684117257595,
+            "synthesis_time_s": 0.38115477561950684,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6058529019355774,
+            "utmos": 3.898078680038452,
+            "duration_s": 2.506666666666667,
+            "duration_ratio": 0.8355555555555556,
+            "rms": 0.15289941430091858,
+            "peak": 0.686600387096405,
+            "hf_ratio": 0.0028440491296350956,
+            "synthesis_time_s": 1.2172067165374756,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The sixth sick sheikh's sixth sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.10714285714285714,
+            "secs": 0.40825676918029785,
+            "utmos": 4.344297409057617,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 1.1690666666666667,
+            "rms": 0.12341554462909698,
+            "peak": 0.5854431986808777,
+            "hf_ratio": 0.023010773584246635,
+            "synthesis_time_s": 1.4108855724334717,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7073631286621094,
+            "utmos": 4.149850368499756,
+            "duration_s": 8.032,
+            "duration_ratio": 1.9058983050847458,
+            "rms": 0.14983060956001282,
+            "peak": 0.6701070070266724,
+            "hf_ratio": 0.0021104146726429462,
+            "synthesis_time_s": 3.789898157119751,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.683012843132019,
+            "utmos": 3.935420274734497,
+            "duration_s": 9.888,
+            "duration_ratio": 0.9167682119205297,
+            "rms": 0.15777698159217834,
+            "peak": 0.7514533996582031,
+            "hf_ratio": 0.003111890284344554,
+            "synthesis_time_s": 4.778583765029907,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6612014174461365,
+            "utmos": 3.8209612369537354,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8404786324786325,
+            "rms": 0.1571974754333496,
+            "peak": 0.7927212119102478,
+            "hf_ratio": 0.00274675153195858,
+            "synthesis_time_s": 2.3056023120880127,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4280302822589874,
+            "utmos": 2.6671104431152344,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.09216085076332092,
+            "peak": 0.6302255392074585,
+            "hf_ratio": 0.021384993568062782,
+            "synthesis_time_s": 0.3748619556427002,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-24 14:48:48 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 2,
+        "total_evaluations": 24,
+        "wer": {
+          "mean": 0.06180555555555556,
+          "std": 0.11889478630007194,
+          "ci95": 0.04756782138702928,
+          "min": 0.0,
+          "max": 0.375,
+          "n": 24,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.02405753968253968,
+          "std": 0.07978679903122045,
+          "ci95": 0.03192136781995796,
+          "min": 0.0,
+          "max": 0.35714285714285715,
+          "n": 24,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5653943407038847,
+          "std": 0.11532372650556473,
+          "ci95": 0.046139099911902515,
+          "min": 0.260351300239563,
+          "max": 0.673804521560669,
+          "n": 24,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.104858815670013,
+          "std": 0.3506238871755208,
+          "ci95": 0.14027877048449675,
+          "min": 2.951707124710083,
+          "max": 4.465487480163574,
+          "n": 24,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0643846612578576,
+          "std": 0.3128274859765173,
+          "ci95": 0.12515706063282087,
+          "min": 0.689957805907173,
+          "max": 1.856,
+          "n": 24,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6611821055412292,
+            "utmos": 3.928699254989624,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.11765928566455841,
+            "peak": 0.7613869905471802,
+            "hf_ratio": 0.03218510001897812,
+            "synthesis_time_s": 1.3758232593536377,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5527969002723694,
+            "utmos": 3.9229013919830322,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 0.8933333333333333,
+            "rms": 0.11907739192247391,
+            "peak": 0.7802762389183044,
+            "hf_ratio": 0.03821660950779915,
+            "synthesis_time_s": 1.6941547393798828,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.6146340370178223,
+            "utmos": 4.443389415740967,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 1.1339209039548024,
+            "rms": 0.13153497874736786,
+            "peak": 0.9837365746498108,
+            "hf_ratio": 0.008877650834619999,
+            "synthesis_time_s": 2.291215181350708,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.654341459274292,
+            "utmos": 4.171339988708496,
+            "duration_s": 7.8933333333333335,
+            "duration_ratio": 0.818567901234568,
+            "rms": 0.12230920046567917,
+            "peak": 0.9123916029930115,
+            "hf_ratio": 0.014167098328471184,
+            "synthesis_time_s": 3.748392105102539,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6459572911262512,
+            "utmos": 3.8741989135742188,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7561181434599156,
+            "rms": 0.1336887776851654,
+            "peak": 0.7647926807403564,
+            "hf_ratio": 0.014245872385799885,
+            "synthesis_time_s": 2.0930702686309814,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.260351300239563,
+            "utmos": 4.129340648651123,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.10875292122364044,
+            "peak": 0.7233192920684814,
+            "hf_ratio": 0.038437146693468094,
+            "synthesis_time_s": 0.36846446990966797,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6528502106666565,
+            "utmos": 3.9651265144348145,
+            "duration_s": 3.3386666666666667,
+            "duration_ratio": 1.1128888888888888,
+            "rms": 0.13179564476013184,
+            "peak": 0.785433828830719,
+            "hf_ratio": 0.006956219207495451,
+            "synthesis_time_s": 1.65409517288208,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The sick, sick, shake, sick sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.35714285714285715,
+            "secs": 0.45819029211997986,
+            "utmos": 3.8514657020568848,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 1.1477333333333335,
+            "rms": 0.11992692202329636,
+            "peak": 0.8261793255805969,
+            "hf_ratio": 0.0610528364777565,
+            "synthesis_time_s": 1.4022676944732666,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.621046245098114,
+            "utmos": 4.446950912475586,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 1.3870282485875707,
+            "rms": 0.12352254986763,
+            "peak": 0.9287490844726562,
+            "hf_ratio": 0.011704770848155022,
+            "synthesis_time_s": 2.779904842376709,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6586771607398987,
+            "utmos": 4.465487480163574,
+            "duration_s": 8.213333333333333,
+            "duration_ratio": 0.7615011037527593,
+            "rms": 0.13053473830223083,
+            "peak": 0.9069793224334717,
+            "hf_ratio": 0.0160536952316761,
+            "synthesis_time_s": 3.9274044036865234,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.673804521560669,
+            "utmos": 4.014251708984375,
+            "duration_s": 4.224,
+            "duration_ratio": 0.7581538461538462,
+            "rms": 0.12820114195346832,
+            "peak": 0.738314151763916,
+            "hf_ratio": 0.018612129613757133,
+            "synthesis_time_s": 2.00769305229187,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.40355750918388367,
+            "utmos": 2.951707124710083,
+            "duration_s": 0.928,
+            "duration_ratio": 1.856,
+            "rms": 0.11719436198472977,
+            "peak": 0.7056283950805664,
+            "hf_ratio": 0.03172789514064789,
+            "synthesis_time_s": 0.5216822624206543,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6045049428939819,
+            "utmos": 4.29557991027832,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.13250330090522766,
+            "peak": 0.9005576968193054,
+            "hf_ratio": 0.022407464683055878,
+            "synthesis_time_s": 1.3790013790130615,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.5889263153076172,
+            "utmos": 3.616867780685425,
+            "duration_s": 3.52,
+            "duration_ratio": 0.88,
+            "rms": 0.12594720721244812,
+            "peak": 0.8472336530685425,
+            "hf_ratio": 0.03359386697411537,
+            "synthesis_time_s": 1.7365658283233643,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.6105718016624451,
+            "utmos": 4.392422676086426,
+            "duration_s": 5.056,
+            "duration_ratio": 1.199728813559322,
+            "rms": 0.1203698143362999,
+            "peak": 0.9037359356880188,
+            "hf_ratio": 0.021155593916773796,
+            "synthesis_time_s": 2.434788227081299,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.657008707523346,
+            "utmos": 4.448563575744629,
+            "duration_s": 8.544,
+            "duration_ratio": 0.8860444444444445,
+            "rms": 0.12585026025772095,
+            "peak": 0.9010722041130066,
+            "hf_ratio": 0.009974365122616291,
+            "synthesis_time_s": 4.01666259765625,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6108835935592651,
+            "utmos": 4.1709771156311035,
+            "duration_s": 3.8933333333333335,
+            "duration_ratio": 0.689957805907173,
+            "rms": 0.13406704366207123,
+            "peak": 0.8433928489685059,
+            "hf_ratio": 0.016815176233649254,
+            "synthesis_time_s": 1.930159091949463,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36157944798469543,
+            "utmos": 3.7387795448303223,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.09688364714384079,
+            "peak": 0.7174327373504639,
+            "hf_ratio": 0.05212758108973503,
+            "synthesis_time_s": 0.36020731925964355,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6022236347198486,
+            "utmos": 4.392915725708008,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.13389210402965546,
+            "peak": 0.7409913539886475,
+            "hf_ratio": 0.0071802460588514805,
+            "synthesis_time_s": 1.3100249767303467,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The sixth sick shake's sixth sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.17857142857142858,
+            "secs": 0.4773865342140198,
+            "utmos": 4.415456771850586,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 1.1690666666666667,
+            "rms": 0.1220596507191658,
+            "peak": 0.814132809638977,
+            "hf_ratio": 0.06065778061747551,
+            "synthesis_time_s": 1.417194128036499,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6137716770172119,
+            "utmos": 4.143078804016113,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 1.6300112994350282,
+            "rms": 0.1245378628373146,
+            "peak": 0.9409642815589905,
+            "hf_ratio": 0.01047441828995943,
+            "synthesis_time_s": 3.342700719833374,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6432599425315857,
+            "utmos": 4.355911731719971,
+            "duration_s": 7.7973333333333334,
+            "duration_ratio": 0.7229315673289183,
+            "rms": 0.12108547240495682,
+            "peak": 0.9230059385299683,
+            "hf_ratio": 0.026602182537317276,
+            "synthesis_time_s": 3.772817373275757,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5857250690460205,
+            "utmos": 4.347832679748535,
+            "duration_s": 4.128,
+            "duration_ratio": 0.740923076923077,
+            "rms": 0.1323508471250534,
+            "peak": 0.791969358921051,
+            "hf_ratio": 0.019751420244574547,
+            "synthesis_time_s": 1.994654893875122,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.35623347759246826,
+            "utmos": 4.0333662033081055,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.12804743647575378,
+            "peak": 0.70689857006073,
+            "hf_ratio": 0.036851707845926285,
+            "synthesis_time_s": 0.3616306781768799,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-24 14:50:36 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 2,
+        "total_evaluations": 24,
+        "wer": {
+          "mean": 0.05659722222222222,
+          "std": 0.10668985160919905,
+          "ci95": 0.04268483053871277,
+          "min": 0.0,
+          "max": 0.375,
+          "n": 24,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.025545634920634924,
+          "std": 0.08633368988924242,
+          "ci95": 0.034540669680586104,
+          "min": 0.0,
+          "max": 0.39285714285714285,
+          "n": 24,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6137462394932905,
+          "std": 0.10638850581130983,
+          "ci95": 0.042564267110022556,
+          "min": 0.2948478162288666,
+          "max": 0.6989511251449585,
+          "n": 24,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.8968775967756906,
+          "std": 0.2673685061840595,
+          "ci95": 0.10696968086204871,
+          "min": 3.211211681365967,
+          "max": 4.255058288574219,
+          "n": 24,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.28782280685729,
+          "std": 0.3888060701916949,
+          "ci95": 0.15555482520817754,
+          "min": 0.807931623931624,
+          "max": 2.304,
+          "n": 24,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 1,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6381174921989441,
+            "utmos": 3.9926598072052,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 0.9797723577235774,
+            "rms": 0.1329527199268341,
+            "peak": 0.9270344376564026,
+            "hf_ratio": 0.015978626906871796,
+            "synthesis_time_s": 1.3913307189941406,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.6265863180160522,
+            "utmos": 3.63386869430542,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 1.1013333333333333,
+            "rms": 0.12209731340408325,
+            "peak": 0.9404118061065674,
+            "hf_ratio": 0.047972746193408966,
+            "synthesis_time_s": 2.1322946548461914,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.6849411725997925,
+            "utmos": 4.005121231079102,
+            "duration_s": 7.008,
+            "duration_ratio": 1.662915254237288,
+            "rms": 0.13141606748104095,
+            "peak": 0.978047788143158,
+            "hf_ratio": 0.016162186861038208,
+            "synthesis_time_s": 3.344774007797241,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6989511251449585,
+            "utmos": 4.131170272827148,
+            "duration_s": 10.122666666666667,
+            "duration_ratio": 1.0497580246913583,
+            "rms": 0.13737991452217102,
+            "peak": 0.972846508026123,
+            "hf_ratio": 0.009327446110546589,
+            "synthesis_time_s": 4.749748945236206,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6912311315536499,
+            "utmos": 4.178623676300049,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 1.0680168776371306,
+            "rms": 0.12025487422943115,
+            "peak": 0.9503013491630554,
+            "hf_ratio": 0.010405334644019604,
+            "synthesis_time_s": 2.899555206298828,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48796236515045166,
+            "utmos": 3.508648157119751,
+            "duration_s": 1.152,
+            "duration_ratio": 2.304,
+            "rms": 0.10057704150676727,
+            "peak": 0.8189645409584045,
+            "hf_ratio": 0.08064568787813187,
+            "synthesis_time_s": 0.5722837448120117,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6182736158370972,
+            "utmos": 3.736109972000122,
+            "duration_s": 3.8506666666666667,
+            "duration_ratio": 1.2835555555555556,
+            "rms": 0.1357523500919342,
+            "peak": 0.8708477020263672,
+            "hf_ratio": 0.00312649249099195,
+            "synthesis_time_s": 1.8217670917510986,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The sixth sick shakes, sixth sheep is sick.",
+            "wer": 0.25,
+            "cer": 0.17857142857142858,
+            "secs": 0.5707546472549438,
+            "utmos": 4.022188186645508,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 1.2970666666666666,
+            "rms": 0.1053810566663742,
+            "peak": 0.9249454140663147,
+            "hf_ratio": 0.09466949850320816,
+            "synthesis_time_s": 1.574509620666504,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6933586597442627,
+            "utmos": 4.183842182159424,
+            "duration_s": 8.117333333333333,
+            "duration_ratio": 1.926146892655367,
+            "rms": 0.12497789412736893,
+            "peak": 0.9780303835868835,
+            "hf_ratio": 0.005624800454825163,
+            "synthesis_time_s": 3.791233777999878,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6463983654975891,
+            "utmos": 3.9726669788360596,
+            "duration_s": 9.557333333333334,
+            "duration_ratio": 0.8861103752759382,
+            "rms": 0.1306048333644867,
+            "peak": 0.9743605256080627,
+            "hf_ratio": 0.014645161107182503,
+            "synthesis_time_s": 4.683838367462158,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6571870446205139,
+            "utmos": 4.057310104370117,
+            "duration_s": 4.544,
+            "duration_ratio": 0.8155897435897436,
+            "rms": 0.12892799079418182,
+            "peak": 0.8925971984863281,
+            "hf_ratio": 0.01819755509495735,
+            "synthesis_time_s": 2.22841215133667,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.488939106464386,
+            "utmos": 3.211211681365967,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.11791322380304337,
+            "peak": 0.9384522438049316,
+            "hf_ratio": 0.030073760077357292,
+            "synthesis_time_s": 0.3913710117340088,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6523820161819458,
+            "utmos": 3.755486011505127,
+            "duration_s": 3.008,
+            "duration_ratio": 1.0271219512195122,
+            "rms": 0.1393955796957016,
+            "peak": 0.9286853075027466,
+            "hf_ratio": 0.01884295791387558,
+            "synthesis_time_s": 1.5188910961151123,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.6614966988563538,
+            "utmos": 4.168215751647949,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 1.0666666666666667,
+            "rms": 0.12675166130065918,
+            "peak": 0.907799482345581,
+            "hf_ratio": 0.025671040639281273,
+            "synthesis_time_s": 2.0267515182495117,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.6863559484481812,
+            "utmos": 4.094040870666504,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 1.37690395480226,
+            "rms": 0.1372898519039154,
+            "peak": 0.9599301218986511,
+            "hf_ratio": 0.011628161184489727,
+            "synthesis_time_s": 2.77251935005188,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6762004494667053,
+            "utmos": 3.7003965377807617,
+            "duration_s": 12.117333333333333,
+            "duration_ratio": 1.2566123456790124,
+            "rms": 0.13223370909690857,
+            "peak": 0.9726334810256958,
+            "hf_ratio": 0.006297805346548557,
+            "synthesis_time_s": 5.648586750030518,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6901789307594299,
+            "utmos": 3.7428555488586426,
+            "duration_s": 5.610666666666667,
+            "duration_ratio": 0.994295358649789,
+            "rms": 0.13911037147045135,
+            "peak": 0.9619885683059692,
+            "hf_ratio": 0.01034287828952074,
+            "synthesis_time_s": 2.6974096298217773,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3559998869895935,
+            "utmos": 3.7183761596679688,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.12561121582984924,
+            "peak": 0.8797508478164673,
+            "hf_ratio": 0.03511626273393631,
+            "synthesis_time_s": 0.36419153213500977,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5993045568466187,
+            "utmos": 3.847311496734619,
+            "duration_s": 3.1573333333333333,
+            "duration_ratio": 1.0524444444444445,
+            "rms": 0.14808373153209686,
+            "peak": 0.9360338449478149,
+            "hf_ratio": 0.0023744392674416304,
+            "synthesis_time_s": 1.4935619831085205,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The sick, sick shakes. Sick sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.39285714285714285,
+            "secs": 0.5883370041847229,
+            "utmos": 3.9519989490509033,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 1.6682666666666666,
+            "rms": 0.10352238267660141,
+            "peak": 0.9538059830665588,
+            "hf_ratio": 0.07595609128475189,
+            "synthesis_time_s": 2.0134024620056152,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6745803952217102,
+            "utmos": 4.255058288574219,
+            "duration_s": 7.466666666666667,
+            "duration_ratio": 1.7717514124293785,
+            "rms": 0.13530460000038147,
+            "peak": 0.9536712765693665,
+            "hf_ratio": 0.007124506402760744,
+            "synthesis_time_s": 3.520794630050659,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6740462779998779,
+            "utmos": 4.046731948852539,
+            "duration_s": 9.514666666666667,
+            "duration_ratio": 0.8821545253863134,
+            "rms": 0.13567371666431427,
+            "peak": 0.9696320295333862,
+            "hf_ratio": 0.022360332310199738,
+            "synthesis_time_s": 4.561239242553711,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Where did you leave the keys to the sound recording studio? Yesterday afternoon.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6734787225723267,
+            "utmos": 4.154872894287109,
+            "duration_s": 4.501333333333333,
+            "duration_ratio": 0.807931623931624,
+            "rms": 0.13519492745399475,
+            "peak": 0.9624489545822144,
+            "hf_ratio": 0.012934550642967224,
+            "synthesis_time_s": 2.177692413330078,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.2948478162288666,
+            "utmos": 3.456296920776367,
+            "duration_s": 0.832,
+            "duration_ratio": 1.664,
+            "rms": 0.12780244648456573,
+            "peak": 0.9181718230247498,
+            "hf_ratio": 0.029079647734761238,
+            "synthesis_time_s": 0.45123958587646484,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-24 14:52:24 UTC",
+      "git": {
+        "commit_sha": "unknown",
+        "is_dirty": null
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "9c5d48be363a8ca1d2b20afb77bab19ed99436b40fe1399eb3749822f8a15c0e",
+        "n_files": 49
+      },
+      "language": "en",
+      "seeds": [
+        42,
+        123
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 2,
+        "total_evaluations": 24,
+        "wer": {
+          "mean": 0.048263888888888884,
+          "std": 0.10273962113227096,
+          "ci95": 0.041104409196351506,
+          "min": 0.0,
+          "max": 0.375,
+          "n": 24,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.013640873015873016,
+          "std": 0.04158262622940276,
+          "ci95": 0.016636515349728438,
+          "min": 0.0,
+          "max": 0.17857142857142858,
+          "n": 24,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4520738124847412,
+          "std": 0.08347304647182574,
+          "ci95": 0.03339617395149479,
+          "min": 0.30435705184936523,
+          "max": 0.5560675859451294,
+          "n": 24,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.930756817261378,
+          "std": 0.40645978154090673,
+          "ci95": 0.1626177807372626,
+          "min": 2.5321197509765625,
+          "max": 4.3843584060668945,
+          "n": 24,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.2470535506095701,
+          "std": 0.3744294937573729,
+          "ci95": 0.14980299671118322,
+          "min": 0.7806919831223628,
+          "max": 2.0931977401129944,
+          "n": 24,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "the birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4239044487476349,
+            "utmos": 3.9291858673095703,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.0453333333333334,
+            "rms": 0.14476440846920013,
+            "peak": 0.7455404996871948,
+            "hf_ratio": 0.05075057968497276,
+            "synthesis_time_s": 1.578735589981079,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.45057135820388794,
+            "utmos": 3.7986111640930176,
+            "duration_s": 4.032,
+            "duration_ratio": 1.008,
+            "rms": 0.14303584396839142,
+            "peak": 0.6500289440155029,
+            "hf_ratio": 0.06170673295855522,
+            "synthesis_time_s": 1.9941401481628418,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.5560675859451294,
+            "utmos": 4.33707332611084,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 1.6527909604519775,
+            "rms": 0.1460656374692917,
+            "peak": 0.7891583442687988,
+            "hf_ratio": 0.034666869789361954,
+            "synthesis_time_s": 3.3355395793914795,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5078748464584351,
+            "utmos": 4.312226295471191,
+            "duration_s": 9.045333333333334,
+            "duration_ratio": 0.9380345679012346,
+            "rms": 0.14318335056304932,
+            "peak": 0.8759614825248718,
+            "hf_ratio": 0.02494264766573906,
+            "synthesis_time_s": 4.286787748336792,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4846629500389099,
+            "utmos": 4.116907119750977,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 0.7806919831223628,
+            "rms": 0.15536990761756897,
+            "peak": 0.8349348306655884,
+            "hf_ratio": 0.016730299219489098,
+            "synthesis_time_s": 2.054823637008667,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3709312677383423,
+            "utmos": 3.7307019233703613,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.11864447593688965,
+            "peak": 0.5381655693054199,
+            "hf_ratio": 0.06335511058568954,
+            "synthesis_time_s": 0.3667125701904297,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48388993740081787,
+            "utmos": 4.028311729431152,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 1.0808888888888888,
+            "rms": 0.14256471395492554,
+            "peak": 0.7972605228424072,
+            "hf_ratio": 0.017021549865603447,
+            "synthesis_time_s": 1.5673887729644775,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The sixth sick sheikh's sixth sheep is sick.",
+            "wer": 0.375,
+            "cer": 0.10714285714285714,
+            "secs": 0.3325805366039276,
+            "utmos": 4.240729331970215,
+            "duration_s": 2.8693333333333335,
+            "duration_ratio": 1.1477333333333335,
+            "rms": 0.11659545451402664,
+            "peak": 0.9446710348129272,
+            "hf_ratio": 0.18956224620342255,
+            "synthesis_time_s": 1.4321308135986328,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5308102369308472,
+            "utmos": 4.047962665557861,
+            "duration_s": 8.821333333333333,
+            "duration_ratio": 2.0931977401129944,
+            "rms": 0.14293703436851501,
+            "peak": 0.8765555024147034,
+            "hf_ratio": 0.01485771220177412,
+            "synthesis_time_s": 4.255360126495361,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5080873370170593,
+            "utmos": 3.8903253078460693,
+            "duration_s": 12.714666666666666,
+            "duration_ratio": 1.1788432671081677,
+            "rms": 0.1447298675775528,
+            "peak": 0.9006819128990173,
+            "hf_ratio": 0.032631341367959976,
+            "synthesis_time_s": 6.030559301376343,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49314916133880615,
+            "utmos": 4.36623477935791,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.9151452991452992,
+            "rms": 0.15412583947181702,
+            "peak": 0.8174225091934204,
+            "hf_ratio": 0.022379489615559578,
+            "synthesis_time_s": 2.4468424320220947,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 42,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.324918657541275,
+            "utmos": 3.254626512527466,
+            "duration_s": 0.736,
+            "duration_ratio": 1.472,
+            "rms": 0.12026061862707138,
+            "peak": 0.5279610753059387,
+            "hf_ratio": 0.12569931149482727,
+            "synthesis_time_s": 0.37879443168640137,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ],
+        "123": [
+          {
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.37804126739501953,
+            "utmos": 4.0831708908081055,
+            "duration_s": 3.0613333333333332,
+            "duration_ratio": 1.0453333333333334,
+            "rms": 0.1596268266439438,
+            "peak": 0.8256978988647461,
+            "hf_ratio": 0.04077969491481781,
+            "synthesis_time_s": 1.4773805141448975,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_01"
+          },
+          {
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "She sells sea shells by the seashore with fresh sunshine.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45112597942352295,
+            "utmos": 4.203090190887451,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 1.1013333333333333,
+            "rms": 0.12555065751075745,
+            "peak": 0.6975305080413818,
+            "hf_ratio": 0.09181062132120132,
+            "synthesis_time_s": 2.19793701171875,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_11"
+          },
+          {
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.5489577651023865,
+            "utmos": 4.078794479370117,
+            "duration_s": 6.08,
+            "duration_ratio": 1.4427118644067796,
+            "rms": 0.14647121727466583,
+            "peak": 0.8609108924865723,
+            "hf_ratio": 0.030875587835907936,
+            "synthesis_time_s": 2.9434874057769775,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_21"
+          },
+          {
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.528793215751648,
+            "utmos": 3.955021381378174,
+            "duration_s": 10.122666666666667,
+            "duration_ratio": 1.0497580246913583,
+            "rms": 0.1482335478067398,
+            "peak": 0.8509910702705383,
+            "hf_ratio": 0.014594017527997494,
+            "synthesis_time_s": 4.801546096801758,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_31"
+          },
+          {
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49665436148643494,
+            "utmos": 3.779344320297241,
+            "duration_s": 5.610666666666667,
+            "duration_ratio": 0.994295358649789,
+            "rms": 0.1502225250005722,
+            "peak": 0.8230620622634888,
+            "hf_ratio": 0.014428598806262016,
+            "synthesis_time_s": 2.68605637550354,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_41"
+          },
+          {
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.31704169511795044,
+            "utmos": 3.57670259475708,
+            "duration_s": 0.928,
+            "duration_ratio": 1.856,
+            "rms": 0.11394613981246948,
+            "peak": 0.5102037191390991,
+            "hf_ratio": 0.05860840901732445,
+            "synthesis_time_s": 0.471050500869751,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_51"
+          },
+          {
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4751284122467041,
+            "utmos": 3.6613593101501465,
+            "duration_s": 3.2,
+            "duration_ratio": 1.0666666666666667,
+            "rms": 0.13303425908088684,
+            "peak": 0.6669244766235352,
+            "hf_ratio": 0.010305557399988174,
+            "synthesis_time_s": 1.5360305309295654,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_02"
+          },
+          {
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The sixth sick shakes, sixth sheep is sick.",
+            "wer": 0.25,
+            "cer": 0.17857142857142858,
+            "secs": 0.31963562965393066,
+            "utmos": 4.238801956176758,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 1.1690666666666667,
+            "rms": 0.1301136612892151,
+            "peak": 0.8942402601242065,
+            "hf_ratio": 0.1236095130443573,
+            "synthesis_time_s": 1.379636526107788,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_12"
+          },
+          {
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5331188440322876,
+            "utmos": 4.017364025115967,
+            "duration_s": 8.682666666666666,
+            "duration_ratio": 2.0602937853107344,
+            "rms": 0.14427001774311066,
+            "peak": 0.8164820671081543,
+            "hf_ratio": 0.01859990693628788,
+            "synthesis_time_s": 4.183622121810913,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_22"
+          },
+          {
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5223683714866638,
+            "utmos": 3.7751402854919434,
+            "duration_s": 10.304,
+            "duration_ratio": 0.9553377483443708,
+            "rms": 0.141153022646904,
+            "peak": 0.8863608837127686,
+            "hf_ratio": 0.03566303849220276,
+            "synthesis_time_s": 4.837138891220093,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_32"
+          },
+          {
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5071005821228027,
+            "utmos": 4.3843584060668945,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.8251623931623931,
+            "rms": 0.15065596997737885,
+            "peak": 0.8106342554092407,
+            "hf_ratio": 0.02233184687793255,
+            "synthesis_time_s": 2.1952872276306152,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_42"
+          },
+          {
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 123,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.30435705184936523,
+            "utmos": 2.5321197509765625,
+            "duration_s": 0.832,
+            "duration_ratio": 1.664,
+            "rms": 0.12997794151306152,
+            "peak": 0.7072173357009888,
+            "hf_ratio": 0.04360852763056755,
+            "synthesis_time_s": 0.4351530075073242,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "en_52"
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

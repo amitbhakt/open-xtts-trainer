@@ -1,0 +1,14 @@
+# docs/recipe_design.md §6, phase 9. Install with: uvx pre-commit install
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+  - repo: local
+    hooks:
+      - id: static-invariants
+        name: static invariants (no swallowed excepts, random data, non-strict loads, spec literals, placeholders)
+        entry: uv run pytest -q -p no:cacheprovider tests/test_invariants.py tests/test_spec_parity.py -k "no_ or scanners or spec_literals"
+        language: system
+        pass_filenames: false
+        types: [python]

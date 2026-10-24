@@ -1,141 +1,75 @@
-"""Diagnostic script to benchmark base DVAE vs fine-tuned DVAE on held-out audio.
+"""DVAE diagnostic: how well does a DVAE fit your audio? (docs/recipe_design.md §3, Stage 1 decision.)
 
-Computes:
-1. Mel Reconstruction Error (L1 & MSE)
-2. Commitment Loss
-3. Codebook Index Diversity (unique tokens used)
+The recipe keeps the released DVAE unless it fits the target audio clearly worse than reference speech it
+handles well; a trained DVAE forces a full Stage 2 retrain (F1). This measures, with the DVAE in eval mode
+(the same code as Stage 1 validation, stage1_dvae.train.evaluate_dvae):
+- reconstruction error of whole clips decoded from their codes,
+- active codes and perplexity of the code distribution,
+- with --compare, code drift: the share of frames whose code differs between the two DVAEs.
+With --reference_dataset, the same numbers on reference speech, and the ratios between them. The thresholds
+for "clearly worse" are [E5] until ablation A2 calibrates them, so this reports and doesn't decide.
+
+    python scripts/diagnose_dvae.py --dataset my_data/dataset.jsonl --checkpoint xtts_base/dvae.pth \\
+        [--reference_dataset en_ref/dataset.jsonl] [--compare checkpoints/dvae/dvae.pth] [--report out.json]
 """
 
 import argparse
+import json
 import os
+import sys
+from typing import Any, Dict, Optional
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import torch
-import torch.nn.functional as F
-import torchaudio
-from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-from TTS.tts.layers.xtts.dvae import DiscreteVAE
-from xtts_trainer.config import safe_torch_load, load_audio
+
+from xtts_trainer.data import load_validated_dataset
+from xtts_trainer.models import load_dvae
+from xtts_trainer.stage1_dvae.dataset import MelDataset
+from xtts_trainer.stage1_dvae.train import evaluate_dvae
+
+MAX_FRAMES = 2048  # per clip, as Stage 1 validation
 
 
-def load_dvae_model(checkpoint_path: str, device: str = "cpu") -> DiscreteVAE:
-    """Instantiate and restore a DiscreteVAE checkpoint."""
-    if not os.path.exists(checkpoint_path):
-        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
-
-    ckpt = safe_torch_load(checkpoint_path, map_location=device)
-    state = ckpt["dvae"] if isinstance(ckpt, dict) and "dvae" in ckpt else (
-        ckpt["model"] if isinstance(ckpt, dict) and "model" in ckpt else ckpt
-    )
-
-    num_tokens = state["codebook.embed"].shape[1] if state and "codebook.embed" in state else 1024
-    dvae = DiscreteVAE(
-        channels=80,
-        normalization=None,
-        positional_dims=1,
-        num_tokens=num_tokens,
-        codebook_dim=512,
-        hidden_dim=512,
-        num_resnet_blocks=3,
-        kernel_size=3,
-        num_layers=2,
-        use_transposed_convs=False,
-    ).to(device)
-
-    missing, unexpected = dvae.load_state_dict(state, strict=True)
-    assert len(missing) == 0 and len(unexpected) == 0, f"DVAE strict load failed: missing={missing}, unexpected={unexpected}"
-    dvae.eval()
-    return dvae
+def dataset_mels(dataset_path: str, device: str):
+    records, dataset_dir, _ = load_validated_dataset(dataset_path, None, require_text=False)
+    mels = MelDataset([r.audio_path(dataset_dir) for r in records], MAX_FRAMES, random_crop=False)
+    return [m.to(device) for m in mels]
 
 
-def evaluate_dvae(
-    dvae: DiscreteVAE,
-    mel_extractor: TorchMelSpectrogram,
-    audio_paths: list[str],
-    device: str = "cpu",
-) -> dict:
-    """Evaluate DVAE reconstruction metrics on a list of audio files."""
-    total_l1 = 0.0
-    total_mse = 0.0
-    total_commitment = 0.0
-    all_codes = []
-
-    with torch.no_grad():
-        for path in audio_paths:
-            waveform, _ = load_audio(path, target_sr=22050)
-            waveform = waveform.to(device)
-            mels = mel_extractor(waveform)
-
-            recon_loss, commit_loss, recon_mels = dvae(mels)
-            l1_err = F.l1_loss(recon_mels, mels).item()
-            mse_err = F.mse_loss(recon_mels, mels).item()
-            codes = dvae.get_codebook_indices(mels)
-
-            total_l1 += l1_err
-            total_mse += mse_err
-            total_commitment += commit_loss.mean().item()
-            all_codes.append(codes.flatten().cpu())
-
-    n = max(1, len(audio_paths))
-    all_codes_cat = torch.cat(all_codes)
-    unique_tokens = len(torch.unique(all_codes_cat))
-
-    return {
-        "mel_l1": total_l1 / n,
-        "mel_mse": total_mse / n,
-        "commitment_loss": total_commitment / n,
-        "unique_codes": unique_tokens,
-        "total_codes": len(all_codes_cat),
-        "codebook_utilization_pct": (unique_tokens / dvae.num_tokens) * 100.0,
-    }
+def diagnose(dataset_path: str, checkpoint: str, reference_dataset: Optional[str] = None,
+             compare: Optional[str] = None, device: str = "cpu") -> Dict[str, Any]:
+    dvae = load_dvae(checkpoint, device=device)
+    other = load_dvae(compare, device=device) if compare else None
+    report: Dict[str, Any] = {"checkpoint": checkpoint, "dataset": dataset_path,
+                              "target": evaluate_dvae(dvae, dataset_mels(dataset_path, device), other)}
+    if compare:
+        report["compare"] = compare
+    if reference_dataset:
+        ref = evaluate_dvae(dvae, dataset_mels(reference_dataset, device), other)
+        report["reference_dataset"] = reference_dataset
+        report["reference"] = ref
+        report["target_vs_reference"] = {
+            "recon_ratio": report["target"]["val_recon"] / ref["val_recon"],
+            "perplexity_ratio": report["target"]["perplexity"] / ref["perplexity"],
+        }
+    return report
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compare base vs fine-tuned DVAE reconstruction")
-    parser.add_argument("--base_dvae", type=str, default="xtts_base/dvae.pth", help="Base pretrained DVAE path")
-    parser.add_argument("--trained_dvae", type=str, default="checkpoints/dvae/dvae.pth", help="Fine-tuned DVAE path")
-    parser.add_argument("--audio_dir", type=str, default="sample_audio", help="Directory of evaluation audio")
-    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    parser = argparse.ArgumentParser(description="How well does a DVAE fit this audio? (reports, doesn't decide)")
+    parser.add_argument("--dataset", required=True, help="dataset.jsonl of the target audio")
+    parser.add_argument("--checkpoint", default="xtts_base/dvae.pth")
+    parser.add_argument("--reference_dataset", default=None, help="dataset.jsonl of reference speech")
+    parser.add_argument("--compare", default=None, help="A second DVAE, e.g. a Stage 1 result, for code drift")
+    parser.add_argument("--report", default=None)
+    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     args = parser.parse_args()
-
-    audio_files = sorted([os.path.join(args.audio_dir, f) for f in os.listdir(args.audio_dir) if f.endswith(".wav")])
-    if not audio_files:
-        print(f"No WAV files found in: {args.audio_dir}")
-        return
-
-    mel_extractor = TorchMelSpectrogram(
-        filter_length=4096,
-        hop_length=1024,
-        win_length=4096,
-        normalize=False,
-        sampling_rate=22050,
-        mel_fmin=0,
-        mel_fmax=8000,
-        n_mel_channels=80,
-    ).to(args.device)
-
-    print(f"\n=======================================================")
-    print(f"DVAE Benchmark on {len(audio_files)} Held-Out Audio Clips ({args.device})")
-    print(f"=======================================================")
-
-    results = {}
-    if os.path.exists(args.base_dvae):
-        print(f"Evaluating Base DVAE: {args.base_dvae}...")
-        base_model = load_dvae_model(args.base_dvae, device=args.device)
-        results["Base"] = evaluate_dvae(base_model, mel_extractor, audio_files, device=args.device)
-
-    if os.path.exists(args.trained_dvae):
-        print(f"Evaluating Fine-Tuned DVAE: {args.trained_dvae}...")
-        trained_model = load_dvae_model(args.trained_dvae, device=args.device)
-        results["Fine-Tuned"] = evaluate_dvae(trained_model, mel_extractor, audio_files, device=args.device)
-
-    print("\n-------------------------------------------------------")
-    print(f"{'Metric':<25} | {'Base DVAE':<15} | {'Fine-Tuned DVAE':<15}")
-    print("-------------------------------------------------------")
-    for metric in ["mel_l1", "mel_mse", "commitment_loss", "unique_codes", "codebook_utilization_pct"]:
-        base_val = f"{results['Base'][metric]:.4f}" if "Base" in results else "N/A"
-        trained_val = f"{results['Fine-Tuned'][metric]:.4f}" if "Fine-Tuned" in results else "N/A"
-        suffix = "%" if "pct" in metric else ""
-        print(f"{metric:<25} | {base_val + suffix:<15} | {trained_val + suffix:<15}")
-    print("-------------------------------------------------------\n")
+    report = diagnose(args.dataset, args.checkpoint, args.reference_dataset, args.compare, args.device)
+    if args.report:
+        with open(args.report, "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=2)
+    print(json.dumps(report, indent=2))
 
 
 if __name__ == "__main__":

@@ -1,18 +1,9 @@
-"""Discriminators, Generators, and GAN losses for Latent HiFi-GAN Vocoder."""
+"""Discriminators and GAN losses for Latent HiFi-GAN Vocoder (the generator comes from xtts_trainer.models)."""
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Tuple
-
-from TTS.tts.layers.xtts.hifigan_decoder import HifiDecoder
-
-HiFiGANGenerator = HifiDecoder
-
-
-def build_hifigan_decoder() -> HifiDecoder:
-    """Builds the native XTTS-v2 HiFi-GAN decoder matching upstream architecture."""
-    return HifiDecoder()
 
 
 class DiscriminatorP(nn.Module):

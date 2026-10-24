@@ -5,7 +5,8 @@ import argparse
 import torch
 import soundfile as sf
 import numpy as np
-from xtts_trainer.config import HiFiGANConfig, safe_torch_load
+from xtts_trainer.models import build_hifigan, check_spec_hash, load_state_strict, safe_torch_load
+from xtts_trainer.spec import SPEC
 
 
 def synthesize_audio(
@@ -13,7 +14,7 @@ def synthesize_audio(
     latent_path: str,
     output_path: str = "synthesized.wav",
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
-    sample_rate: int = 24000,
+    sample_rate: int = SPEC.output_sample_rate,
 ):
     """Loads a trained HiFi-GAN vocoder checkpoint and synthesizes audio from latents."""
     if device == "cuda" and not torch.cuda.is_available():
@@ -21,22 +22,23 @@ def synthesize_audio(
 
     print(f"Loading HiFi-GAN checkpoint: {checkpoint_path} on {device}...")
     ckpt = safe_torch_load(checkpoint_path, map_location=device)
+    check_spec_hash(ckpt, checkpoint_path)
 
     # 1. Initialize Generator matching native XTTS architecture
-    from xtts_trainer.stage3_hifigan.models import build_hifigan_decoder
-    generator = build_hifigan_decoder().to(device)
+    generator = build_hifigan().to(device)
 
     if "hifigan_decoder" in ckpt:
-        generator.load_state_dict(ckpt["hifigan_decoder"], strict=True)
+        load_state_strict(generator, ckpt["hifigan_decoder"], f"HiFi-GAN decoder ({checkpoint_path})")
     elif "generator" in ckpt:
-        generator.waveform_decoder.load_state_dict(ckpt["generator"], strict=True)
+        load_state_strict(generator.waveform_decoder, ckpt["generator"], f"HiFi-GAN generator ({checkpoint_path})")
     else:
-        generator.load_state_dict(ckpt, strict=True)
+        load_state_strict(generator, ckpt, f"HiFi-GAN decoder ({checkpoint_path})")
     generator.eval()
 
     # 2. Load latent
     print(f"Loading latent file: {latent_path}...")
     latent_data = safe_torch_load(latent_path, map_location=device)
+    check_spec_hash(latent_data, latent_path)
 
     if isinstance(latent_data, dict) and "gpt_latents" in latent_data:
         latents = latent_data["gpt_latents"].to(device)
@@ -49,10 +51,10 @@ def synthesize_audio(
     else:
         raise ValueError("Unrecognized latent file structure.")
 
-    # Shape expected: [B, T_frames, 1024]
+    # Shape expected: [B, T_frames, model_dim]
     if latents.ndim == 2:
         latents = latents.unsqueeze(0)
-    if latents.shape[1] == 1024 and latents.shape[2] != 1024:
+    if latents.shape[1] == SPEC.gpt.model_dim and latents.shape[2] != SPEC.gpt.model_dim:
         latents = latents.transpose(1, 2)
 
     # 3. Vocoder synthesis forward pass with speaker conditioning
