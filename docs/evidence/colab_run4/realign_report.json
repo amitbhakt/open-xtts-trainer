@@ -1,0 +1,48 @@
+{
+  "dataset": "sample_audio/dataset.jsonl",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "only 0/8 clips are under 1.5s; short-utterance coverage helps avoid short-text hallucination (docs/recipe_design.md §3, ablation A1)"
+  ],
+  "stats": {
+    "clips": 8,
+    "hours": 0.0139,
+    "speakers": {
+      "ljspeech": 6,
+      "jfk": 2
+    },
+    "languages": {
+      "en": 8
+    },
+    "transcript_sources": {
+      "dataset": 6,
+      "human": 2
+    },
+    "duration_s": {
+      "min": 1.9,
+      "max": 9.667,
+      "histogram": {
+        "9-10s": 2,
+        "1-2s": 1,
+        "5-6s": 3,
+        "8-9s": 1,
+        "4-5s": 1
+      }
+    },
+    "short_clip_fraction": 0.0,
+    "single_word_fraction": 0.0,
+    "eval_overlap_checked": true,
+    "reference_overlap_checked": true,
+    "asr_checked": false,
+    "realigned": true,
+    "aligned_clips": 2,
+    "pause_issues": {},
+    "text_checked": true,
+    "limits": {
+      "min_duration_s": 0.5,
+      "max_duration_s": 11.61,
+      "max_text_tokens": 200
+    }
+  }
+}

@@ -17,8 +17,8 @@
 
 XTTS-v2 is a widely used open multilingual zero-shot text-to-speech (TTS) model. Practitioners fine-tune it to
 adapt it to new speakers and languages, mostly with community recipes whose claims have never been checked. We
-audit the released training code at a pinned commit of its maintained fork, and confirm each finding in the
-original project's final release. We find six defects that silently change what is trained:
+audit the released training code at a pinned commit of its maintained fork, and find six defects that silently
+change what is trained:
 
 - the DVAE codebook is overwritten by a running average in training mode, so any DVAE training changes what the
   codes mean;
@@ -28,6 +28,9 @@ original project's final release. We find six defects that silently change what 
 - Hugging Face Whisper word timestamps cannot locate pauses;
 - vocabulary extension initialises the newest token as a copy of an unrelated language tag.
 
+The four defects in the training code are also present in the original project's final release. The other two
+are properties of the released checkpoint and of Hugging Face Whisper.
+
 We release a three-stage recipe (DVAE, GPT, HiFi-GAN decoder) that repairs these defects. Each repair is guarded
 by a test that fails when the repair is removed. Each recipe decision is graded by the strength of its evidence.
 We also release an evaluation protocol: a frozen 180-sentence, five-language test set, paired A/B comparison
@@ -35,8 +38,8 @@ with bootstrap intervals, pre-registered gates, and target-speaker reference cli
 using.
 
 On the stock model, the English pilot baseline is WER 0.057, CER 0.019, SECS 0.571 and UTMOS 4.02. Reruns are
-bit-identical. With real weights, a cut misplaced by ±1 s lowers the worst forced-alignment word score from ≥ 0.54
-to ≤ 0.02, so such a cut is detectable. In smoke-scale runs, DVAE fine-tuning changes 81% of the discrete codes
+bit-identical. On one real recording, a cut misplaced by ±1 s lowers the worst forced-alignment word score from
+≥ 0.54 to ≤ 0.02, so such a cut is detectable. In smoke-scale runs, DVAE fine-tuning changes 81% of the discrete codes
 for identical audio, and freezing the codebook does not reduce this. Any DVAE fine-tuning therefore invalidates
 the pretrained GPT. *[Main results of experiments A1–A8 to be added.]*
 
@@ -64,8 +67,10 @@ can detect them.
 This work treats the fine-tuning recipe as a claim to be tested rather than a procedure to be followed. Our
 contributions are:
 
-- **C1, a code audit.** We find six defects (F1–F6) in the XTTS training and data code. Each is demonstrated by a
-  test against the pinned upstream code and confirmed in the original project's final release (Section 5.1).
+- **C1, a code audit.** We find six defects (F1–F6): four in the XTTS training code, one in its released
+  checkpoint and one in the Whisper timestamps its data tools rely on. Each is demonstrated by a test against the
+  pinned upstream code, and the four in the training code are also present in the original project's final
+  release (Section 5.1).
 - **C2, a repaired three-stage recipe.** It covers the DVAE, the GPT and the HiFi-GAN decoder. Each decision is
   tagged with an evidence level and guarded by a test (Section 3).
 - **C3, a verifiable data pipeline.** Transcripts come from CTC forced alignment, cuts are planned at pauses, and a
@@ -137,7 +142,7 @@ No recipe decision is accepted because of who proposed it. Each decision carries
 | E5 | Our own hypothesis, untested | Test before it shapes a default |
 
 A decision rises in level only through a test or a measured experiment. The full register of decisions and
-their levels is maintained in `docs/recipe_design.md` (§3–§4). It also assesses ten community claims. Two are
+their levels is maintained in `docs/recipe_design.md` (§3–§4). It also assesses eleven community claims. Two are
 wrong, and most of the rest are unproven or right for a reason other than the one given.
 
 ### 3.2 Code audit
@@ -151,7 +156,7 @@ commands and file hashes. For each finding we wrote two tests:
 
 The six findings are summarised in Table 1 and their consequences are discussed in Section 5.1.
 
-**Table 1.** Defects found in the upstream XTTS training and data code.
+**Table 1.** Defects found in the upstream XTTS training code (F1, F2, F4, F6), its released DVAE checkpoint (F3) and the Hugging Face Whisper timestamps used for data preparation (F5).
 
 | ID | Defect | Consequence | Repair |
 |---|---|---|---|
@@ -239,7 +244,8 @@ re-alignment enabled, the validator re-aligns each clip and rejects it if:
 
 Five CMU ARCTIC speakers [17] serve as reference voices. Their reference clips are assembled from whole
 utterances and pinned by hash. The licence file of each speaker is pinned too. The set is never regenerated
-silently: a missing file is an error.
+silently: a missing file is an error. The loader also recomputes the set's hash, so an edited set can't carry
+its old hash into a manifest.
 
 **Metrics (version 2).**
 
@@ -269,15 +275,18 @@ WER and SECS and 0.07 for UTMOS.
 **Target-speaker evaluation.** For voice adaptation, the question is whether the fine-tune sounds more like the
 target speaker than stock cloning does. Whole clips of each target speaker are held out (seeded) and assembled
 into a 6–10 s reference clip. The SHA-256 of every held-out clip goes into a lock at a single canonical path. The
-dataset validator refuses any training clip whose audio matches the lock. The target gate requires the lower end
+dataset validator refuses any training clip whose audio matches the lock, and evaluation reads target clips only
+from that path, so the clips it scores are the ones training refuses. Target-speaker and eval-voice measurements
+are separate runs, so the forgetting gates are never diluted by the target speaker. The target gate requires the lower end
 of the SECS interval to be above zero.
 
 ### 3.6 Reproducibility discipline
 
 - **Pinned inputs.** All six upstream model artifacts are pinned by hash in `artifacts.lock.json`. Every data
-  source must declare a SHA-1 before it can be downloaded: an unpinned source raises an error. GitHub sources use
-  commit-pinned URLs. The archive.org source (a LibriVox recording, public domain) is checked against
-  archive.org's published SHA-1.
+  file must have a SHA-256 pin before it can be downloaded: an unpinned file raises an error. GitHub sources use
+  commit-pinned URLs. For the archive.org source (a LibriVox recording, public domain), each SHA-256 was taken
+  from a download whose SHA-1 matched the value archive.org publishes, which carries that provenance over
+  without relying on SHA-1 for the check.
 - **Determinism.** Evaluation manifests record the eval-set hash, voice locks, seeds, languages, ASR model and a
   code fingerprint. Comparisons refuse manifests whose inputs differ.
 - **Bug-class protocol.** Every change follows eight steps:
@@ -290,7 +299,9 @@ of the SECS interval to be above zero.
   7. measure model behaviour before and after;
   8. link the finding to its guarding test.
 - **Thresholds.** Thresholds come from a baseline, a publication or a stated requirement, never from the current
-  output.
+  output. One exception is disclosed: the alignment-rejection thresholds (Section 3.4) were set after inspecting
+  word scores on the same JFK recording that Section 5.4 uses to test them. They are therefore tuned on that
+  recording, not validated independently of it.
 - **Continuous integration.** CI runs linting and the full test suite. Tests that need real weights, GPU or
   licensed audio run in a Colab notebook, and their outputs are archived as evidence.
 
@@ -319,7 +330,7 @@ The smoke runs test whether each stage runs correctly. They are not meant to imp
 | Stage | Settings |
 |---|---|
 | Stage 1 | 20 epochs, batch 4; normal and frozen-codebook modes from the released DVAE |
-| Stage 2 | 2 epochs; 6 train and 2 evaluation clips; effective batch 2; fp32 |
+| Stage 2 | 3 epochs of 3 optimizer steps (9 steps); 6 train and 2 evaluation clips; batch 2, no accumulation; fp32 |
 | Stage 3 | 60 epochs, batch 4; discriminator warm-up 40 steps; mixed precision on CUDA |
 
 **Baseline evaluation.** English pilot: 12 sentences (2 per category) × 5 voices × 2 seeds = 120 utterances,
@@ -327,13 +338,13 @@ scored under metrics version 2.
 
 ## 5 Results to date
 
-### 5.1 The upstream defects are present in the original release
+### 5.1 The training-code defects date from the original release
 
 All six findings were reproduced by tests against the pinned fork. F1, F2, F4 and F6 are also present at the
 corresponding lines of the original `coqui-ai/TTS` v0.22.0. The silent sample substitution, the non-strict loads
 and the half-clip prompt for short clips are present there too. F3 is a property of the released checkpoint
-itself, and F5 of Hugging Face Whisper, so neither depends on the code base. The defects therefore date from
-Coqui's own release and are inherited by any recipe built on it. Each repair has a guard test that fails when the
+itself, and F5 of Hugging Face Whisper, so neither depends on the code base. The four training-code defects
+therefore date from Coqui's own release and are inherited by any recipe built on it. Each repair has a guard test that fails when the
 repair is removed.
 
 ### 5.2 Artifact integrity and determinism
@@ -386,8 +397,9 @@ tight word boundary and lost a clip. Its replacement, a weighted pause bonus, in
 "And so,". The lexicographic objective (Section 3.4) gives two clips covering 89% of the recording. The resulting
 eight-clip sample set was prepared and validated with no manual edits.
 
-**Shifted-cut test.** We prepared JFK with MMS forced alignment, moved the end of the first clip by ±1 s, and
-re-aligned every clip as the validator does (Table 3).
+**Shifted-cut test.** We prepared JFK with MMS forced alignment and a 2.5 s minimum clip length, which gives
+three clips (the sample set above uses 3.0 s and gives two). We moved the end of the first clip by ±1 s and
+re-aligned every clip as the validator does (Table 3). Only the first clip was shifted.
 
 **Table 3.** Re-alignment word scores for the first JFK clip, "And so, my fellow Americans: ask".
 
@@ -400,8 +412,10 @@ re-aligned every clip as the validator does (Table 3).
 Across all three unshifted clips, the lowest re-aligned word score was 0.54. The word "for" scored 0.12 when the
 whole 11 s recording was aligned in one pass, but 0.66 when re-aligned within its own clip. A low score from a
 long alignment window is therefore not, by itself, evidence of a bad clip. The rejection thresholds (0.05 floor;
-at most one word below 0.2) sit inside a wide margin between clean clips (≥ 0.54) and clips cut 1 s wrong
-(≤ 0.02, with five weak words). This is one recording and one language, so the thresholds remain provisional.
+at most one word below 0.2) sit inside a wide margin between clean clips (≥ 0.54) and the clip cut 1 s wrong
+(≤ 0.02, with five weak words). The thresholds were set after inspecting this recording (Section 3.6), and this is
+one shifted clip of one recording in one language, so the margin is evidence for the thresholds, not a validation
+of them.
 
 ### 5.5 Training smoke runs with real weights
 
@@ -409,7 +423,7 @@ at most one word below 0.2) sit inside a wide margin between clean clips (≥ 0.
 
 | Stage | Measure | Start | Best | Note |
 |---|---|---|---|---|
-| 2 (GPT) | Eval loss (text CE + mel CE) | 3.200 | 2.972 (step 9) | Strict load of base weights; export completed |
+| 2 (GPT) | Eval loss (text CE + mel CE) | 3.200 | 2.972 (step 9, the last optimizer step) | Strict load of base weights; export completed |
 | 3 (HiFi-GAN) | Validation mel L1 | 1.553 | 1.350 (step 106) | Rose to 1.367 by step 120 |
 | 1 (DVAE, normal) | Val. reconstruction | 0.243 | 0.105 | 141 active codes (stock 136); perplexity 114.3 (114.6) |
 | 1 (DVAE, frozen codebook) | Val. reconstruction | 0.243 | 0.116 | 147 active codes; perplexity 123.2 |
@@ -476,13 +490,15 @@ the effect of F2 on short-text hallucination is a hypothesis to be tested by A3.
 
 **Threats to validity.** Our audit covers the training path we use; untested code paths may contain further
 defects. Every external fact in the repository (hashes, timestamps, transcripts) comes from recorded command
-output, but the Colab runs used uploaded working trees rather than tagged commits. Their code is identified by a
-content fingerprint (runs 1–2) or by date (runs 3–4).
+output, but the Colab runs used uploaded working trees rather than tagged commits. Runs 2 and 4 recorded a content
+fingerprint of the code; run 4's equals that of commit `1838b4c`, which identifies its code exactly. Runs 1 and 3
+are identified only by date. Run 4 also predates source pinning, so the digests of its input audio were not
+recorded.
 
 ## 8 Conclusion
 
-We audited the XTTS-v2 fine-tuning pipeline and found six defects, present since the original release, that
-silently change what is trained. We built a three-stage recipe in which every decision carries its evidence
+We audited the XTTS-v2 fine-tuning pipeline and found six defects that silently change what is trained; the
+four in the training code have been present since the original release. We built a three-stage recipe in which every decision carries its evidence
 level and every repair is guarded by a test, together with a data pipeline whose forced-alignment validator
 detects misplaced cuts on real audio. We also built an evaluation protocol designed so that a fine-tune can be
 judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline
@@ -500,6 +516,10 @@ All code, tests, evaluation definitions, pinned hashes and archived run evidence
   `eval/dataset/reference_voices.lock.json` pins the reference voices.
 - **Gates:** `eval/gates.json` holds the pre-registered gates.
 - **Run evidence:** `docs/evidence/` holds the archived evidence of each Colab run, with environment snapshots.
+- **Not in the repository:** target-speaker clips and their lock (`eval/target_voices/`) are kept private by
+  design, because they hold a real person's voice, transcripts and local paths. Target-speaker results can be
+  reproduced only by whoever holds that speaker's recordings; everything else here can be rerun from public
+  data.
 - **Notebook:** `notebooks/phase0_phase1_colab.ipynb` reproduces the GPU steps.
 
 ## Data and licences
@@ -599,8 +619,8 @@ encoders in zero-shot TTS, arXiv:2506.20190) to be added once their author lists
 | Bit-identical reruns; seed variance (5.2) | `docs/evidence/colab_run1/pilot_en_reproducibility.json`; `docs/evidence/colab_run2/determinism_check.json` |
 | Baseline, Table 2 (5.3) | `docs/evidence/colab_run2/pilot_en_metrics_v2.json` and its README |
 | Planner regression (5.4) | `docs/evidence/colab_run3/README.md`; `tests/test_prepare.py` (`test_cuts_prefer_the_longest_pause_jfk`, `test_pause_never_outweighs_speech`, `test_equal_speech_plans_cut_at_the_longer_pause`) |
-| Shifted-cut word scores, Table 3 (5.4) | `docs/evidence/colab_run4/README.md`; `test_mms_jfk_alignment_and_shifted_cut` |
-| Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/README.md`; drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
+| Shifted-cut word scores, Table 3 (5.4) | `docs/evidence/colab_run4/jfk_realign_shift_*.json`; `test_mms_jfk_alignment_and_shifted_cut` |
+| Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/` (`stage1_smoke.json`, `training_summary.json`, `runs_gpt_smoke_log.txt`, `stage3_metrics.jsonl`); drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
 | Paired A/B and gates (3.5) | `scripts/compare_ab.py`; `eval/gates.json`; `tests/test_compare_ab.py` |
 | Target-speaker hold-out guard (3.5) | `eval/target_voices.py`; `xtts_trainer/data/validate.py`; `tests/test_target_voices.py` |
-| Source pinning (3.6) | `xtts_trainer/speech_data.py`; `docs/evidence/source_pins.md` |
+| Source pinning (3.6) | `xtts_trainer/speech_data.py`; `docs/evidence/source_pins.md` (SHA-256 pins, with the SHA-1 cross-check) |

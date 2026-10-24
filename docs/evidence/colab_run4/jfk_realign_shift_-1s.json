@@ -1,0 +1,428 @@
+{
+  "shift_s": -1.0,
+  "report": {
+    "input": "jfk.flac",
+    "input_s": 11.0,
+    "transcript_source": "human",
+    "aligner": "torchaudio-mms_fa",
+    "segments": 3,
+    "kept_s": 9.877,
+    "kept_fraction": 0.8979,
+    "duration_histogram": {
+      "2-3s": 1,
+      "3-4s": 2
+    },
+    "chars_per_second": {
+      "min": 7.27,
+      "max": 11.79,
+      "mean": 9.12
+    },
+    "alignment_score": {
+      "min": 0.122,
+      "mean": 0.79
+    },
+    "pause_issues_before_fix": {
+      "unpunctuated_pause": 1
+    },
+    "fix_pauses": false,
+    "dropped": [],
+    "config": {
+      "segment": {
+        "min_s": 2.5,
+        "max_s": 11.0,
+        "min_gap_s": 0.15,
+        "edge_pad_s": 0.2,
+        "pause_cap_s": 1.0
+      },
+      "quality": {
+        "min_word_score": 0.05,
+        "weak_word_score": 0.2,
+        "max_weak_words": 1,
+        "max_unexplained_speech_s": 0.1,
+        "max_word_s": 1.5,
+        "max_s_per_char": 0.35
+      },
+      "pauses": {
+        "min_gap_s": 0.15,
+        "unpunctuated_gap_s": 0.3
+      },
+      "fix_pauses": false
+    },
+    "candidates": [
+      {
+        "text": "And so, my fellow Americans: ask",
+        "start_s": 0.181,
+        "end_s": 3.897,
+        "kept": true,
+        "problems": [],
+        "unexplained_speech_s": 0.0,
+        "words": [
+          [
+            "And",
+            0.381,
+            0.541,
+            0.987
+          ],
+          [
+            "so,",
+            0.641,
+            0.741,
+            0.997
+          ],
+          [
+            "my",
+            1.002,
+            1.202,
+            0.999
+          ],
+          [
+            "fellow",
+            1.322,
+            1.583,
+            0.99
+          ],
+          [
+            "Americans:",
+            1.663,
+            2.284,
+            0.995
+          ],
+          [
+            "ask",
+            3.366,
+            3.767,
+            0.905
+          ]
+        ]
+      },
+      {
+        "text": "not what your country can do for you,",
+        "start_s": 3.897,
+        "end_s": 7.513,
+        "kept": true,
+        "problems": [],
+        "unexplained_speech_s": 0.0,
+        "words": [
+          [
+            "not",
+            4.027,
+            4.328,
+            0.888
+          ],
+          [
+            "what",
+            5.39,
+            5.59,
+            0.838
+          ],
+          [
+            "your",
+            5.67,
+            5.831,
+            0.941
+          ],
+          [
+            "country",
+            5.911,
+            6.311,
+            0.939
+          ],
+          [
+            "can",
+            6.472,
+            6.632,
+            0.536
+          ],
+          [
+            "do",
+            6.692,
+            6.792,
+            0.329
+          ],
+          [
+            "for",
+            6.973,
+            7.113,
+            0.122
+          ],
+          [
+            "you,",
+            7.153,
+            7.313,
+            0.559
+          ]
+        ]
+      },
+      {
+        "text": "ask what you can do for your country.",
+        "start_s": 8.075,
+        "end_s": 10.619,
+        "kept": true,
+        "problems": [],
+        "unexplained_speech_s": 0.0,
+        "words": [
+          [
+            "ask",
+            8.275,
+            8.576,
+            0.503
+          ],
+          [
+            "what",
+            8.636,
+            8.816,
+            0.553
+          ],
+          [
+            "you",
+            8.916,
+            9.056,
+            0.91
+          ],
+          [
+            "can",
+            9.217,
+            9.377,
+            0.755
+          ],
+          [
+            "do",
+            9.437,
+            9.537,
+            0.772
+          ],
+          [
+            "for",
+            9.678,
+            9.798,
+            0.965
+          ],
+          [
+            "your",
+            9.838,
+            9.998,
+            0.931
+          ],
+          [
+            "country.",
+            10.058,
+            10.419,
+            0.967
+          ]
+        ]
+      }
+    ]
+  },
+  "realigned": [
+    {
+      "audio": "clips/clip_0001.wav",
+      "text": "And so, my fellow Americans: ask",
+      "duration_s": 2.716,
+      "unexplained_speech_s": 0.0,
+      "words": [
+        [
+          "And",
+          0.523,
+          0.765,
+          0.178
+        ],
+        [
+          "so,",
+          1.006,
+          1.187,
+          0.241
+        ],
+        [
+          "my",
+          1.388,
+          1.428,
+          0.018
+        ],
+        [
+          "fellow",
+          1.449,
+          1.871,
+          0.041
+        ],
+        [
+          "Americans:",
+          1.931,
+          2.615,
+          0.175
+        ],
+        [
+          "ask",
+          2.615,
+          2.676,
+          0.04
+        ]
+      ]
+    },
+    {
+      "audio": "clips/clip_0002.wav",
+      "text": "not what your country can do for you,",
+      "duration_s": 3.616,
+      "unexplained_speech_s": 0.0,
+      "words": [
+        [
+          "not",
+          0.1,
+          0.442,
+          0.827
+        ],
+        [
+          "what",
+          1.487,
+          1.688,
+          0.54
+        ],
+        [
+          "your",
+          1.768,
+          1.929,
+          0.692
+        ],
+        [
+          "country",
+          2.029,
+          2.431,
+          0.994
+        ],
+        [
+          "can",
+          2.572,
+          2.732,
+          0.999
+        ],
+        [
+          "do",
+          2.793,
+          2.893,
+          0.998
+        ],
+        [
+          "for",
+          3.074,
+          3.194,
+          0.662
+        ],
+        [
+          "you,",
+          3.255,
+          3.476,
+          0.701
+        ]
+      ]
+    },
+    {
+      "audio": "clips/clip_0003.wav",
+      "text": "ask what you can do for your country.",
+      "duration_s": 2.544,
+      "unexplained_speech_s": 0.0,
+      "words": [
+        [
+          "ask",
+          0.182,
+          0.505,
+          0.592
+        ],
+        [
+          "what",
+          0.545,
+          0.727,
+          0.938
+        ],
+        [
+          "you",
+          0.828,
+          0.989,
+          0.962
+        ],
+        [
+          "can",
+          1.151,
+          1.292,
+          1.0
+        ],
+        [
+          "do",
+          1.353,
+          1.454,
+          1.0
+        ],
+        [
+          "for",
+          1.615,
+          1.736,
+          0.949
+        ],
+        [
+          "your",
+          1.757,
+          1.918,
+          0.869
+        ],
+        [
+          "country.",
+          1.999,
+          2.342,
+          0.96
+        ]
+      ]
+    }
+  ],
+  "validation": {
+    "dataset": "/tmp/pytest-of-root/pytest-0/test_mms_jfk_alignment_and_shi0/jfk/dataset.jsonl",
+    "ok": false,
+    "errors": [
+      {
+        "line": 2,
+        "audio": "clips/clip_0001.wav",
+        "code": "alignment_mismatch",
+        "message": "low_alignment_score: 'my' 0.02 < 0.05; weak_alignment: 5 words below 0.2 ('And' 0.18, 'my' 0.02, 'fellow' 0.04, 'Americans:' 0.18); at most 1 allowed"
+      }
+    ],
+    "warnings": [
+      "only 0/3 clips are under 1.5s; short-utterance coverage helps avoid short-text hallucination (docs/recipe_design.md \u00a73, ablation A1)",
+      "punctuation/pause disagreements {'unpunctuated_pause': 1} (e.g. line 3 unpunctuated_pause after 'not' gap 1.062s); [E4] check, set strict_pauses to make it blocking (docs/recipe_design.md A6)",
+      "eval-set leakage checks did not run fully (eval set or reference lock not found)"
+    ],
+    "stats": {
+      "clips": 3,
+      "hours": 0.0025,
+      "speakers": {
+        "jfk": 3
+      },
+      "languages": {
+        "en": 3
+      },
+      "transcript_sources": {
+        "human": 3
+      },
+      "duration_s": {
+        "min": 2.544,
+        "max": 3.616,
+        "histogram": {
+          "2-3s": 2,
+          "3-4s": 1
+        }
+      },
+      "short_clip_fraction": 0.0,
+      "single_word_fraction": 0.0,
+      "eval_overlap_checked": false,
+      "reference_overlap_checked": false,
+      "asr_checked": false,
+      "realigned": true,
+      "aligned_clips": 2,
+      "pause_issues": {
+        "unpunctuated_pause": 1
+      },
+      "text_checked": true,
+      "limits": {
+        "min_duration_s": 0.5,
+        "max_duration_s": 11.61,
+        "max_text_tokens": 200
+      }
+    }
+  }
+}

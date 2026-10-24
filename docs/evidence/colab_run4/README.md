@@ -1,11 +1,29 @@
 # Colab run 4: Phases 6–7 with real weights (2026-10-24)
 
-Summarized from the evidence zip the run produced (`docs/evidence/phase6`, `docs/evidence/phase7` on the
-Colab machine). The raw files stay out of the repository; the numbers below are copied from them.
+Summarized from the evidence zip the run produced. The measurement files are in this directory (audio, the
+prepared dataset and the Colab working copy are not committed):
 
-The run used the code uploaded after 1838b4c (the run-4 planner fix), before source pinning, on a single
-Colab GPU. Every training run here is a
-smoke test on the 8-clip sample set (6 LJSpeech clips, 2 JFK clips). It shows that each stage loads the real
+| File | What it holds |
+|---|---|
+| `environment_colab.json` | Python, torch, CUDA, GPU (Tesla T4), `pip freeze`, and the code fingerprint |
+| `artifact_verification.json` | All six XTTS-v2 artifacts checked against `artifacts.lock.json` (SHA-256 and size) |
+| `prep_report.json`, `validation_report.json`, `realign_report.json` | Sample-set preparation and its validation |
+| `jfk_realign_shift_{+0,+1,-1}s.json` | The shifted-cut check: per-word scores and the validator's verdict |
+| `training_summary.json`, `runs_gpt_smoke_log.txt` | Stage 2 summary and its full training log |
+| `stage1_smoke.json`, `stage3_metrics.jsonl` | Stage 1 (both modes) and Stage 3 validation metrics per step |
+
+**Code.** The run used an uploaded working tree, so it has no git commit. Its code fingerprint
+(`eval/harness.get_code_fingerprint`, SHA-256 over every source file) is `d4e73cd008e7…` over 55 files, which
+is exactly the fingerprint of commit `1838b4c`; the next commit, `07f0bfa`, gives `4b48eca2b6dc…` over 57.
+So this run's code is `1838b4c`.
+
+**Inputs.** The XTTS-v2 weights are identified by `artifact_verification.json`. The audio inputs are not: the
+run predates source pinning (`07f0bfa`), so it downloaded LJSpeech and JFK from moving branches without
+recording their digests, and they can't be recovered now. The URLs are in `prep_report.json`. The current pins
+(`docs/evidence/source_pins.md`) were taken from those branches the next day; that the run saw the same bytes is
+likely but not shown.
+
+Every training run here is a smoke test on the 8-clip sample set (6 LJSpeech clips, 2 JFK clips). It shows that each stage loads the real
 weights, trains, validates and saves its best checkpoint. It says nothing about quality.
 
 ## Phase 6: data preparation
@@ -29,13 +47,17 @@ scored 0.12 when the whole 11 s file was aligned, scores 0.66 once it is re-alig
 Unexplained speech is 0.0 s on every clean clip (0.04 s on the +1 s clip).
 
 What this supports: the rejection thresholds (hard floor 0.05; at most one word below 0.2) sit well inside
-the gap between clean clips (≥ 0.54) and clips cut 1 s wrong (≤ 0.02, five weak words). This is one
-recording, so it supports the thresholds without proving them for other speakers or languages.
+the gap between clean clips (≥ 0.54) and the clip cut 1 s wrong (≤ 0.02, five weak words). The ≤ 0.02 result
+is for clip 1 only, at `min_s` 2.5; the sample set's 3.0 s setup cuts JFK differently and was not shifted.
+The thresholds were also set after looking at this recording's run 3 word scores, so this is supporting
+evidence from the recording they were tuned on, not an independent validation. Other speakers and languages
+are untested.
 
 ## Phase 7: training smoke runs
 
-**Stage 2, GPT** (6 train / 2 eval clips, 2 epochs, effective batch 2, fp32). Eval loss went from 3.200
-before training to 2.972 at the best step (9); text CE 0.022, mel CE 2.950. The GPT loaded strictly from
+**Stage 2, GPT** (6 train / 2 eval clips, 3 epochs, batch 2 with no accumulation, fp32). Steps are optimizer
+steps: 6 clips at batch 2 give 3 per epoch, 9 in all. The log shows this: epochs 0–2, with one best
+checkpoint after each, at global steps 3, 6 and 9 (`best_model_3.pth`, `_6`, `_9`). Eval loss went from 3.200 before training to 2.972 at the best step, the last (9); text CE 0.022, mel CE 2.950. The GPT loaded strictly from
 `xtts_base/model.pth`, and the export completed.
 
 **Stage 3, HiFi-GAN** (60 epochs, batch 4, discriminator warm-up 40 steps, CUDA mixed precision).
