@@ -19,10 +19,12 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 import soundfile as sf
 
-from eval.dataset import CMU_ARCTIC_LICENSE_URL, CMU_ARCTIC_URL, load_eval_set
+from eval.dataset import CMU_ARCTIC_LICENSE_URL, CMU_ARCTIC_URL, DEFAULT_EVAL_SET_PATH, load_eval_set
 
-DEFAULT_OUT_DIR = "eval/reference_voices"
-DEFAULT_LOCK_PATH = "eval/dataset/reference_voices.lock.json"
+# Absolute (repo-root based), so the defaults don't depend on the working directory
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_OUT_DIR = os.path.join(_REPO_ROOT, "eval", "reference_voices")
+DEFAULT_LOCK_PATH = os.path.join(_REPO_ROOT, "eval", "dataset", "reference_voices.lock.json")
 DEFAULT_CACHE_DIR = os.path.expanduser("~/.cache/open_xtts_trainer/cmu_arctic")
 MIN_CLIP_S = 6.0
 MAX_CLIP_S = 10.0
@@ -162,7 +164,7 @@ def build_reference_voices(
     out_dir: str = DEFAULT_OUT_DIR,
     lock_path: str = DEFAULT_LOCK_PATH,
     cache_dir: str = DEFAULT_CACHE_DIR,
-    eval_set_path: str = "eval/dataset/eval_set.json",
+    eval_set_path: str = DEFAULT_EVAL_SET_PATH,
     url_template: str = CMU_ARCTIC_URL,
     license_url_template: str = CMU_ARCTIC_LICENSE_URL,
     update_lock: bool = False,

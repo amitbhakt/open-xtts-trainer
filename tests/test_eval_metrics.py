@@ -1,5 +1,6 @@
 """Unit tests for evaluation metrics and evaluation dataset loading."""
 
+import json
 import os
 import sys
 
@@ -179,3 +180,17 @@ def test_baseline_requires_all_reference_voice_audio(tmp_path):
     data = load_eval_set()
     with pytest.raises(FileNotFoundError, match="Missing reference voice audio"):
         resolve_reference_voices(data, str(tmp_path))
+
+
+def test_eval_set_is_never_regenerated_silently(tmp_path, monkeypatch):
+    """A missing eval set is an error, not a fresh file: a wrong path must not silently change what is measured."""
+    from eval.dataset import DEFAULT_EVAL_SET_PATH
+    from eval.reference_voices import DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR
+
+    missing = tmp_path / "nope" / "eval_set.json"
+    with pytest.raises(FileNotFoundError, match="frozen eval set"):
+        load_eval_set(str(missing))
+    assert not missing.exists()
+    assert all(os.path.isabs(p) for p in (DEFAULT_EVAL_SET_PATH, DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR))
+    monkeypatch.chdir(tmp_path)  # defaults don't depend on the working directory
+    assert load_eval_set()["sha256"] == json.load(open(DEFAULT_EVAL_SET_PATH))["sha256"]

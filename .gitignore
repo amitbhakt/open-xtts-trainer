@@ -63,6 +63,7 @@ REMEDIATION_PLAN.md
 # Raw Colab evidence download (curated copy lives in docs/evidence/colab_run1/)
 phase01_evidence/
 phase01_run2_evidence/
+run4_evidence/
 colab_upload/
 
 # Retired proof outputs and old loss charts: kept locally and on Hugging Face, not in git

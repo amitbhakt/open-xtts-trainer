@@ -26,7 +26,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import soundfile as sf
 
-from eval.reference_voices import MAX_CLIP_S, MIN_CLIP_S, assemble_clip, sha256_file
+from eval.reference_voices import MAX_CLIP_S, MIN_CLIP_S, assemble_clip, sha256_file, trim_edges
 from xtts_trainer.data import DatasetRecord, load_validated_dataset, write_dataset
 from xtts_trainer.data.validate import DEFAULT_TARGET_LOCK
 from xtts_trainer.spec import SPEC
@@ -53,9 +53,11 @@ def _hold_out(records: List[DatasetRecord], dataset_dir: str, rng: random.Random
     order = [r for r in records if r.duration_s <= MAX_CLIP_S]
     rng.shuffle(order)
     rate = SPEC.output_sample_rate
+    # Keep only edge-trimmed audio: a mostly silent clip shrinks to its speech, so a long run of such clips
+    # costs little memory. assemble_clip trims again, which leaves already-trimmed audio unchanged.
     loaded: List[np.ndarray] = []
     for r in order:
-        loaded.append(load_mono(r.audio_path(dataset_dir), rate))
+        loaded.append(trim_edges(load_mono(r.audio_path(dataset_dir), rate), rate))
         if sum(len(a) for a in loaded) < MIN_CLIP_S * rate:
             continue
         try:

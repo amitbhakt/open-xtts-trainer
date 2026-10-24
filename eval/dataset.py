@@ -321,7 +321,12 @@ def build_evaluation_dataset() -> Dict[str, Any]:
     return data
 
 
-def save_frozen_eval_set(output_path: str = "eval/dataset/eval_set.json") -> str:
+# Absolute, so a script or test run from another directory reads the frozen set instead of missing it
+DEFAULT_EVAL_SET_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                     "eval", "dataset", "eval_set.json")
+
+
+def save_frozen_eval_set(output_path: str = DEFAULT_EVAL_SET_PATH) -> str:
     """Save the evaluation set and return its SHA-256 hash."""
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     dataset = build_evaluation_dataset()
@@ -336,10 +341,15 @@ def save_frozen_eval_set(output_path: str = "eval/dataset/eval_set.json") -> str
     return sha256
 
 
-def load_eval_set(path: str = "eval/dataset/eval_set.json") -> Dict[str, Any]:
-    """Load the evaluation set from disk with validation."""
+def load_eval_set(path: str = DEFAULT_EVAL_SET_PATH) -> Dict[str, Any]:
+    """Load the frozen evaluation set from disk with validation.
+
+    A missing file is an error. Regenerating it here (as this used to) would silently measure against a new
+    file whenever a path was wrong, e.g. a relative default resolved from another working directory.
+    """
     if not os.path.exists(path):
-        save_frozen_eval_set(path)
+        raise FileNotFoundError(f"No frozen eval set at {path}; it is committed at {DEFAULT_EVAL_SET_PATH}. "
+                                f"Freezing a new one is deliberate: eval.dataset.save_frozen_eval_set(path)")
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)

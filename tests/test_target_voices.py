@@ -153,6 +153,15 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     written = sorted(os.listdir(tmp_path / "eval" / "baselines"))
     commit = baseline_module.PINNED_UPSTREAM_COMMIT[:12]
     assert written == [f"base_xtts_{commit}_target.json", f"tuned_xtts_{commit}_target.json"]
+    # ...and, run from another directory, still measured against the frozen eval set (absolute default path)
+    from eval.dataset import DEFAULT_EVAL_SET_PATH
+
+    frozen = json.load(open(DEFAULT_EVAL_SET_PATH))["sha256"]
+    on_disk = json.load(open(tmp_path / "eval" / "baselines" / f"base_xtts_{commit}_target.json"))
+    assert on_disk["eval_set_sha256"] == frozen and not (tmp_path / "eval" / "dataset").exists()
+    for bad in ("../escape", "a/b", ".hidden", ""):
+        with pytest.raises(ValueError, match="plain name"):
+            baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="target", target_dir=out, label=bad)
 
 
 def test_builder_only_writes_where_training_checks(tmp_path):
@@ -204,3 +213,14 @@ def test_holdout_search_continues_past_clips_that_trim_short(tmp_path):
     dataset = write_dataset(str(tmp_path / "dataset.jsonl"), records)
     lock = build_target_voices(dataset, str(tmp_path / "targets"), seed=0)
     assert MIN_CLIP_S <= lock["voices"]["target_me"]["duration_s"] <= MAX_CLIP_S
+
+
+def test_holdout_keeps_only_trimmed_audio(tmp_path, monkeypatch):
+    """Every loaded clip is edge-trimmed as it is loaded, so silent clips don't pile up full-length in memory."""
+    import eval.target_voices as target_module
+
+    trimmed = []
+    real_trim = target_module.trim_edges
+    monkeypatch.setattr(target_module, "trim_edges", lambda wav, rate: trimmed.append(len(wav)) or real_trim(wav, rate))
+    lock = build_target_voices(_dataset(str(tmp_path), speakers=("me",), n=8), str(tmp_path / "targets"))
+    assert len(trimmed) >= len(lock["voices"]["target_me"]["source_clips"])

@@ -128,7 +128,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Duration is estimated from the words XTTS actually says (upstream's text cleaner); "too long" needs both a 2.2× ratio and ≥ 1 s excess; headline speaker similarity counts clips ≥ 2 s. | `[E1]` measured: the written-digit and sub-second-clip artifacts in the stock baseline | Built (metrics version 2) |
 | Fine-tunes are judged by a paired A/B against stock XTTS-v2, with gates fixed in advance. | `[E1]` | Built (`scripts/compare_ab.py`, `eval/gates.json`) |
 | Voice fine-tunes are also judged on the target speaker, with reference clips held out of training (the validator refuses them), not only on unseen eval voices. | `[E1]` (a fine-tune can't be credited for cloning a voice it trained on) | Built (`scripts/build_target_voices.py`, `--voices target`) |
-| Training data has a stated license, and every downloaded file is fetched from an immutable URL and checked against a SHA-1 (no pin, no download). | `[E1]` | Built. Art of War: archive.org's published SHA-1. LJSpeech and JFK: commit-pinned URLs, SHA-1 computed at pinning. Commands and values in [`docs/evidence/source_pins.md`](evidence/source_pins.md). |
+| Training data has a stated license, and every downloaded file is checked against a SHA-1 before use (no pin, no download). | `[E1]` | Built. LJSpeech and JFK: commit-pinned URLs plus the SHA-1 computed at pinning. Art of War: archive.org's published SHA-1; its URLs aren't revision-specific, so the hash is the guarantee (changed content fails the check). Commands and values in [`docs/evidence/source_pins.md`](evidence/source_pins.md). |
 
 ## §4 Community claims, assessed
 

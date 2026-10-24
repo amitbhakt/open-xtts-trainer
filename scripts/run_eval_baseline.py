@@ -12,6 +12,7 @@ If the checkpoint or any reference voice audio is missing, the script fails.
 """
 
 import os
+import re
 import sys
 import json
 import time
@@ -21,7 +22,7 @@ from typing import Optional, Dict, List, Any
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from eval.dataset import load_eval_set
+from eval.dataset import DEFAULT_EVAL_SET_PATH, load_eval_set
 from eval.harness import (
     METRICS_VERSION, EvaluationHarness, get_code_fingerprint, get_git_info, summarize_by_category, summarize_results,
 )
@@ -73,7 +74,7 @@ def summaries_from_results(results_by_language: Dict[str, List[Dict[str, Any]]])
 def generate_baseline(
     checkpoint_dir: str,
     reference_audio_dir: str = DEFAULT_OUT_DIR,
-    eval_set_path: str = "eval/dataset/eval_set.json",
+    eval_set_path: str = DEFAULT_EVAL_SET_PATH,
     output_path: Optional[str] = None,
     seeds: List[int] = (42, 123, 999),
     languages: Optional[List[str]] = None,
@@ -93,6 +94,8 @@ def generate_baseline(
     """
     if voices not in ("arctic", "target", "all"):
         raise ValueError(f"voices must be arctic, target or all, not {voices!r}")
+    if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*", label):
+        raise ValueError(f"label {label!r} must be a plain name (letters, digits, '_', '-', '.'); it becomes a file name")
     missing_ckpt = [f for f in REQUIRED_CHECKPOINT_FILES if not os.path.exists(os.path.join(checkpoint_dir, f))]
     if missing_ckpt:
         raise FileNotFoundError(
@@ -194,7 +197,7 @@ if __name__ == "__main__":
     parser.add_argument("--reference_lock", type=str, default=DEFAULT_LOCK_PATH)
     parser.add_argument("--seeds", type=int, nargs="+", default=[42, 123, 999])
     parser.add_argument("--subset_size", type=int, default=None, help="First N sentences per language (pilot runs)")
-    parser.add_argument("--eval_set", type=str, default="eval/dataset/eval_set.json")
+    parser.add_argument("--eval_set", type=str, default=DEFAULT_EVAL_SET_PATH)
     parser.add_argument("--output", type=str, default=None)
     parser.add_argument("--languages", type=str, nargs="+", default=None, help="Languages to evaluate (default: all in eval set)")
     parser.add_argument("--asr_model", type=str, default="openai/whisper-large-v3")

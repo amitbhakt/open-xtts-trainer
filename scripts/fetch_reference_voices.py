@@ -11,6 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from eval.dataset import DEFAULT_EVAL_SET_PATH
 from eval.reference_voices import DEFAULT_CACHE_DIR, DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR, build_reference_voices
 
 
@@ -19,7 +20,7 @@ def main():
     parser.add_argument("--out_dir", type=str, default=DEFAULT_OUT_DIR)
     parser.add_argument("--lock", type=str, default=DEFAULT_LOCK_PATH)
     parser.add_argument("--cache_dir", type=str, default=DEFAULT_CACHE_DIR, help="Where source tarballs are kept")
-    parser.add_argument("--eval_set", type=str, default="eval/dataset/eval_set.json")
+    parser.add_argument("--eval_set", type=str, default=DEFAULT_EVAL_SET_PATH)
     parser.add_argument("--update_lock", action="store_true", help="Rewrite the lock instead of verifying against it")
     args = parser.parse_args()
 

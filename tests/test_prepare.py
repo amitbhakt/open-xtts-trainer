@@ -474,15 +474,15 @@ def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
     """Clip numbering restarts per recording, so each file needs its own prefix (art_of_war has 7 files)."""
     import xtts_trainer.speech_data as speech_data
 
-    urls = []
+    import hashlib
+
+    urls, pins = [], {}
     for k, phrases in enumerate([PHRASES, [p.upper() for p in PHRASES[::-1]]]):
         audio, _ = tone_speech(phrase_words(phrases))
         path = tmp_path / f"part{k}.wav"
         sf.write(str(path), audio, SPEC.output_sample_rate)
         urls.append(path.as_uri())
-    import hashlib
-
-    pins = {u: hashlib.sha1(open(u[len("file://"):], "rb").read()).hexdigest() for u in urls}
+        pins[path.as_uri()] = hashlib.sha1(path.read_bytes()).hexdigest()  # hash the file, not its URI
     monkeypatch.setitem(speech_data.SOURCES, "two_parts", speech_data.Source(
         lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None, sha1=pins))
     monkeypatch.setattr(speech_data, "prepare_recording", _with_transcripts(speech_data.prepare_recording, urls))
