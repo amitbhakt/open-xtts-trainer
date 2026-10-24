@@ -1,0 +1,44 @@
+tests/test_target_voices.py
+  s_bfc6eb584d8e27::t_bf3767ebd694e6 156-164,216-226
+docs/recipe_design.md
+  s_bfc6eb584d8e27::t_41c1d587ae855e 131
+scripts/fetch_reference_voices.py
+  s_bfc6eb584d8e27::t_61c94873ee4ce0 14,23
+tests/test_eval_metrics.py
+  s_bfc6eb584d8e27::t_edf2e7b9fecfab 3
+  s_bfc6eb584d8e27::t_bf3767ebd694e6 183-196
+scripts/run_eval_baseline.py
+  s_bfc6eb584d8e27::t_61c94873ee4ce0 25,77,200
+  s_bfc6eb584d8e27::t_eebaea1524cb51 15,97-98
+tests/test_prepare.py
+  s_bfc6eb584d8e27::t_eebaea1524cb51 477-479,485
+eval/harness.py
+  s_bfc6eb584d8e27::t_61c94873ee4ce0 21,158
+eval/reference_voices.py
+  s_bfc6eb584d8e27::t_61c94873ee4ce0 22,167
+  s_bfc6eb584d8e27::t_eebaea1524cb51 24-27
+eval/dataset.py
+  s_bfc6eb584d8e27::t_61c94873ee4ce0 324-329,344-349,351-352
+scripts/rescore_baseline.py
+  s_bfc6eb584d8e27::t_61c94873ee4ce0 18,52
+docs/evidence/source_pins.md
+  s_bfc6eb584d8e27::t_41c1d587ae855e 3-6,10-31,45-46
+eval/target_voices.py
+  s_bfc6eb584d8e27::t_eebaea1524cb51 29,56-57,60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "e06f1ffdb17c45fe8e4d8581f58b1041f0e55363",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
