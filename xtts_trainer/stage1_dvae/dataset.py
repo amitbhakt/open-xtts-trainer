@@ -36,7 +36,7 @@ class MelDataset(Dataset):
             raise FileNotFoundError(f"No .wav audio files found in: {audio_dir}")
 
         from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-        from xtts_trainer.config import DEFAULT_MEL_STATS_PATH
+        from xtts_trainer.config import DEFAULT_MEL_STATS_PATH, ensure_mel_stats
 
         self.mel_transform = TorchMelSpectrogram(
             filter_length=n_fft,
@@ -46,7 +46,7 @@ class MelDataset(Dataset):
             n_mel_channels=n_mels,
             mel_fmin=0,
             mel_fmax=8000,
-            mel_norm_file=DEFAULT_MEL_STATS_PATH,
+            mel_norm_file=ensure_mel_stats(DEFAULT_MEL_STATS_PATH),
         )
 
     def __len__(self) -> int:

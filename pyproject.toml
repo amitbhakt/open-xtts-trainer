@@ -38,6 +38,9 @@ eval = [
 where = ["."]
 include = ["xtts_trainer*"]
 
+[tool.setuptools.package-data]
+xtts_trainer = ["mel_stats.pth"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

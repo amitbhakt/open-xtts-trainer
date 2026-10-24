@@ -1,11 +1,52 @@
 """Audio and model configuration defaults for XTTS v2 training."""
 
 import os
+import re
+import logging
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
+
+logger = logging.getLogger(__name__)
 
 # Default path to local mel_stats.pth normalized tensor (matching upstream XTTS-v2)
 DEFAULT_MEL_STATS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mel_stats.pth")
+XTTS_MEL_STATS_SHA256 = "1f69422a8a8f344c4fca2f0c6b8d41d2151d6615b7321e48e6bb15ae949b119c"
+XTTS_MEL_STATS_URL = "https://huggingface.co/coqui/XTTS-v2/resolve/main/mel_stats.pth"
+
+
+def is_language_code(s: str) -> bool:
+    """Determine if a token represents an ISO 639 / BCP-47 language code rather than a speaker identifier."""
+    s = s.strip().lower()
+    if re.match(r"^[a-z]{2,3}(-[a-z]{2,4})?$", s) and not re.search(r"\d", s):
+        if s in {"spk", "usr", "man", "boy", "ref", "tgt"}:
+            return False
+        return True
+    return False
+
+
+def ensure_mel_stats(target_path: Optional[str] = None) -> str:
+    """Ensure that the upstream XTTS-v2 mel_stats.pth file exists locally and matches SHA-256."""
+    path = target_path or DEFAULT_MEL_STATS_PATH
+    if os.path.exists(path):
+        return path
+
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    import urllib.request
+    import hashlib
+
+    logger.info(f"Downloading upstream XTTS-v2 mel_stats.pth from {XTTS_MEL_STATS_URL} to {path}...")
+    urllib.request.urlretrieve(XTTS_MEL_STATS_URL, path)
+
+    with open(path, "rb") as f:
+        file_hash = hashlib.sha256(f.read()).hexdigest()
+    if file_hash != XTTS_MEL_STATS_SHA256:
+        os.remove(path)
+        raise RuntimeError(
+            f"Downloaded mel_stats.pth SHA-256 mismatch! Expected {XTTS_MEL_STATS_SHA256}, got {file_hash}"
+        )
+
+    logger.info("Successfully downloaded and verified upstream mel_stats.pth.")
+    return path
 
 
 @dataclass

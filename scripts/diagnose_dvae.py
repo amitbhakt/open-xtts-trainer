@@ -40,7 +40,8 @@ def load_dvae_model(checkpoint_path: str, device: str = "cpu") -> DiscreteVAE:
         use_transposed_convs=False,
     ).to(device)
 
-    missing, unexpected = dvae.load_state_dict(state, strict=False)
+    missing, unexpected = dvae.load_state_dict(state, strict=True)
+    assert len(missing) == 0 and len(unexpected) == 0, f"DVAE strict load failed: missing={missing}, unexpected={unexpected}"
     dvae.eval()
     return dvae
 

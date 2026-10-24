@@ -9,7 +9,7 @@ from tqdm import tqdm
 from typing import Optional
 
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-from xtts_trainer.config import safe_torch_load, load_audio, DEFAULT_MEL_STATS_PATH
+from xtts_trainer.config import safe_torch_load, load_audio, DEFAULT_MEL_STATS_PATH, ensure_mel_stats, is_language_code
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -55,9 +55,10 @@ def extract_latents(
                     prompt = parts[1]
                     # Handle audio|text|speaker|lang or audio|text|lang
                     if len(parts) >= 4:
-                        item_lang = parts[3]
-                    elif len(parts) == 3 and parts[2] in {"en", "es", "fr", "de", "it", "pt", "pl", "tr", "ru", "nl", "cs", "ar", "zh-cn", "ja", "hu", "ko", "hi"}:
-                        item_lang = parts[2]
+                        item_lang = parts[3].strip().lower()
+                    elif len(parts) == 3:
+                        p2 = parts[2].strip()
+                        item_lang = p2.lower() if is_language_code(p2) else lang
                     else:
                         item_lang = lang
                     metadata_map[wav_name] = (prompt, item_lang)
@@ -121,7 +122,7 @@ def extract_latents(
             mel_fmin=0,
             mel_fmax=8000,
             n_mel_channels=80,
-            mel_norm_file=DEFAULT_MEL_STATS_PATH,
+            mel_norm_file=ensure_mel_stats(DEFAULT_MEL_STATS_PATH),
         ).to(device)
         logger.info("XTTS model, DVAE, and mel extractor successfully loaded for latent extraction.")
     else:

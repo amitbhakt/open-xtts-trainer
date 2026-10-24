@@ -24,7 +24,7 @@ from TTS.tts.layers.xtts.tokenizer import VoiceBpeTokenizer
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from TTS.tts.layers.xtts.gpt import GPT
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-from xtts_trainer.config import safe_torch_load, DEFAULT_MEL_STATS_PATH
+from xtts_trainer.config import safe_torch_load, DEFAULT_MEL_STATS_PATH, ensure_mel_stats, is_language_code
 from xtts_trainer.stage2_gpt.vocab_extender import resize_gpt_embeddings
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -95,9 +95,9 @@ class GPTTextAudioDataset(Dataset):
                     elif len(parts) == 3:
                         wav_name = parts[0]
                         text = parts[1]
-                        p2 = parts[2]
-                        if p2 in {"en", "es", "fr", "de", "it", "pt", "pl", "tr", "ru", "nl", "cs", "ar", "zh-cn", "ja", "hu", "ko", "hi"}:
-                            lang = p2
+                        p2 = parts[2].strip()
+                        if is_language_code(p2):
+                            lang = p2.lower()
                             speaker = "default"
                         else:
                             speaker = p2
@@ -356,6 +356,7 @@ def train_gpt(
 
     # 2. Initialize Mel Spectrogram Extractors (22,050 Hz matching upstream XTTS)
     # DVAE extractor: 1024 FFT / 256 hop / 1024 win normalized with mel_stats
+    mel_stats_verified_path = ensure_mel_stats(DEFAULT_MEL_STATS_PATH)
     mel_extractor_dvae = TorchMelSpectrogram(
         filter_length=1024,
         hop_length=256,
@@ -365,7 +366,7 @@ def train_gpt(
         mel_fmin=0,
         mel_fmax=8000,
         n_mel_channels=80,
-        mel_norm_file=DEFAULT_MEL_STATS_PATH,
+        mel_norm_file=mel_stats_verified_path,
     ).to(device)
 
     # Style/Perceiver extractor: 2048 FFT / 256 hop / 1024 win normalized with mel_stats (parity with inference)
@@ -378,7 +379,7 @@ def train_gpt(
         mel_fmin=0,
         mel_fmax=8000,
         n_mel_channels=80,
-        mel_norm_file=DEFAULT_MEL_STATS_PATH,
+        mel_norm_file=mel_stats_verified_path,
     ).to(device)
 
     # 3. Initialize DVAE Tokenizer (for target audio code extraction)

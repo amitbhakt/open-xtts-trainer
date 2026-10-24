@@ -30,6 +30,7 @@ ENV/
 checkpoints/
 *.pt
 *.pth
+!xtts_trainer/mel_stats.pth
 *.bin
 *.onnx
 

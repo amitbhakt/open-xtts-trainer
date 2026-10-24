@@ -67,22 +67,87 @@ SAMPLE_SPEECH_SOURCES = [
         "lang": "en",
     },
     {
-        "name": "ljspeech_07",
-        "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0007.wav",
-        "description": "LJSpeech (Linda Johnson) - Expressive intonation",
-        "text": "the earliest book printed with movable types, the Gutenberg, or forty-two line Bible of about 1455,",
-        "speaker": "ljspeech",
-        "lang": "en",
-    },
-    {
-        "name": "jfk_speech",
+        "name": "jfk_speech_01",
         "url": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
-        "description": "JFK Presidential Inaugural Address - Male speech",
-        "text": "And so, my fellow Americans: ask not what your country can do for you — ask what you can do for your country.",
+        "description": "JFK Presidential Inaugural Address - First clause",
+        "text": "And so, my fellow Americans: ask not what your country can do for you,",
         "speaker": "jfk",
         "lang": "en",
+        "time_slice": (0.0, 5.5),
+    },
+    {
+        "name": "jfk_speech_02",
+        "url": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
+        "description": "JFK Presidential Inaugural Address - Second clause",
+        "text": "ask what you can do for your country.",
+        "speaker": "jfk",
+        "lang": "en",
+        "time_slice": (5.5, 11.0),
     },
 ]
+
+
+def segment_audio_on_silence(
+    audio: np.ndarray,
+    sample_rate: int,
+    min_duration_sec: float = 3.0,
+    max_duration_sec: float = 10.0,
+    silence_thresh_db: float = -35.0,
+) -> list[tuple[int, int]]:
+    """Segment continuous speech audio at natural pauses to avoid slicing words mid-syllable."""
+    frame_len = int(0.02 * sample_rate)  # 20ms
+    hop_len = int(0.01 * sample_rate)    # 10ms
+    num_frames = (len(audio) - frame_len) // hop_len + 1
+    if num_frames <= 0:
+        return [(0, len(audio))]
+
+    shape = (num_frames, frame_len)
+    strides = (audio.strides[0] * hop_len, audio.strides[0])
+    frames = np.lib.stride_tricks.as_strided(audio, shape=shape, strides=strides)
+    rms = np.sqrt(np.mean(frames ** 2, axis=-1) + 1e-9)
+    peak_rms = np.max(rms)
+
+    chunk_size = int(max_duration_sec * sample_rate)
+    if peak_rms <= 1e-6:
+        total_chunks = max(1, len(audio) // chunk_size)
+        return [(i * chunk_size, min(len(audio), (i + 1) * chunk_size)) for i in range(total_chunks)]
+
+    db = 20 * np.log10(rms / peak_rms)
+    is_silent = db < silence_thresh_db
+
+    # If there is virtually no silence (e.g. continuous synthetic test tone), chunk evenly
+    if not np.any(is_silent):
+        total_chunks = max(1, len(audio) // chunk_size)
+        return [(i * chunk_size, min(len(audio), (i + 1) * chunk_size)) for i in range(total_chunks)]
+
+    segments = []
+    min_samples = int(min_duration_sec * sample_rate)
+    max_samples = int(max_duration_sec * sample_rate)
+    current_pos = 0
+
+    while current_pos < len(audio):
+        target_end = current_pos + max_samples
+        if target_end >= len(audio):
+            if len(audio) - current_pos >= int(1.0 * sample_rate):
+                segments.append((current_pos, len(audio)))
+            break
+
+        # Search for silence in the window [current_pos + min_samples, target_end]
+        search_start_sample = current_pos + min_samples
+        search_start_frame = search_start_sample // hop_len
+        search_end_frame = min(num_frames - 1, target_end // hop_len)
+
+        split_sample = target_end
+        if search_end_frame > search_start_frame:
+            sub_silent = np.where(is_silent[search_start_frame:search_end_frame])[0]
+            if len(sub_silent) > 0:
+                split_frame = search_start_frame + sub_silent[len(sub_silent) // 2]
+                split_sample = split_frame * hop_len
+
+        segments.append((current_pos, split_sample))
+        current_pos = split_sample
+
+    return segments
 
 
 def prepare_speech_from_file(
@@ -125,22 +190,24 @@ def prepare_speech_from_file(
         lead_offset = max(0, non_silent[0] - int(0.05 * sample_rate))
         resampled = resampled[lead_offset:]
 
-    chunk_size = int(max_duration_sec * sample_rate)
-    total_clips = max(1, len(resampled) // chunk_size)
+    slices = segment_audio_on_silence(
+        resampled,
+        sample_rate=sample_rate,
+        min_duration_sec=min(2.0, max_duration_sec),
+        max_duration_sec=max_duration_sec,
+    )
     created_files = []
 
     print(f"\n==================================================")
     print(f"Preparing speech from user recording: {input_file}")
-    print(f"Total audio length: {len(resampled) / sample_rate:.2f}s -> {total_clips} clips ({max_duration_sec}s each)")
+    print(f"Total audio length: {len(resampled) / sample_rate:.2f}s -> {len(slices)} clips")
     print(f"Target format: {sample_rate}Hz 16-bit PCM mono WAV -> '{output_dir}'")
     print(f"==================================================")
 
-    for i in range(total_clips):
+    for i, (start_idx, end_idx) in enumerate(slices):
         out_filename = f"speech_{i+1:03d}.wav"
         out_path = os.path.join(output_dir, out_filename)
-        clip = resampled[i * chunk_size : (i + 1) * chunk_size]
-        if len(clip) < chunk_size:
-            clip = np.pad(clip, (0, chunk_size - len(clip)))
+        clip = resampled[start_idx:end_idx]
 
         peak = np.max(np.abs(clip))
         if peak > 0:
@@ -156,19 +223,20 @@ def prepare_speech_from_file(
         with open(transcript_file, "r", encoding="utf-8") as tf:
             transcripts = [line.strip() for line in tf if line.strip()]
     elif transcript:
-        transcripts = [transcript] * total_clips
+        transcripts = [transcript] * len(created_files)
     else:
-        # Transcribe clips using local Whisper ASR to generate genuine ground-truth text
+        # Transcribe clips using local Whisper ASR with correct sample rate
         print("Transcribing clips with local Whisper ASR to produce genuine ground-truth text...")
         try:
             from transformers import pipeline
             asr = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
             for path in created_files:
-                res = asr(path)
+                clip_audio, sr = sf.read(path)
+                res = asr({"raw": clip_audio, "sampling_rate": sr}, generate_kwargs={"language": "english", "task": "transcribe"})
                 txt = res.get("text", "").strip()
-                transcripts.append(txt if txt else "Audio recording clip.")
+                transcripts.append(txt if txt else f"Audio recording clip {len(transcripts)+1}.")
         except Exception as e:
-            print(f"[Warning] Automated Whisper transcription unavailable ({e}). Using index prompt.")
+            logger.warning(f"Whisper automated transcription unavailable ({e}). Using index prompt.")
             transcripts = [f"Speech clip {i+1}." for i in range(len(created_files))]
 
     with open(metadata_csv_path, "w", encoding="utf-8") as f:
@@ -237,14 +305,19 @@ def download_and_prepare_speech(
                 lead_offset = max(0, non_silent[0] - int(0.05 * sample_rate))
                 resampled = resampled[lead_offset:]
 
-            chunk_size = int(max_duration_sec * sample_rate)
-            max_available = len(resampled) // chunk_size
-            total_to_slice = min(num_samples, max_available)
+            slices = segment_audio_on_silence(
+                resampled,
+                sample_rate=sample_rate,
+                min_duration_sec=min(3.0, max_duration_sec),
+                max_duration_sec=max(6.0, max_duration_sec),
+            )
+            total_to_slice = min(num_samples, len(slices))
 
             for i in range(total_to_slice):
                 out_filename = f"speech_{i+1:03d}.wav"
                 out_path = os.path.join(output_dir, out_filename)
-                clip = resampled[i * chunk_size : (i + 1) * chunk_size]
+                start_idx, end_idx = slices[i]
+                clip = resampled[start_idx:end_idx]
 
                 # Peak normalize
                 peak = np.max(np.abs(clip))
@@ -254,18 +327,24 @@ def download_and_prepare_speech(
                 sf.write(out_path, clip, sample_rate, subtype="PCM_16")
                 created_files.append(out_path)
 
-            print(f"Successfully sliced {len(created_files)} clips ({len(created_files)*max_duration_sec/60:.2f} minutes) of human speech!")
+            print(f"Successfully sliced {len(created_files)} clips at natural pause boundaries of human speech!")
             print(f"Transcribing {len(created_files)} clips with local Whisper ASR for ground-truth alignment...")
             transcripts = []
             try:
                 from transformers import pipeline
-                asr = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
+                asr = pipeline("automatic-speech-recognition", model="openai/whisper-base.en", device="cpu")
                 for p in created_files:
-                    txt = asr(p)["text"].strip()
-                    transcripts.append(txt if txt else "Audio clip.")
+                    clip_audio, sr = sf.read(p)
+                    res = asr({"raw": clip_audio, "sampling_rate": sr}, generate_kwargs={"language": "english", "task": "transcribe"})
+                    txt = res.get("text", "").strip()
+                    if not txt:
+                        raise RuntimeError(f"Whisper produced empty transcription for {p}")
+                    transcripts.append(txt)
             except Exception as e:
-                print(f"[Warning] Automated Whisper transcription unavailable ({e}).")
-                transcripts = [f"Clean human speech clip {i+1}." for i in range(len(created_files))]
+                raise RuntimeError(
+                    f"Automated Whisper speech transcription failed ({e}). "
+                    f"Genuine paired transcripts are required for Stage 2 training."
+                ) from e
 
             metadata_csv_path = os.path.join(output_dir, "metadata.csv")
             with open(metadata_csv_path, "w", encoding="utf-8") as f:
@@ -296,6 +375,13 @@ def download_and_prepare_speech(
             tensor = torch.from_numpy(audio).float().unsqueeze(0)
             if orig_sr != sample_rate:
                 tensor = F.resample(tensor, orig_sr, sample_rate)
+
+            # Apply time slice if specified (e.g. multi-clause utterances)
+            if "time_slice" in item:
+                start_sec, end_sec = item["time_slice"]
+                start_idx = int(start_sec * sample_rate)
+                end_idx = min(tensor.shape[1], int(end_sec * sample_rate))
+                tensor = tensor[:, start_idx:end_idx]
 
             # Keep complete utterance so text and audio match 1:1; only cap if exceeds XTTS maximum (~25s)
             max_samples = int(25.0 * sample_rate)

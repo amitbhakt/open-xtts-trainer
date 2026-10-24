@@ -94,7 +94,7 @@ def verify_stage1_dvae(dvae_ckpt: str, audio_path: str, device: str = "cpu") -> 
     waveform = waveform[:, :22050 * 3].to(device)  # 3 seconds
 
     from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-    from xtts_trainer.config import DEFAULT_MEL_STATS_PATH
+    from xtts_trainer.config import DEFAULT_MEL_STATS_PATH, ensure_mel_stats
 
     mel_transform = TorchMelSpectrogram(
         filter_length=1024,
@@ -104,7 +104,7 @@ def verify_stage1_dvae(dvae_ckpt: str, audio_path: str, device: str = "cpu") -> 
         n_mel_channels=80,
         mel_fmin=0,
         mel_fmax=8000,
-        mel_norm_file=DEFAULT_MEL_STATS_PATH,
+        mel_norm_file=ensure_mel_stats(DEFAULT_MEL_STATS_PATH),
     ).to(device)
     mel = mel_transform(waveform)
 
@@ -212,13 +212,13 @@ def verify_stage2_and_3_pipeline(
 
     # Initialize Whisper ASR for speech intelligibility & WER evaluation
     print("  Initializing Whisper ASR for speech intelligibility & Word Error Rate (WER) evaluation...")
-    asr_pipeline = None
-    try:
-        from transformers import pipeline
-        asr_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
-        print("  [PASS] Whisper ASR pipeline loaded successfully.")
-    except Exception as e:
-        print(f"  [WARN] Could not load Whisper ASR ({e}). Proceeding without ASR evaluation.")
+    from transformers import pipeline
+    asr_pipeline = pipeline(
+        "automatic-speech-recognition",
+        model="openai/whisper-base.en",
+        device="cpu",
+    )
+    print("  [PASS] Whisper ASR pipeline loaded successfully.")
 
     results = {}
     print("\n" + "=" * 60)
@@ -266,22 +266,25 @@ def verify_stage2_and_3_pipeline(
             )
 
         # Transcribe synthesized audio with Whisper and compute WER
-        hyp_text = ""
-        wer = None
-        if asr_pipeline is not None:
-            try:
-                asr_out = asr_pipeline(audio, generate_kwargs={"language": "english", "task": "transcribe"})
-                hyp_text = asr_out.get("text", "").strip()
-                wer = compute_wer(text, hyp_text)
-            except Exception as e:
-                print(f"  [WARN] ASR transcription error on {tag}: {e}")
+        # Pass dictionary with explicit sample rate to ensure Whisper resamples 24kHz -> 16kHz
+        asr_input = {"raw": audio, "sampling_rate": 24000}
+        asr_out = asr_pipeline(asr_input, generate_kwargs={"language": "english", "task": "transcribe"})
+        hyp_text = asr_out.get("text", "").strip()
+        wer = compute_wer(text, hyp_text)
+
+        # Enforce hard intelligibility gate (WER <= 0.40)
+        assert wer <= 0.40, (
+            f"Speech intelligibility gate failed for [{tag}]! Word Error Rate: {wer:.1%} "
+            f"exceeded maximum allowed threshold (40.0%).\n"
+            f"  Reference:  \"{text}\"\n"
+            f"  Hypothesis: \"{hyp_text}\""
+        )
 
         out_path = os.path.join(output_dir, f"{tag}_stage3_verified.wav")
         sf.write(out_path, audio, 24000)
         print(f"  [PASS] Saved to: {out_path}")
         print(f"         Duration: {duration:.2f}s | RMS: {rms:.4f} | Peak: {peak:.4f} | HF Ratio (>4kHz): {hf_ratio:.4f}")
-        if wer is not None:
-            print(f"         ASR: \"{hyp_text}\" | WER: {wer:.1%}")
+        print(f"         ASR: \"{hyp_text}\" | WER: {wer:.1%}")
 
         results[tag] = {
             "text": text,
