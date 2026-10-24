@@ -44,6 +44,9 @@ xtts_trainer = ["mel_stats.pth", "spec/xtts_v2_config.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Delete each passing test's tmp_path when it finishes. Stage 3 tests write ~800 MB training states, and keeping
+# them all filled the CI runner's disk (CI run 40114391317). Failed tests keep theirs for debugging.
+tmp_path_retention_policy = "failed"
 python_files = ["test_*.py"]
 
 [tool.ruff]

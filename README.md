@@ -112,10 +112,14 @@ say whether a recipe helps; until it runs, no improvement is claimed. Design dec
 
 ## Installation
 
+Requires **FFmpeg** (system package). Coqui-TTS reads audio through `torchcodec`, which loads FFmpeg's shared
+libraries: `sudo apt-get install ffmpeg` on Debian/Ubuntu, `brew install ffmpeg` on macOS. Colab already has it.
+
 ```bash
 git clone https://github.com/amitbhakt/open-xtts-trainer.git
 cd open-xtts-trainer
-pip install -e .
+uv sync --frozen        # exactly the versions in uv.lock; or: pip install -e .
+python scripts/fetch_base_artifacts.py --dest xtts_base   # XTTS-v2 files, hash-verified
 ```
 
 ---

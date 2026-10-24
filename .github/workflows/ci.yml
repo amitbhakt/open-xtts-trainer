@@ -25,6 +25,8 @@ jobs:
         with:
           python-version: "3.11"
           enable-cache: true
+      - name: System audio libraries (torchcodec, which coqui-tts uses for audio IO, loads FFmpeg's shared libraries)
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
       - name: Install exactly what uv.lock pins
         run: uv sync --frozen --extra dev
       - name: Fetch and hash-verify the small upstream artifacts (vocab, config, mel_stats)

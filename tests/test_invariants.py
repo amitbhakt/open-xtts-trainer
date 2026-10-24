@@ -289,6 +289,41 @@ def test_stage3_overfits_one_segment():
 # Model-gated canaries (run where xtts_base/ exists, e.g. Colab)
 # ---------------------------------------------------------------------------
 
+def _reference_voice():
+    """(lock entry, wav path) of the first locked reference voice, or skip.
+
+    The lock is committed but the audio is built on demand (scripts/fetch_reference_voices.py), so a fresh
+    checkout has the lock without the audio: checking only the lock made these tests fail instead of skip
+    (Colab run 4 step 5, before step 6 built the voices).
+    """
+    lock_path = os.path.join(REPO_ROOT, "eval", "dataset", "reference_voices.lock.json")
+    if not os.path.exists(lock_path):
+        pytest.skip("needs the reference-voice lock (scripts/fetch_reference_voices.py)")
+    with open(lock_path, "r", encoding="utf-8") as f:
+        speaker_id, entry = next(iter(sorted(json.load(f)["voices"].items())))
+    if "transcript" not in entry:
+        pytest.skip("reference lock predates transcripts; rerun scripts/fetch_reference_voices.py --update_lock")
+    wav = os.path.join(REPO_ROOT, "eval", "reference_voices", f"{speaker_id}.wav")
+    if not os.path.exists(wav):
+        pytest.skip(f"needs the reference voice audio {wav} (scripts/fetch_reference_voices.py)")
+    return entry, wav
+
+
+def test_reference_voice_helper_skips_without_audio(tmp_path, monkeypatch):
+    """A checkout with the committed lock but no built audio must skip the real-voice tests, not fail them."""
+    import shutil
+
+    (tmp_path / "eval" / "dataset").mkdir(parents=True)
+    shutil.copy(os.path.join(REPO_ROOT, "eval", "dataset", "reference_voices.lock.json"), tmp_path / "eval" / "dataset")
+    monkeypatch.setattr(sys.modules[__name__], "REPO_ROOT", str(tmp_path))
+    with pytest.raises(pytest.skip.Exception, match="reference voice audio"):
+        _reference_voice()
+    (tmp_path / "eval" / "reference_voices").mkdir()
+    speaker = sorted(json.load(open(tmp_path / "eval" / "dataset" / "reference_voices.lock.json"))["voices"])[0]
+    (tmp_path / "eval" / "reference_voices" / f"{speaker}.wav").write_bytes(b"")
+    assert _reference_voice()[1].endswith(f"{speaker}.wav")
+
+
 @needs_base_model
 def test_vocoder_round_trip_prefers_true_alignment(tmp_path):
     """Real clip -> teacher-forced latents (our extractor) -> stock HifiDecoder weights -> audio.
@@ -303,17 +338,10 @@ def test_vocoder_round_trip_prefers_true_alignment(tmp_path):
     from xtts_trainer.models import build_hifigan, load_state_strict, safe_torch_load
     from xtts_trainer.stage3_hifigan.extract_latents import extract_latents, latent_filename
 
-    lock_path = os.path.join(REPO_ROOT, "eval", "dataset", "reference_voices.lock.json")
-    if not os.path.exists(lock_path):
-        pytest.skip("needs reference voices (scripts/fetch_reference_voices.py)")
-    with open(lock_path, "r", encoding="utf-8") as f:
-        voices = json.load(f)["voices"]
-    speaker_id, entry = next(iter(sorted(voices.items())))
-    if "transcript" not in entry:
-        pytest.skip("reference lock predates transcripts; rerun scripts/fetch_reference_voices.py --update_lock")
+    entry, reference_wav = _reference_voice()
 
     # Re-encode as float WAV: same audio, different bytes, so the eval-leakage check doesn't (rightly) refuse it
-    original, sr = sf.read(os.path.join(REPO_ROOT, "eval", "reference_voices", f"{speaker_id}.wav"), dtype="float32")
+    original, sr = sf.read(reference_wav, dtype="float32")
     wav = str(tmp_path / "clip.wav")
     sf.write(wav, original, sr, subtype="FLOAT")
     dataset = write_test_dataset(str(tmp_path), [wav], texts=[entry["transcript"]])
@@ -415,11 +443,6 @@ def test_identity_canary_released_model(tmp_path):
     """The released XTTS-v2 through export_upstream equals the released XTTS-v2 (Phase 5 canary 2)."""
     from xtts_trainer.stage2_gpt.export import export_upstream
 
-    lock_path = os.path.join(REPO_ROOT, "eval", "dataset", "reference_voices.lock.json")
-    if not os.path.exists(lock_path):
-        pytest.skip("needs reference voices (scripts/fetch_reference_voices.py)")
-    with open(lock_path, "r", encoding="utf-8") as f:
-        speaker_id = sorted(json.load(f)["voices"])[0]
+    _, reference_wav = _reference_voice()
     export_upstream(XTTS_BASE, str(tmp_path / "export"))
-    _assert_identical(XTTS_BASE, str(tmp_path / "export"),
-                      os.path.join(REPO_ROOT, "eval", "reference_voices", f"{speaker_id}.wav"))
+    _assert_identical(XTTS_BASE, str(tmp_path / "export"), reference_wav)

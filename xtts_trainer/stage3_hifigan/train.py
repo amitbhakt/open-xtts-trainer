@@ -245,7 +245,8 @@ def train_hifigan(
             scaler_g.step(optim_g)
             scaler_g.update()
             sched_g.step()
-            sched_d.step()
+            if not config.mel_only:  # the discriminators only train (and their optimizer only steps) when used
+                sched_d.step()
             step += 1
             if step % config.val_every_steps == 0:
                 validate(epoch)

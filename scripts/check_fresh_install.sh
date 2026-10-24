@@ -6,6 +6,8 @@
 #                                             # minus ignored), for checking uncommitted changes
 # Installs exactly what uv.lock pins into a new environment, fetches only the small hash-locked artifacts,
 # and runs the test suite. Nothing from the current checkout's .venv, xtts_base/ or caches is used.
+# It does NOT isolate system libraries: FFmpeg (needed by torchcodec) comes from this machine. CI installs it
+# explicitly; a passing local run on a machine with Homebrew FFmpeg doesn't prove a bare system works.
 set -euo pipefail
 repo="$(git rev-parse --show-toplevel)"
 work="$(mktemp -d)"

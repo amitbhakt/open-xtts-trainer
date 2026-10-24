@@ -220,11 +220,11 @@ def test_stretched_word_is_a_problem():
 
 
 def test_cuts_prefer_the_longest_pause_jfk():
-    """Colab run 3: JFK is just over 11 s, so it must be split. The first planner (scoring kept audio) cut at a
-    0.16 s "do | for" boundary, because cutting at a long pause discards the pause; the aligner was unsure of
-    "for" there and the second clip was dropped. Pauses follow the real take; word lengths are approximate."""
+    """JFK is just over 11 s, so it must be split. Pauses follow the real take; word lengths are approximate.
+    v1 (kept audio) cut at the 0.16 s "do | for" boundary (Colab run 3). v2 (weighted pause bonus) cut after
+    "And so," and dropped those words to collect the bonus (Colab run 4). Speech first, pauses as tie-break."""
     text = "And so, my fellow Americans: ask not what your country can do for you, ask what you can do for your country."
-    pauses = {"Americans:": 0.35, "not": 1.06, "do": 0.16, "you,": 0.45}
+    pauses = {"so,": 0.3, "Americans:": 0.35, "not": 1.06, "do": 0.16, "you,": 0.45}
     words, t = [], 0.1
     for w in text.split():
         dur = 0.13 + 0.06 * len(w)
@@ -232,10 +232,54 @@ def test_cuts_prefer_the_longest_pause_jfk():
         t += dur + pauses.get(w, 0.05)
     plan = plan_segments(words, words[-1].end_s + 0.3, SegmentConfig(min_s=3.0, max_s=11.0))
     assert words[-1].end_s - words[0].start_s > 11.0  # the whole take doesn't fit in one clip
-    assert not plan.dropped and [w for s in plan.segments for w in s.words] == words
+    assert not plan.dropped and [w for s in plan.segments for w in s.words] == words  # no speech traded away
+    assert plan.segments[0].text.startswith("And so, my fellow Americans:")
     ends = [s.words[-1].text for s in plan.segments[:-1]]
     assert "not" in ends and "do" not in ends  # cut at the 1.06 s pause, never at the 0.16 s one
-    assert all(pauses[e] >= 0.35 for e in ends)
+
+
+def _phrase(t, n_words, word_s=0.4, gap=0.05, label="w"):
+    words = []
+    for k in range(n_words):
+        words.append(_w(f"{label}{k}", t, t + word_s))
+        t += word_s + gap
+    return words, t - gap
+
+
+def test_pause_never_outweighs_speech():
+    """A short head phrase followed by a long pause ("And so," in the real take) must stay: dropping it to
+    cut at the pause would trade speech for pause, which v2 did."""
+    head = [_w("Yes,", 0.1, 0.3)]
+    body, end = _phrase(1.2, 8)  # 0.9 s pause after "Yes,", then 3.55 s of speech
+    plan = plan_segments(head + body, end + 0.3, SegmentConfig(min_s=3.0, max_s=11.0))
+    assert not plan.dropped and plan.segments[0].words[0].text == "Yes,"
+
+
+@pytest.mark.parametrize("first_gap, second_gap", [(0.2, 0.8), (0.8, 0.2)])
+def test_equal_speech_plans_cut_at_the_longer_pause(first_gap, second_gap):
+    """Two plans keep all the speech; the cut must land on the longer pause, whichever side it is on."""
+    a, t = _phrase(0.1, 8, label="a")             # 3.55 s
+    b, t = _phrase(t + first_gap, 2, label="b")    # 0.85 s
+    c, t = _phrase(t + second_gap, 8, label="c")   # 3.55 s
+    # Either [a b][c] or [a][b c] fits 3-5.6 s with padding; [a b c] doesn't
+    plan = plan_segments(a + b + c, t + 0.3, SegmentConfig(min_s=3.0, max_s=5.6))
+    assert not plan.dropped and len(plan.segments) == 2
+    cut_after = plan.segments[0].words[-1].text
+    assert cut_after == ("b1" if second_gap > first_gap else "a7")
+
+
+def test_one_weak_word_is_tolerated_but_not_two_or_a_missing_one():
+    """JFK's reduced "for" scored 0.12 in a correct clip (Colab runs 3-4); the old any-word-under-0.2 rule
+    dropped it. One weak word passes; two weak words, or one near zero (no audio behind it), don't."""
+    from xtts_trainer.prepare.segment import Segment, segment_problems
+
+    def seg(*scores):
+        words = [AlignedWord(f"w{i}", i * 0.5, i * 0.5 + 0.4, sc) for i, sc in enumerate(scores)]
+        return Segment(0.0, len(scores) * 0.5, words)
+
+    assert segment_problems(seg(0.9, 0.12, 0.95, 0.9), 0.0) == []
+    assert [p.split(":")[0] for p in segment_problems(seg(0.9, 0.12, 0.15, 0.9), 0.0)] == ["weak_alignment"]
+    assert [p.split(":")[0] for p in segment_problems(seg(0.9, 0.02, 0.95, 0.9), 0.0)] == ["low_alignment_score"]
 
 
 def test_plan_segments_drops_with_reason_when_no_pause():
@@ -449,10 +493,21 @@ def test_mms_jfk_alignment_and_shifted_cut(tmp_path, shift_s):
         write_dataset(dataset, records)
     real_vocab = os.path.join(REPO_ROOT, "xtts_base", "vocab.json")
     result = _validate(dataset, real_vocab, realigner=realignment_checker(aligner))
+    # Calibration evidence: every clip re-aligned as validation sees it, word by word (scores, unexplained speech)
+    from xtts_trainer.prepare.pipeline import load_mono
+
+    realigned = []
+    for r in records:
+        audio = load_mono(os.path.join(out, r.audio), SPEC.output_sample_rate)
+        window = aligner.align(audio, SPEC.output_sample_rate, r.text)
+        clip_s = len(audio) / SPEC.output_sample_rate
+        realigned.append({"audio": r.audio, "text": r.text, "duration_s": round(clip_s, 3),
+                          "unexplained_speech_s": round(window.unexplained_speech_s(0.0, clip_s), 3),
+                          "words": [[w.text, round(w.start_s, 3), round(w.end_s, 3), round(w.score, 3)] for w in window.words]})
     evidence_dir = os.path.join(REPO_ROOT, "docs", "evidence", "phase6")
     os.makedirs(evidence_dir, exist_ok=True)
     with open(os.path.join(evidence_dir, f"jfk_realign_shift_{shift_s:+.0f}s.json"), "w") as f:
-        json.dump({"shift_s": shift_s, "report": report, "validation": result.to_json()}, f, indent=2)
+        json.dump({"shift_s": shift_s, "report": report, "realigned": realigned, "validation": result.to_json()}, f, indent=2)
     if shift_s:
         assert "alignment_mismatch" in {e.code for e in result.errors}
     else:

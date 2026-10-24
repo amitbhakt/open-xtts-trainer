@@ -132,9 +132,15 @@ def prepare_recording(
 
     clips_dir = os.path.join(output_dir, "clips")
     os.makedirs(clips_dir, exist_ok=True)
-    records, kept, dropped = [], [], list(plan.dropped)
+    records, kept, dropped, candidates = [], [], list(plan.dropped), []
     for seg in plan.segments:
-        problems = segment_problems(seg, unexplained_speech_s(alignments, seg), config.quality)
+        unexplained = unexplained_speech_s(alignments, seg)
+        problems = segment_problems(seg, unexplained, config.quality)
+        # Every planned segment's word scores, kept or not: the quality thresholds are [E5] and get
+        # calibrated from these (docs/recipe_design.md §3)
+        candidates.append({"text": seg.text, "start_s": round(seg.start_s, 3), "end_s": round(seg.end_s, 3),
+                           "kept": not problems, "problems": problems, "unexplained_speech_s": round(unexplained, 3),
+                           "words": [[w.text, round(w.start_s, 3), round(w.end_s, 3), round(w.score, 3)] for w in seg.words]})
         if problems:
             dropped.append(Dropped(seg.start_s, seg.end_s, seg.text, "; ".join(problems)))
             continue
@@ -159,6 +165,7 @@ def prepare_recording(
         kept.append(seg)
 
     report = prep_report(input_file, audio_s, transcript_source, aligner.name, kept, records, dropped, config)
+    report["candidates"] = candidates
     return records, report
 
 
