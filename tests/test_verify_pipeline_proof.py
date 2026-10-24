@@ -16,7 +16,7 @@ def test_verify_stage1_dvae(tmp_path):
     audio_path = os.path.join(str(tmp_path), "audio.wav")
 
     dvae = build_dvae()
-    torch.save({"model": dvae.state_dict()}, ckpt_path)
+    torch.save({"dvae": dvae.state_dict()}, ckpt_path)
 
     # 1 second of 22050 Hz sine wave
     sine = torch.sin(torch.linspace(0, 440, 22050)).unsqueeze(0)

@@ -47,10 +47,11 @@ def verify_stage1_dvae(dvae_ckpt: str, audio_path: str, device: str = "cpu") -> 
     assert os.path.exists(audio_path), f"Audio file not found: {audio_path}"
 
     payload = safe_torch_load(dvae_ckpt, map_location=device)
-    state_dict = payload.get("model", payload)
+    state_dict = payload.get("dvae", payload.get("model", payload))
 
     dvae = build_dvae().to(device).eval()
-    dvae.load_state_dict(state_dict, strict=False)
+    missing, unexpected = dvae.load_state_dict(state_dict, strict=True)
+    assert len(missing) == 0 and len(unexpected) == 0, f"DVAE strict load failed: missing={missing}, unexpected={unexpected}"
 
     # Load audio and compute 80-bin mel
     waveform, sr = torchaudio.load(audio_path)

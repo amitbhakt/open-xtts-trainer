@@ -79,15 +79,17 @@ def extract_latents(
                 dvae.load_state_dict(state_dvae, strict=False)
                 dvae.eval()
 
+            # Mel extractor for DVAE (native 1024 FFT / 256 hop / 1024 win matching upstream XTTS)
             mel_extractor_dvae = TorchMelSpectrogram(
-                filter_length=4096,
-                hop_length=1024,
-                win_length=4096,
+                filter_length=1024,
+                hop_length=256,
+                win_length=1024,
                 normalize=False,
                 sampling_rate=22050,
                 mel_fmin=0,
                 mel_fmax=8000,
                 n_mel_channels=80,
+                mel_norm_file=None,
             ).to(device)
             logger.info("XTTS model, DVAE, and mel extractor successfully loaded for latent extraction.")
         except Exception as e:

@@ -15,11 +15,11 @@ class MelDataset(Dataset):
         self,
         audio_dir: str,
         sample_rate: int = 22050,
-        n_fft: int = 4096,
-        hop_length: int = 1024,
-        win_length: int = 4096,
+        n_fft: int = 1024,
+        hop_length: int = 256,
+        win_length: int = 1024,
         n_mels: int = 80,
-        max_mel_frames: int = 64,
+        max_mel_frames: int = 256,
     ):
         super().__init__()
         self.audio_dir = audio_dir
@@ -43,6 +43,7 @@ class MelDataset(Dataset):
             n_mel_channels=n_mels,
             mel_fmin=0,
             mel_fmax=8000,
+            mel_norm_file=None,
         )
 
     def __len__(self) -> int:
@@ -63,9 +64,9 @@ class MelDataset(Dataset):
 
         time_frames = mel.shape[-1]
         if time_frames < self.max_mel_frames:
-            # Pad
+            # Pad with log-mel silence threshold (log(1e-5) ~= -11.5129) instead of 0
             pad_amount = self.max_mel_frames - time_frames
-            mel = torch.nn.functional.pad(mel, (0, pad_amount))
+            mel = torch.nn.functional.pad(mel, (0, pad_amount), value=-11.5129)
         else:
             # Random crop
             start = random.randint(0, time_frames - self.max_mel_frames)

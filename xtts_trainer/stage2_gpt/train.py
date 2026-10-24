@@ -259,27 +259,31 @@ def train_gpt(
     stop_text_token = 0 if stop_token_id is None else stop_token_id
     logger.info(f"Loaded tokenizer with {vocab_size} tokens (start: {start_text_token}, stop: {stop_text_token}).")
 
-    # 2. Initialize Mel Spectrogram Extractors (22,050 Hz)
+    # 2. Initialize Mel Spectrogram Extractors (22,050 Hz matching upstream XTTS)
+    # DVAE extractor: 1024 FFT / 256 hop / 1024 win (21.5 audio codes/sec at stride 4)
     mel_extractor_dvae = TorchMelSpectrogram(
-        filter_length=4096,
-        hop_length=1024,
-        win_length=4096,
+        filter_length=1024,
+        hop_length=256,
+        win_length=1024,
         normalize=False,
         sampling_rate=22050,
         mel_fmin=0,
         mel_fmax=8000,
         n_mel_channels=80,
+        mel_norm_file=None,
     ).to(device)
 
+    # Style/Perceiver extractor: 2048 FFT / 256 hop / 1024 win
     mel_extractor_style = TorchMelSpectrogram(
-        filter_length=4096,
-        hop_length=1024,
-        win_length=4096,
+        filter_length=2048,
+        hop_length=256,
+        win_length=1024,
         normalize=False,
         sampling_rate=22050,
         mel_fmin=0,
         mel_fmax=8000,
         n_mel_channels=80,
+        mel_norm_file=None,
     ).to(device)
 
     # 3. Initialize DVAE Tokenizer (for target audio code extraction)

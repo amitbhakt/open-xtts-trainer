@@ -89,18 +89,24 @@ class LatentHiFiGANDataset(Dataset):
             waveform = torch.nn.functional.pad(waveform, (0, pad_audio))
             audio_len = self.audio_samples_slice
 
-        # Compute valid random slice offsets with silence rejection
-        max_latent_start = max(0, latent_len - self.latent_frames_slice)
+        # Compute valid synchronized random slice offsets with silence rejection.
+        # Constrain max_latent_start by both latent_len and audio_len to prevent independent clamping
+        # and guarantee 100% temporal alignment between latent frames and waveform samples.
+        samples_per_latent = 4 * (24000 / 22050) * 256
+        max_latent_by_audio = (
+            int((audio_len - self.audio_samples_slice) / samples_per_latent)
+            if audio_len >= self.audio_samples_slice
+            else 0
+        )
+        max_latent_start = max(0, min(latent_len - self.latent_frames_slice, max_latent_by_audio))
+
         best_slice = None
         best_rms = -1.0
 
         # Try up to 8 random windows to sample active speech rather than silence
         for _ in range(8):
             latent_start = random.randint(0, max_latent_start) if max_latent_start > 0 else 0
-            audio_start = int(latent_start * 4 * (24000 / 22050)) * 256
-
-            if audio_start + self.audio_samples_slice > audio_len:
-                audio_start = max(0, audio_len - self.audio_samples_slice)
+            audio_start = int(round(latent_start * samples_per_latent))
 
             waveform_slice = waveform[:, audio_start : audio_start + self.audio_samples_slice]
             latents_slice = gpt_latents[latent_start : latent_start + self.latent_frames_slice, :]
