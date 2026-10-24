@@ -80,6 +80,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Decision | Evidence | Status |
 |---|---|---|
 | Transcripts come from the corpus's own metadata or from forced alignment, never from fixed-length cuts. Each clip's text is exactly its aligned words. | `[E1]` | Built (`xtts_trainer/prepare/`); real-audio check passed (`test_mms_jfk_alignment_and_shifted_cut`) |
+| Reject a clip when re-alignment finds a word below 0.05, or more than one word below 0.2. | `[E1]` one recording: on JFK, clean clips' lowest word scores 0.54; a cut moved ±1 s drops to 0.01–0.02 with five words below 0.2 ([`colab_run4`](evidence/colab_run4/README.md)) | Built; needs more speakers and languages before the values count as general |
 | Cut only at pauses of at least 150 ms, preferring the longest pauses. | `[E4]` practitioners; `[E1]` for the long-pause preference (a cut at a tight boundary lost a clip on real JFK audio) | Built; `test_cuts_prefer_the_longest_pause_jfk` |
 | Mix short utterances and single words in with long ones from the start, not in a later round. | `[E4]`; `[E2]`-adjacent: forgetting under sequential fine-tuning ([Yang et al. 2021](https://www.arxiv.org/pdf/2110.04482v1)) | The validator warns when under 5% of clips are short; thresholds are A1 |
 | Punctuation should match pauses (a comma with no pause, or a long pause with no punctuation, is flagged). | `[E4]` | Built as a warning; `--strict_pauses` makes it blocking; A6 decides the default |
@@ -92,7 +93,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Off by default: fine-tune the GPT (and optionally the decoder) with the stock DVAE. | `[E1]` F1; `[E4]` community practice | Built (pairing rules, F1) |
 | Train it only when a diagnostic shows the stock DVAE fits your audio clearly worse than reference speech (code usage, reconstruction), and then retrain Stage 2. | `[E1]` F1; `[E5]` thresholds | Diagnostic built (`scripts/diagnose_dvae.py`); thresholds are A2 |
 | Never swap in a DVAE whose codes differ (e.g. Tortoise's) under a pretrained GPT. | `[E1]` + `[E2]` (codebook pruned 8192→1024) | Enforced by the pairing rules |
-| Frozen-codebook mode (quantizer fixed, encoder trainable). | `[E5]` | Built. On synthetic data, codes still drift 47% because the encoder adapts; A2 |
+| Frozen-codebook mode (quantizer fixed, encoder trainable). | `[E1]` that it doesn't protect the GPT | Built, but it doesn't keep codes stable: on real speech 81% of codes changed, the same as normal mode (synthetic data: 47%), because the encoder adapts ([`colab_run4`](evidence/colab_run4/README.md)). Any Stage 1 run needs a Stage 2 retrain; A2 |
 | Fail the run if the codebook collapses on validation data. | `[E1]` + `[E2]` ([Zheng & Vedaldi, ICCV 2023](https://openaccess.thecvf.com/content/ICCV2023/html/Zheng_Online_Clustered_Codebook_ICCV_2023_paper.html)) | Built; floor values are `[E5]` |
 
 **Stage 2: GPT and text**
@@ -119,6 +120,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Speaker Consistency Loss as an option. | `[E2]` used for the XTTS decoder, but the YourTTS erratum says its gradient never flowed there ([arXiv 2112.02418](https://arxiv.org/pdf/2112.02418)) | Built, off by default; A8 |
 | Full-band (to 12 kHz) mel loss as an option; the default stops at 8 kHz. | `[E4]` | Built, off by default; A8 |
 | Discriminators start fresh, so warm them up while the generator learns from mel loss only; refuse runs that never leave warm-up. | `[E1]` (no upstream discriminator weights exist); `[E4]` noisy early epochs | Built |
+| Keep the best checkpoint by validation mel loss, not the last one. | `[E1]` smoke run: mel L1 1.553 → 1.350 at step 106, then back up to 1.367 by step 120 ([`colab_run4`](evidence/colab_run4/README.md)) | Built |
 
 **Evaluation**
 
@@ -170,7 +172,7 @@ decision rule fixed before running. Results update the evidence tags above.
 ## §6 Verification phases
 
 The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipynb`. Evidence is in
-`docs/evidence/`. Status as of 2026-10-24.
+`docs/evidence/`. Status as of 2026-10-25.
 
 | Phase | Checks | Status |
 |---|---|---|
@@ -180,8 +182,8 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | 3 Data contracts | One dataset format, validated before every stage; latent files carry a schema | Done |
 | 4 Parity | Our spectrograms, models and losses match upstream's, each check shown to fail when broken | Done |
 | 5 Canaries | Vocoder round trip, export identity, overfit, segment alignment | Done; identity on the released weights pending |
-| 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Real-aligner checks passed (run 3); sample-set preparation pending a rerun |
-| 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Built and tested; real-weights runs pending |
+| 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Done: real-aligner checks (runs 3–4); sample set prepared and validated with zero edits (run 4) |
+| 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); no full-size run yet |
 | 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Tooling done; no fine-tune measured yet |
 | 9 Automation | CI, pre-commit, PR checklist, fresh-install check | Files in place; fresh install passes locally |
 
