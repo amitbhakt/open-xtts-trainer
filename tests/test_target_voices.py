@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -156,8 +157,8 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     # ...and, run from another directory, still measured against the frozen eval set (absolute default path)
     from eval.dataset import DEFAULT_EVAL_SET_PATH
 
-    frozen = json.load(open(DEFAULT_EVAL_SET_PATH))["sha256"]
-    on_disk = json.load(open(tmp_path / "eval" / "baselines" / f"base_xtts_{commit}_target.json"))
+    frozen = json.loads(Path(DEFAULT_EVAL_SET_PATH).read_text(encoding="utf-8"))["sha256"]
+    on_disk = json.loads(Path(tmp_path / "eval" / "baselines" / f"base_xtts_{commit}_target.json").read_text(encoding="utf-8"))
     assert on_disk["eval_set_sha256"] == frozen and not (tmp_path / "eval" / "dataset").exists()
     for bad in ("../escape", "a/b", ".hidden", ""):
         with pytest.raises(ValueError, match="plain name"):

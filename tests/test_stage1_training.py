@@ -4,6 +4,7 @@ import json
 import math
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -78,7 +79,7 @@ def test_codebook_collapse_fails_the_run(tmp_path):
     _, dataset = _clips(tmp_path)
     with pytest.raises(CodebookCollapseError, match="codebook collapsed"):
         train_dvae(dataset, str(tmp_path / "out"), _config(frozen_codebook=False), _base(tmp_path), device="cpu")
-    metrics = [json.loads(l) for l in open(tmp_path / "out" / "metrics.jsonl")]
+    metrics = [json.loads(l) for l in Path(tmp_path / "out" / "metrics.jsonl").read_text(encoding="utf-8").splitlines()]
     assert metrics[-1]["active_codes"] == 1
 
 
@@ -89,7 +90,7 @@ def test_frozen_codebook_best_checkpoint_and_metadata(tmp_path):
     ckpt = safe_torch_load(best_path)
     assert ckpt[REQUIRES_GPT_RETRAIN_KEY] is True and ckpt["codebook_frozen"] is True
     assert torch.equal(ckpt["dvae"]["codebook.embed"], torch.load(base)["codebook.embed"])  # frozen: unchanged
-    metrics = [json.loads(l) for l in open(tmp_path / "out" / "metrics.jsonl")]
+    metrics = [json.loads(l) for l in Path(tmp_path / "out" / "metrics.jsonl").read_text(encoding="utf-8").splitlines()]
     assert ckpt["val"]["val_recon"] == min(m["val_recon"] for m in metrics)  # best by validation loss
     assert ckpt["reference"]["code_drift"] == 0.0 and all(m["code_drift"] is not None for m in metrics)
     assert ckpt["base_dvae_sha256"]

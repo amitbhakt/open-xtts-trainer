@@ -11,6 +11,7 @@ import os
 import sys
 import tarfile
 import zlib
+from pathlib import Path
 from types import SimpleNamespace
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -209,14 +210,14 @@ def test_reference_voices_build_lock_and_verify(tmp_path):
     for speaker_id, entry in lock["voices"].items():
         assert MIN_CLIP_S <= entry["duration_s"] <= MAX_CLIP_S
         license_path = os.path.join(kwargs["out_dir"], entry["license_file"])
-        assert open(license_path, encoding="utf-8").read() == f"test license for {speaker_id.split('_', 1)[1]}\n"
+        assert Path(license_path).read_text(encoding="utf-8") == f"test license for {speaker_id.split('_', 1)[1]}\n"
         # 2 s utterances + 0.25 s gaps: three are needed to pass 6 s, and the transcript is exactly theirs
         assert entry["utterances_used"] == utterances[:3]
         spk = speaker_id.split("_", 1)[1]
         assert entry["transcript"] == " ".join(f"Sentence {u[-2:]} for {spk}." for u in utterances[:3])
 
     # The license requires marking modifications: the notice names every clip's source utterances
-    notice = open(os.path.join(kwargs["out_dir"], "MODIFICATIONS.txt"), encoding="utf-8").read()
+    notice = Path(kwargs["out_dir"], "MODIFICATIONS.txt").read_text(encoding="utf-8")
     assert "MODIFIED" in notice and all(f"{sid}.wav" in notice for sid in lock["voices"])
 
     # Second run verifies against the lock and is deterministic
@@ -225,7 +226,7 @@ def test_reference_voices_build_lock_and_verify(tmp_path):
 
     # A changed license fails verification
     license_path = os.path.join(kwargs["out_dir"], lock["voices"][next(iter(lock["voices"]))]["license_file"])
-    original_license = open(license_path, "rb").read()
+    original_license = Path(license_path).read_bytes()
     with open(license_path, "ab") as f:
         f.write(b"edited")
     with pytest.raises(RuntimeError, match="License"):

@@ -59,7 +59,7 @@ def ensure_mel_stats(target_path: Optional[str] = None) -> str:
     try:
         os.makedirs(os.path.dirname(os.path.abspath(dest)), exist_ok=True)
         test_file = dest + ".tmp_probe"
-        with open(test_file, "w") as f:
+        with open(test_file, "w", encoding="utf-8") as f:
             f.write("probe")
         os.remove(test_file)
     except (PermissionError, OSError):

@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -193,4 +194,4 @@ def test_eval_set_is_never_regenerated_silently(tmp_path, monkeypatch):
     assert not missing.exists()
     assert all(os.path.isabs(p) for p in (DEFAULT_EVAL_SET_PATH, DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR))
     monkeypatch.chdir(tmp_path)  # defaults don't depend on the working directory
-    assert load_eval_set()["sha256"] == json.load(open(DEFAULT_EVAL_SET_PATH))["sha256"]
+    assert load_eval_set()["sha256"] == json.loads(Path(DEFAULT_EVAL_SET_PATH).read_text(encoding="utf-8"))["sha256"]

@@ -56,4 +56,13 @@ line-length = 120
 [tool.ruff.lint]
 # docs/recipe_design.md §6, phase 9: no swallowed exceptions (broad except, bare except, try-except-pass), no syntax errors.
 # Style rules are deliberately not enforced here; this gate is for bug classes.
-select = ["E9", "E722", "BLE001", "S110"]
+select = ["E9", "E722", "BLE001", "S110", "SIM115", "PLW1514"]
+# Files are opened in a with-block (SIM115) and text with an explicit encoding (PLW1514): a bare open() reads
+# with the platform locale, which fails on non-UTF-8 systems for files like the Hindi eval set.
+# PLW1514 is a preview rule in ruff 0.6.9; explicit-preview-rules enables only the preview rules named here.
+preview = true
+explicit-preview-rules = true
+
+[tool.ruff.lint.per-file-ignores]
+# Colab cells run once on a UTF-8 Linux kernel that exits after the run
+"notebooks/*.ipynb" = ["SIM115", "PLW1514"]

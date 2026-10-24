@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -330,7 +331,7 @@ def test_prepared_dataset_passes_validation_with_traceable_text(tmp_path, tone_r
     result = _validate(dataset, vocab, realigner=realignment_checker(tone_aligner()))
     assert result.ok, result.errors
     assert result.stats["aligned_clips"] == 3 and result.stats["pause_issues"] == {}
-    assert json.load(open(os.path.join(os.path.dirname(dataset), "prep_report.json")))["recordings"][0]["segments"] == 3
+    assert json.loads(Path(os.path.dirname(dataset), "prep_report.json").read_text(encoding="utf-8"))["recordings"][0]["segments"] == 3
 
 
 @pytest.mark.parametrize("shift_s", [1.0, -1.0])
@@ -465,7 +466,7 @@ def test_download_checks_the_published_sha1(tmp_path):
     src = tmp_path / "file.bin"
     src.write_bytes(b"recording")
     good = hashlib.sha1(b"recording").hexdigest()
-    assert open(_download(src.as_uri(), str(tmp_path / "dl"), good), "rb").read() == b"recording"
+    assert Path(_download(src.as_uri(), str(tmp_path / "dl"), good)).read_bytes() == b"recording"
     with pytest.raises(RuntimeError, match="SHA-1"):
         _download(src.as_uri(), str(tmp_path / "dl"), "0" * 40)  # the cached copy is checked too
 
@@ -490,7 +491,7 @@ def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
                                           config=PrepConfig(segment=SegmentConfig(min_s=1.5, max_s=6.0)))
     records = load_dataset(dataset)
     assert len(records) == 6 and len({r.audio for r in records}) == 6
-    report = json.load(open(tmp_path / "out" / "prep_report.json"))["recordings"]
+    report = json.loads(Path(tmp_path / "out" / "prep_report.json").read_text(encoding="utf-8"))["recordings"]
     assert [r["license"] for r in report] == ["test", "test"]
 
 
@@ -566,7 +567,7 @@ def test_mms_jfk_alignment_and_shifted_cut(tmp_path, shift_s):
                           "words": [[w.text, round(w.start_s, 3), round(w.end_s, 3), round(w.score, 3)] for w in window.words]})
     evidence_dir = os.path.join(REPO_ROOT, "docs", "evidence", "phase6")
     os.makedirs(evidence_dir, exist_ok=True)
-    with open(os.path.join(evidence_dir, f"jfk_realign_shift_{shift_s:+.0f}s.json"), "w") as f:
+    with open(os.path.join(evidence_dir, f"jfk_realign_shift_{shift_s:+.0f}s.json"), "w", encoding="utf-8") as f:
         json.dump({"shift_s": shift_s, "report": report, "realigned": realigned, "validation": result.to_json()}, f, indent=2)
     if shift_s:
         assert "alignment_mismatch" in {e.code for e in result.errors}

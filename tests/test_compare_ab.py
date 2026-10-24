@@ -7,6 +7,7 @@ import copy
 import json
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -15,12 +16,12 @@ import pytest
 from scripts.compare_ab import compare_ab
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES = json.load(open(os.path.join(REPO_ROOT, "eval", "gates.json")))
+GATES = json.loads(Path(REPO_ROOT, "eval", "gates.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture
 def base():
-    with open(os.path.join(REPO_ROOT, "docs", "evidence", "colab_run2", "pilot_en_metrics_v2.json")) as f:
+    with open(os.path.join(REPO_ROOT, "docs", "evidence", "colab_run2", "pilot_en_metrics_v2.json"), encoding="utf-8") as f:
         return json.load(f)
 
 

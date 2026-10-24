@@ -11,6 +11,7 @@ import os
 import random
 import re
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -47,7 +48,7 @@ def find_swallowed_broad_excepts(roots):
     """`except:` / `except Exception` / `except BaseException` whose body never re-raises."""
     hits = []
     for path, rel in _python_files(roots):
-        tree = ast.parse(open(path, encoding="utf-8").read())
+        tree = ast.parse(Path(path).read_text(encoding="utf-8"))
         for node in ast.walk(tree):
             if not isinstance(node, ast.ExceptHandler):
                 continue
@@ -62,7 +63,7 @@ def find_swallowed_broad_excepts(roots):
 def find_pattern(roots, pattern, allowed=()):
     hits = []
     for path, rel in _python_files(roots):
-        for i, line in enumerate(open(path, encoding="utf-8"), start=1):
+        for i, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(keepends=True), start=1):
             code = re.sub(r"(^|\s)#.*$", "", line)
             if re.search(pattern, code) and rel.replace(os.sep, "/") not in allowed:
                 hits.append(f"{rel}:{i}: {line.strip()}")
@@ -319,7 +320,7 @@ def test_reference_voice_helper_skips_without_audio(tmp_path, monkeypatch):
     with pytest.raises(pytest.skip.Exception, match="reference voice audio"):
         _reference_voice()
     (tmp_path / "eval" / "reference_voices").mkdir()
-    speaker = sorted(json.load(open(tmp_path / "eval" / "dataset" / "reference_voices.lock.json"))["voices"])[0]
+    speaker = sorted(json.loads(Path(tmp_path / "eval" / "dataset" / "reference_voices.lock.json").read_text(encoding="utf-8"))["voices"])[0]
     (tmp_path / "eval" / "reference_voices" / f"{speaker}.wav").write_bytes(b"")
     assert _reference_voice()[1].endswith(f"{speaker}.wav")
 

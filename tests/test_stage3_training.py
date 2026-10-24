@@ -4,6 +4,7 @@ import json
 import os
 import random
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -95,7 +96,7 @@ def test_training_validates_keeps_best_and_writes_samples(tmp_path):
     best = train_hifigan(dataset, str(tmp_path / "latents"), str(tmp_path / "out"), _config(),
                          device="cpu", allow_synthetic_latents=True)
     ckpt = safe_torch_load(best)
-    metrics = [json.loads(l) for l in open(tmp_path / "out" / "metrics.jsonl")]
+    metrics = [json.loads(l) for l in Path(tmp_path / "out" / "metrics.jsonl").read_text(encoding="utf-8").splitlines()]
     assert ckpt["val_mel_l1"] == min(m["val_mel_l1"] for m in metrics)
     assert ckpt["reference_val_mel_l1"] == metrics[0]["reference"] and "beats_start" in ckpt
     assert sorted(os.listdir(tmp_path / "out" / "samples")) == ["step_0", "step_2", "step_4"]
@@ -159,7 +160,7 @@ def test_finetune_that_never_leaves_disc_warmup_is_refused(tmp_path, decoder):
     best = train_hifigan(dataset, str(tmp_path / "latents"), str(tmp_path / "out2"),
                          _config(disc_warmup_steps=1000, mel_only=True, epochs=1),
                          checkpoint_dir=str(base), device="cpu", allow_synthetic_latents=True)
-    metrics = [json.loads(l) for l in open(tmp_path / "out2" / "metrics.jsonl")]
+    metrics = [json.loads(l) for l in Path(tmp_path / "out2" / "metrics.jsonl").read_text(encoding="utf-8").splitlines()]
     assert metrics[0]["reference"] == safe_torch_load(best)["reference_val_mel_l1"]
 
 
