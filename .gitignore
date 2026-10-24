@@ -30,6 +30,7 @@ ENV/
 checkpoints/
 xtts_base/
 eval/reference_voices/
+eval/target_voices/
 *.pt
 *.pth
 !xtts_trainer/mel_stats.pth

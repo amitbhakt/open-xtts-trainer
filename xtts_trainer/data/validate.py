@@ -36,6 +36,20 @@ from xtts_trainer.spec.languages import XTTS_BASE_LANGUAGES
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_EVAL_SET = os.path.join(REPO_ROOT, "eval", "dataset", "eval_set.json")
 DEFAULT_REFERENCE_LOCK = os.path.join(REPO_ROOT, "eval", "dataset", "reference_voices.lock.json")
+# Written by scripts/build_target_voices.py: the target speaker's held-out evaluation clips (eval/target_voices.py)
+DEFAULT_TARGET_LOCK = os.path.join(REPO_ROOT, "eval", "target_voices", "target_voices.lock.json")
+
+
+def target_holdout_hashes(lock_path: str) -> Dict[str, str]:
+    """SHA-256 -> voice id for every reference clip and held-out source clip in a target-voice lock."""
+    with open(lock_path, "r", encoding="utf-8") as f:
+        lock = json.load(f)
+    hashes = {}
+    for vid, entry in lock["voices"].items():
+        hashes[entry["clip_sha256"]] = vid
+        for source in entry["source_clips"]:
+            hashes[source["sha256"]] = vid
+    return hashes
 
 
 def _upstream_training_limits() -> Tuple[int, int]:
@@ -160,6 +174,7 @@ def validate_dataset(
     extra_languages: Sequence[str] = (),
     eval_set_path: Optional[str] = DEFAULT_EVAL_SET,
     reference_lock_path: Optional[str] = DEFAULT_REFERENCE_LOCK,
+    target_lock_path: Optional[str] = DEFAULT_TARGET_LOCK,
     config: Optional[ValidationConfig] = None,
     transcriber: Optional[Callable[[str, DatasetRecord], str]] = None,
     require_text: bool = True,
@@ -167,7 +182,8 @@ def validate_dataset(
 ) -> ValidationReport:
     """Validate a dataset.jsonl. Structural problems raise DatasetFormatError; content problems are collected.
 
-    eval_set_path / reference_lock_path: leakage checks run against them when they exist; the report's
+    eval_set_path / reference_lock_path / target_lock_path: leakage checks run against them when they exist
+    (target_lock_path: the target speaker's held-out evaluation clips, scripts/build_target_voices.py); the report's
     stats say whether they ran. transcriber(audio_path, record) -> text is used when config.asr_cer_max is set.
     require_text=False validates audio only (Stage 1 DVAE and Stage 3 vocoder don't use transcripts);
     vocab_path may then be None. realigner(audio_path, record) -> problems re-aligns the text to the audio
@@ -201,6 +217,7 @@ def validate_dataset(
     if reference_lock_path and os.path.exists(reference_lock_path):
         with open(reference_lock_path, "r", encoding="utf-8") as f:
             reference_hashes = {v["clip_sha256"]: k for k, v in json.load(f)["voices"].items()}
+    target_hashes = target_holdout_hashes(target_lock_path) if target_lock_path and os.path.exists(target_lock_path) else {}
 
     audio_hashes: Dict[str, DatasetRecord] = {}
     speakers = Counter(r.speaker for r in records)
@@ -238,6 +255,10 @@ def validate_dataset(
             audio_hashes[file_hash] = r
         if file_hash in reference_hashes:
             report.add(r, "eval_overlap_audio", f"is eval reference voice '{reference_hashes[file_hash]}'")
+        if file_hash in target_hashes:
+            report.add(r, "target_holdout_overlap",
+                       f"is held out for evaluating '{target_hashes[file_hash]}'; train on the dataset_train.jsonl "
+                       f"written by scripts/build_target_voices.py")
 
         if not require_text:
             continue
@@ -316,6 +337,7 @@ def validate_dataset(
         "single_word_fraction": round(n_single_word / n, 4) if n else 0.0,
         "eval_overlap_checked": bool(eval_texts),
         "reference_overlap_checked": bool(reference_hashes),
+        "target_holdout_checked": bool(target_hashes),
         "asr_checked": config.asr_cer_max is not None,
         "realigned": realigner is not None,
         "aligned_clips": sum(1 for r in records if (r.alignment or {}).get("words")),

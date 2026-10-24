@@ -85,6 +85,10 @@ def test_comparisons_need_identical_inputs(base):
     tuned["seeds"] = [1, 2]
     with pytest.raises(ValueError, match="seeds"):
         compare_ab(base, tuned)
+    tuned = tuned_from(base)
+    tuned["voices"] = "target"  # measured on the target speaker, base on the eval voices
+    with pytest.raises(ValueError, match="voices"):
+        compare_ab(base, tuned)
     with pytest.raises(ValueError, match="same checkpoint"):
         compare_ab(base, copy.deepcopy(base))
     tuned = tuned_from(base)

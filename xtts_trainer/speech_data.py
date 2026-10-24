@@ -13,6 +13,7 @@ The output is validated (xtts_trainer.data.validate) before this command reports
 
 import argparse
 import csv
+import hashlib
 import io
 import json
 import os
@@ -44,12 +45,33 @@ class Source:
     metadata_url: Optional[str] = None
     # A human transcript of the whole recording; None = Whisper
     transcript: Optional[str] = None
+    # Why we may train on it, with where that is stated
+    license: str = ""
+    # url -> SHA-1 published by the host, checked after every download
+    sha1: Dict[str, str] = field(default_factory=dict)
 
+
+# One solo reader, public domain, files pinned by the SHA-1 archive.org publishes
+# (https://archive.org/metadata/art_of_war_librivox). Replaced reach-vb/random-audios, which has no license,
+# no dataset card and an unknown speaker.
+ARCHIVE_ART_OF_WAR = "https://archive.org/download/art_of_war_librivox"
+ART_OF_WAR = [(f"{ARCHIVE_ART_OF_WAR}/{name}", sha1) for name, sha1 in [
+    ("art_of_war_01-02_sun_tzu_64kb.mp3", "9b9e7c673fe27d50c703f92efcabeb695d9722f7"),
+    ("art_of_war_03-04_sun_tzu_64kb.mp3", "bfda68aff1a6f6a7a55f62cf11ee3ee652b3f699"),
+    ("art_of_war_05-06_sun_tzu_64kb.mp3", "9bede3f68665ca5a7cdd0140d599ee529cb879bb"),
+    ("art_of_war_07-08_sun_tzu_64kb.mp3", "787463abd4ef57d25c64547708c7c5aa3514c6a0"),
+    ("art_of_war_09-10_sun_tzu_64kb.mp3", "2b4e476b0f39b6ab055263d64bad8846d3b3c2be"),
+    ("art_of_war_11_sun_tzu_64kb.mp3", "ab6d413e9c793381b0f3e539bc65385f22c91fec"),
+    ("art_of_war_12-13_sun_tzu_64kb.mp3", "e59b738e5399332bed637039838059d38adc0137"),
+]]
+ART_OF_WAR_LICENSE = ("Public domain: LibriVox recordings are public-domain dedications; archive.org item "
+                      "art_of_war_librivox, licenseurl http://creativecommons.org/licenses/publicdomain/")
 
 SOURCES: Dict[str, Source] = {
     "ljspeech_sample": Source(
         lang="en", speaker="ljspeech", kind="corpus_clips",
         description="LJSpeech LJ001-0001..0006 (public domain); text from metadata.csv, normalized column",
+        license="Public domain (LJ Speech Dataset, https://keithito.com/LJ-Speech-Dataset/)",
         urls=[f"{LJSPEECH_BASE}/wavs/LJ001-000{i}.wav" for i in range(1, 7)],
         metadata_url=f"{LJSPEECH_BASE}/metadata.csv",
     ),
@@ -59,23 +81,30 @@ SOURCES: Dict[str, Source] = {
         urls=["https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"],
         transcript="And so, my fellow Americans: ask not what your country can do for you, "
                    "ask what you can do for your country.",
+        license="Public domain: 1961 inaugural address, a work of the US government; clip from the openai/whisper "
+                "test data",
     ),
-    "long_10m": Source(
-        lang="en", speaker="speaker_1",
-        description="10-minute continuous English speech (reach-vb/random-audios), Whisper transcript, aligned",
-        urls=["https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669-10.mp3"],
+    "art_of_war_short": Source(
+        lang="en", speaker="moira_fogarty",
+        description="LibriVox: The Art of War (tr. Lionel Giles), read by Moira Fogarty, chapters 1-2 (8.4 min); "
+                    "Whisper transcript, aligned",
+        urls=[ART_OF_WAR[0][0]], sha1=dict(ART_OF_WAR[:1]),
+        license=ART_OF_WAR_LICENSE,
     ),
-    "long_2h": Source(
-        lang="en", speaker="speaker_1",
-        description="2-hour continuous English speech (reach-vb/random-audios), Whisper transcript, aligned",
-        urls=["https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669.mp3"],
+    "art_of_war": Source(
+        lang="en", speaker="moira_fogarty",
+        description="LibriVox: The Art of War (tr. Lionel Giles), read by Moira Fogarty, all 13 chapters (72 min); "
+                    "Whisper transcript, aligned",
+        urls=[u for u, _ in ART_OF_WAR], sha1=dict(ART_OF_WAR),
+        license=ART_OF_WAR_LICENSE,
     ),
 }
 # Named bundles of sources
 SOURCE_SETS = {"sample": ["ljspeech_sample", "jfk"]}
 
 
-def _download(url: str, dest_dir: str) -> str:
+def _download(url: str, dest_dir: str, sha1: Optional[str] = None) -> str:
+    """Download once into dest_dir; with sha1, the file (fresh or cached) must match it."""
     os.makedirs(dest_dir, exist_ok=True)
     path = os.path.join(dest_dir, os.path.basename(url))
     if not os.path.exists(path):
@@ -85,6 +114,13 @@ def _download(url: str, dest_dir: str) -> str:
         with open(path + ".tmp", "wb") as f:
             f.write(data)
         os.replace(path + ".tmp", path)
+    if sha1 is not None:
+        digest = hashlib.sha1()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                digest.update(chunk)
+        if digest.hexdigest() != sha1:
+            raise RuntimeError(f"{path} has SHA-1 {digest.hexdigest()}, expected {sha1} for {url}; delete it and retry")
     return path
 
 
@@ -129,13 +165,20 @@ def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAlig
         if source.kind == "corpus_clips":
             recs, report = prepare_corpus_clips(name, source, output_dir)
         else:
-            recs, report = [], None
-            for url in source.urls:
-                path = _download(url, os.path.join(output_dir, "_downloads"))
-                recs_i, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
+            recs = []
+            for k, url in enumerate(source.urls):
+                path = _download(url, os.path.join(output_dir, "_downloads"), source.sha1.get(url))
+                # One prefix per file: clip numbering restarts for every recording
+                prefix = name if len(source.urls) == 1 else f"{name}_{k + 1:02d}"
+                recs_k, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
                                                    transcript=source.transcript, aligner=aligner, config=config,
-                                                   clip_prefix=name, source=url, max_seconds=max_seconds)
-                recs += recs_i
+                                                   clip_prefix=prefix, source=url, max_seconds=max_seconds)
+                report["license"] = source.license
+                reports.append(report)
+                recs += recs_k
+            records += recs
+            continue
+        report["license"] = source.license
         records += recs
         reports.append(report)
     return write_prepared(output_dir, records, reports)

@@ -31,7 +31,7 @@ import numpy as np
 
 from eval.harness import HEADLINE_SECS_MIN_S
 
-SAME_INPUT_KEYS = ("metrics_version", "eval_set_sha256", "reference_voices", "seeds", "subset_size", "languages", "asr_model")
+SAME_INPUT_KEYS = ("metrics_version", "eval_set_sha256", "voices", "reference_voices", "seeds", "subset_size", "languages", "asr_model")
 METRICS = ("wer", "cer", "secs", "utmos", "duration_ratio")
 HIGHER_IS_BETTER = {"secs", "utmos"}
 BOOTSTRAP_SAMPLES = 10_000

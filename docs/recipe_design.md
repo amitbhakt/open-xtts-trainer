@@ -7,9 +7,11 @@ that guards it. Code comments refer here with short IDs:
 - **A1–A8:** experiments still to run (§5);
 - **Phase 0–9:** verification stages (§6).
 
-**Upstream** means [`idiap/coqui-ai-TTS`](https://github.com/idiap/coqui-ai-TTS), the maintained fork of the
-archived `coqui-ai/TTS`, pinned at commit `03339e5b790b5e16ea8867a142e8bb26ec646d94` (`pyproject.toml`). Every
-file:line reference is to that commit. The findings were verified there only, not against the archived original.
+**Upstream** means [`idiap/coqui-ai-TTS`](https://github.com/idiap/coqui-ai-TTS), the maintained fork of
+[`coqui-ai/TTS`](https://github.com/coqui-ai/TTS) (unmaintained since Coqui shut down; last push 2024-08-16, not
+formally archived). It is pinned at commit `03339e5b790b5e16ea8867a142e8bb26ec646d94` (`pyproject.toml`), and every
+file:line reference below is to that commit unless marked "original". The code findings were also checked against
+the original's last release, v0.22.0, where each one is present too (table below).
 
 ## §1 Evidence levels
 
@@ -36,6 +38,23 @@ Each finding has a test that demonstrates the upstream behaviour, and a guard th
 | **F4** | The stock tokenizer raises `NotImplementedError` for any language outside its list, and inference indexes `char_limits[language]`, so a model trained on a new language can't run through stock inference. | `tts/layers/xtts/tokenizer.py:651-652` | A tokenizer subclass with explicitly registered languages, used in validation, training, the exported inference loader and latent extraction. | `test_project_tokenizer_registers_languages`, `test_train_export_and_new_language_inference` |
 | **F5** | Hugging Face Whisper word timestamps are contiguous: each word ends exactly where the next begins, so they can't locate pauses. Also: when a transcript is missing words, CTC forced alignment doesn't leave the extra speech unaligned; it stretches a neighbouring word over it. | `tests/fixtures/jfk_whisper_alignment.json` | Word times come from CTC forced alignment (MMS_FA). Missing text is detected as frames where the model hears a character but the alignment path says blank. | `test_whisper_word_timestamps_have_no_gaps`, `test_missing_text_is_detected_as_unexplained_speech` |
 | **F6** | When `GPTTrainer` extends the vocabulary, new text rows get unit-variance random values, and the old *last* row is copied onto the new last row on the assumption that it is `[START]`. In XTTS-v2 `[START]` is 261 and the last row is `[hi]` (6680), so the newest token, typically the new language tag, starts as a copy of `[hi]`. | `tts/layers/xtts/trainer/gpt_trainer.py:113-142` | New rows start at the mean of the existing rows plus small noise (A5). Base weights load strictly through our own path. | `test_new_text_rows_mean_init_and_upstream_f6` |
+
+**Also in the original `coqui-ai/TTS` v0.22.0** (checked 2026-10-24): these problems date from Coqui's own release,
+not from the fork. F3 is a property of the released `dvae.pth` itself and F5 of Hugging Face Whisper, so neither
+depends on the code base.
+
+| Finding | Original v0.22.0 | Fork, pinned commit |
+|---|---|---|
+| F1 | `TTS/tts/layers/xtts/dvae.py:103-116` | `dvae.py:103-116` |
+| F2 | `TTS/tts/layers/xtts/gpt.py:541-546` (mask after the loop), `:414` (perceiver divides by 256) | `gpt.py:461-465` |
+| F4 | `TTS/tts/layers/xtts/tokenizer.py:643` | `tokenizer.py:651-652` |
+| F6 | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:118-137` | `gpt_trainer.py:113-142` |
+| Silent sample substitution | `TTS/tts/layers/xtts/trainer/dataset.py:156-180` | same pattern |
+| Non-strict checkpoint and DVAE loads | `trainer/gpt_trainer.py:84, 186` | same |
+| Half-clip prompt for short clips | `trainer/dataset.py:35` | `trainer/dataset.py:36-37` |
+
+One difference: the original cleans Hindi with `basic_cleaners` (a "will implement" placeholder); the fork uses
+`multilingual_cleaners`, like the other listed languages.
 
 Other upstream behaviours the Stage 2 wrapper changes:
 - **Silent sample substitution:** `XTTSDataset.__getitem__` catches every exception and silently trains on sample 1 instead (and can recurse forever). Ours raises; `test_dataset_failures_raise_instead_of_substituting`, `test_strict_dataset_items_match_upstream`.
@@ -106,6 +125,8 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | CER/WER from Whisper large-v3 with the standard normalizer; speaker similarity from ECAPA2 (not the model's own encoder); UTMOS only relative to the baseline. | `[E2]` XTTS paper protocol; `[E3]` ([arXiv 2506.20190](https://arxiv.org/pdf/2506.20190)) | Built (`eval/`) |
 | Duration is estimated from the words XTTS actually says (upstream's text cleaner); "too long" needs both a 2.2× ratio and ≥ 1 s excess; headline speaker similarity counts clips ≥ 2 s. | `[E1]` measured: the written-digit and sub-second-clip artifacts in the stock baseline | Built (metrics version 2) |
 | Fine-tunes are judged by a paired A/B against stock XTTS-v2, with gates fixed in advance. | `[E1]` | Built (`scripts/compare_ab.py`, `eval/gates.json`) |
+| Voice fine-tunes are also judged on the target speaker, with reference clips held out of training (the validator refuses them), not only on unseen eval voices. | `[E1]` (a fine-tune can't be credited for cloning a voice it trained on) | Built (`scripts/build_target_voices.py`, `--voices target`) |
+| Training data has a stated license; downloaded sources are pinned by the host's published checksum. | `[E1]` | Built (LibriVox Art of War replaced an unlicensed source; LJSpeech and JFK are public domain) |
 
 ## §4 Community claims, assessed
 

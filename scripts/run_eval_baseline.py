@@ -26,6 +26,7 @@ from eval.harness import (
     METRICS_VERSION, EvaluationHarness, get_code_fingerprint, get_git_info, summarize_by_category, summarize_results,
 )
 from eval.reference_voices import DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR, verify_reference_voices
+from eval.target_voices import DEFAULT_TARGET_DIR, verify_target_voices
 from xtts_trainer.spec import XTTS_BASE_LANGUAGES
 
 
@@ -80,11 +81,18 @@ def generate_baseline(
     subset_size: Optional[int] = None,
     lock_path: str = DEFAULT_LOCK_PATH,
     label: str = "base",
+    voices: str = "arctic",
+    target_dir: str = DEFAULT_TARGET_DIR,
 ) -> Dict[str, Any]:
     """Measure a checkpoint (stock XTTS-v2 by default) on the frozen eval set. Raises if any input is missing.
 
     label names the model in the manifest ("base", "tuned", ...); scripts/compare_ab.py pairs two manifests.
+    voices: "arctic" (the eval set's CMU ARCTIC voices: forgetting check on unseen speakers), "target" (the
+    target speaker's held-out clips from scripts/build_target_voices.py: did the fine-tune learn the voice?)
+    or "all".
     """
+    if voices not in ("arctic", "target", "all"):
+        raise ValueError(f"voices must be arctic, target or all, not {voices!r}")
     missing_ckpt = [f for f in REQUIRED_CHECKPOINT_FILES if not os.path.exists(os.path.join(checkpoint_dir, f))]
     if missing_ckpt:
         raise FileNotFoundError(
@@ -96,11 +104,17 @@ def generate_baseline(
         output_path = f"eval/baselines/base_xtts_{PINNED_UPSTREAM_COMMIT[:12]}.json"
 
     eval_data = load_eval_set(eval_set_path)
-    voices = resolve_reference_voices(eval_data, reference_audio_dir)
-    locked = verify_reference_voices(reference_audio_dir, lock_path)
-    unlocked = sorted({v["speaker_id"] for v in voices} - set(locked))
-    if unlocked:
-        raise RuntimeError(f"Reference voices {unlocked} are not in the lock {lock_path}; rebuild the lock.")
+    selected = voices
+    voices = []
+    if selected in ("arctic", "all"):
+        voices = resolve_reference_voices(eval_data, reference_audio_dir)
+        locked = verify_reference_voices(reference_audio_dir, lock_path)
+        unlocked = sorted({v["speaker_id"] for v in voices} - set(locked))
+        if unlocked:
+            raise RuntimeError(f"Reference voices {unlocked} are not in the lock {lock_path}; rebuild the lock.")
+    if selected in ("target", "all"):
+        voices += [{"speaker_id": vid, "language": None, "path": path}
+                   for vid, path in sorted(verify_target_voices(target_dir).items())]
     if languages is None:
         languages = ["en"] + sorted(eval_data["target_languages"].keys())
 
@@ -152,6 +166,7 @@ def generate_baseline(
         "checkpoint_sha256": {
             f: _sha256_of_file(os.path.join(checkpoint_dir, f)) for f in REQUIRED_CHECKPOINT_FILES
         },
+        "voices": selected,
         "reference_voices": [
             {"speaker_id": v["speaker_id"], "sha256": _sha256_of_file(v["path"])} for v in voices
         ],
@@ -183,6 +198,9 @@ if __name__ == "__main__":
     parser.add_argument("--languages", type=str, nargs="+", default=None, help="Languages to evaluate (default: all in eval set)")
     parser.add_argument("--asr_model", type=str, default="openai/whisper-large-v3")
     parser.add_argument("--label", type=str, default="base", help="Name of this model in the manifest (base, tuned, ...)")
+    parser.add_argument("--voices", choices=["arctic", "target", "all"], default="arctic",
+                        help="arctic: eval-set CMU voices; target: held-out target-speaker clips (build_target_voices.py)")
+    parser.add_argument("--target_dir", type=str, default=DEFAULT_TARGET_DIR)
     args = parser.parse_args()
 
     res = generate_baseline(
@@ -196,6 +214,8 @@ if __name__ == "__main__":
         subset_size=args.subset_size,
         lock_path=args.reference_lock,
         label=args.label,
+        voices=args.voices,
+        target_dir=args.target_dir,
     )
     print("Baseline measured successfully.")
     print(json.dumps(res["summary_by_language"], indent=2))

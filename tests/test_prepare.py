@@ -438,9 +438,56 @@ def test_sources_declare_language_and_carry_no_hardcoded_cuts():
     assert not {"time_slice", "text"} & fields
     for name, source in SOURCES.items():
         assert source.lang and source.speaker, name
+        assert source.license, f"{name} must say why we may train on it"
+        if source.kind == "recording" and "archive.org" in source.urls[0]:
+            assert set(source.sha1) == set(source.urls), f"{name}: every file pinned by its published SHA-1"
         assert source.kind in ("corpus_clips", "recording")
         assert source.kind != "corpus_clips" or source.metadata_url
     assert all(n in SOURCES for names in SOURCE_SETS.values() for n in names)
+
+
+def test_download_checks_the_published_sha1(tmp_path):
+    import hashlib
+
+    from xtts_trainer.speech_data import _download
+
+    src = tmp_path / "file.bin"
+    src.write_bytes(b"recording")
+    good = hashlib.sha1(b"recording").hexdigest()
+    assert open(_download(src.as_uri(), str(tmp_path / "dl"), good), "rb").read() == b"recording"
+    with pytest.raises(RuntimeError, match="SHA-1"):
+        _download(src.as_uri(), str(tmp_path / "dl"), "0" * 40)  # the cached copy is checked too
+
+
+def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
+    """Clip numbering restarts per recording, so each file needs its own prefix (art_of_war has 7 files)."""
+    import xtts_trainer.speech_data as speech_data
+
+    urls = []
+    for k, phrases in enumerate([PHRASES, [p.upper() for p in PHRASES[::-1]]]):
+        audio, _ = tone_speech(phrase_words(phrases))
+        path = tmp_path / f"part{k}.wav"
+        sf.write(str(path), audio, SPEC.output_sample_rate)
+        urls.append(path.as_uri())
+    monkeypatch.setitem(speech_data.SOURCES, "two_parts", speech_data.Source(
+        lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None))
+    monkeypatch.setattr(speech_data, "prepare_recording", _with_transcripts(speech_data.prepare_recording, urls))
+    dataset = speech_data.prepare_sources(["two_parts"], str(tmp_path / "out"), aligner=tone_aligner(),
+                                          config=PrepConfig(segment=SegmentConfig(min_s=1.5, max_s=6.0)))
+    records = load_dataset(dataset)
+    assert len(records) == 6 and len({r.audio for r in records}) == 6
+    report = json.load(open(tmp_path / "out" / "prep_report.json"))["recordings"]
+    assert [r["license"] for r in report] == ["test", "test"]
+
+
+def _with_transcripts(prepare, urls):
+    """prepare_recording with the human transcript of each tone file (the test source has none)."""
+    texts = [" ".join(PHRASES), " ".join(p.upper() for p in PHRASES[::-1])]
+
+    def wrapped(path, *args, **kwargs):
+        kwargs["transcript"] = texts[[os.path.basename(u) for u in urls].index(os.path.basename(path))]
+        return prepare(path, *args, **kwargs)
+    return wrapped
 
 
 @pytest.mark.parametrize("argv, message", [
