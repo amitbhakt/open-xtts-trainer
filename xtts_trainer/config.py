@@ -14,12 +14,28 @@ XTTS_MEL_STATS_SHA256 = "1f69422a8a8f344c4fca2f0c6b8d41d2151d6615b7321e48e6bb15a
 XTTS_MEL_STATS_URL = "https://huggingface.co/coqui/XTTS-v2/resolve/main/mel_stats.pth"
 
 
-def is_language_code(s: str) -> bool:
-    """Determine if a token represents an ISO 639 / BCP-47 language code rather than a speaker identifier."""
-    s = s.strip().lower()
-    if re.match(r"^[a-z]{2,3}(-[a-z]{2,4})?$", s) and not re.search(r"\d", s):
-        if s in {"spk", "usr", "man", "boy", "ref", "tgt"}:
-            return False
+# ISO 639-1 two-letter codes + stock XTTS & common BCP-47 language identifiers
+VALID_LANGUAGE_CODES = {
+    # Stock 17 XTTS-v2 languages:
+    "en", "es", "fr", "de", "it", "pt", "pl", "tr", "ru", "nl", "cs", "ar", "zh-cn", "ja", "hu", "ko", "hi",
+    # Extended language additions (Indic, European, Asian, African, Middle Eastern):
+    "bn", "el", "ta", "te", "ur", "fa", "th", "vi", "id", "ms", "ro", "sv", "da", "fi", "no", "he", "uk",
+    "bg", "ca", "hr", "sk", "sl", "lt", "lv", "et", "sw", "af", "gu", "kn", "ml", "mr", "pa", "dv", "ne",
+    "si", "my", "km", "lo", "ka", "am", "so", "sq", "az", "hy", "eu", "gl", "is", "mk", "mt", "cy", "ga",
+    "eo", "la", "tl", "jv", "su", "zh", "pt-br", "es-la",
+}
+
+
+def is_language_code(s: str, extra_languages: Optional[List[str]] = None) -> bool:
+    """Determine if a token represents an ISO 639 / BCP-47 language code rather than a speaker identifier.
+
+    Checks against standard ISO-639-1 language codes and any explicitly registered extra languages.
+    Speaker identifiers (e.g. 'jfk', 'amy', 'bob', 'lj', 'spk1') are correctly rejected as non-languages.
+    """
+    token = s.strip().lower()
+    if token in VALID_LANGUAGE_CODES:
+        return True
+    if extra_languages and token in [l.lower() for l in extra_languages]:
         return True
     return False
 
@@ -27,13 +43,25 @@ def is_language_code(s: str) -> bool:
 def ensure_mel_stats(target_path: Optional[str] = None) -> str:
     """Ensure that the upstream XTTS-v2 mel_stats.pth file exists locally and matches SHA-256."""
     path = target_path or DEFAULT_MEL_STATS_PATH
-    if os.path.exists(path):
-        return path
-
-    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     import urllib.request
     import hashlib
 
+    # Verify SHA-256 hash on every load, even if file already exists
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            file_hash = hashlib.sha256(f.read()).hexdigest()
+        if file_hash == XTTS_MEL_STATS_SHA256:
+            return path
+        logger.warning(
+            f"Existing mel_stats.pth at {path} SHA-256 mismatch (got {file_hash}, expected {XTTS_MEL_STATS_SHA256}). "
+            f"Re-downloading authoritative upstream XTTS tensor from Hugging Face..."
+        )
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     logger.info(f"Downloading upstream XTTS-v2 mel_stats.pth from {XTTS_MEL_STATS_URL} to {path}...")
     urllib.request.urlretrieve(XTTS_MEL_STATS_URL, path)
 

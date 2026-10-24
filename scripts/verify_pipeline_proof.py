@@ -23,11 +23,23 @@ from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from xtts_trainer.stage3_hifigan.models import build_hifigan_decoder
 
 
+NUM_TO_WORDS = {
+    "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four",
+    "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine",
+    "10": "ten", "11": "eleven", "12": "twelve", "13": "thirteen",
+    "14": "fourteen", "15": "fifteen", "16": "sixteen", "17": "seventeen",
+    "18": "eighteen", "19": "nineteen", "20": "twenty", "30": "thirty",
+    "40": "forty", "50": "fifty", "60": "sixty", "70": "seventy",
+    "80": "eighty", "90": "ninety", "100": "hundred", "1000": "thousand",
+}
+
+
 def compute_wer(reference: str, hypothesis: str) -> float:
-    """Compute standard Word Error Rate between reference and hypothesis text."""
+    """Compute standard Word Error Rate between reference and hypothesis text with number normalization."""
     def clean(s: str) -> List[str]:
         s = s.lower().translate(str.maketrans("", "", string.punctuation))
-        return [w for w in s.split() if w]
+        words = s.split()
+        return [NUM_TO_WORDS.get(w, w) for w in words if w]
 
     r = clean(reference)
     h = clean(hypothesis)
@@ -272,10 +284,10 @@ def verify_stage2_and_3_pipeline(
         hyp_text = asr_out.get("text", "").strip()
         wer = compute_wer(text, hyp_text)
 
-        # Enforce hard intelligibility gate (WER <= 0.40)
-        assert wer <= 0.40, (
+        # Enforce hard intelligibility gate (WER <= 0.35 with text normalization)
+        assert wer <= 0.35, (
             f"Speech intelligibility gate failed for [{tag}]! Word Error Rate: {wer:.1%} "
-            f"exceeded maximum allowed threshold (40.0%).\n"
+            f"exceeded maximum allowed threshold (35.0%).\n"
             f"  Reference:  \"{text}\"\n"
             f"  Hypothesis: \"{hyp_text}\""
         )

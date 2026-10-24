@@ -37,6 +37,7 @@ def test_prepare_speech_from_30s_file(temp_workspace):
         output_dir=output_dir,
         sample_rate=24000,
         max_duration_sec=3.0,
+        transcript="Synthetic audio test prompt.",
     )
 
     # 2. Check that exactly 10 clips were created

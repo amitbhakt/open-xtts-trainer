@@ -73,7 +73,7 @@ SAMPLE_SPEECH_SOURCES = [
         "text": "And so, my fellow Americans: ask not what your country can do for you,",
         "speaker": "jfk",
         "lang": "en",
-        "time_slice": (0.0, 5.5),
+        "time_slice": (0.0, 7.5),
     },
     {
         "name": "jfk_speech_02",
@@ -82,7 +82,7 @@ SAMPLE_SPEECH_SOURCES = [
         "text": "ask what you can do for your country.",
         "speaker": "jfk",
         "lang": "en",
-        "time_slice": (5.5, 11.0),
+        "time_slice": (7.5, 11.0),
     },
 ]
 
@@ -154,7 +154,9 @@ def prepare_speech_from_file(
     input_file: str,
     output_dir: str = "sample_audio",
     sample_rate: int = 24000,
-    max_duration_sec: float = 3.0,
+    max_duration_sec: float = 6.0,
+    lang: str = "en",
+    speaker_name: str = "user_speaker",
     transcript: str = None,
     transcript_file: str = None,
 ) -> list[str]:
@@ -164,7 +166,9 @@ def prepare_speech_from_file(
         input_file: Path to local audio file (e.g. 30-second recording).
         output_dir: Directory to save processed .wav clips and metadata.csv.
         sample_rate: Target sample rate (default 24000 Hz).
-        max_duration_sec: Duration in seconds per training clip.
+        max_duration_sec: Duration in seconds per training clip (default 6.0s).
+        lang: Language code for transcription and metadata (default 'en').
+        speaker_name: Speaker identifier for conditioning grouping.
         transcript: Optional single transcript applied to all clips.
         transcript_file: Optional file containing one transcript per line.
 
@@ -225,25 +229,33 @@ def prepare_speech_from_file(
     elif transcript:
         transcripts = [transcript] * len(created_files)
     else:
-        # Transcribe clips using local Whisper ASR with correct sample rate
-        print("Transcribing clips with local Whisper ASR to produce genuine ground-truth text...")
+        # Transcribe clips using local Whisper ASR with correct sample rate and language
+        print(f"Transcribing clips with local Whisper ASR (lang: '{lang}') to produce genuine ground-truth text...")
         try:
             from transformers import pipeline
-            asr = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
+            asr_model = "openai/whisper-base.en" if lang == "en" else "openai/whisper-base"
+            asr = pipeline("automatic-speech-recognition", model=asr_model, device="cpu")
+            gen_kwargs = {"task": "transcribe"}
+            if lang:
+                gen_kwargs["language"] = lang
             for path in created_files:
                 clip_audio, sr = sf.read(path)
-                res = asr({"raw": clip_audio, "sampling_rate": sr}, generate_kwargs={"language": "english", "task": "transcribe"})
+                res = asr({"raw": clip_audio, "sampling_rate": sr}, generate_kwargs=gen_kwargs)
                 txt = res.get("text", "").strip()
-                transcripts.append(txt if txt else f"Audio recording clip {len(transcripts)+1}.")
+                if not txt:
+                    raise RuntimeError(f"Whisper produced empty transcription for {path}")
+                transcripts.append(txt)
         except Exception as e:
-            logger.warning(f"Whisper automated transcription unavailable ({e}). Using index prompt.")
-            transcripts = [f"Speech clip {i+1}." for i in range(len(created_files))]
+            raise RuntimeError(
+                f"Automated Whisper speech transcription failed ({e}). "
+                f"Please provide an explicit --transcript or --transcript_file."
+            ) from e
 
     with open(metadata_csv_path, "w", encoding="utf-8") as f:
         for i, path in enumerate(created_files):
             fname = os.path.basename(path)
-            t = transcripts[i] if i < len(transcripts) else f"Training speech prompt {i+1}."
-            f.write(f"{fname}|{t}|user_speaker|en\n")
+            t = transcripts[i]
+            f.write(f"{fname}|{t}|{speaker_name}|{lang}\n")
 
     print(f"Successfully created {len(created_files)} clips and wrote metadata to '{metadata_csv_path}'.")
     return created_files
