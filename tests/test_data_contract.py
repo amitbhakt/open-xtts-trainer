@@ -302,3 +302,12 @@ def test_rejects_latent_with_other_spec(tmp_path):
     write(1)
     with pytest.raises(RuntimeError, match="spec_hash"):
         LatentHiFiGANDataset(records, root, latents)
+
+
+def test_positional_arguments_keep_their_meaning(tmp_path):
+    """target_lock_path was added last: a caller passing config positionally (6th) must still pass a config."""
+    b = Builder(tmp_path).valid_base()
+    path = write_dataset(os.path.join(b.root, "dataset.jsonl"), b.records)
+    strict = ValidationConfig(min_duration_s=5.0)  # makes every clip too short
+    report = validate_dataset(path, b.vocab, (), None, None, strict)
+    assert "too_short" in codes(report)

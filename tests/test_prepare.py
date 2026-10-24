@@ -8,6 +8,7 @@ MMS_FA model. Tests marked mms run the real aligner when its weights are already
 
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
@@ -439,11 +440,21 @@ def test_sources_declare_language_and_carry_no_hardcoded_cuts():
     for name, source in SOURCES.items():
         assert source.lang and source.speaker, name
         assert source.license, f"{name} must say why we may train on it"
-        if source.kind == "recording" and "archive.org" in source.urls[0]:
-            assert set(source.sha1) == set(source.urls), f"{name}: every file pinned by its published SHA-1"
+        downloads = set(source.urls) | ({source.metadata_url} if source.metadata_url else set())
+        assert set(source.sha1) == downloads, f"{name}: every downloaded file pinned"
+        assert all(re.fullmatch(r"[0-9a-f]{40}", h) for h in source.sha1.values()), f"{name}: pins are SHA-1 hex digests"
+        assert all(re.search(r"/(dev|main|master)/", u) is None for u in downloads), f"{name}: no moving branch URLs"
         assert source.kind in ("corpus_clips", "recording")
         assert source.kind != "corpus_clips" or source.metadata_url
     assert all(n in SOURCES for names in SOURCE_SETS.values() for n in names)
+
+
+def test_unpinned_download_is_refused_with_a_clear_error():
+    from xtts_trainer.speech_data import Source
+
+    source = Source(lang="en", speaker="x", description="unpinned", urls=["https://example.org/a.wav"], license="test")
+    with pytest.raises(KeyError, match="no SHA-1 pin"):
+        source.pinned(source.urls[0])
 
 
 def test_download_checks_the_published_sha1(tmp_path):
@@ -469,8 +480,11 @@ def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
         path = tmp_path / f"part{k}.wav"
         sf.write(str(path), audio, SPEC.output_sample_rate)
         urls.append(path.as_uri())
+    import hashlib
+
+    pins = {u: hashlib.sha1(open(u[len("file://"):], "rb").read()).hexdigest() for u in urls}
     monkeypatch.setitem(speech_data.SOURCES, "two_parts", speech_data.Source(
-        lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None))
+        lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None, sha1=pins))
     monkeypatch.setattr(speech_data, "prepare_recording", _with_transcripts(speech_data.prepare_recording, urls))
     dataset = speech_data.prepare_sources(["two_parts"], str(tmp_path / "out"), aligner=tone_aligner(),
                                           config=PrepConfig(segment=SegmentConfig(min_s=1.5, max_s=6.0)))
@@ -510,7 +524,6 @@ def _mms_cached():
     return os.path.exists(path) and os.path.getsize(path) > 1_000_000_000
 
 
-JFK_URL = "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"
 
 
 @pytest.mark.skipif(not _mms_cached() or not os.path.exists(os.path.join(REPO_ROOT, "xtts_base", "vocab.json")),
@@ -518,9 +531,9 @@ JFK_URL = "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"
 @pytest.mark.parametrize("shift_s", [0.0, 1.0, -1.0])
 def test_mms_jfk_alignment_and_shifted_cut(tmp_path, shift_s):
     """Real aligner on JFK: prepared clips realign cleanly; a cut moved by 1 s is rejected."""
-    from xtts_trainer.speech_data import SOURCES, _download
+    from xtts_trainer.speech_data import JFK_SHA1, JFK_URL, SOURCES, _download
 
-    jfk = _download(JFK_URL, str(tmp_path / "dl"))
+    jfk = _download(JFK_URL, str(tmp_path / "dl"), JFK_SHA1)
     out = str(tmp_path / "jfk")
     aligner = CtcAligner()
     records, report = prepare_recording(jfk, out, "en", "jfk", transcript=SOURCES["jfk"].transcript, aligner=aligner,

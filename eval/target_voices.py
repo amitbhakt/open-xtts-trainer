@@ -11,21 +11,28 @@ so training on the original, un-split dataset by mistake is caught. Matching is 
 copy of a held-out clip would not be caught, which the split here avoids by construction.
 
 Voice ids are "target_<speaker>"; use them in eval/gates.json's target-speaker gate.
+
+The lock always lives at xtts_trainer.data.validate.DEFAULT_TARGET_LOCK, the one place training checks: a lock
+written elsewhere would let training on held-out clips pass unnoticed, so the builder refuses other locations
+(tests opt out with allow_unchecked_location).
 """
 
 import json
 import os
 import random
+import re
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import soundfile as sf
 
 from eval.reference_voices import MAX_CLIP_S, MIN_CLIP_S, assemble_clip, sha256_file
-from xtts_trainer.data import DATASET_FILENAME, DatasetRecord, load_validated_dataset, write_dataset
+from xtts_trainer.data import DatasetRecord, load_validated_dataset, write_dataset
+from xtts_trainer.data.validate import DEFAULT_TARGET_LOCK
 from xtts_trainer.spec import SPEC
 
-DEFAULT_TARGET_DIR = "eval/target_voices"
+DEFAULT_TARGET_DIR = os.path.dirname(DEFAULT_TARGET_LOCK)
+SPEAKER_ID = re.compile(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*")  # becomes a file name: no separators, no leading dot
 LOCK_FILENAME = "target_voices.lock.json"
 TRAIN_DATASET_FILENAME = "dataset_train.jsonl"
 LOCK_FORMAT = {"format": "open-xtts-target-voices", "version": 1}
@@ -38,32 +45,43 @@ def voice_id(speaker: str) -> str:
 
 def _hold_out(records: List[DatasetRecord], dataset_dir: str, rng: random.Random
               ) -> Tuple[List[DatasetRecord], np.ndarray, List[int]]:
-    """Shuffled clips short enough to fit are tried in order; the first ones that assemble into a 6-10 s clip
-    are held out. Only a short prefix is loaded, so a speaker with hours of audio costs a few clips' memory."""
+    """Shuffled clips short enough to fit are loaded one at a time until they assemble into a 6-10 s clip;
+    those are held out. Clips load lazily, so a speaker with hours of audio costs a few clips' memory, and
+    trimming or skipping never ends the search while eligible clips remain."""
     from xtts_trainer.prepare.pipeline import load_mono
 
     order = [r for r in records if r.duration_s <= MAX_CLIP_S]
     rng.shuffle(order)
-    prefix, total = [], 0.0
-    for r in order:
-        prefix.append(r)
-        total += r.duration_s
-        if total >= 2 * MAX_CLIP_S:
-            break
     rate = SPEC.output_sample_rate
-    try:
-        clip, used = assemble_clip([load_mono(r.audio_path(dataset_dir), rate) for r in prefix], rate)
-    except ValueError as e:
-        speaker = records[0].speaker if records else "?"
-        raise ValueError(f"speaker '{speaker}': not enough audio for a {MIN_CLIP_S}-{MAX_CLIP_S} s reference "
-                         f"clip from clips of at most {MAX_CLIP_S} s ({e})") from e
-    return prefix, clip, used
+    loaded: List[np.ndarray] = []
+    for r in order:
+        loaded.append(load_mono(r.audio_path(dataset_dir), rate))
+        if sum(len(a) for a in loaded) < MIN_CLIP_S * rate:
+            continue
+        try:
+            clip, used = assemble_clip(loaded, rate)
+        except ValueError:
+            continue  # trimmed too short so far: keep adding clips
+        return order[:len(loaded)], clip, used
+    speaker = records[0].speaker if records else "?"
+    raise ValueError(f"speaker '{speaker}': not enough audio for a {MIN_CLIP_S}-{MAX_CLIP_S} s reference clip "
+                     f"from {len(order)} clips of at most {MAX_CLIP_S} s")
 
 
 def build_target_voices(dataset_path: str, out_dir: str = DEFAULT_TARGET_DIR, speakers: Optional[List[str]] = None,
-                        seed: int = 0, min_train_clips: int = 2) -> Dict[str, Any]:
-    """Hold out reference clips per speaker; write clips, the lock and dataset_train.jsonl. Returns the lock."""
-    records, dataset_dir, _ = load_validated_dataset(dataset_path, None, require_text=False)
+                        seed: int = 0, min_train_clips: int = 2, allow_unchecked_location: bool = False
+                        ) -> Dict[str, Any]:
+    """Hold out reference clips per speaker; write clips, the lock and dataset_train.jsonl. Returns the lock.
+
+    Rerunning replaces the previous holdout. allow_unchecked_location: tests only (training doesn't check
+    locks outside DEFAULT_TARGET_DIR).
+    """
+    if os.path.abspath(out_dir) != os.path.abspath(DEFAULT_TARGET_DIR) and not allow_unchecked_location:
+        raise ValueError(f"target voices must be built in {DEFAULT_TARGET_DIR}: it is the only lock location "
+                         f"training checks, so a holdout elsewhere could be trained on unnoticed")
+    # The source dataset contains this speaker's clips by definition, including any previous holdout, so it is
+    # validated without the target-holdout check (every other check still applies)
+    records, dataset_dir, _ = load_validated_dataset(dataset_path, None, require_text=False, target_lock_path=None)
     by_speaker: Dict[str, List[DatasetRecord]] = {}
     for r in records:
         by_speaker.setdefault(r.speaker, []).append(r)
@@ -71,6 +89,9 @@ def build_target_voices(dataset_path: str, out_dir: str = DEFAULT_TARGET_DIR, sp
     unknown = sorted(set(speakers) - set(by_speaker))
     if unknown:
         raise KeyError(f"speakers {unknown} are not in {dataset_path}")
+    unsafe = [s for s in speakers if not SPEAKER_ID.fullmatch(s)]
+    if unsafe:
+        raise ValueError(f"speaker ids {unsafe} can't be file names (letters, digits, '_', '-', '.'; no leading '.')")
 
     os.makedirs(out_dir, exist_ok=True)
     rng = random.Random(seed)

@@ -29,7 +29,19 @@ from xtts_trainer.prepare.pipeline import PrepConfig, load_mono, prepare_recordi
 from xtts_trainer.spec import SPEC
 
 DEFAULT_VOCAB = "xtts_base/vocab.json"
-LJSPEECH_BASE = "https://raw.githubusercontent.com/coqui-ai/TTS/dev/tests/data/ljspeech"
+# Pinned to commits (the branches move) and checked by SHA-1; values and commands in docs/evidence/source_pins.md
+LJSPEECH_BASE = "https://raw.githubusercontent.com/coqui-ai/TTS/dbf1a08a0d4e47fdad6172e433eeb34bc6b13b4e/tests/data/ljspeech"
+LJSPEECH_SHA1 = {
+    f"{LJSPEECH_BASE}/metadata.csv": "247ef0626c1ec7f4d01e8bc8599c4b070a396209",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0001.wav": "a4f9d63b0cfbd36eb1c23b7b122f213bc587ecc4",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0002.wav": "6249e7e3edd982e8cb79a8b8deef4c907374e1fc",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0003.wav": "fc4d535b7b0a1ba2ea09dca3aad2fc9e2816a19c",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0004.wav": "41a5fe1e72f423534158d54cc9bfca920921c045",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0005.wav": "ccef55335f89ed4f21c4e0091a1aaf34b2bcbe11",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0006.wav": "6fafc6a2bb5dedf373cdace60bd6746a89548153",
+}
+JFK_URL = "https://raw.githubusercontent.com/openai/whisper/86098128c0b4f24f0e2aa2994de830614b474227/tests/jfk.flac"
+JFK_SHA1 = "537ddf75dff344f8d31c1cd6ebee23ee8362d921"
 
 
 @dataclass
@@ -47,8 +59,14 @@ class Source:
     transcript: Optional[str] = None
     # Why we may train on it, with where that is stated
     license: str = ""
-    # url -> SHA-1 published by the host, checked after every download
+    # url -> SHA-1 for every file the source downloads (audio and metadata_url), checked after every download.
+    # Required: an unpinned URL is an error, not a skipped check.
     sha1: Dict[str, str] = field(default_factory=dict)
+
+    def pinned(self, url: str) -> str:
+        if url not in self.sha1:
+            raise KeyError(f"{url} has no SHA-1 pin; every downloaded file must be pinned (docs/evidence/source_pins.md)")
+        return self.sha1[url]
 
 
 # One solo reader, public domain, files pinned by the SHA-1 archive.org publishes
@@ -74,11 +92,12 @@ SOURCES: Dict[str, Source] = {
         license="Public domain (LJ Speech Dataset, https://keithito.com/LJ-Speech-Dataset/)",
         urls=[f"{LJSPEECH_BASE}/wavs/LJ001-000{i}.wav" for i in range(1, 7)],
         metadata_url=f"{LJSPEECH_BASE}/metadata.csv",
+        sha1=LJSPEECH_SHA1,
     ),
     "jfk": Source(
         lang="en", speaker="jfk",
         description="JFK inaugural address excerpt (public domain, Whisper test clip), human transcript, aligned",
-        urls=["https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"],
+        urls=[JFK_URL], sha1={JFK_URL: JFK_SHA1},
         transcript="And so, my fellow Americans: ask not what your country can do for you, "
                    "ask what you can do for your country.",
         license="Public domain: 1961 inaugural address, a work of the US government; clip from the openai/whisper "
@@ -136,7 +155,7 @@ def ljspeech_texts(metadata_csv: str) -> Dict[str, str]:
 
 def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[List[DatasetRecord], dict]:
     cache = os.path.join(output_dir, "_downloads")
-    with open(_download(source.metadata_url, cache), "r", encoding="utf-8") as f:
+    with open(_download(source.metadata_url, cache, source.pinned(source.metadata_url)), "r", encoding="utf-8") as f:
         texts = ljspeech_texts(f.read())
     clips_dir = os.path.join(output_dir, "clips")
     os.makedirs(clips_dir, exist_ok=True)
@@ -145,7 +164,7 @@ def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[Li
         clip_id = os.path.splitext(os.path.basename(url))[0]
         if clip_id not in texts:
             raise KeyError(f"{clip_id} is not in {source.metadata_url}")
-        audio = load_mono(_download(url, cache), SPEC.output_sample_rate)
+        audio = load_mono(_download(url, cache, source.pinned(url)), SPEC.output_sample_rate)
         rel = f"clips/{name}_{clip_id}.wav"
         sf.write(os.path.join(output_dir, rel), audio, SPEC.output_sample_rate, subtype="PCM_16")
         records.append(DatasetRecord(audio=rel, text=texts[clip_id], lang=source.lang, speaker=source.speaker,
@@ -167,7 +186,7 @@ def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAlig
         else:
             recs = []
             for k, url in enumerate(source.urls):
-                path = _download(url, os.path.join(output_dir, "_downloads"), source.sha1.get(url))
+                path = _download(url, os.path.join(output_dir, "_downloads"), source.pinned(url))
                 # One prefix per file: clip numbering restarts for every recording
                 prefix = name if len(source.urls) == 1 else f"{name}_{k + 1:02d}"
                 recs_k, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,

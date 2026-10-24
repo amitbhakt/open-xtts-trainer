@@ -85,6 +85,7 @@ def test_comparisons_need_identical_inputs(base):
     tuned["seeds"] = [1, 2]
     with pytest.raises(ValueError, match="seeds"):
         compare_ab(base, tuned)
+    base["voices"] = "arctic"  # as run_eval_baseline records it (the run-2 manifest predates the field)
     tuned = tuned_from(base)
     tuned["voices"] = "target"  # measured on the target speaker, base on the eval voices
     with pytest.raises(ValueError, match="voices"):

@@ -101,7 +101,8 @@ def generate_baseline(
         )
 
     if output_path is None:
-        output_path = f"eval/baselines/base_xtts_{PINNED_UPSTREAM_COMMIT[:12]}.json"
+        # One file per label and voice set, so a target run never overwrites the eval-voice run (or vice versa)
+        output_path = f"eval/baselines/{label}_xtts_{PINNED_UPSTREAM_COMMIT[:12]}_{voices}.json"
 
     eval_data = load_eval_set(eval_set_path)
     selected = voices

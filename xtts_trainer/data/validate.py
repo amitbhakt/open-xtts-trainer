@@ -36,7 +36,9 @@ from xtts_trainer.spec.languages import XTTS_BASE_LANGUAGES
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_EVAL_SET = os.path.join(REPO_ROOT, "eval", "dataset", "eval_set.json")
 DEFAULT_REFERENCE_LOCK = os.path.join(REPO_ROOT, "eval", "dataset", "reference_voices.lock.json")
-# Written by scripts/build_target_voices.py: the target speaker's held-out evaluation clips (eval/target_voices.py)
+# Written by scripts/build_target_voices.py: the target speaker's held-out evaluation clips (eval/target_voices.py).
+# The one location training checks; the builder refuses to write a lock anywhere else, so the guard can't be
+# bypassed by building the holdout in another directory.
 DEFAULT_TARGET_LOCK = os.path.join(REPO_ROOT, "eval", "target_voices", "target_voices.lock.json")
 
 
@@ -174,16 +176,17 @@ def validate_dataset(
     extra_languages: Sequence[str] = (),
     eval_set_path: Optional[str] = DEFAULT_EVAL_SET,
     reference_lock_path: Optional[str] = DEFAULT_REFERENCE_LOCK,
-    target_lock_path: Optional[str] = DEFAULT_TARGET_LOCK,
     config: Optional[ValidationConfig] = None,
     transcriber: Optional[Callable[[str, DatasetRecord], str]] = None,
     require_text: bool = True,
     realigner: Optional[Callable[[str, DatasetRecord], List[str]]] = None,
+    target_lock_path: Optional[str] = "default",
 ) -> ValidationReport:
     """Validate a dataset.jsonl. Structural problems raise DatasetFormatError; content problems are collected.
 
     eval_set_path / reference_lock_path / target_lock_path: leakage checks run against them when they exist
-    (target_lock_path: the target speaker's held-out evaluation clips, scripts/build_target_voices.py); the report's
+    (target_lock_path: the target speaker's held-out evaluation clips, scripts/build_target_voices.py; "default"
+    means DEFAULT_TARGET_LOCK, None skips the check); the report's
     stats say whether they ran. transcriber(audio_path, record) -> text is used when config.asr_cer_max is set.
     require_text=False validates audio only (Stage 1 DVAE and Stage 3 vocoder don't use transcripts);
     vocab_path may then be None. realigner(audio_path, record) -> problems re-aligns the text to the audio
@@ -217,6 +220,8 @@ def validate_dataset(
     if reference_lock_path and os.path.exists(reference_lock_path):
         with open(reference_lock_path, "r", encoding="utf-8") as f:
             reference_hashes = {v["clip_sha256"]: k for k, v in json.load(f)["voices"].items()}
+    if target_lock_path == "default":  # resolved at call time, so DEFAULT_TARGET_LOCK is the one definition
+        target_lock_path = DEFAULT_TARGET_LOCK
     target_hashes = target_holdout_hashes(target_lock_path) if target_lock_path and os.path.exists(target_lock_path) else {}
 
     audio_hashes: Dict[str, DatasetRecord] = {}

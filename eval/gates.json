@@ -34,7 +34,7 @@
     }
   ],
   "target_speaker_gate_template": {
-    "how": "For voice adaptation: run scripts/build_target_voices.py on your dataset (it holds out reference clips and writes dataset_train.jsonl to train on), measure both models with run_eval_baseline.py --voices target, then add this gate to 'gates' with the voice ids it printed (target_<speaker>) before running compare_ab.",
+    "how": "For voice adaptation: run scripts/build_target_voices.py on your dataset (it holds out reference clips and writes dataset_train.jsonl to train on), measure both models with python scripts/run_eval_baseline.py --voices target, then add this gate to 'gates' with the voice ids it printed (target_<speaker>) before running compare_ab.",
     "gate": {
       "metric": "secs",
       "rule": "better",

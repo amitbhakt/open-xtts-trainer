@@ -15,11 +15,16 @@ import torch
 
 from dataset_helpers import write_test_vocab
 from eval.reference_voices import MAX_CLIP_S, MIN_CLIP_S
-from eval.target_voices import LOCK_FILENAME, build_target_voices, holdout_hashes, verify_target_voices
+from eval.target_voices import LOCK_FILENAME, build_target_voices as _build, holdout_hashes, verify_target_voices
 from xtts_trainer.data import DatasetRecord, load_dataset, validate_dataset, write_dataset
 from xtts_trainer.spec import SPEC
 
 SR = SPEC.output_sample_rate
+
+
+def build_target_voices(dataset, out_dir, **kw):
+    """Tests build in tmp dirs; the real CLI may only use the canonical location (tested below)."""
+    return _build(dataset, out_dir, allow_unchecked_location=True, **kw)
 
 
 def _dataset(root, speakers=("me", "you"), n=8, seconds=2.0):
@@ -102,6 +107,7 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     (ckpt / "model.pth").write_bytes(b"fake")
     (ckpt / "vocab.json").write_bytes(b"{}")
     wav = (np.sin(np.linspace(0, 3000, SR * 2)) * 0.3).astype(np.float32)
+    conditioned = []
 
     class FakeXtts:
         @staticmethod
@@ -118,7 +124,7 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
             return self
 
         def get_conditioning_latents(self, audio_path):
-            assert os.path.basename(audio_path[0]).startswith("target_")
+            conditioned.append(audio_path[0])
             return torch.zeros(1, 32, 1024), torch.zeros(1, 512, 1)
 
         def inference(self, **kw):
@@ -134,5 +140,67 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     )
     assert manifest["voices"] == "target"
     assert [v["speaker_id"] for v in manifest["reference_voices"]] == ["target_me", "target_you"]
+    # each voice id was synthesized from its own held-out reference clip, in order
+    assert conditioned == [os.path.join(out, "target_me.wav"), os.path.join(out, "target_you.wav")]
+    assert [run["speaker_id"] for run in manifest["runs"]] == ["target_me", "target_you"]
     with pytest.raises(ValueError, match="voices must be"):
         baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="everyone")
+    # Without --output, each label and voice set gets its own file: a target run can't overwrite another run
+    monkeypatch.chdir(tmp_path)
+    for label in ("base", "tuned"):
+        baseline_module.generate_baseline(checkpoint_dir=str(ckpt), seeds=[1], languages=["en"], subset_size=2,
+                                          voices="target", target_dir=out, label=label)
+    written = sorted(os.listdir(tmp_path / "eval" / "baselines"))
+    commit = baseline_module.PINNED_UPSTREAM_COMMIT[:12]
+    assert written == [f"base_xtts_{commit}_target.json", f"tuned_xtts_{commit}_target.json"]
+
+
+def test_builder_only_writes_where_training_checks(tmp_path):
+    from eval.target_voices import DEFAULT_TARGET_DIR
+    from xtts_trainer.data.validate import DEFAULT_TARGET_LOCK
+
+    assert os.path.join(DEFAULT_TARGET_DIR, LOCK_FILENAME) == DEFAULT_TARGET_LOCK
+    with pytest.raises(ValueError, match="only lock location"):
+        _build(_dataset(str(tmp_path)), str(tmp_path / "elsewhere"))
+
+
+def test_rebuilding_replaces_the_previous_holdout(tmp_path, monkeypatch):
+    """The source dataset contains the previous holdout by definition; rebuilding must not trip the guard."""
+    import xtts_trainer.data.validate as validate_module
+
+    dataset = _dataset(str(tmp_path))
+    out = str(tmp_path / "targets")
+    monkeypatch.setattr(validate_module, "DEFAULT_TARGET_LOCK", os.path.join(out, LOCK_FILENAME))
+    first = build_target_voices(dataset, out, seed=1)
+    second = build_target_voices(dataset, out, seed=2)  # the lock from the first run now exists
+    assert first["voices"].keys() == second["voices"].keys()
+
+
+def test_speaker_ids_must_be_safe_file_names(tmp_path):
+    records = [DatasetRecord(audio=f"c{i}.wav", text="hello", lang="en", speaker="../escape", duration_s=2.0, sr=SR,
+                             transcript_source="human") for i in range(6)]
+    for i in range(6):
+        sf.write(str(tmp_path / f"c{i}.wav"), (0.1 * np.random.RandomState(i).randn(SR * 2)).astype("float32"), SR)
+    dataset = write_dataset(str(tmp_path / "dataset.jsonl"), records)
+    with pytest.raises(ValueError, match="can't be file names"):
+        build_target_voices(dataset, str(tmp_path / "targets"))
+    assert not (tmp_path / "escape.wav").exists()
+
+
+def test_holdout_search_continues_past_clips_that_trim_short(tmp_path):
+    """Mostly-silent clips trim to almost nothing; the search must keep loading clips, not stop at a fixed prefix."""
+    records = []
+    for i in range(14):
+        rng = np.random.RandomState(i)
+        audio = np.zeros(int(SR * 2.0), dtype="float32")
+        if i >= 10:  # only the last four clips have 2 s of signal
+            t = np.arange(len(audio)) / SR
+            audio = (0.2 * np.sin(2 * np.pi * rng.uniform(100, 800) * t)).astype("float32")
+        else:
+            audio[: SR // 10] = 0.2 * rng.randn(SR // 10)  # 0.1 s of signal, then silence
+        sf.write(str(tmp_path / f"c{i}.wav"), audio, SR)
+        records.append(DatasetRecord(audio=f"c{i}.wav", text="hello", lang="en", speaker="me", duration_s=2.0,
+                                     sr=SR, transcript_source="human"))
+    dataset = write_dataset(str(tmp_path / "dataset.jsonl"), records)
+    lock = build_target_voices(dataset, str(tmp_path / "targets"), seed=0)
+    assert MIN_CLIP_S <= lock["voices"]["target_me"]["duration_s"] <= MAX_CLIP_S
