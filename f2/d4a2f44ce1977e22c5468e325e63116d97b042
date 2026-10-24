@@ -1,0 +1,424 @@
+xtts_trainer/stage2_gpt/export.py
+  s_bfc6eb584d8e27::t_96222c5a79aeaa 2-17,19-21,25-36,39-50,54-56,60-70,103-111,113-117
+  s_bfc6eb584d8e27::t_e8569262d4f832 18,24,51-53,71-72,89-102
+  s_bfc6eb584d8e27::t_657093079c5cf0 57-59
+  s_bfc6eb584d8e27::t_1e61d621c687c6 112
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_d2474ef8235ffa 22-23
+  s_bfc6eb584d8e27::t_a85e30e7815660 75-76
+  s_bfc6eb584d8e27::t_599dc6a8fc1366 73-74,77-88
+  s_bfc6eb584d8e27::t_1c2786bd082809 37-38
+scripts/fetch_reference_voices.py
+  s_bfc6eb584d8e27::t_ca460dd07ea059 1,3-8,14,17-24,26-33,36-37
+xtts_trainer/frontend/__init__.py
+  s_bfc6eb584d8e27::t_863d3bebcf8835 1-5
+eval/dataset.py
+  s_bfc6eb584d8e27::t_312c9e9c4c9563 14
+  s_bfc6eb584d8e27::t_0a837678cd0b3f 236-239
+  s_bfc6eb584d8e27::t_5c949f1db228be 76,78-87,294-296
+  s_bfc6eb584d8e27::t_1752df255e153c 231-235,240-286
+  s_bfc6eb584d8e27::t_92ffe337bdb270 77
+docs/evidence/artifact_verification.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 3,6,14,22,28-51,57-58,65-67,73-80,85,87
+  s_bfc6eb584d8e27::t_0c542139dc9e45 1-2,4-5,7-13,15-21,23-27,52-56,59-64,68-72,81-84,86,88-89
+scripts/run_mini_test.py
+  s_bfc6eb584d8e27::t_3c964743630624 13-14,21
+  s_bfc6eb584d8e27::t_3ab576c8fe10f5 75-78,91-95
+  s_bfc6eb584d8e27::t_581981ac84c98a 56-59,61
+  s_bfc6eb584d8e27::t_88661620f76349 37-47,72,82,88,107,109-110
+scripts/run_eval_baseline.py
+  s_bfc6eb584d8e27::t_3cc655e5e747c3 29,82-87,119-123,145-146,185,198
+  s_bfc6eb584d8e27::t_5546a4bc4abfe6 5-6,9-18,33-61,72-73,78-79,88-99,104-118,124-128,130-136,138-140,143-144,147-149,151-159,161,164-176,183-184,188-194,200-201
+  s_bfc6eb584d8e27::t_9312242b749d3f 7-8,28,74,80-81,100-103,137,160,177-180,195-197
+  s_bfc6eb584d8e27::t_ee7fbdd73a595f 150
+  s_bfc6eb584d8e27::t_feec09d7551e3c 25-27,62-71,129,141-142,162-163
+scripts/fetch_base_artifacts.py
+  s_bfc6eb584d8e27::t_f5a5830be0f520 1-209
+tests/test_spec_parity.py
+  s_bfc6eb584d8e27::t_f006c79249b941 1-240,242-280
+  s_bfc6eb584d8e27::t_2f62e13d6d9727 241
+  s_bfc6eb584d8e27::t_4f947885e2875a 281-313
+eval/dataset/eval_set.json
+  s_bfc6eb584d8e27::t_d5d580d5c22b25 808-885
+  s_bfc6eb584d8e27::t_5c949f1db228be 2-313,888
+docs/recipe_design.md
+  s_bfc6eb584d8e27::t_4063a78efcc9e2 1-193
+scripts/convert_metadata_csv.py
+  s_bfc6eb584d8e27::t_98266127a1b7db 1-91
+tests/dataset_helpers.py
+  s_bfc6eb584d8e27::t_98bddda7f26fc1 1,5-6,8-45,47-48
+  s_bfc6eb584d8e27::t_74840d6d71476c 3,49-63
+docs/evidence/colab_run1/environment_colab.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-742
+docs/evidence/colab_run1/pilot_en_reproducibility.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-51
+tests/test_stage3_training.py
+  s_bfc6eb584d8e27::t_770f6add93a3fb 69-75
+  s_bfc6eb584d8e27::t_82f8c80a4597df 1,3,5-6,8,10-13,15,17-24,26-68,76-104,121-123,125-127,149-174,177-179,182-187,189,192,195-200
+  s_bfc6eb584d8e27::t_5390574edf0be7 201,203-204,206-211
+  s_bfc6eb584d8e27::t_f9c20319d2c40c 105,110-120,124,128-148
+  s_bfc6eb584d8e27::t_8b52e7f2ff7139 16
+  s_bfc6eb584d8e27::t_23395ee233e49f 106-109
+  s_bfc6eb584d8e27::t_67d699996e9996 188
+pyproject.toml
+  s_bfc6eb584d8e27::t_880e92e03eb4ea 48-53,55-56
+  s_bfc6eb584d8e27::t_a6685619ae4164 43
+  s_bfc6eb584d8e27::t_cc39dce25f3e3e 19-20
+  s_bfc6eb584d8e27::t_92ffe337bdb270 54
+xtts_trainer/data/validate.py
+  s_bfc6eb584d8e27::t_78d72f287b6b95 1-8,12-63,65-68,73-142,145,155-164,167-171,175-186,191-208,211-241,245-260,262-286,294-319,324-326,328-329,331,337-338,340-341,410-414,417-420,425-426,437-450
+  s_bfc6eb584d8e27::t_6d69ec61ba01aa 143-144,146-154,188
+  s_bfc6eb584d8e27::t_92ffe337bdb270 64,261,330,335
+  s_bfc6eb584d8e27::t_fe8ef55fd3d32e 9-11,69-72,166,173-174,209-210,287-293,320-322,332-334,336,342-387,389-390,421-424,429-433,435-436
+  s_bfc6eb584d8e27::t_2660fdcb90ccd8 388
+  s_bfc6eb584d8e27::t_542f79ea03c75c 165,172,187,189-190,242-244,323,327,339,391-409,415-416,427-428,434
+xtts_trainer/stage2_gpt/train.py
+  s_bfc6eb584d8e27::t_dd160bcd423e73 3-8,15-17,20-24,30-44,63-68,74-77,80-85,90-92,95-110,115,122,125-126,128-129,132,136-138,143-155,158-161,166-167,169
+  s_bfc6eb584d8e27::t_3857dbd193baf6 25
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1,168
+  s_bfc6eb584d8e27::t_2f0c1d77bdab49 112,130-131
+  s_bfc6eb584d8e27::t_882754ab0bd9b5 45-49,51-52,58-62,120-121,133-135,139-141
+  s_bfc6eb584d8e27::t_e8569262d4f832 86-87,93-94,111,116-117,142,162,164-165,170
+  s_bfc6eb584d8e27::t_0ddef1945ccc19 50,53-57,118-119
+  s_bfc6eb584d8e27::t_b62ba8b88a8461 72
+  s_bfc6eb584d8e27::t_0aa2b7e1d308a2 88,113,163,171-172
+  s_bfc6eb584d8e27::t_e4da43328858bd 123-124
+xtts_trainer/data/latents.py
+  s_bfc6eb584d8e27::t_fe780a86a54afa 1-76
+xtts_trainer/stage3_hifigan/inference.py
+  s_bfc6eb584d8e27::t_88878845f89c9d 8-9,17,25,28,31,33,35,41,54,57
+docs/evidence/colab_run1/artifact_verification.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-89
+xtts_trainer/stage3_hifigan/extract_latents.py
+  s_bfc6eb584d8e27::t_1f3670600b7bc8 10,13,80-83,110,120,141-144
+  s_bfc6eb584d8e27::t_4396162d73b846 8,11-12,14-15,23-27,29,35,37-41,57-60,72,92-93,95-98,100,102-104,112,123-124,129,145-147,155,160,164
+  s_bfc6eb584d8e27::t_1c2786bd082809 66,68
+  s_bfc6eb584d8e27::t_e8569262d4f832 62,64-65,70-71
+docs/evidence/colab_run1/smoke.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-691
+notebooks/open_xtts_train_demo.ipynb
+  s_bfc6eb584d8e27::t_18b575f6db9568 59,61
+  s_bfc6eb584d8e27::t_bffd32950c4805 7,9-11,13,15-21,28,34,37,41-42,49-50,56,60,62,69-72,78,81-83,90-91,97,100-105,112-114,120,123-125,132,138,141-142,145-155,162-168,173-181,187
+  s_bfc6eb584d8e27::t_1c2786bd082809 143
+  s_bfc6eb584d8e27::t_92ffe337bdb270 12,14
+xtts_trainer/frontend/text.py
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_49b7257f17fc78 2-68
+docs/evidence/colab_run2/README.md
+  s_bfc6eb584d8e27::t_61c5ee32816d5a 1-37
+  s_bfc6eb584d8e27::t_82bb2656d91a8f 38-64
+xtts_trainer/prepare/segment.py
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_d6e5bd56b44505 22-25,90,93-97,104-110,121-125
+  s_bfc6eb584d8e27::t_4a90ac45468ca5 2-21,26-32,35-89,91-92,98-103,111-120,126-143,145-150,153-158
+  s_bfc6eb584d8e27::t_2660fdcb90ccd8 33-34,144,151-152
+eval/__init__.py
+  s_bfc6eb584d8e27::t_cebf7e80b8ed94 9-21
+docs/evidence/colab_run1/reference_voices.lock.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-86
+docs/evidence/colab_run2/environment_colab.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-746
+docs/evidence/colab_run2/reference_voices.lock.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-121
+tests/test_stage1_training.py
+  s_bfc6eb584d8e27::t_cc814c67e94d86 1,3-4,6-10,12-13,17-115
+  s_bfc6eb584d8e27::t_5390574edf0be7 116-129
+  s_bfc6eb584d8e27::t_01c5018f37784c 139-141,143
+  s_bfc6eb584d8e27::t_67d699996e9996 15
+  s_bfc6eb584d8e27::t_d487318e9595ae 130-138,142,144-148
+xtts_trainer/spec/artifacts.py
+  s_bfc6eb584d8e27::t_4fd86aa17be785 1-94
+xtts_trainer/models/factory.py
+  s_bfc6eb584d8e27::t_fd9cf991b7d20a 1-80
+  s_bfc6eb584d8e27::t_d1a80fa022b6f4 81-97
+notebooks/phase0_phase1_colab.ipynb
+  s_bfc6eb584d8e27::t_5ff46df7b25fce 1-6,8,10-12,15,27-28,31,34-52,54-62,64-73,75-91,93-101,105-108,110-114,116-142,145-152,154-159,162-169,175-180,334-342,356-361,364-371,383-388,391-398,408-413,416-425,428-433,436-443,445,447,449-468
+  s_bfc6eb584d8e27::t_9a3bc49764908f 18,193-212,214-218
+  s_bfc6eb584d8e27::t_4209545a292802 13-14,17,25-26,29-30,32-33,63,74,92,102-104,109,115,143-144,153,171-174,181-192,219-224,333,362-363,389-390,414-415,426-427,434-435
+  s_bfc6eb584d8e27::t_92ffe337bdb270 9
+  s_bfc6eb584d8e27::t_171d01ca935a96 7,20-21,53,264-332,444,446,448
+  s_bfc6eb584d8e27::t_f6f2465186950a 16,19,22-24,160-161,170,225-236,238,246-263,343-355,372-379,399-407
+  s_bfc6eb584d8e27::t_2e83ca3be033f7 213,237,239-245
+  s_bfc6eb584d8e27::t_82bb2656d91a8f 380-382
+docs/evidence/colab_run1/pilot_en_run2.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-2687
+docs/evidence/colab_run1/README.md
+  s_bfc6eb584d8e27::t_2c09570769b6e7 1-25
+tests/test_prepare.py
+  s_bfc6eb584d8e27::t_33da0ce05250d8 309-318,320,326-328,336-338
+  s_bfc6eb584d8e27::t_6adb1988ccd18f 425-426,450-451
+  s_bfc6eb584d8e27::t_ea4d8ad180ca2e 196-197,201,211-219
+  s_bfc6eb584d8e27::t_a05f195ed948ad 1-165,171-172,174-175,182-195,198,200,202,204-210,220-221,241-308,319,321-325,329-335,339-424,427-449,455-459
+  s_bfc6eb584d8e27::t_78d38e82b48236 199,203
+  s_bfc6eb584d8e27::t_b381f84150294c 452-454
+  s_bfc6eb584d8e27::t_9982b2bf470eec 230
+  s_bfc6eb584d8e27::t_343f701926a97f 222,226-229,231,239-240
+  s_bfc6eb584d8e27::t_2660fdcb90ccd8 166-170,173,176-181
+  s_bfc6eb584d8e27::t_be0d9730aa1d50 223-225,232-238
+xtts_trainer/stage1_dvae/train.py
+  s_bfc6eb584d8e27::t_57abed982d4055 27,95,113
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_c1e19fea46758d 26,29,37
+  s_bfc6eb584d8e27::t_3af2fe27e040de 125
+  s_bfc6eb584d8e27::t_90c6e88e6f3cff 175
+  s_bfc6eb584d8e27::t_4404488c4de891 2-13,16-17,19,21-22,28,30-36,41-47,53,55-66,68-83,85-91,98-99,102,104-107,109,111,114-124,126-136,139-174,176-188,190-193,195-203,206-210,214-219,223-226,228-230
+  s_bfc6eb584d8e27::t_682c6634251bcb 204-205
+  s_bfc6eb584d8e27::t_2417ffbada1df2 48-52,54
+xtts_trainer/stage3_hifigan/models.py
+  s_bfc6eb584d8e27::t_88878845f89c9d 1
+docs/evidence/colab_run1/pilot_en_run1.json
+  s_bfc6eb584d8e27::t_7db4440eac77b1 1-2687
+xtts_trainer/models/__init__.py
+  s_bfc6eb584d8e27::t_732603b2f7b485 1-2,4-9,12-14,17-19,23
+  s_bfc6eb584d8e27::t_295dd5f2c3e7fd 10-11,21
+  s_bfc6eb584d8e27::t_e4d435ecd4237f 15-16,22
+  s_bfc6eb584d8e27::t_d1a80fa022b6f4 3,20
+xtts_trainer/prepare/__init__.py
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_e12ced0741b7eb 2-13
+docs/evidence/colab_run2/smoke.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-715
+xtts_trainer/spec/xtts_spec.py
+  s_bfc6eb584d8e27::t_87a25e9185a412 1-200
+scripts/rescore_baseline.py
+  s_bfc6eb584d8e27::t_62d02fa5724781 1-65
+eval/gates.json
+  s_bfc6eb584d8e27::t_03a863188197d0 1-2,4-48
+  s_bfc6eb584d8e27::t_92ffe337bdb270 3
+.github/pull_request_template.md
+  s_bfc6eb584d8e27::t_053cee6f81392b 2-29
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+tests/test_eval_metrics.py
+  s_bfc6eb584d8e27::t_5171dae7c866ef 165-181
+  s_bfc6eb584d8e27::t_6c6ce704c79a73 23
+  s_bfc6eb584d8e27::t_11b17db306b333 18-19
+  s_bfc6eb584d8e27::t_2ab4e81f2042b9 91-119
+xtts_trainer/speech_data.py
+  s_bfc6eb584d8e27::t_f486e8f0eff757 1,4-11,15-18,20-21,23,25-83,85-88,91-184,186-193,195-197
+  s_bfc6eb584d8e27::t_92ffe337bdb270 3
+  s_bfc6eb584d8e27::t_ec5020a8b20efc 84,89
+scripts/diagnose_dvae.py
+  s_bfc6eb584d8e27::t_6f38d07abd0a14 27
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_839007256a5ecc 2-13,17,19-20,22,24,26,28-29,31,34-37,40-56,60-66,68-72
+scripts/compare_baselines.py
+  s_bfc6eb584d8e27::t_1ec5ed1a104f99 17,19
+  s_bfc6eb584d8e27::t_ee7fbdd73a595f 18
+  s_bfc6eb584d8e27::t_8c7c60ada6663b 1-16,20-82
+xtts_trainer/data/__init__.py
+  s_bfc6eb584d8e27::t_8bd3b83cc64e50 1-13,15-19,21
+  s_bfc6eb584d8e27::t_542f79ea03c75c 14,20
+docs/evidence/colab_run2/smoke_rerun.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-715
+xtts_trainer/stage2_gpt/vocab_extender.py
+  s_bfc6eb584d8e27::t_92ffe337bdb270 103
+  s_bfc6eb584d8e27::t_c96a87cb780aa0 98-99,102,105-135,139-141,143-151
+  s_bfc6eb584d8e27::t_a1fd44f022e4d7 45-46,48-49,62-90
+tests/test_training_hygiene.py
+  s_bfc6eb584d8e27::t_da7286ba90d958 1-35,37-93
+  s_bfc6eb584d8e27::t_0530a6c01c3832 36
+.pre-commit-config.yaml
+  s_bfc6eb584d8e27::t_053cee6f81392b 2-14
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+tests/fixtures/upstream_checkpoint_index.json
+  s_bfc6eb584d8e27::t_00c6b7c82786a6 1-3676
+docs/upstream_reference.md
+  s_bfc6eb584d8e27::t_8598ca905ca678 25-30
+  s_bfc6eb584d8e27::t_918e6f2b459667 93
+  s_bfc6eb584d8e27::t_ff1c863adf020a 9-24,36-92,100-109
+scripts/record_upstream_index.py
+  s_bfc6eb584d8e27::t_3868af62e132d9 1-26,28-111
+  s_bfc6eb584d8e27::t_17daf27d92fa82 27
+xtts_trainer/prepare/pipeline.py
+  s_bfc6eb584d8e27::t_9c68fb59860a36 193-195,197-199
+  s_bfc6eb584d8e27::t_7c910059928ce2 2-82,85-136,138-192,196
+  s_bfc6eb584d8e27::t_2660fdcb90ccd8 83-84,137
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+xtts_trainer/stage3_hifigan/train.py
+  s_bfc6eb584d8e27::t_64335464b4bf91 2-15,18,20,23-25,33,36,38-42,48,54-57,59-102,111,115,117-118,120,122,124-129,131-132,135-153,155-196,198-240,242-258,262-268,271-277,279-282
+  s_bfc6eb584d8e27::t_ca1f55a05c3c59 47,49-53
+  s_bfc6eb584d8e27::t_90c6e88e6f3cff 197
+  s_bfc6eb584d8e27::t_9e81d50d703dcb 32,106,113,119,134
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_71c2654ac6ae34 31,34-35
+xtts_trainer/frontend/mels.py
+  s_bfc6eb584d8e27::t_81e172cedfcab8 1-62
+eval/dataset/reference_voices.lock.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-121
+scripts/check_fresh_install.sh
+  s_bfc6eb584d8e27::t_053cee6f81392b 1,3-26
+  s_bfc6eb584d8e27::t_92ffe337bdb270 2
+xtts_trainer/asr.py
+  s_bfc6eb584d8e27::t_92ffe337bdb270 15
+  s_bfc6eb584d8e27::t_99dfd799676dab 1-3,5-14,18-27,29-32,43
+  s_bfc6eb584d8e27::t_b2ebfebff0d3d1 4,16-17,28,33-42,44-63
+xtts_trainer/stage2_gpt/gpt_trainer.py
+  s_bfc6eb584d8e27::t_3fdf93b8b26598 2-8,10-11,13-20,22-32,36-96,103-105,113-114,135-163,165-168,170-186,189-214,219,227,229-232,234-246,248-249,255
+  s_bfc6eb584d8e27::t_12435e5be59f2b 247,250-254
+  s_bfc6eb584d8e27::t_e4da43328858bd 21,97-102,106-112,115-134
+  s_bfc6eb584d8e27::t_e8569262d4f832 33-35,215-218,220-222,224-226
+  s_bfc6eb584d8e27::t_0aa2b7e1d308a2 164,187-188
+  s_bfc6eb584d8e27::t_58f159f9d55249 9,12,228,233
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1,169,223
+xtts_trainer/spec/xtts_v2_config.json
+  s_bfc6eb584d8e27::t_0f6d867d95719f 1-159
+tests/test_stage2_gpt_trainer.py
+  s_bfc6eb584d8e27::t_37962543acd17d 388
+  s_bfc6eb584d8e27::t_540eb84a02997d 328-358
+  s_bfc6eb584d8e27::t_daab8b599b365d 376-387,389-394
+  s_bfc6eb584d8e27::t_1c2786bd082809 424
+  s_bfc6eb584d8e27::t_1f5214f517a59d 251-310
+  s_bfc6eb584d8e27::t_588b18f999c835 121
+  s_bfc6eb584d8e27::t_882754ab0bd9b5 422
+  s_bfc6eb584d8e27::t_58f159f9d55249 206
+  s_bfc6eb584d8e27::t_d61df05d9b6b1f 1-120,122-205,207-250,311-327,359-375,395-421,423,425-430
+xtts_trainer/spec/languages.py
+  s_bfc6eb584d8e27::t_c6ba2355384d8b 1-4,7-26
+  s_bfc6eb584d8e27::t_a1aebdc18e56d7 5-6
+docs/evidence/colab_run2/determinism_check.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-51
+docs/evidence/colab_run3/README.md
+  s_bfc6eb584d8e27::t_e2f6cdacadefed 1-39
+scripts/download_real_speech.py
+  s_bfc6eb584d8e27::t_09da6e9564abf2 1,3
+tests/test_compare_ab.py
+  s_bfc6eb584d8e27::t_9d037bdefb9820 1-99
+xtts_trainer/prepare/pauses.py
+  s_bfc6eb584d8e27::t_c4e4f2d9cd6587 2-48
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+README.md
+  s_bfc6eb584d8e27::t_18b575f6db9568 127-130,133-137,139-144
+  s_bfc6eb584d8e27::t_856bb7f7b3e6db 54,56-57,60-61,63-69,71-72,76-79,254,256-257,260-262,265-267,269-270
+  s_bfc6eb584d8e27::t_c7fcee318d3db4 145-157,197,206,237
+  s_bfc6eb584d8e27::t_f74199dff2f4e7 203,205,210,212-220,225,233-234,236,239-240,243-250
+  s_bfc6eb584d8e27::t_1c2786bd082809 171,173-177,179,181-190
+  s_bfc6eb584d8e27::t_92ffe337bdb270 58,73-74,232
+eval/harness.py
+  s_bfc6eb584d8e27::t_ee7fbdd73a595f 36-43,49-54,56,58-66,356
+  s_bfc6eb584d8e27::t_312c9e9c4c9563 22-23,181,235-238
+  s_bfc6eb584d8e27::t_74d792e67e83d2 134-152,294,321
+  s_bfc6eb584d8e27::t_feec09d7551e3c 104-133,329,336-346,357
+  s_bfc6eb584d8e27::t_f70c731f64612d 161,177,192
+  s_bfc6eb584d8e27::t_2ee41c9f914261 44-48,55,57
+  s_bfc6eb584d8e27::t_ff9e9284f422d5 87-103,308-318,333,355
+  s_bfc6eb584d8e27::t_bbb8eb0cbee338 5-6,31-32,160,162-163,178-179,201-213,242-247,265
+  s_bfc6eb584d8e27::t_a1aebdc18e56d7 73-82
+  s_bfc6eb584d8e27::t_cebf7e80b8ed94 8,29,254,274
+tests/test_stage2_training.py
+  s_bfc6eb584d8e27::t_8b52e7f2ff7139 14
+  s_bfc6eb584d8e27::t_18c33fd39d21bd 57,68,78
+  s_bfc6eb584d8e27::t_67d699996e9996 11-12
+  s_bfc6eb584d8e27::t_540eb84a02997d 149-151
+  s_bfc6eb584d8e27::t_92ffe337bdb270 148
+tests/test_data_contract.py
+  s_bfc6eb584d8e27::t_f2f913281824ff 1-21,23-28,31-77,79-219
+  s_bfc6eb584d8e27::t_92ffe337bdb270 78
+  s_bfc6eb584d8e27::t_a0e58178c89d13 22
+  s_bfc6eb584d8e27::t_e79d2f3d46dc25 220-304
+  s_bfc6eb584d8e27::t_74840d6d71476c 29-30
+xtts_trainer/prepare/align.py
+  s_bfc6eb584d8e27::t_6b831f04c1728d 2-3,5-13,15-17,19-20,23-48,50-58,61-120,126-143,145-148,150-153,162-179,181-189,191-193,198-204
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1,4
+  s_bfc6eb584d8e27::t_fd15435989cf56 18,21-22
+  s_bfc6eb584d8e27::t_2660fdcb90ccd8 121-125,144,149,154-161,190,194-197
+  s_bfc6eb584d8e27::t_a028b6cb1977bb 14,49,59-60,180
+docs/evidence/colab_run2/artifact_verification.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-89
+scripts/compare_ab.py
+  s_bfc6eb584d8e27::t_e69bab9f27f6d3 1-80,82-134,136-168
+  s_bfc6eb584d8e27::t_03a863188197d0 81,135
+tests/test_eval_phase1.py
+  s_bfc6eb584d8e27::t_cc474aaac5a31a 135-136,138
+  s_bfc6eb584d8e27::t_47882755a9b1ee 174-175,209,213-216,342-354
+  s_bfc6eb584d8e27::t_e5e17b18850596 183-185,188-197,206,211-212,218-221,225-234,290-291,355-375
+  s_bfc6eb584d8e27::t_16c7a37a3edf3e 1-12,14-93,97-100,152-173,177-182,186-187,198-205,207-208,210,217,222-224,235-259,262-270
+  s_bfc6eb584d8e27::t_2ee41c9f914261 389-390,392-394,396
+  s_bfc6eb584d8e27::t_30c5b6bc980a99 101-117
+  s_bfc6eb584d8e27::t_2ab4e81f2042b9 94-96,118-134,137,139-151,260-261,336-337
+  s_bfc6eb584d8e27::t_a39d74e20a3ff9 13
+  s_bfc6eb584d8e27::t_decb55d3b716c7 176
+  s_bfc6eb584d8e27::t_8005ae700d7512 271-272
+  s_bfc6eb584d8e27::t_6ca5636014194c 273-289,292-335,338-341
+  s_bfc6eb584d8e27::t_ee7fbdd73a595f 376-388,391,395
+docs/evidence/colab_run2/pilot_en.json
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 1-3151
+xtts_trainer/stage3_hifigan/dataset.py
+  s_bfc6eb584d8e27::t_3e4a71220a867b 11
+  s_bfc6eb584d8e27::t_ab5ae62cf195dd 1-8,12-13,16,20,24-35,39,41-44,47-48,57-60,67,80-83,85-95,98-101,103-104,106-107,109-116
+  s_bfc6eb584d8e27::t_aa5cffd51b8d15 18-19,22,61-66,68-72,74-75
+  s_bfc6eb584d8e27::t_23395ee233e49f 46,51-56
+  s_bfc6eb584d8e27::t_f1e1ebbb93c450 96-97
+  s_bfc6eb584d8e27::t_d7394553401cc9 17,21
+xtts_trainer/data/schema.py
+  s_bfc6eb584d8e27::t_5901790ee06ea2 1-7,11-41,46-91,94-100,128-171
+  s_bfc6eb584d8e27::t_fe8ef55fd3d32e 8-10,42-45,92-93,101-127
+eval/metrics.py
+  s_bfc6eb584d8e27::t_a1aebdc18e56d7 17-55
+  s_bfc6eb584d8e27::t_05df0b1ba0a32f 164-224,226-228
+  s_bfc6eb584d8e27::t_cebf7e80b8ed94 229-279
+  s_bfc6eb584d8e27::t_312c9e9c4c9563 15-16,284
+tests/test_invariants.py
+  s_bfc6eb584d8e27::t_8e1d07e87fb778 357-425
+  s_bfc6eb584d8e27::t_3ab576c8fe10f5 193-198,205,220-224,226-229
+  s_bfc6eb584d8e27::t_3a7f82546b5c61 77-78
+  s_bfc6eb584d8e27::t_540eb84a02997d 262-263
+  s_bfc6eb584d8e27::t_a7cd420fdac434 294-299,304-343
+  s_bfc6eb584d8e27::t_fd137f19e49c42 83-84
+  s_bfc6eb584d8e27::t_49cea36fd3c663 1-76,79-82,85-192,199-204,206-219,225,230-261,264-293,300-303,344-356
+.gitignore
+  s_bfc6eb584d8e27::t_e6b4c217d60081 65
+  s_bfc6eb584d8e27::t_fdd97108ad3aac 66-69
+  s_bfc6eb584d8e27::t_f44082b32a2fab 56
+  s_bfc6eb584d8e27::t_9fa5b88ad7c6c9 61-63
+  s_bfc6eb584d8e27::t_8750dcbf1e0273 31-32
+  s_bfc6eb584d8e27::t_7cb7183a1aa31a 64
+.github/workflows/ci.yml
+  s_bfc6eb584d8e27::t_053cee6f81392b 2-33
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+xtts_trainer/models/checkpoint_io.py
+  s_bfc6eb584d8e27::t_231fb1306abf25 35-53,55,58-62
+  s_bfc6eb584d8e27::t_e4d435ecd4237f 93-104
+  s_bfc6eb584d8e27::t_295dd5f2c3e7fd 90
+  s_bfc6eb584d8e27::t_e8186d962e4180 1-34,54,56-57,63-89,91-92
+xtts_trainer/config.py
+  s_bfc6eb584d8e27::t_1845b3ef2d7f88 1,3-5,7-8,10,44-45,47,51-53,72
+  s_bfc6eb584d8e27::t_89b352abf2db91 15-25,28-38,43,46,54-69
+  s_bfc6eb584d8e27::t_a1aebdc18e56d7 84
+eval/reference_voices.py
+  s_bfc6eb584d8e27::t_518e8a5b151316 1-13,15-21,23-30,33-73,80-81,83,91-93,99-101,103-104,106,108-113,116-118,129-136,159-166,168-169,171,173-191,196-207,211-220,226-230,233-235,239-241,243-264,270,273
+  s_bfc6eb584d8e27::t_2e71e726e684bf 75,77-78,82,84-90,94-98,209-210
+  s_bfc6eb584d8e27::t_0d0741d1f39057 14,32,74,76,79,105,107,114-115,119-128,231-232
+  s_bfc6eb584d8e27::t_0a837678cd0b3f 22,31,102,137-158,167,170,172,192-195,208,221-225,236-238,242,265-269,271-272
+xtts_trainer/training.py
+  s_bfc6eb584d8e27::t_92ffe337bdb270 1
+  s_bfc6eb584d8e27::t_3c875188eff14d 48
+  s_bfc6eb584d8e27::t_316babeb661e7c 2-47,49-137,139-140,142-146
+xtts_trainer/spec/__init__.py
+  s_bfc6eb584d8e27::t_a1aebdc18e56d7 15
+  s_bfc6eb584d8e27::t_0269fb98bd6561 1-14,16
+docs/evidence/colab_run2/pilot_en_metrics_v2.json
+  s_bfc6eb584d8e27::t_45b1bae9fbb5b3 1-5542
+xtts_trainer/stage1_dvae/dataset.py
+  s_bfc6eb584d8e27::t_d462b9471c2046 3-4,13-16,19-26,28,31-32,44-45,48-52,55-58
+  s_bfc6eb584d8e27::t_06144f89f6f2a8 9-10,30
+  s_bfc6eb584d8e27::t_57abed982d4055 33-35
+  s_bfc6eb584d8e27::t_7beabd8549a7d6 8,42
+  s_bfc6eb584d8e27::t_e0c16b9e1b623e 36
+  s_bfc6eb584d8e27::t_3ab576c8fe10f5 46-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "f2d4a2f44ce1977e22c5468e325e63116d97b042",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
