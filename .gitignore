@@ -49,6 +49,7 @@ sample_audio/
 logs/
 *.zip
 *.log
+AUDIT.md
 .DS_Store
 .idea/
 .vscode/

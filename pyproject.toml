@@ -37,3 +37,7 @@ eval = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["xtts_trainer*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

@@ -9,7 +9,7 @@ from tqdm import tqdm
 from typing import Optional
 
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-from xtts_trainer.config import safe_torch_load, load_audio
+from xtts_trainer.config import safe_torch_load, load_audio, DEFAULT_MEL_STATS_PATH
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -25,6 +25,8 @@ def extract_latents(
     device: str = "cuda" if torch.cuda.is_available() else "cpu",
     text_prompt: str = "",
     lang: str = "en",
+    overwrite: bool = True,
+    allow_synthetic_fallback: bool = False,
 ) -> None:
     """Extracts true per-frame temporal GPT latents and speaker embeddings for HiFi-GAN vocoder training."""
     if device == "cuda" and not torch.cuda.is_available():
@@ -51,7 +53,13 @@ def extract_latents(
                 if len(parts) >= 2:
                     wav_name = os.path.basename(parts[0])
                     prompt = parts[1]
-                    item_lang = parts[2] if len(parts) > 2 else lang
+                    # Handle audio|text|speaker|lang or audio|text|lang
+                    if len(parts) >= 4:
+                        item_lang = parts[3]
+                    elif len(parts) == 3 and parts[2] in {"en", "es", "fr", "de", "it", "pt", "pl", "tr", "ru", "nl", "cs", "ar", "zh-cn", "ja", "hu", "ko", "hi"}:
+                        item_lang = parts[2]
+                    else:
+                        item_lang = lang
                     metadata_map[wav_name] = (prompt, item_lang)
 
     model = None
@@ -113,14 +121,16 @@ def extract_latents(
             mel_fmin=0,
             mel_fmax=8000,
             n_mel_channels=80,
-            mel_norm_file=None,
+            mel_norm_file=DEFAULT_MEL_STATS_PATH,
         ).to(device)
         logger.info("XTTS model, DVAE, and mel extractor successfully loaded for latent extraction.")
     else:
-        logger.warning(
-            "No --checkpoint_dir specified! Running in synthetic standalone test mode. "
-            "For production vocoder training, pass --checkpoint_dir to extract true temporal GPT latents."
-        )
+        if not allow_synthetic_fallback:
+            raise ValueError(
+                "Stage 3 latent extraction requires a valid XTTS checkpoint (--checkpoint_dir xtts_base). "
+                "Standalone random-latent fallback has been removed to prevent training vocoders on noise."
+            )
+        logger.warning("Running in synthetic fallback mode for unit testing.")
 
     audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")])
     if not audio_files:
@@ -133,7 +143,8 @@ def extract_latents(
         audio_path = os.path.join(audio_dir, filename)
         output_path = os.path.join(output_dir, f"{base_name}.pt")
 
-        if os.path.exists(output_path):
+        if os.path.exists(output_path) and not overwrite:
+            logger.info(f"Skipping existing latent: {output_path}")
             continue
 
         waveform_24k, _ = load_audio(audio_path, target_sr=24000)
@@ -152,10 +163,16 @@ def extract_latents(
                 audio_codes = dvae.get_codebook_indices(dvae_mel).to(device)  # [1, T_codes]
 
                 # 3. Ground-truth text tokens for this specific clip
-                clip_prompt, clip_lang = metadata_map.get(
-                    filename,
-                    (text_prompt if text_prompt else "Hello, this is a conditioning alignment prompt.", lang),
-                )
+                if filename in metadata_map:
+                    clip_prompt, clip_lang = metadata_map[filename]
+                elif text_prompt:
+                    clip_prompt, clip_lang = text_prompt, lang
+                else:
+                    raise KeyError(
+                        f"Clip '{filename}' not found in metadata '{resolved_metadata}'. "
+                        f"Every audio file must be paired with genuine ground-truth text."
+                    )
+
                 try:
                     tokens = model.tokenizer.encode(clip_prompt, clip_lang)
                 except Exception:
@@ -165,6 +182,7 @@ def extract_latents(
                         tokens = model.tokenizer.tokenizer.encode(f"{lang_tok}{clip_prompt}".replace(" ", "[SPACE]")).ids
                     else:
                         tokens = model.tokenizer.tokenizer.encode(clip_prompt.replace(" ", "[SPACE]")).ids
+
                 text_tokens = torch.tensor([tokens], dtype=torch.long, device=device)
                 text_len = torch.tensor([text_tokens.shape[-1]], device=device)
                 expected_output_len = torch.tensor([audio_codes.shape[-1] * model.gpt.code_stride_len], device=device)
@@ -180,8 +198,7 @@ def extract_latents(
                     return_latent=True,
                 )
         else:
-            # Standalone mode: generate proportional temporal sequence matching audio length
-            # 1 latent frame per 1024 samples @ 22050 Hz (~0.0464s per frame)
+            # Synthetic testing mode only
             num_frames = max(16, int(waveform_22k.shape[-1] / 1024))
             gpt_latents = torch.randn(1, num_frames, 1024)
             speaker_emb = torch.randn(1, 512, 1)
@@ -199,9 +216,10 @@ def main():
     parser = argparse.ArgumentParser(description="Extract temporal GPT Latents for HiFi-GAN Vocoder training.")
     parser.add_argument("--audio_dir", type=str, required=True, help="Path to input audio directory (.wav)")
     parser.add_argument("--output_dir", type=str, required=True, help="Directory to save extracted .pt files")
-    parser.add_argument("--checkpoint_dir", type=str, default="", help="Path to XTTS checkpoint directory")
+    parser.add_argument("--checkpoint_dir", type=str, required=True, help="Path to XTTS checkpoint directory (xtts_base)")
     parser.add_argument("--metadata_path", type=str, default="", help="Path to metadata.csv pairing audio with transcripts")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--no_overwrite", action="store_true", help="Skip re-extracting existing latents")
     args = parser.parse_args()
 
     extract_latents(
@@ -210,6 +228,7 @@ def main():
         checkpoint_dir=args.checkpoint_dir,
         metadata_path=args.metadata_path,
         device=args.device,
+        overwrite=not args.no_overwrite,
     )
 
 

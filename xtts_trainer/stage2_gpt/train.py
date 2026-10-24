@@ -24,7 +24,7 @@ from TTS.tts.layers.xtts.tokenizer import VoiceBpeTokenizer
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from TTS.tts.layers.xtts.gpt import GPT
 from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
-from xtts_trainer.config import safe_torch_load
+from xtts_trainer.config import safe_torch_load, DEFAULT_MEL_STATS_PATH
 from xtts_trainer.stage2_gpt.vocab_extender import resize_gpt_embeddings
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -61,7 +61,8 @@ class GPTTextAudioDataset(Dataset):
         self.max_text_tokens = max_text_tokens
         self.max_audio_tokens = max_audio_tokens
         self.device = device
-        self.items: List[Tuple[str, str, str]] = []  # (audio_path, text, lang)
+        self.items: List[Tuple[str, str, str, str]] = []  # (audio_path, text, lang, speaker)
+        self.speaker_to_indices: Dict[str, List[int]] = {}
 
         if not os.path.isdir(audio_dir):
             raise FileNotFoundError(f"Audio directory does not exist: {audio_dir}")
@@ -78,7 +79,7 @@ class GPTTextAudioDataset(Dataset):
                 resolved_metadata_path = candidate_txt
                 logger.info(f"Auto-detected metadata file: {resolved_metadata_path}")
 
-        raw_items: List[Tuple[str, str, str]] = []
+        raw_items: List[Tuple[str, str, str, str]] = []
         if resolved_metadata_path and os.path.exists(resolved_metadata_path):
             with open(resolved_metadata_path, "r", encoding="utf-8") as f:
                 for line in f:
@@ -86,15 +87,44 @@ class GPTTextAudioDataset(Dataset):
                     if not line:
                         continue
                     parts = line.split("|")
-                    if len(parts) >= 2:
+                    if len(parts) >= 4:
                         wav_name = parts[0]
                         text = parts[1]
-                        lang = parts[2] if len(parts) > 2 else default_lang
-                        wav_path = os.path.join(audio_dir, wav_name if wav_name.endswith(".wav") else f"{wav_name}.wav")
-                        if os.path.exists(wav_path):
-                            raw_items.append((wav_path, text, lang))
+                        speaker = parts[2]
+                        lang = parts[3]
+                    elif len(parts) == 3:
+                        wav_name = parts[0]
+                        text = parts[1]
+                        p2 = parts[2]
+                        if p2 in {"en", "es", "fr", "de", "it", "pt", "pl", "tr", "ru", "nl", "cs", "ar", "zh-cn", "ja", "hu", "ko", "hi"}:
+                            lang = p2
+                            speaker = "default"
                         else:
-                            logger.warning(f"Audio file referenced in metadata not found: {wav_path}")
+                            speaker = p2
+                            lang = default_lang
+                    elif len(parts) >= 2:
+                        wav_name = parts[0]
+                        text = parts[1]
+                        speaker = "default"
+                        lang = default_lang
+                    else:
+                        continue
+
+                    # If speaker is default, infer from filename prefix if available
+                    base_stem = os.path.splitext(os.path.basename(wav_name))[0]
+                    if speaker == "default":
+                        if base_stem.lower().startswith("ljspeech") or base_stem.lower().startswith("lj"):
+                            speaker = "ljspeech"
+                        elif base_stem.lower().startswith("jfk"):
+                            speaker = "jfk"
+                        elif "_" in base_stem:
+                            speaker = base_stem.split("_")[0]
+
+                    wav_path = os.path.join(audio_dir, wav_name if wav_name.endswith(".wav") else f"{wav_name}.wav")
+                    if os.path.exists(wav_path):
+                        raw_items.append((wav_path, text, lang, speaker))
+                    else:
+                        logger.warning(f"Audio file referenced in metadata not found: {wav_path}")
         else:
             raise FileNotFoundError(
                 f"No metadata file found in '{audio_dir}' and --metadata_path was not provided. "
@@ -108,7 +138,8 @@ class GPTTextAudioDataset(Dataset):
 
         # Filter clips by duration rather than truncating mid-sentence (prevents premature stop tokens)
         max_duration_sec = (self.max_audio_tokens * 1024) / self.sample_rate
-        for wav_path, text, lang in raw_items:
+        for item in raw_items:
+            wav_path = item[0]
             try:
                 info = torchaudio.info(wav_path)
                 dur = info.num_frames / info.sample_rate
@@ -118,23 +149,33 @@ class GPTTextAudioDataset(Dataset):
                         f"Filtered to prevent mid-sentence truncation."
                     )
                     continue
-                self.items.append((wav_path, text, lang))
+                self.items.append(item)
             except Exception:
-                # If info fails, retain item and validate at runtime
-                self.items.append((wav_path, text, lang))
+                self.items.append(item)
 
         if not self.items:
-            # If all were filtered out, fall back to raw items with warning
-            logger.warning("All clips exceeded duration threshold; retaining raw items.")
-            self.items = raw_items
+            raise ValueError(
+                f"All {len(raw_items)} audio clips exceeded maximum duration limit ({max_duration_sec:.2f}s). "
+                f"Please provide shorter speech clips (<= {max_duration_sec:.1f}s) or increase max_audio_tokens."
+            )
 
-        logger.info(f"Loaded {len(self.items)} text-audio training pairs.")
+        # Build speaker index mapping for same-speaker conditioning
+        for idx, item in enumerate(self.items):
+            spk = item[3]
+            if spk not in self.speaker_to_indices:
+                self.speaker_to_indices[spk] = []
+            self.speaker_to_indices[spk].append(idx)
+
+        logger.info(
+            f"Loaded {len(self.items)} text-audio training pairs across {len(self.speaker_to_indices)} speaker(s)."
+        )
 
     def __len__(self) -> int:
         return len(self.items)
 
     def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
-        wav_path, text, lang = self.items[index]
+        import random
+        wav_path, text, lang, speaker = self.items[index]
 
         # 1. Load and resample target audio to 22050 Hz
         waveform, sr = torchaudio.load(wav_path)
@@ -155,12 +196,17 @@ class GPTTextAudioDataset(Dataset):
             dvae_mel = self.mel_spectrogram_dvae(wav_dvae)
             audio_codes = self.dvae.get_codebook_indices(dvae_mel).squeeze(0).cpu()  # [T_codes]
             if audio_codes.shape[-1] > self.max_audio_tokens:
-                audio_codes = audio_codes[: self.max_audio_tokens]
+                raise ValueError(
+                    f"Audio clip {wav_path} yielded {audio_codes.shape[-1]} codes, exceeding max {self.max_audio_tokens}. "
+                    f"Mid-sentence truncation is prohibited; ensure audio duration matches max_audio_tokens."
+                )
 
-            # 3. Extract speaker conditioning mel from a SEPARATE reference clip
-            # Using a distinct clip prevents target self-leakage into conditioning
-            ref_index = (index + 1) % len(self.items)
-            ref_path, _, _ = self.items[ref_index]
+            # 3. Extract speaker conditioning mel from a SEPARATE clip of the SAME speaker
+            same_spk_indices = self.speaker_to_indices.get(speaker, [index])
+            candidate_indices = [i for i in same_spk_indices if i != index]
+            ref_index = random.choice(candidate_indices) if candidate_indices else index
+            ref_path = self.items[ref_index][0]
+
             ref_waveform, ref_sr = torchaudio.load(ref_path)
             if ref_waveform.shape[0] > 1:
                 ref_waveform = ref_waveform.mean(dim=0, keepdim=True)
@@ -171,7 +217,6 @@ class GPTTextAudioDataset(Dataset):
             max_ref_samples = int(6.0 * self.sample_rate)
             ref_slice = ref_waveform[:, :max_ref_samples].to(self.device)
             cond_mel = self.mel_spectrogram_style(ref_slice).squeeze(0).cpu()  # [80, T_cond_mel]
-            cond_len = ref_slice.shape[-1]
 
         # 4. Tokenize text using XTTS VoiceBpeTokenizer
         try:
@@ -195,12 +240,11 @@ class GPTTextAudioDataset(Dataset):
             "text_tokens": text_tokens,
             "audio_codes": audio_codes,
             "cond_mel": cond_mel,
-            "cond_len": cond_len,
         }
 
 
 def collate_gpt_batch(batch: List[Dict[str, torch.Tensor]], stop_audio_token: int = 8193) -> Dict[str, torch.Tensor]:
-    """Pads text, discrete audio codes, and conditioning mel spectrograms into a batch."""
+    """Pads text and discrete audio codes into a batch, cropping conditioning mels to uniform batch length."""
     batch_size = len(batch)
 
     # Text padding
@@ -220,17 +264,10 @@ def collate_gpt_batch(batch: List[Dict[str, torch.Tensor]], stop_audio_token: in
     # Audio wav length proxy (expected output audio length = code_length * 1024)
     wav_lengths = code_lengths * 1024
 
-    # Conditioning mel padding
-    # cond_lens represents audio samples (divided by 256 in GPT.forward to match mel frames)
-    cond_lens = torch.tensor(
-        [item.get("cond_len", item["cond_mel"].shape[-1] * 256) for item in batch],
-        dtype=torch.long,
-    )
-    mel_frame_lens = [item["cond_mel"].shape[-1] for item in batch]
-    max_cond_len = max(1, max(mel_frame_lens))
-    cond_mels = torch.zeros(batch_size, 1, 80, max_cond_len, dtype=torch.float32)
-    for i, item in enumerate(batch):
-        cond_mels[i, 0, :, : mel_frame_lens[i]] = item["cond_mel"]
+    # Conditioning mel: crop all items in batch to the minimum length in the batch.
+    # This guarantees ZERO zero-padding in cond_mels, so the perceiver resampler never attends to loud log-mel zeros.
+    min_cond_len = min(item["cond_mel"].shape[-1] for item in batch)
+    cond_mels = torch.stack([item["cond_mel"][:, :min_cond_len].unsqueeze(0) for item in batch], dim=0)
 
     return {
         "text_inputs": text_inputs,
@@ -238,7 +275,6 @@ def collate_gpt_batch(batch: List[Dict[str, torch.Tensor]], stop_audio_token: in
         "audio_codes": audio_codes,
         "wav_lengths": wav_lengths,
         "cond_mels": cond_mels,
-        "cond_lens": cond_lens,
     }
 
 
@@ -319,7 +355,7 @@ def train_gpt(
     logger.info(f"Loaded tokenizer with {vocab_size} tokens (start: {start_text_token}, stop: {stop_text_token}).")
 
     # 2. Initialize Mel Spectrogram Extractors (22,050 Hz matching upstream XTTS)
-    # DVAE extractor: 1024 FFT / 256 hop / 1024 win (21.5 audio codes/sec at stride 4)
+    # DVAE extractor: 1024 FFT / 256 hop / 1024 win normalized with mel_stats
     mel_extractor_dvae = TorchMelSpectrogram(
         filter_length=1024,
         hop_length=256,
@@ -329,10 +365,10 @@ def train_gpt(
         mel_fmin=0,
         mel_fmax=8000,
         n_mel_channels=80,
-        mel_norm_file=None,
+        mel_norm_file=DEFAULT_MEL_STATS_PATH,
     ).to(device)
 
-    # Style/Perceiver extractor: 2048 FFT / 256 hop / 1024 win
+    # Style/Perceiver extractor: 2048 FFT / 256 hop / 1024 win normalized with mel_stats (parity with inference)
     mel_extractor_style = TorchMelSpectrogram(
         filter_length=2048,
         hop_length=256,
@@ -342,7 +378,7 @@ def train_gpt(
         mel_fmin=0,
         mel_fmax=8000,
         n_mel_channels=80,
-        mel_norm_file=None,
+        mel_norm_file=DEFAULT_MEL_STATS_PATH,
     ).to(device)
 
     # 3. Initialize DVAE Tokenizer (for target audio code extraction)
@@ -371,10 +407,19 @@ def train_gpt(
     ).to(device)
 
     if state_dvae is not None:
-        missing, unexpected = dvae.load_state_dict(state_dvae, strict=False)
-        logger.info(f"DVAE restored (missing: {len(missing)}, unexpected: {len(unexpected)})")
+        missing, unexpected = dvae.load_state_dict(state_dvae, strict=True)
+        if missing or unexpected:
+            raise RuntimeError(f"DVAE strict load failed: missing={missing}, unexpected={unexpected}")
+        logger.info(f"DVAE restored with strict=True (100% parameter match)")
     else:
         logger.info(f"Using initialized DVAE with {dvae_tokens} tokens.")
+
+    if dvae_checkpoint and "xtts_base" not in dvae_checkpoint and checkpoint_dir and "xtts_base" in checkpoint_dir:
+        logger.warning(
+            "CRITICAL WARNING: Fine-tuned DVAE loaded with stock pretrained GPT checkpoint! "
+            "Because DVAE fine-tuning changes codebook token semantics, ensure Stage 2 is trained "
+            "for sufficient epochs so the GPT backbone re-learns discrete token mappings."
+        )
 
     dvae.eval()
 
@@ -515,16 +560,14 @@ def train_gpt(
             audio_codes = batch["audio_codes"].to(device)
             wav_lengths = batch["wav_lengths"].to(device)
             cond_mels = batch["cond_mels"].to(device)
-            cond_lens = batch["cond_lens"].to(device)
 
-            # Native autoregressive forward pass
+            # Native autoregressive forward pass (cond_mels is uniformly cropped with zero padding)
             loss_text, loss_mel, _ = gpt(
                 text_inputs=text_inputs,
                 text_lengths=text_lengths,
                 audio_codes=audio_codes,
                 wav_lengths=wav_lengths,
                 cond_mels=cond_mels,
-                cond_lens=cond_lens,
             )
 
             loss = loss_text * 0.01 + loss_mel * 1.0

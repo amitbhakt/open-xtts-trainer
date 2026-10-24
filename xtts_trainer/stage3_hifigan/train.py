@@ -141,7 +141,12 @@ def train_hifigan(
     last_ckpt_path = ""
     global_step = 0
 
-    logger.info(f"Beginning Stage 3 training for {epochs} epochs (Batch size: {batch_size}, Steps per epoch: {len(dataloader)})...")
+    total_steps = epochs * len(dataloader)
+    effective_warmup_steps = min(warmup_steps, max(1, total_steps // 5)) if is_finetuning else 0
+    logger.info(
+        f"Beginning Stage 3 training for {epochs} epochs (Batch size: {batch_size}, Steps per epoch: {len(dataloader)}, "
+        f"Discriminator warmup: {effective_warmup_steps}/{total_steps} steps)..."
+    )
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
@@ -199,7 +204,7 @@ def train_hifigan(
             loss_gen_f = generator_loss(y_df_hat_g)
             loss_gen_s = generator_loss(y_ds_hat_g)
 
-            if is_finetuning and global_step <= warmup_steps:
+            if is_finetuning and global_step <= effective_warmup_steps:
                 # Discriminator warmup: train generator purely on Mel reconstruction loss
                 # to prevent random discriminator gradients from corrupting pretrained vocoder
                 loss_g = loss_mel

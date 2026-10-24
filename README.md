@@ -69,7 +69,11 @@ All components have been empirically verified on an NVIDIA GPU (T4 / CUDA 12) us
 | **Stage 3: Latent HiFi-GAN (Mel Loss)** | 190.83 | 63.49 | **67% acoustic error reduction** on human speech |
 | **Stage 3: Discriminators (MPD + MSD)** | 8.02 | 3.62 | **Stable adversarial equilibrium** (no mode collapse) |
 | **Stage 1: Discrete VAE (Mel Recon)** | 8.13 | 2.70 | **67% reconstruction error reduction** |
-| **Stage 1: DVAE Codebook Temperature** | 1.000 | 0.999 | Controlled Gumbel-Softmax codebook annealing |
+| **Stage 1: DVAE Codebook Vector Quantization** | — | — | Stable Nearest-Neighbor Codebook Assignment & Commitment |
+
+> [!WARNING]
+> **DVAE Codebook Retraining Invariant:**  
+> Fine-tuning or retraining the Discrete VAE (Stage 1) alters discrete codebook token assignments, which **invalidates pretrained GPT backbone checkpoints**. Only train Stage 1 if you intend to train the Stage 2 GPT backbone from scratch or adapt the audio tokenizer to a fundamentally new sample rate / codec architecture. For standard voice cloning or adding new language scripts, keep the base DVAE frozen and train Stage 2 and Stage 3.
 
 ---
 
@@ -212,7 +216,7 @@ python scripts/verify_pipeline_proof.py \
 | **Gate 2: Stage 2 (GPT)** | Loads compatible trained parameters & extracts reference latents | Confirms conditioning flow with zero random-latent fallbacks |
 | **Gate 3: Stage 3 (HiFi-GAN)** | Loads trained decoder with `strict=True` ($100\%$ parameter match) | Guarantees audio is decoded by your checkpoint (zero bypass) |
 | **Gate 4: Multi-Sentence Suite** | Synthesizes sibilant (`s1_sibilant`), fluent (`s2_fluent`), and benchmark (`s3_benchmark`) sentences | Evaluates phonetic stability across continuous text |
-| **Gate 5: Audio Quality Proof** | Asserts finite waveform, healthy amplitude ($\text{RMS} \ge 0.02$), non-clipping peak ($\le 1.05$), and measures $>4\text{ kHz}$ sibilant energy | Eliminates vocoder amplitude collapse and validates phase health |
+| **Gate 5: Speech Quality & Intelligibility Proof** | Transcribes generated speech using local Whisper ASR to evaluate Word Error Rate (WER); asserts finite waveform, healthy amplitude ($\text{RMS} \ge 0.02$), non-clipping peak ($\le 1.05$), and measures $>4\text{ kHz}$ high-frequency energy | Validates true speech intelligibility, eliminates vocoder amplitude collapse, and proves acoustic clarity |
 
 Execution outputs and verification metrics are automatically recorded to `proof_outputs/pipeline_proof_manifest.json`.
 

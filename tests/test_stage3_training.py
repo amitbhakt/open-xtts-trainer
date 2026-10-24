@@ -122,7 +122,13 @@ def test_extract_latents_standalone(temp_workspace):
     wav = torch.sin(torch.linspace(0, 440, 24000)).unsqueeze(0)
     torchaudio.save(wav_path, wav, 24000)
 
-    extract_latents(audio_dir=audio_dir, output_dir=latents_dir, checkpoint_dir="", device="cpu")
+    extract_latents(
+        audio_dir=audio_dir,
+        output_dir=latents_dir,
+        checkpoint_dir="",
+        device="cpu",
+        allow_synthetic_fallback=True,
+    )
 
     out_file = os.path.join(latents_dir, "test.pt")
     assert os.path.exists(out_file)

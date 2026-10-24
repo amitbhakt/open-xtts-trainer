@@ -103,6 +103,16 @@ def train_dvae(
                 logger.info(f"Setting DVAE codebook tokens to {inferred_tokens} based on checkpoint.")
                 num_tokens = inferred_tokens
 
+    logger.warning(
+        "\n" + "!" * 70 + "\n"
+        "CRITICAL ARCHITECTURAL NOTICE (DVAE CODEBOOK INVARIANT):\n"
+        "Fine-tuning or retraining the DiscreteVAE alters its codebook indices.\n"
+        "Pretrained XTTS GPT checkpoints rely on stock codebook token meanings.\n"
+        "If you fine-tune or retrain the DVAE, you MUST retrain Stage 2 GPT from scratch\n"
+        "on the new codebook indices. Freezing DVAE is strongly recommended for voice cloning.\n"
+        + "!" * 70
+    )
+
     # 3. Native DVAE Model
     dvae = build_dvae_model(
         channels=getattr(config, "n_mels", 80),
@@ -114,8 +124,10 @@ def train_dvae(
     optimizer = torch.optim.Adam(dvae.parameters(), lr=config.learning_rate)
 
     if state_dict is not None:
-        missing, unexpected = dvae.load_state_dict(state_dict, strict=False)
-        logger.info(f"Loaded DVAE weights (Missing: {len(missing)}, Unexpected: {len(unexpected)})")
+        missing, unexpected = dvae.load_state_dict(state_dict, strict=True)
+        if missing or unexpected:
+            raise RuntimeError(f"DVAE strict load failed: missing={missing}, unexpected={unexpected}")
+        logger.info(f"Loaded DVAE weights with strict=True (100% parameter match)")
 
     dvae.train()
     last_ckpt = ""

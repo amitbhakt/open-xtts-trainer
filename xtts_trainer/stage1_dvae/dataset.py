@@ -24,6 +24,7 @@ class MelDataset(Dataset):
         super().__init__()
         self.audio_dir = audio_dir
         self.sample_rate = sample_rate
+        self.hop_length = hop_length
         self.max_mel_frames = max_mel_frames
 
         self.audio_files = [
@@ -35,6 +36,8 @@ class MelDataset(Dataset):
             raise FileNotFoundError(f"No .wav audio files found in: {audio_dir}")
 
         from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
+        from xtts_trainer.config import DEFAULT_MEL_STATS_PATH
+
         self.mel_transform = TorchMelSpectrogram(
             filter_length=n_fft,
             hop_length=hop_length,
@@ -43,7 +46,7 @@ class MelDataset(Dataset):
             n_mel_channels=n_mels,
             mel_fmin=0,
             mel_fmax=8000,
-            mel_norm_file=None,
+            mel_norm_file=DEFAULT_MEL_STATS_PATH,
         )
 
     def __len__(self) -> int:
@@ -58,18 +61,24 @@ class MelDataset(Dataset):
             resampler = torchaudio.transforms.Resample(sr, self.sample_rate)
             waveform = resampler(waveform)
 
+        # Pad waveform with zeros (silence) if shorter than target duration
+        # This guarantees channel-specific normalized silence values via TorchMelSpectrogram
+        min_samples = self.max_mel_frames * self.hop_length
+        if waveform.shape[-1] < min_samples:
+            pad_amount = min_samples - waveform.shape[-1]
+            waveform = torch.nn.functional.pad(waveform, (0, pad_amount), value=0.0)
+
         # Compute mel-spectrogram [1, n_mels, time]
         with torch.no_grad():
             mel = self.mel_transform(waveform).squeeze(0)  # [80, time]
 
         time_frames = mel.shape[-1]
-        if time_frames < self.max_mel_frames:
-            # Pad with log-mel silence threshold (log(1e-5) ~= -11.5129) instead of 0
-            pad_amount = self.max_mel_frames - time_frames
-            mel = torch.nn.functional.pad(mel, (0, pad_amount), value=-11.5129)
-        else:
-            # Random crop
+        if time_frames > self.max_mel_frames:
+            # Random crop if longer than max_mel_frames
             start = random.randint(0, time_frames - self.max_mel_frames)
             mel = mel[:, start : start + self.max_mel_frames]
+        elif time_frames < self.max_mel_frames:
+            # Slice/pad safety to exact target length
+            mel = torch.nn.functional.pad(mel, (0, self.max_mel_frames - time_frames))
 
         return mel

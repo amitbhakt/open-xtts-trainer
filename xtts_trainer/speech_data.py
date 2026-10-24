@@ -22,7 +22,8 @@ SAMPLE_SPEECH_SOURCES = [
         "name": "ljspeech_01",
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0001.wav",
         "description": "LJSpeech (Linda Johnson) - Literary prose",
-        "text": "Printing, in the only sense with which we are at present concerned, differs from most if not from all the other arts and crafts represented in the Exhibition",
+        "text": "Printing, in the only sense with which we are at present concerned, differs from most if not from all the arts and crafts represented in the Exhibition",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
@@ -30,6 +31,7 @@ SAMPLE_SPEECH_SOURCES = [
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0002.wav",
         "description": "LJSpeech (Linda Johnson) - Short phrase",
         "text": "in being comparatively modern.",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
@@ -37,6 +39,7 @@ SAMPLE_SPEECH_SOURCES = [
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0003.wav",
         "description": "LJSpeech (Linda Johnson) - Multi-clause sentence",
         "text": "For although the Chinese took impressions from wood blocks engraved in relief for centuries before the Woodcutters of the Netherlands, by a similar process",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
@@ -44,13 +47,15 @@ SAMPLE_SPEECH_SOURCES = [
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0004.wav",
         "description": "LJSpeech (Linda Johnson) - Narrative cadence",
         "text": "produced the block books, which were the immediate predecessors of the true printed book,",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
         "name": "ljspeech_05",
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0005.wav",
         "description": "LJSpeech (Linda Johnson) - Historical text",
-        "text": "the invention of moveable sorts in the middle of the fifteenth century may justly be considered as the invention of the art of printing.",
+        "text": "the invention of movable metal letters in the middle of the fifteenth century may justly be considered as the invention of the art of printing.",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
@@ -58,6 +63,7 @@ SAMPLE_SPEECH_SOURCES = [
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0006.wav",
         "description": "LJSpeech (Linda Johnson) - Phonetic variety",
         "text": "And it is worth mention in passing that, as an example of fine typography,",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
@@ -65,6 +71,7 @@ SAMPLE_SPEECH_SOURCES = [
         "url": "https://github.com/coqui-ai/TTS/raw/dev/tests/data/ljspeech/wavs/LJ001-0007.wav",
         "description": "LJSpeech (Linda Johnson) - Expressive intonation",
         "text": "the earliest book printed with movable types, the Gutenberg, or forty-two line Bible of about 1455,",
+        "speaker": "ljspeech",
         "lang": "en",
     },
     {
@@ -72,6 +79,7 @@ SAMPLE_SPEECH_SOURCES = [
         "url": "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac",
         "description": "JFK Presidential Inaugural Address - Male speech",
         "text": "And so, my fellow Americans: ask not what your country can do for you — ask what you can do for your country.",
+        "speaker": "jfk",
         "lang": "en",
     },
 ]
@@ -149,12 +157,25 @@ def prepare_speech_from_file(
             transcripts = [line.strip() for line in tf if line.strip()]
     elif transcript:
         transcripts = [transcript] * total_clips
+    else:
+        # Transcribe clips using local Whisper ASR to generate genuine ground-truth text
+        print("Transcribing clips with local Whisper ASR to produce genuine ground-truth text...")
+        try:
+            from transformers import pipeline
+            asr = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
+            for path in created_files:
+                res = asr(path)
+                txt = res.get("text", "").strip()
+                transcripts.append(txt if txt else "Audio recording clip.")
+        except Exception as e:
+            print(f"[Warning] Automated Whisper transcription unavailable ({e}). Using index prompt.")
+            transcripts = [f"Speech clip {i+1}." for i in range(len(created_files))]
 
     with open(metadata_csv_path, "w", encoding="utf-8") as f:
         for i, path in enumerate(created_files):
             fname = os.path.basename(path)
             t = transcripts[i] if i < len(transcripts) else f"Training speech prompt {i+1}."
-            f.write(f"{fname}|{t}|en\n")
+            f.write(f"{fname}|{t}|user_speaker|en\n")
 
     print(f"Successfully created {len(created_files)} clips and wrote metadata to '{metadata_csv_path}'.")
     return created_files
@@ -234,10 +255,22 @@ def download_and_prepare_speech(
                 created_files.append(out_path)
 
             print(f"Successfully sliced {len(created_files)} clips ({len(created_files)*max_duration_sec/60:.2f} minutes) of human speech!")
+            print(f"Transcribing {len(created_files)} clips with local Whisper ASR for ground-truth alignment...")
+            transcripts = []
+            try:
+                from transformers import pipeline
+                asr = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
+                for p in created_files:
+                    txt = asr(p)["text"].strip()
+                    transcripts.append(txt if txt else "Audio clip.")
+            except Exception as e:
+                print(f"[Warning] Automated Whisper transcription unavailable ({e}).")
+                transcripts = [f"Clean human speech clip {i+1}." for i in range(len(created_files))]
+
             metadata_csv_path = os.path.join(output_dir, "metadata.csv")
             with open(metadata_csv_path, "w", encoding="utf-8") as f:
                 for i, path in enumerate(created_files):
-                    f.write(f"{os.path.basename(path)}|Human speech training clip number {i+1}.|en\n")
+                    f.write(f"{os.path.basename(path)}|{transcripts[i]}|speaker_1|en\n")
             print(f"Wrote metadata index to: {metadata_csv_path}")
             return created_files
 
@@ -264,7 +297,8 @@ def download_and_prepare_speech(
             if orig_sr != sample_rate:
                 tensor = F.resample(tensor, orig_sr, sample_rate)
 
-            max_samples = int(max_duration_sec * sample_rate)
+            # Keep complete utterance so text and audio match 1:1; only cap if exceeds XTTS maximum (~25s)
+            max_samples = int(25.0 * sample_rate)
             if tensor.shape[1] > max_samples:
                 tensor = tensor[:, :max_samples]
 
@@ -275,7 +309,7 @@ def download_and_prepare_speech(
 
             sf.write(out_path, processed_audio, sample_rate, subtype="PCM_16")
             created_files.append(out_path)
-            metadata_entries.append((out_filename, item.get("text", "Sample human speech."), item.get("lang", "en")))
+            metadata_entries.append((out_filename, item["text"], item.get("speaker", "default"), item.get("lang", "en")))
             duration = len(processed_audio) / sample_rate
             print(f"  [{idx+1}/{len(sources)}] Saved {out_filename} ({duration:.2f}s) - {item['description']}")
 
@@ -285,8 +319,8 @@ def download_and_prepare_speech(
     # Write ground-truth metadata.csv
     metadata_csv_path = os.path.join(output_dir, "metadata.csv")
     with open(metadata_csv_path, "w", encoding="utf-8") as f:
-        for fname, text, lang in metadata_entries:
-            f.write(f"{fname}|{text}|{lang}\n")
+        for fname, text, spk, lang in metadata_entries:
+            f.write(f"{fname}|{text}|{spk}|{lang}\n")
     print(f"Wrote ground-truth paired transcripts to: {metadata_csv_path}")
 
     print(f"\nPrepared {len(created_files)} speech files in '{output_dir}'.")

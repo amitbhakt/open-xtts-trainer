@@ -27,11 +27,11 @@ def synthesize_audio(
     generator = build_hifigan_decoder().to(device)
 
     if "hifigan_decoder" in ckpt:
-        generator.load_state_dict(ckpt["hifigan_decoder"], strict=False)
+        generator.load_state_dict(ckpt["hifigan_decoder"], strict=True)
     elif "generator" in ckpt:
-        generator.waveform_decoder.load_state_dict(ckpt["generator"], strict=False)
+        generator.waveform_decoder.load_state_dict(ckpt["generator"], strict=True)
     else:
-        generator.load_state_dict(ckpt, strict=False)
+        generator.load_state_dict(ckpt, strict=True)
     generator.eval()
 
     # 2. Load latent

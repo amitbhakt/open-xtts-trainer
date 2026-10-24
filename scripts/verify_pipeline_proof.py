@@ -15,11 +15,42 @@ import numpy as np
 import soundfile as sf
 import torch
 import torchaudio
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
+import string
 
 from xtts_trainer.config import safe_torch_load
 from TTS.tts.layers.xtts.dvae import DiscreteVAE
 from xtts_trainer.stage3_hifigan.models import build_hifigan_decoder
+
+
+def compute_wer(reference: str, hypothesis: str) -> float:
+    """Compute standard Word Error Rate between reference and hypothesis text."""
+    def clean(s: str) -> List[str]:
+        s = s.lower().translate(str.maketrans("", "", string.punctuation))
+        return [w for w in s.split() if w]
+
+    r = clean(reference)
+    h = clean(hypothesis)
+    if not r:
+        return 0.0 if not h else 1.0
+
+    d = np.zeros((len(r) + 1, len(h) + 1), dtype=int)
+    for i in range(len(r) + 1):
+        d[i, 0] = i
+    for j in range(len(h) + 1):
+        d[0, j] = j
+
+    for i in range(1, len(r) + 1):
+        for j in range(1, len(h) + 1):
+            if r[i - 1] == h[j - 1]:
+                d[i, j] = d[i - 1, j - 1]
+            else:
+                d[i, j] = min(
+                    d[i - 1, j] + 1,      # deletion
+                    d[i, j - 1] + 1,      # insertion
+                    d[i - 1, j - 1] + 1,  # substitution
+                )
+    return float(d[len(r), len(h)] / len(r))
 
 
 def build_dvae() -> DiscreteVAE:
@@ -62,14 +93,20 @@ def verify_stage1_dvae(dvae_ckpt: str, audio_path: str, device: str = "cpu") -> 
         waveform = waveform.mean(dim=0, keepdim=True)
     waveform = waveform[:, :22050 * 3].to(device)  # 3 seconds
 
-    mel_transform = torchaudio.transforms.MelSpectrogram(
-        sample_rate=22050,
-        n_fft=1024,
-        win_length=1024,
+    from TTS.tts.layers.tortoise.arch_utils import TorchMelSpectrogram
+    from xtts_trainer.config import DEFAULT_MEL_STATS_PATH
+
+    mel_transform = TorchMelSpectrogram(
+        filter_length=1024,
         hop_length=256,
-        n_mels=80,
+        win_length=1024,
+        sampling_rate=22050,
+        n_mel_channels=80,
+        mel_fmin=0,
+        mel_fmax=8000,
+        mel_norm_file=DEFAULT_MEL_STATS_PATH,
     ).to(device)
-    mel = torch.log(torch.clamp(mel_transform(waveform), min=1e-5))
+    mel = mel_transform(waveform)
 
     with torch.no_grad():
         codes = dvae.get_codebook_indices(mel)
@@ -173,9 +210,19 @@ def verify_stage2_and_3_pipeline(
         ("s3_benchmark", "Hello, this is a test of the trained Stage Three audio decoder."),
     ]
 
+    # Initialize Whisper ASR for speech intelligibility & WER evaluation
+    print("  Initializing Whisper ASR for speech intelligibility & Word Error Rate (WER) evaluation...")
+    asr_pipeline = None
+    try:
+        from transformers import pipeline
+        asr_pipeline = pipeline("automatic-speech-recognition", model="openai/whisper-tiny", device="cpu")
+        print("  [PASS] Whisper ASR pipeline loaded successfully.")
+    except Exception as e:
+        print(f"  [WARN] Could not load Whisper ASR ({e}). Proceeding without ASR evaluation.")
+
     results = {}
     print("\n" + "=" * 60)
-    print("STEP 4 & 5: Multi-Sentence Synthesis & Audio Quality Verification")
+    print("STEP 4 & 5: Multi-Sentence Synthesis, Intelligibility & Quality Verification")
     print("=" * 60)
 
     for tag, text in test_sentences:
@@ -207,20 +254,39 @@ def verify_stage2_and_3_pipeline(
         total_energy = np.sum(fft ** 2) + 1e-9
         hf_ratio = float(hf_energy / total_energy)
 
-        # Gate on high-frequency energy for sibilant sentence to ensure non-muffled vocoder
+        # Gate on high-frequency energy across all speech to ensure non-muffled vocoder
+        assert hf_ratio >= 0.002, (
+            f"High-frequency check failed: {tag} produced only {hf_ratio:.6f} energy >4kHz. "
+            f"Output speech is excessively muffled."
+        )
         if tag == "s1_sibilant":
             assert hf_ratio >= 0.003, (
                 f"Sibilant stress test failed: {tag} produced only {hf_ratio:.6f} energy >4kHz. "
-                f"Output speech is excessively muffled."
+                f"Sibilants require crisp high-frequency preservation."
             )
+
+        # Transcribe synthesized audio with Whisper and compute WER
+        hyp_text = ""
+        wer = None
+        if asr_pipeline is not None:
+            try:
+                asr_out = asr_pipeline(audio, generate_kwargs={"language": "english", "task": "transcribe"})
+                hyp_text = asr_out.get("text", "").strip()
+                wer = compute_wer(text, hyp_text)
+            except Exception as e:
+                print(f"  [WARN] ASR transcription error on {tag}: {e}")
 
         out_path = os.path.join(output_dir, f"{tag}_stage3_verified.wav")
         sf.write(out_path, audio, 24000)
         print(f"  [PASS] Saved to: {out_path}")
         print(f"         Duration: {duration:.2f}s | RMS: {rms:.4f} | Peak: {peak:.4f} | HF Ratio (>4kHz): {hf_ratio:.4f}")
+        if wer is not None:
+            print(f"         ASR: \"{hyp_text}\" | WER: {wer:.1%}")
 
         results[tag] = {
             "text": text,
+            "asr_transcription": hyp_text,
+            "wer": wer,
             "path": out_path,
             "duration": duration,
             "rms": rms,

@@ -1,7 +1,11 @@
 """Audio and model configuration defaults for XTTS v2 training."""
 
+import os
 from dataclasses import dataclass, field
 from typing import List
+
+# Default path to local mel_stats.pth normalized tensor (matching upstream XTTS-v2)
+DEFAULT_MEL_STATS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mel_stats.pth")
 
 
 @dataclass
