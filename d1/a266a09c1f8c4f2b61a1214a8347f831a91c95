@@ -1,0 +1,37 @@
+xtts_trainer/spec/artifacts.py
+  ai_agent 62
+tests/test_stage1_training.py
+  ai_agent 7,82,93
+tests/test_eval_metrics.py
+  ai_agent 6,197
+tests/test_stage2_gpt_trainer.py
+  ai_agent 9,246,421
+tests/test_prepare.py
+  ai_agent 13,334,469,494,570
+pyproject.toml
+  s_bfc6eb584d8e27::t_d804262673f10d 59-68
+tests/test_invariants.py
+  ai_agent 14,51,66,323
+tests/test_target_voices.py
+  ai_agent 7,160-161
+tests/test_compare_ab.py
+  ai_agent 10,19,24
+tests/test_stage3_training.py
+  ai_agent 7,99,163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "d1a266a09c1f8c4f2b61a1214a8347f831a91c95",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
