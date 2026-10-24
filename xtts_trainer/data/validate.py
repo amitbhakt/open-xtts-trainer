@@ -10,7 +10,8 @@ Checks (each error carries the dataset line and a stable code):
                 and lie inside the clip; optional re-alignment check (catches a shifted cut)
 - pauses:       punctuation agrees with aligned pauses (warnings; errors with strict_pauses)
 - speakers:     every speaker has >= 2 clips unless the record sets single_clip_speaker
-- leakage:      no duplicate audio; no overlap with the eval set's sentences or reference-voice clips
+- leakage:      no duplicate audio; no overlap with the eval set's sentences or reference-voice clips, or with
+                the target speaker's held-out evaluation clips (target_voices.lock.json, build_target_voices.py)
 Warnings (non-blocking) report coverage the recipe cares about, e.g. how much short-utterance data exists.
 
 CLI:
@@ -223,6 +224,11 @@ def validate_dataset(
     if target_lock_path == "default":  # resolved at call time, so DEFAULT_TARGET_LOCK is the one definition
         target_lock_path = DEFAULT_TARGET_LOCK
     target_hashes = target_holdout_hashes(target_lock_path) if target_lock_path and os.path.exists(target_lock_path) else {}
+    # No lock is normal when no holdout was built. Target clips without their lock mean the guard is off for a
+    # holdout that exists, so training on it would go unnoticed: say so
+    target_dir = os.path.dirname(target_lock_path) if target_lock_path else ""
+    orphaned_targets = bool(target_dir) and not target_hashes and os.path.isdir(target_dir) and any(
+        n.startswith("target_") and n.endswith(".wav") for n in os.listdir(target_dir))
 
     audio_hashes: Dict[str, DatasetRecord] = {}
     speakers = Counter(r.speaker for r in records)
@@ -363,6 +369,9 @@ def validate_dataset(
         )
     if not eval_texts or not reference_hashes:
         report.warnings.append("eval-set leakage checks did not run fully (eval set or reference lock not found)")
+    if orphaned_targets:
+        report.warnings.append(f"target-speaker clips exist in {target_dir} but their lock is missing, so held-out "
+                               f"clips are not being refused; rebuild with scripts/build_target_voices.py")
     if require_text and any(r.transcript_source.startswith(ASR_SOURCE_PREFIX) for r in records) and config.asr_cer_max is None:
         report.warnings.append("dataset has ASR transcripts but no ASR cross-check was run (set asr_cer_max)")
     return report

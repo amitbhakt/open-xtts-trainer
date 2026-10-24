@@ -442,8 +442,8 @@ def test_sources_declare_language_and_carry_no_hardcoded_cuts():
         assert source.lang and source.speaker, name
         assert source.license, f"{name} must say why we may train on it"
         downloads = set(source.urls) | ({source.metadata_url} if source.metadata_url else set())
-        assert set(source.sha1) == downloads, f"{name}: every downloaded file pinned"
-        assert all(re.fullmatch(r"[0-9a-f]{40}", h) for h in source.sha1.values()), f"{name}: pins are SHA-1 hex digests"
+        assert set(source.sha256) == downloads, f"{name}: every downloaded file pinned"
+        assert all(re.fullmatch(r"[0-9a-f]{64}", h) for h in source.sha256.values()), f"{name}: pins are SHA-256 hex digests"
         assert all(re.search(r"/(dev|main|master)/", u) is None for u in downloads), f"{name}: no moving branch URLs"
         assert source.kind in ("corpus_clips", "recording")
         assert source.kind != "corpus_clips" or source.metadata_url
@@ -454,21 +454,26 @@ def test_unpinned_download_is_refused_with_a_clear_error():
     from xtts_trainer.speech_data import Source
 
     source = Source(lang="en", speaker="x", description="unpinned", urls=["https://example.org/a.wav"], license="test")
-    with pytest.raises(KeyError, match="no SHA-1 pin"):
+    with pytest.raises(KeyError, match="no SHA-256 pin"):
         source.pinned(source.urls[0])
 
 
-def test_download_checks_the_published_sha1(tmp_path):
+def test_download_checks_the_sha256_pin(tmp_path):
     import hashlib
 
     from xtts_trainer.speech_data import _download
 
     src = tmp_path / "file.bin"
     src.write_bytes(b"recording")
-    good = hashlib.sha1(b"recording").hexdigest()
+    good = hashlib.sha256(b"recording").hexdigest()
     assert Path(_download(src.as_uri(), str(tmp_path / "dl"), good)).read_bytes() == b"recording"
-    with pytest.raises(RuntimeError, match="SHA-1"):
-        _download(src.as_uri(), str(tmp_path / "dl"), "0" * 40)  # the cached copy is checked too
+    with pytest.raises(RuntimeError, match="SHA-256"):
+        _download(src.as_uri(), str(tmp_path / "dl"), "0" * 64)  # the cached copy is checked too
+    # No pin, or a SHA-1-length pin, is refused before anything is downloaded
+    for bad in (None, "", hashlib.sha1(b"recording").hexdigest()):
+        with pytest.raises(ValueError, match="SHA-256 pin"):
+            _download(src.as_uri(), str(tmp_path / "unpinned"), bad)
+    assert not (tmp_path / "unpinned").exists()
 
 
 def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
@@ -483,9 +488,9 @@ def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
         path = tmp_path / f"part{k}.wav"
         sf.write(str(path), audio, SPEC.output_sample_rate)
         urls.append(path.as_uri())
-        pins[path.as_uri()] = hashlib.sha1(path.read_bytes()).hexdigest()  # hash the file, not its URI
+        pins[path.as_uri()] = hashlib.sha256(path.read_bytes()).hexdigest()  # hash the file, not its URI
     monkeypatch.setitem(speech_data.SOURCES, "two_parts", speech_data.Source(
-        lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None, sha1=pins))
+        lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None, sha256=pins))
     monkeypatch.setattr(speech_data, "prepare_recording", _with_transcripts(speech_data.prepare_recording, urls))
     dataset = speech_data.prepare_sources(["two_parts"], str(tmp_path / "out"), aligner=tone_aligner(),
                                           config=PrepConfig(segment=SegmentConfig(min_s=1.5, max_s=6.0)))
@@ -532,9 +537,9 @@ def _mms_cached():
 @pytest.mark.parametrize("shift_s", [0.0, 1.0, -1.0])
 def test_mms_jfk_alignment_and_shifted_cut(tmp_path, shift_s):
     """Real aligner on JFK: prepared clips realign cleanly; a cut moved by 1 s is rejected."""
-    from xtts_trainer.speech_data import JFK_SHA1, JFK_URL, SOURCES, _download
+    from xtts_trainer.speech_data import JFK_SHA256, JFK_URL, SOURCES, _download
 
-    jfk = _download(JFK_URL, str(tmp_path / "dl"), JFK_SHA1)
+    jfk = _download(JFK_URL, str(tmp_path / "dl"), JFK_SHA256)
     out = str(tmp_path / "jfk")
     aligner = CtcAligner()
     records, report = prepare_recording(jfk, out, "en", "jfk", transcript=SOURCES["jfk"].transcript, aligner=aligner,

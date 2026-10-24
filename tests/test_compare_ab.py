@@ -91,6 +91,12 @@ def test_comparisons_need_identical_inputs(base):
     tuned["voices"] = "target"  # measured on the target speaker, base on the eval voices
     with pytest.raises(ValueError, match="voices"):
         compare_ab(base, tuned)
+    # A manifest from before the field was always measured on the ARCTIC voices, so it pairs with "arctic"
+    legacy = copy.deepcopy(base)
+    del legacy["voices"]
+    assert compare_ab(legacy, tuned_from(base))["pairs"] > 0
+    with pytest.raises(ValueError, match="voices"):
+        compare_ab(legacy, tuned)  # ...and still not with a target-speaker run
     with pytest.raises(ValueError, match="same checkpoint"):
         compare_ab(base, copy.deepcopy(base))
     tuned = tuned_from(base)

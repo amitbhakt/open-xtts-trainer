@@ -2,7 +2,7 @@
 
     python scripts/build_target_voices.py --dataset my_data/dataset.jsonl [--speakers me]
 
-Then train on my_data/dataset_train.jsonl, and evaluate both models with --voices target (or all):
+Then train on my_data/dataset_train.jsonl, and evaluate both models with --voices target:
     python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --voices target --output eval/baselines/base.json
 See eval/target_voices.py.
 """

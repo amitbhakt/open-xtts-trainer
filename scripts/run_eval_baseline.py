@@ -1,4 +1,4 @@
-"""Run stock base XTTS baseline measurement and save eval/baselines/base_xtts_<pinned-sha>.json.
+"""Measure a checkpoint on the frozen eval set; saves eval/baselines/<label>_xtts_<pinned-sha12>_<voices>.json.
 
 Phase 1 deliverable:
 - Loads frozen eval_set.json.
@@ -84,16 +84,23 @@ def generate_baseline(
     label: str = "base",
     voices: str = "arctic",
     target_dir: str = DEFAULT_TARGET_DIR,
+    allow_unchecked_location: bool = False,
 ) -> Dict[str, Any]:
     """Measure a checkpoint (stock XTTS-v2 by default) on the frozen eval set. Raises if any input is missing.
 
     label names the model in the manifest ("base", "tuned", ...); scripts/compare_ab.py pairs two manifests.
     voices: "arctic" (the eval set's CMU ARCTIC voices: forgetting check on unseen speakers), "target" (the
-    target speaker's held-out clips from scripts/build_target_voices.py: did the fine-tune learn the voice?)
-    or "all".
+    target speaker's held-out clips from scripts/build_target_voices.py: did the fine-tune learn the voice?).
+    The two are separate runs: pooled, every ungated gate in eval/gates.json would mix the forgetting check on
+    unseen voices with the target speaker. Target clips are read only from DEFAULT_TARGET_DIR, the one place
+    training refuses them (allow_unchecked_location: tests only).
     """
-    if voices not in ("arctic", "target", "all"):
-        raise ValueError(f"voices must be arctic, target or all, not {voices!r}")
+    if voices not in ("arctic", "target"):
+        raise ValueError(f"voices must be arctic or target, not {voices!r}")
+    if (voices == "target" and os.path.abspath(target_dir) != os.path.abspath(DEFAULT_TARGET_DIR)
+            and not allow_unchecked_location):
+        raise ValueError(f"target voices are read only from {DEFAULT_TARGET_DIR}: training refuses held-out clips "
+                         f"listed there, and nowhere else")
     if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*", label):
         raise ValueError(f"label {label!r} must be a plain name (letters, digits, '_', '-', '.'); it becomes a file name")
     missing_ckpt = [f for f in REQUIRED_CHECKPOINT_FILES if not os.path.exists(os.path.join(checkpoint_dir, f))]
@@ -110,13 +117,13 @@ def generate_baseline(
     eval_data = load_eval_set(eval_set_path)
     selected = voices
     voices = []
-    if selected in ("arctic", "all"):
+    if selected == "arctic":
         voices = resolve_reference_voices(eval_data, reference_audio_dir)
         locked = verify_reference_voices(reference_audio_dir, lock_path)
         unlocked = sorted({v["speaker_id"] for v in voices} - set(locked))
         if unlocked:
             raise RuntimeError(f"Reference voices {unlocked} are not in the lock {lock_path}; rebuild the lock.")
-    if selected in ("target", "all"):
+    if selected == "target":
         voices += [{"speaker_id": vid, "language": None, "path": path}
                    for vid, path in sorted(verify_target_voices(target_dir).items())]
     if languages is None:
@@ -202,9 +209,8 @@ if __name__ == "__main__":
     parser.add_argument("--languages", type=str, nargs="+", default=None, help="Languages to evaluate (default: all in eval set)")
     parser.add_argument("--asr_model", type=str, default="openai/whisper-large-v3")
     parser.add_argument("--label", type=str, default="base", help="Name of this model in the manifest (base, tuned, ...)")
-    parser.add_argument("--voices", choices=["arctic", "target", "all"], default="arctic",
+    parser.add_argument("--voices", choices=["arctic", "target"], default="arctic",
                         help="arctic: eval-set CMU voices; target: held-out target-speaker clips (build_target_voices.py)")
-    parser.add_argument("--target_dir", type=str, default=DEFAULT_TARGET_DIR)
     args = parser.parse_args()
 
     res = generate_baseline(
@@ -219,7 +225,6 @@ if __name__ == "__main__":
         lock_path=args.reference_lock,
         label=args.label,
         voices=args.voices,
-        target_dir=args.target_dir,
     )
     print("Baseline measured successfully.")
     print(json.dumps(res["summary_by_language"], indent=2))

@@ -81,6 +81,11 @@ def build_target_voices(dataset_path: str, out_dir: str = DEFAULT_TARGET_DIR, sp
     if os.path.abspath(out_dir) != os.path.abspath(DEFAULT_TARGET_DIR) and not allow_unchecked_location:
         raise ValueError(f"target voices must be built in {DEFAULT_TARGET_DIR}: it is the only lock location "
                          f"training checks, so a holdout elsewhere could be trained on unnoticed")
+    # The builder's own output lacks the previous holdout: rebuilding from it would drop those clips from training
+    # for good, and overwrite the file being read
+    if os.path.basename(dataset_path) == TRAIN_DATASET_FILENAME:
+        raise ValueError(f"{dataset_path} is a training split written by this builder; build from the original "
+                         f"dataset.jsonl (it contains every clip, including the previous holdout)")
     # The source dataset contains this speaker's clips by definition, including any previous holdout, so it is
     # validated without the target-holdout check (every other check still applies)
     records, dataset_dir, _ = load_validated_dataset(dataset_path, None, require_text=False, target_lock_path=None)
@@ -95,15 +100,21 @@ def build_target_voices(dataset_path: str, out_dir: str = DEFAULT_TARGET_DIR, sp
     if unsafe:
         raise ValueError(f"speaker ids {unsafe} can't be file names (letters, digits, '_', '-', '.'; no leading '.')")
 
-    os.makedirs(out_dir, exist_ok=True)
+    # Every speaker's holdout is chosen and checked before anything is written, so a failure leaves the previous
+    # clips and lock consistent with each other
     rng = random.Random(seed)
-    voices, held_out = {}, set()
+    chosen = []
     for speaker in speakers:
         clips = sorted(by_speaker[speaker], key=lambda r: r.audio)
         order, clip, used = _hold_out(clips, dataset_dir, rng)
         if len(clips) - len(used) < min_train_clips:
             raise ValueError(f"speaker '{speaker}' would keep only {len(clips) - len(used)} training clips; "
                              f"needs at least {min_train_clips} besides the held-out reference")
+        chosen.append((speaker, order, clip, used))
+
+    os.makedirs(out_dir, exist_ok=True)
+    voices, held_out = {}, set()
+    for speaker, order, clip, used in chosen:
         vid = voice_id(speaker)
         path = os.path.join(out_dir, f"{vid}.wav")
         sf.write(path, clip, SPEC.output_sample_rate, subtype="PCM_16")

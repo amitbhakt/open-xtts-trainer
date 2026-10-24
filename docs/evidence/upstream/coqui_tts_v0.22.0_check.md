@@ -13,7 +13,7 @@ false	2024-08-16T12:07:14Z	dev
 
 $ for f in TTS/tts/layers/xtts/dvae.py TTS/tts/layers/xtts/gpt.py TTS/tts/layers/xtts/trainer/gpt_trainer.py \
            TTS/tts/layers/xtts/trainer/dataset.py TTS/tts/layers/xtts/tokenizer.py; do
-    curl -sfL -o "$(basename $f)" "https://raw.githubusercontent.com/coqui-ai/TTS/v0.22.0/$f"; done
+    curl -sSfL --retry 3 -o "$(basename $f)" "https://raw.githubusercontent.com/coqui-ai/TTS/fa28f99f1508b5b5366539b2149963edcb80ba62/$f"; done
 $ shasum -a 256 *.py
 6ebc52b0c5ad17b9392ec7d3e4b6aa63aff4f28ea641eac648e1aac9dc593aac  dataset.py
 e076aab664a8843373098b19a2fe7adc7a469b064e1f887444cf18b69ed86344  dvae.py
@@ -21,6 +21,8 @@ e076aab664a8843373098b19a2fe7adc7a469b064e1f887444cf18b69ed86344  dvae.py
 6325607649be01340205d5f342dbc7da4b8a47773f5e91e3482c02a3d1589855  gpt_trainer.py
 106f347814b7bd61ed04f54b39c5349cd046ae1cfe075be139081097cb42617c  tokenizer.py
 ```
+
+Files are fetched by the commit the tag resolves to, not by the tag (a tag can be moved). Rerun 2026-10-25 with the commit URLs: the same five SHA-256 values as the first run by tag, so the excerpts below are from `fa28f99f`.
 
 `archived: false`: the repository is unmaintained (last push 2024-08-16), not formally archived.
 

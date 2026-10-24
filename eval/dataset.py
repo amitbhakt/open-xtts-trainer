@@ -326,13 +326,21 @@ DEFAULT_EVAL_SET_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abs
                                      "eval", "dataset", "eval_set.json")
 
 
-def save_frozen_eval_set(output_path: str = DEFAULT_EVAL_SET_PATH) -> str:
-    """Save the evaluation set and return its SHA-256 hash."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    dataset = build_evaluation_dataset()
+def eval_set_content_hash(data: Dict[str, Any]) -> str:
+    """SHA-256 of the eval set's content: its JSON without the "sha256" field, as save_frozen_eval_set writes it."""
+    content = {k: v for k, v in data.items() if k != "sha256"}
+    return hashlib.sha256(json.dumps(content, indent=2, ensure_ascii=False).encode("utf-8")).hexdigest()
 
-    raw_json = json.dumps(dataset, indent=2, ensure_ascii=False)
-    sha256 = hashlib.sha256(raw_json.encode("utf-8")).hexdigest()
+
+def save_frozen_eval_set(output_path: str) -> str:
+    """Save the evaluation set and return its SHA-256 hash.
+
+    output_path has no default: writing to DEFAULT_EVAL_SET_PATH replaces the frozen set every baseline is
+    measured against, so it has to be named on purpose.
+    """
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    dataset = build_evaluation_dataset()
+    sha256 = eval_set_content_hash(dataset)
     dataset["sha256"] = sha256
 
     with open(output_path, "w", encoding="utf-8") as f:
@@ -353,6 +361,11 @@ def load_eval_set(path: str = DEFAULT_EVAL_SET_PATH) -> Dict[str, Any]:
 
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
+    # Manifests record data["sha256"], so it must describe this content: an edited set can't keep its old hash
+    actual = eval_set_content_hash(data)
+    if data.get("sha256") != actual:
+        raise ValueError(f"{path}: stored sha256 {data.get('sha256')} doesn't match its content ({actual}); "
+                         f"the frozen eval set was edited. Restore it, or freeze a new one deliberately")
 
     # Basic structural validation
     assert "english_sentences" in data, "Missing 'english_sentences' in eval set"

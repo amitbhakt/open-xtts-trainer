@@ -30,6 +30,8 @@ ENV/
 checkpoints/
 xtts_base/
 eval/reference_voices/
+# Deliberately private: the target speaker's held-out clips, and a lock with their transcripts and local paths.
+# Target-speaker results are reproducible only by whoever holds that speaker's recordings.
 eval/target_voices/
 *.pt
 *.pth

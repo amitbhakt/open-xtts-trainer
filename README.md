@@ -136,7 +136,7 @@ The aligner weights (1.26 GB, CC BY-NC 4.0) download on first use.
 # Sample set: 6 LJSpeech clips (text from metadata.csv) + JFK, aligned and cut at pauses
 python -m xtts_trainer.speech_data --source sample --output_dir sample_audio
 
-# Continuous English speech, one reader (LibriVox, public domain, files SHA-1 pinned), Whisper-transcribed
+# Continuous English speech, one reader (LibriVox, public domain, files SHA-256 pinned), Whisper-transcribed
 # and aligned: art_of_war_short is 8.4 min, art_of_war is 72 min (--max_minutes caps each file)
 python -m xtts_trainer.speech_data --source art_of_war_short --output_dir sample_audio
 
@@ -277,8 +277,9 @@ python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --voices target -
 python scripts/run_eval_baseline.py --checkpoint_dir checkpoints/gpt/export --voices target --label tuned --output eval/baselines/tuned_target.json
 ```
 
-Then add the target-speaker gate from `eval/gates.json` (`target_speaker_gate_template`, with the `target_<speaker>`
-ids the first command printed) to `gates`, and run `compare_ab.py` on the two target manifests.
+Then copy the `gate` object inside `target_speaker_gate_template` in `eval/gates.json` into the `gates` list, with
+`voices` set to the `target_<speaker>` ids the first command printed, and run `compare_ab.py` on the two target
+manifests.
 
 The gates are relative to the stock model: for example, word error rate may not get worse beyond a set margin,
 and speaker similarity on the target speaker must improve. Fix them in `eval/gates.json` before you look at

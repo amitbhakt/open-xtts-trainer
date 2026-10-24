@@ -102,8 +102,15 @@ def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:
     return {**gate, **stats, "improvement_ci95": [worst, best], "passed": bool(passed)}
 
 
+def _input(manifest: Dict[str, Any], key: str) -> Any:
+    # Manifests from before the "voices" field could only measure the eval set's ARCTIC voices
+    if key == "voices":
+        return manifest.get("voices", "arctic")
+    return manifest.get(key)
+
+
 def compare_ab(base: Dict[str, Any], tuned: Dict[str, Any], gates: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    mismatched = [k for k in SAME_INPUT_KEYS if base.get(k) != tuned.get(k)]
+    mismatched = [k for k in SAME_INPUT_KEYS if _input(base, k) != _input(tuned, k)]
     if mismatched:
         raise ValueError(f"manifests were measured on different inputs: {mismatched}; an A/B needs identical inputs")
     if base.get("checkpoint_sha256") == tuned.get("checkpoint_sha256"):

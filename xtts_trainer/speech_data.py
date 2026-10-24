@@ -17,6 +17,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
@@ -29,19 +30,19 @@ from xtts_trainer.prepare.pipeline import PrepConfig, load_mono, prepare_recordi
 from xtts_trainer.spec import SPEC
 
 DEFAULT_VOCAB = "xtts_base/vocab.json"
-# Pinned to commits (the branches move) and checked by SHA-1; values and commands in docs/evidence/source_pins.md
+# Pinned to commits (the branches move) and checked by SHA-256; values and commands in docs/evidence/source_pins.md
 LJSPEECH_BASE = "https://raw.githubusercontent.com/coqui-ai/TTS/dbf1a08a0d4e47fdad6172e433eeb34bc6b13b4e/tests/data/ljspeech"
-LJSPEECH_SHA1 = {
-    f"{LJSPEECH_BASE}/metadata.csv": "247ef0626c1ec7f4d01e8bc8599c4b070a396209",
-    f"{LJSPEECH_BASE}/wavs/LJ001-0001.wav": "a4f9d63b0cfbd36eb1c23b7b122f213bc587ecc4",
-    f"{LJSPEECH_BASE}/wavs/LJ001-0002.wav": "6249e7e3edd982e8cb79a8b8deef4c907374e1fc",
-    f"{LJSPEECH_BASE}/wavs/LJ001-0003.wav": "fc4d535b7b0a1ba2ea09dca3aad2fc9e2816a19c",
-    f"{LJSPEECH_BASE}/wavs/LJ001-0004.wav": "41a5fe1e72f423534158d54cc9bfca920921c045",
-    f"{LJSPEECH_BASE}/wavs/LJ001-0005.wav": "ccef55335f89ed4f21c4e0091a1aaf34b2bcbe11",
-    f"{LJSPEECH_BASE}/wavs/LJ001-0006.wav": "6fafc6a2bb5dedf373cdace60bd6746a89548153",
+LJSPEECH_SHA256 = {
+    f"{LJSPEECH_BASE}/metadata.csv": "2727a6428189a0213d480b2de5eceb159877c2b99b0027b22115d076c868938d",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0001.wav": "4d2bd83ff0f7fe33491b03193abdf623f1b4cc2d8103972b33638d3607d86dc5",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0002.wav": "6563390fa42121eeeab15f49fa91fd26afe000022bfdaaa882f06224ad549599",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0003.wav": "ad97822fa512b4897a01557423ffff7cc1fc763c9b9d5d502a5a1bc566f7440b",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0004.wav": "3c9cce186f26b6690b1d96a6a640c3f1bdb10e1f206738344190fa264955a7af",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0005.wav": "0d95df8cd780f0ed4f71d74559d42b33cc98ae9e7b398e0eceb17428dfacb9ca",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0006.wav": "4b866eebe1e7cb6ded4bcb27caa0638b8ade67a6a8a2f7132952b716dc7006db",
 }
 JFK_URL = "https://raw.githubusercontent.com/openai/whisper/86098128c0b4f24f0e2aa2994de830614b474227/tests/jfk.flac"
-JFK_SHA1 = "537ddf75dff344f8d31c1cd6ebee23ee8362d921"
+JFK_SHA256 = "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715"
 
 
 @dataclass
@@ -59,28 +60,29 @@ class Source:
     transcript: Optional[str] = None
     # Why we may train on it, with where that is stated
     license: str = ""
-    # url -> SHA-1 for every file the source downloads (audio and metadata_url), checked after every download.
+    # url -> SHA-256 for every file the source downloads (audio and metadata_url), checked after every download.
     # Required: an unpinned URL is an error, not a skipped check.
-    sha1: Dict[str, str] = field(default_factory=dict)
+    sha256: Dict[str, str] = field(default_factory=dict)
 
     def pinned(self, url: str) -> str:
-        if url not in self.sha1:
-            raise KeyError(f"{url} has no SHA-1 pin; every downloaded file must be pinned (docs/evidence/source_pins.md)")
-        return self.sha1[url]
+        if url not in self.sha256:
+            raise KeyError(f"{url} has no SHA-256 pin; every downloaded file must be pinned "
+                           f"(docs/evidence/source_pins.md)")
+        return self.sha256[url]
 
 
-# One solo reader, public domain, files pinned by the SHA-1 archive.org publishes
-# (https://archive.org/metadata/art_of_war_librivox). Replaced reach-vb/random-audios, which has no license,
-# no dataset card and an unknown speaker.
+# One solo reader, public domain. Pinned by SHA-256 of files whose SHA-1 first matched the value archive.org
+# publishes (https://archive.org/metadata/art_of_war_librivox); archive.org publishes no SHA-256.
+# Replaced reach-vb/random-audios, which has no license, no dataset card and an unknown speaker.
 ARCHIVE_ART_OF_WAR = "https://archive.org/download/art_of_war_librivox"
-ART_OF_WAR = [(f"{ARCHIVE_ART_OF_WAR}/{name}", sha1) for name, sha1 in [
-    ("art_of_war_01-02_sun_tzu_64kb.mp3", "9b9e7c673fe27d50c703f92efcabeb695d9722f7"),
-    ("art_of_war_03-04_sun_tzu_64kb.mp3", "bfda68aff1a6f6a7a55f62cf11ee3ee652b3f699"),
-    ("art_of_war_05-06_sun_tzu_64kb.mp3", "9bede3f68665ca5a7cdd0140d599ee529cb879bb"),
-    ("art_of_war_07-08_sun_tzu_64kb.mp3", "787463abd4ef57d25c64547708c7c5aa3514c6a0"),
-    ("art_of_war_09-10_sun_tzu_64kb.mp3", "2b4e476b0f39b6ab055263d64bad8846d3b3c2be"),
-    ("art_of_war_11_sun_tzu_64kb.mp3", "ab6d413e9c793381b0f3e539bc65385f22c91fec"),
-    ("art_of_war_12-13_sun_tzu_64kb.mp3", "e59b738e5399332bed637039838059d38adc0137"),
+ART_OF_WAR = [(f"{ARCHIVE_ART_OF_WAR}/{name}", sha256) for name, sha256 in [
+    ("art_of_war_01-02_sun_tzu_64kb.mp3", "6cb289fa9a13cfc94b18e8a89159da687c60db88c2b6377311f9bc5664d5492f"),
+    ("art_of_war_03-04_sun_tzu_64kb.mp3", "57e879fe7822578fd22010f1280185799a119a3482e025d9a71f49878ff45ba7"),
+    ("art_of_war_05-06_sun_tzu_64kb.mp3", "ace85bbe5e784c9dc622b9ddb346b513afa7cdb4f9176c45d2fd9df16794bb58"),
+    ("art_of_war_07-08_sun_tzu_64kb.mp3", "23bf3869fc869942cd68812417927fc350dee33e114bbe445f41d5157d559aad"),
+    ("art_of_war_09-10_sun_tzu_64kb.mp3", "49dcdde816c1e1152c1ff1721171ebe5817d0db5ffd2c8970c2c20511b4043ad"),
+    ("art_of_war_11_sun_tzu_64kb.mp3", "031b2426f8a67f7cda7e3a38ed13b061876f7610e078fb8395962669803c27d8"),
+    ("art_of_war_12-13_sun_tzu_64kb.mp3", "61acc0e274eef3f740ec4ad4c5c4a18907e35832d0581d1bf9dfdc3b031afafa"),
 ]]
 ART_OF_WAR_LICENSE = ("Public domain: LibriVox recordings are public-domain dedications; archive.org item "
                       "art_of_war_librivox, licenseurl http://creativecommons.org/licenses/publicdomain/")
@@ -92,12 +94,12 @@ SOURCES: Dict[str, Source] = {
         license="Public domain (LJ Speech Dataset, https://keithito.com/LJ-Speech-Dataset/)",
         urls=[f"{LJSPEECH_BASE}/wavs/LJ001-000{i}.wav" for i in range(1, 7)],
         metadata_url=f"{LJSPEECH_BASE}/metadata.csv",
-        sha1=LJSPEECH_SHA1,
+        sha256=LJSPEECH_SHA256,
     ),
     "jfk": Source(
         lang="en", speaker="jfk",
         description="JFK inaugural address excerpt (public domain, Whisper test clip), human transcript, aligned",
-        urls=[JFK_URL], sha1={JFK_URL: JFK_SHA1},
+        urls=[JFK_URL], sha256={JFK_URL: JFK_SHA256},
         transcript="And so, my fellow Americans: ask not what your country can do for you, "
                    "ask what you can do for your country.",
         license="Public domain: 1961 inaugural address, a work of the US government; clip from the openai/whisper "
@@ -107,14 +109,14 @@ SOURCES: Dict[str, Source] = {
         lang="en", speaker="moira_fogarty",
         description="LibriVox: The Art of War (tr. Lionel Giles), read by Moira Fogarty, chapters 1-2 (8.4 min); "
                     "Whisper transcript, aligned",
-        urls=[ART_OF_WAR[0][0]], sha1=dict(ART_OF_WAR[:1]),
+        urls=[ART_OF_WAR[0][0]], sha256=dict(ART_OF_WAR[:1]),
         license=ART_OF_WAR_LICENSE,
     ),
     "art_of_war": Source(
         lang="en", speaker="moira_fogarty",
         description="LibriVox: The Art of War (tr. Lionel Giles), read by Moira Fogarty, all 13 chapters (72 min); "
                     "Whisper transcript, aligned",
-        urls=[u for u, _ in ART_OF_WAR], sha1=dict(ART_OF_WAR),
+        urls=[u for u, _ in ART_OF_WAR], sha256=dict(ART_OF_WAR),
         license=ART_OF_WAR_LICENSE,
     ),
 }
@@ -122,8 +124,10 @@ SOURCES: Dict[str, Source] = {
 SOURCE_SETS = {"sample": ["ljspeech_sample", "jfk"]}
 
 
-def _download(url: str, dest_dir: str, sha1: Optional[str] = None) -> str:
-    """Download once into dest_dir; with sha1, the file (fresh or cached) must match it."""
+def _download(url: str, dest_dir: str, sha256: str) -> str:
+    """Download once into dest_dir; the file, fresh or cached, must match its SHA-256 pin."""
+    if not re.fullmatch(r"[0-9a-f]{64}", sha256 or ""):
+        raise ValueError(f"{url}: a SHA-256 pin (64 hex digits) is required, got {sha256!r}")
     os.makedirs(dest_dir, exist_ok=True)
     path = os.path.join(dest_dir, os.path.basename(url))
     if not os.path.exists(path):
@@ -133,13 +137,12 @@ def _download(url: str, dest_dir: str, sha1: Optional[str] = None) -> str:
         with open(path + ".tmp", "wb") as f:
             f.write(data)
         os.replace(path + ".tmp", path)
-    if sha1 is not None:
-        digest = hashlib.sha1()
-        with open(path, "rb") as f:
-            for chunk in iter(lambda: f.read(1 << 20), b""):
-                digest.update(chunk)
-        if digest.hexdigest() != sha1:
-            raise RuntimeError(f"{path} has SHA-1 {digest.hexdigest()}, expected {sha1} for {url}; delete it and retry")
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            digest.update(chunk)
+    if digest.hexdigest() != sha256:
+        raise RuntimeError(f"{path} has SHA-256 {digest.hexdigest()}, expected {sha256} for {url}; delete it and retry")
     return path
 
 

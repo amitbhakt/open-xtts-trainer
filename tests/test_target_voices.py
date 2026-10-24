@@ -28,11 +28,11 @@ def build_target_voices(dataset, out_dir, **kw):
     return _build(dataset, out_dir, allow_unchecked_location=True, **kw)
 
 
-def _dataset(root, speakers=("me", "you"), n=8, seconds=2.0):
+def _dataset(root, speakers=("me", "you"), n=8, seconds=2.0, seed=0):
     records = []
     for s, speaker in enumerate(speakers):
         for i in range(n):
-            rng = np.random.RandomState(100 * s + i)
+            rng = np.random.RandomState(seed + 100 * s + i)
             t = np.arange(int(SR * seconds)) / SR
             audio = (0.2 * np.sin(2 * np.pi * rng.uniform(100, 800) * t) + 0.01 * rng.randn(len(t))).astype("float32")
             name = f"{speaker}_{i}.wav"
@@ -70,6 +70,15 @@ def test_training_on_held_out_clips_is_refused(tmp_path):
     assert [e.code for e in leaked.errors] == ["target_holdout_overlap"] * n_held
     assert validate_dataset(lock["train_dataset"], vocab, **kw).ok
     assert len(holdout_hashes(target_lock)) == n_held + 2  # each source clip plus each assembled clip
+    assert not any("lock is missing" in w for w in leaked.warnings)
+    # The lock gone but its clips still there: the guard is off for a holdout that exists, which must be said
+    os.remove(target_lock)
+    unguarded = validate_dataset(dataset, vocab, **kw)
+    assert unguarded.ok and not unguarded.stats["target_holdout_checked"]
+    assert any("lock is missing" in w for w in unguarded.warnings)
+    # No holdout ever built: nothing to warn about
+    clean = validate_dataset(dataset, vocab, **{**kw, "target_lock_path": str(tmp_path / "none" / LOCK_FILENAME)})
+    assert not any("lock is missing" in w for w in clean.warnings)
 
 
 def test_tampered_target_clip_is_refused(tmp_path):
@@ -100,6 +109,8 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     from test_eval_phase1 import FakeEncoder, FakeMOS
     from xtts_trainer.spec.xtts_spec import VENDORED_CONFIG_PATH
 
+    # Every call runs from tmp_path: a call that should be refused can't write a manifest into the repository
+    monkeypatch.chdir(tmp_path)
     out = str(tmp_path / "targets")
     build_target_voices(_dataset(str(tmp_path)), out)
     ckpt = tmp_path / "ckpt"
@@ -137,20 +148,24 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     monkeypatch.setattr(harness_module, "asr_transcribe", lambda audio, sr, lang, model_name, device: "text")
     manifest = baseline_module.generate_baseline(
         checkpoint_dir=str(ckpt), output_path=str(tmp_path / "m.json"), seeds=[1], languages=["en"], subset_size=2,
-        voices="target", target_dir=out, label="base",
+        voices="target", target_dir=out, label="base", allow_unchecked_location=True,
     )
     assert manifest["voices"] == "target"
     assert [v["speaker_id"] for v in manifest["reference_voices"]] == ["target_me", "target_you"]
     # each voice id was synthesized from its own held-out reference clip, in order
     assert conditioned == [os.path.join(out, "target_me.wav"), os.path.join(out, "target_you.wav")]
     assert [run["speaker_id"] for run in manifest["runs"]] == ["target_me", "target_you"]
-    with pytest.raises(ValueError, match="voices must be"):
-        baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="everyone")
+    for pooled in ("everyone", "all"):  # target and eval voices are never pooled into one manifest
+        with pytest.raises(ValueError, match="voices must be"):
+            baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices=pooled)
+    # Clips from anywhere but the canonical directory would be clips training never refuses
+    with pytest.raises(ValueError, match="read only from"):
+        baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="target", target_dir=out)
     # Without --output, each label and voice set gets its own file: a target run can't overwrite another run
-    monkeypatch.chdir(tmp_path)
     for label in ("base", "tuned"):
         baseline_module.generate_baseline(checkpoint_dir=str(ckpt), seeds=[1], languages=["en"], subset_size=2,
-                                          voices="target", target_dir=out, label=label)
+                                          voices="target", target_dir=out, label=label,
+                                          allow_unchecked_location=True)
     written = sorted(os.listdir(tmp_path / "eval" / "baselines"))
     commit = baseline_module.PINNED_UPSTREAM_COMMIT[:12]
     assert written == [f"base_xtts_{commit}_target.json", f"tuned_xtts_{commit}_target.json"]
@@ -162,7 +177,8 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
     assert on_disk["eval_set_sha256"] == frozen and not (tmp_path / "eval" / "dataset").exists()
     for bad in ("../escape", "a/b", ".hidden", ""):
         with pytest.raises(ValueError, match="plain name"):
-            baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="target", target_dir=out, label=bad)
+            baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="target", target_dir=out, label=bad,
+                                              allow_unchecked_location=True)
 
 
 def test_builder_only_writes_where_training_checks(tmp_path):
@@ -217,11 +233,50 @@ def test_holdout_search_continues_past_clips_that_trim_short(tmp_path):
 
 
 def test_holdout_keeps_only_trimmed_audio(tmp_path, monkeypatch):
-    """Every loaded clip is edge-trimmed as it is loaded, so silent clips don't pile up full-length in memory."""
+    """Clips are edge-trimmed as they load, so silence-padded clips don't pile up full-length in memory."""
     import eval.target_voices as target_module
 
-    trimmed = []
-    real_trim = target_module.trim_edges
-    monkeypatch.setattr(target_module, "trim_edges", lambda wav, rate: trimmed.append(len(wav)) or real_trim(wav, rate))
-    lock = build_target_voices(_dataset(str(tmp_path), speakers=("me",), n=8), str(tmp_path / "targets"))
-    assert len(trimmed) >= len(lock["voices"]["target_me"]["source_clips"])
+    raw_len, records = int(SR * 3.0), []
+    for i in range(8):  # 1 s silence, 1 s tone, 1 s silence
+        audio = np.zeros(raw_len, dtype="float32")
+        t = np.arange(SR) / SR
+        audio[SR:2 * SR] = 0.2 * np.sin(2 * np.pi * (200 + 50 * i) * t)
+        sf.write(str(tmp_path / f"c{i}.wav"), audio, SR)
+        records.append(DatasetRecord(audio=f"c{i}.wav", text="hello", lang="en", speaker="me", duration_s=3.0,
+                                     sr=SR, transcript_source="human"))
+    dataset = write_dataset(str(tmp_path / "dataset.jsonl"), records)
+    retained = []
+    real_assemble = target_module.assemble_clip
+    monkeypatch.setattr(target_module, "assemble_clip",
+                        lambda loaded, rate: retained.append([len(a) for a in loaded]) or real_assemble(loaded, rate))
+    build_target_voices(dataset, str(tmp_path / "targets"))
+    # Every array the search holds is the trimmed one: well under the 3 s file, and about the 1 s of tone
+    held = [n for call in retained for n in call]
+    assert held and max(held) < 1.5 * SR < raw_len
+
+
+def test_failed_build_leaves_the_previous_holdout_untouched(tmp_path):
+    """A later speaker failing its check must not overwrite earlier speakers' clips under the old lock."""
+    root = tmp_path / "data"
+    root.mkdir()
+    _dataset(str(root), speakers=("me",), n=10)
+    records = load_dataset(str(root / "dataset.jsonl"))
+    _dataset(str(root), speakers=("you",), n=6, seed=1000)  # 'you' keeps fewer training clips than 'me'
+    dataset = write_dataset(str(root / "dataset.jsonl"), records + load_dataset(str(root / "dataset.jsonl")))
+    out = str(tmp_path / "targets")
+    first = build_target_voices(dataset, out, seed=1)
+    kept = {vid: (10 if vid == "target_me" else 6) - len(e["source_clips"]) for vid, e in first["voices"].items()}
+    assert kept["target_me"] > kept["target_you"]
+    before = {name: (tmp_path / "targets" / name).read_bytes() for name in sorted(os.listdir(out))}
+    # 'me' (processed first) passes this minimum and 'you' fails it, so only an atomic build leaves 'me' alone
+    with pytest.raises(ValueError, match="speaker 'you'"):
+        build_target_voices(dataset, out, seed=2, min_train_clips=kept["target_you"] + 1)
+    assert {name: (tmp_path / "targets" / name).read_bytes() for name in sorted(os.listdir(out))} == before
+    verify_target_voices(out)
+
+
+def test_building_from_the_training_split_is_refused(tmp_path):
+    """dataset_train.jsonl lacks the previous holdout; rebuilding from it would drop those clips for good."""
+    lock = build_target_voices(_dataset(str(tmp_path)), str(tmp_path / "targets"))
+    with pytest.raises(ValueError, match="training split"):
+        build_target_voices(lock["train_dataset"], str(tmp_path / "targets"))
