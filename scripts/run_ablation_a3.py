@@ -221,6 +221,7 @@ def run_ablation_a3(
     # 2. Evaluate both variants with batched Whisper inference
     manifests = {}
     voice_tag = f"_{voices}" if voices != "target" else ""
+    eval_voices = "arctic" if voices in ("base", "arctic") else voices
     for mode, out_path in variants.items():
         manifest_path = os.path.join(output_dir, f"manifest_{mode}{voice_tag}_s{subset_size}.json")
         manifests[mode] = manifest_path
@@ -236,11 +237,11 @@ def run_ablation_a3(
             for s, s_export in zip(seeds, seed_exports):
                 s_manifest_path = os.path.join(output_dir, f"manifest_{mode}{voice_tag}_seed_{s}_s{subset_size}.json")
                 if not os.path.exists(s_manifest_path):
-                    print(f"\n>>> Evaluating {mode.upper()} seed {s} ({s_export}) with voices '{voices}', batch size {eval_batch_size}...")
+                    print(f"\n>>> Evaluating {mode.upper()} seed {s} ({s_export}) with voices '{eval_voices}', batch size {eval_batch_size}...")
                     run_cmd([
                         sys.executable, "scripts/run_eval_baseline.py",
                         "--checkpoint_dir", s_export,
-                        "--voices", voices,
+                        "--voices", eval_voices,
                         "--languages", "en",
                         "--label", f"a3_{mode}_{voices}_s{s}",
                         "--seeds", str(s),
@@ -261,11 +262,11 @@ def run_ablation_a3(
                     "Ensure training was not skipped without existing models."
                 )
 
-            print(f"\n>>> Evaluating {mode.upper()} model ({primary_export}) with voices '{voices}', batch size {eval_batch_size}...")
+            print(f"\n>>> Evaluating {mode.upper()} model ({primary_export}) with voices '{eval_voices}', batch size {eval_batch_size}...")
             run_cmd([
                 sys.executable, "scripts/run_eval_baseline.py",
                 "--checkpoint_dir", primary_export,
-                "--voices", voices,
+                "--voices", eval_voices,
                 "--languages", "en",
                 "--label", f"a3_{mode}_{voices}",
                 "--seeds", *[str(s) for s in seeds],
@@ -311,8 +312,8 @@ def main():
     parser.add_argument("--subset_size", type=int, default=20, help="Eval subset size (default: 20)")
     parser.add_argument("--dry_run", action="store_true", help="Validate plan without running training or eval")
     parser.add_argument("--skip_training", action="store_true", help="Skip training if checkpoints already exist")
-    parser.add_argument("--voices", choices=["target", "base", "all"], default="target",
-                        help="Voices to evaluate: 'target' (Moira Fogarty, N=60) or 'base' (5 CMU ARCTIC voices, N=300)")
+    parser.add_argument("--voices", choices=["target", "base", "arctic", "all"], default="target",
+                        help="Voices to evaluate: 'target' (Moira Fogarty, N=60) or 'base'/'arctic' (5 CMU ARCTIC voices, N=300)")
     args = parser.parse_args()
 
     dataset_path = None
