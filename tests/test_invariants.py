@@ -391,6 +391,9 @@ def test_upstream_checkpoint_loads_into_factory_models():
 
 def _stock_xtts(checkpoint_dir):
     """The base model as stock upstream loads it (Xtts.load_checkpoint, strict, stock tokenizer)."""
+    from xtts_trainer import patch_xtts_prevent_checkpoint_mutation
+
+    patch_xtts_prevent_checkpoint_mutation()
     from TTS.tts.configs.xtts_config import XttsConfig
     from TTS.tts.models.xtts import Xtts
 

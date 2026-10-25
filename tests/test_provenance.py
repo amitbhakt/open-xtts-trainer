@@ -164,4 +164,13 @@ def test_write_baseline_index_preserves_unprocessed_entries(expected, tmp_path):
     with pytest.raises(ValueError, match="missing or empty inputs"):
         write_baseline_index(partial_paths, index_path, existing_index=bad_index_empty_inputs)
 
+    # Reject empty manifest_paths without an existing index
+    with pytest.raises(ValueError, match="manifest_paths cannot be empty"):
+        write_baseline_index({}, index_path)
+
+    # Reject empty existing_index dictionary
+    with pytest.raises(ValueError, match="missing or empty inputs"):
+        write_baseline_index(partial_paths, index_path, existing_index={})
+
+
 

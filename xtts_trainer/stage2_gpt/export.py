@@ -104,6 +104,9 @@ def check_dvae_pairing(checkpoint_dir: str) -> None:
 
 def load_for_inference(checkpoint_dir: str, device: str = "cpu"):
     """Stock Xtts loaded strictly from an exported directory, with the project tokenizer installed."""
+    from xtts_trainer import patch_xtts_prevent_checkpoint_mutation
+
+    patch_xtts_prevent_checkpoint_mutation()
     from TTS.tts.configs.xtts_config import XttsConfig
     from TTS.tts.models.xtts import Xtts
 
