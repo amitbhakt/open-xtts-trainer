@@ -1,0 +1,31 @@
+eval/target_voices.py
+  s_3d61319a4136f0::t_94c2aed19a38a9 168-169
+  s_3d61319a4136f0::t_f17c74c4958f26 124-125
+  s_3d61319a4136f0::t_7e3b34298b32ca 24-25,117-123,127-167,170-171
+tests/test_target_voices.py
+  s_3d61319a4136f0::t_f17c74c4958f26 61,74,77-84,284-307
+docs/evidence/source_pins.md
+  s_3d61319a4136f0::t_7e3b34298b32ca 72
+xtts_trainer/data/validate.py
+  s_3d61319a4136f0::t_7e3b34298b32ca 228-230,374-376
+xtts_trainer/speech_data.py
+  s_3d61319a4136f0::t_7e3b34298b32ca 129,131
+tests/test_prepare.py
+  s_3d61319a4136f0::t_f17c74c4958f26 470
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "24771e68dc14e56c667548730159a81bd56e3923",
+  "prompts": {},
+  "sessions": {
+    "s_3d61319a4136f0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a171b9-f7c6-7260-8786-3c7d50dc7f02",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
