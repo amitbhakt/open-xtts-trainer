@@ -1,0 +1,5068 @@
+{
+  "label": "a3_per_sample_base_s1",
+  "description": "XTTS-v2 checkpoint 'a3_per_sample_base_s1' (/root/open-xtts-trainer/runs/ablations/a3/per_sample/seed_1/export), measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-25 19:48:48 UTC",
+  "git": {
+    "commit_sha": "a6c0549dff309e92d24d92ad9c5183c2c4f5aac6",
+    "is_dirty": false
+  },
+  "code_fingerprint": {
+    "sha256": "f642df0837497f21926367217119e7b3edf923dfc325069bcf7f2f088ac08a52",
+    "n_files": 64
+  },
+  "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+  "checkpoint_sha256": {
+    "model.pth": "8c26801f9e4fa28af32b9f2e095826eb528e70253d961fc878c25e95e842a48a",
+    "config.json": "c489449630c6bf4a6a6de700d31a580c5034e1f49ae22179f675f633e83bd843",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "voices": "arctic",
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "batch_size": 16,
+  "seeds": [
+    1
+  ],
+  "subset_size": 20,
+  "languages": [
+    "en"
+  ],
+  "metrics_version": 2,
+  "summary_by_language": {
+    "en": {
+      "wer": {
+        "mean": 0.03858333333333333,
+        "std": 0.09590854902214459,
+        "ci95": 0.01879807560834034,
+        "min": 0.0,
+        "max": 0.5,
+        "n": 100,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.013634834368530023,
+        "std": 0.054809625793969675,
+        "ci95": 0.010742686655618056,
+        "min": 0.0,
+        "max": 0.42857142857142855,
+        "n": 100,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.5604399221784928,
+        "std": 0.10429552984509297,
+        "ci95": 0.02217237949698063,
+        "min": 0.3034742474555969,
+        "max": 0.7099874019622803,
+        "n": 85,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 4.114808158874512,
+        "std": 0.2800747649008212,
+        "ci95": 0.054894653920560955,
+        "min": 3.187760591506958,
+        "max": 4.4992780685424805,
+        "n": 100,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 1.1079864912086286,
+        "std": 0.3304581660958942,
+        "ci95": 0.06476980055479525,
+        "min": 0.6906666666666667,
+        "max": 2.688,
+        "n": 100,
+        "n_nan": 0
+      },
+      "secs_all": {
+        "mean": 0.531200614720583,
+        "std": 0.1281089600809733,
+        "ci95": 0.02510935617587077,
+        "min": 0.14443372189998627,
+        "max": 0.7099874019622803,
+        "n": 100,
+        "n_nan": 0
+      }
+    }
+  },
+  "summary_by_category": {
+    "en": {
+      "harvard": {
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.545842795073986,
+          "std": 0.10517297642810791,
+          "ci95": 0.04609408923908953,
+          "min": 0.36056625843048096,
+          "max": 0.7045066356658936,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.202275860309601,
+          "std": 0.23209951009221438,
+          "ci95": 0.1017220952936756,
+          "min": 3.7658824920654297,
+          "max": 4.456215858459473,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0253828291805185,
+          "std": 0.13968114450605001,
+          "ci95": 0.061217960720937825,
+          "min": 0.8016842105263158,
+          "max": 1.3949918699186994,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.545842795073986,
+          "std": 0.10517297642810791,
+          "ci95": 0.04609408923908953,
+          "min": 0.36056625843048096,
+          "max": 0.7045066356658936,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "sibilant": {
+        "wer": {
+          "mean": 0.12125,
+          "std": 0.16328756519517468,
+          "ci95": 0.0715639307487405,
+          "min": 0.0,
+          "max": 0.5,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.05535714285714286,
+          "std": 0.11322048202962398,
+          "ci95": 0.04962106407565239,
+          "min": 0.0,
+          "max": 0.42857142857142855,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5084167391061782,
+          "std": 0.11045835659275567,
+          "ci95": 0.04841050922876548,
+          "min": 0.3034742474555969,
+          "max": 0.6651703119277954,
+          "n": 20,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.124294972419738,
+          "std": 0.2730817687090271,
+          "ci95": 0.11968336205685488,
+          "min": 3.443887948989868,
+          "max": 4.4557204246521,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.232606477183833,
+          "std": 0.37378750203264455,
+          "ci95": 0.16381959568222748,
+          "min": 0.8106666666666666,
+          "max": 2.3564293785310735,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5084167391061782,
+          "std": 0.11045835659275567,
+          "ci95": 0.04841050922876548,
+          "min": 0.3034742474555969,
+          "max": 0.6651703119277954,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 1,
+          "nan": 0
+        }
+      },
+      "numbers": {
+        "wer": {
+          "mean": 0.09555555555555557,
+          "std": 0.09332199477612291,
+          "ci95": 0.047227445462763196,
+          "min": 0.0,
+          "max": 0.3,
+          "n": 15,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.01708937198067633,
+          "std": 0.021988057501466807,
+          "ci95": 0.011127492387767916,
+          "min": 0.0,
+          "max": 0.08695652173913043,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5844294706980387,
+          "std": 0.08353292821900063,
+          "ci95": 0.04227349427401152,
+          "min": 0.46877628564834595,
+          "max": 0.6974666118621826,
+          "n": 15,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.287615283330282,
+          "std": 0.1518218271831882,
+          "ci95": 0.07683244534744574,
+          "min": 3.990943193435669,
+          "max": 4.4992780685424805,
+          "n": 15,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.8665539947974729,
+          "std": 0.12679721052480317,
+          "ci95": 0.06416824200186082,
+          "min": 0.6906666666666667,
+          "max": 1.156923076923077,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5844294706980387,
+          "std": 0.08353292821900063,
+          "ci95": 0.04227349427401152,
+          "min": 0.46877628564834595,
+          "max": 0.6974666118621826,
+          "n": 15,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "long_complex": {
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 15,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6030968010425568,
+          "std": 0.09535020856857286,
+          "ci95": 0.04825386325954889,
+          "min": 0.46990320086479187,
+          "max": 0.7099874019622803,
+          "n": 15,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.1756237030029295,
+          "std": 0.20711969774948796,
+          "ci95": 0.10481702896722334,
+          "min": 3.852961540222168,
+          "max": 4.451348781585693,
+          "n": 15,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.994056352312011,
+          "std": 0.12044057316264183,
+          "ci95": 0.06095133965136747,
+          "min": 0.7811282051282051,
+          "max": 1.1633379953379954,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.6030968010425568,
+          "std": 0.09535020856857286,
+          "ci95": 0.04825386325954889,
+          "min": 0.46990320086479187,
+          "max": 0.7099874019622803,
+          "n": 15,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "prosody_questions": {
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 15,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5826205750306447,
+          "std": 0.10179155988032773,
+          "ci95": 0.05151363678359529,
+          "min": 0.40542393922805786,
+          "max": 0.7068745493888855,
+          "n": 15,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.965411965052287,
+          "std": 0.3039973358173699,
+          "ci95": 0.15384387820451398,
+          "min": 3.5636489391326904,
+          "max": 4.412542343139648,
+          "n": 15,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9167360746844594,
+          "std": 0.1396796391008325,
+          "ci95": 0.07068765036279344,
+          "min": 0.7658119658119659,
+          "max": 1.279363184079602,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5826205750306447,
+          "std": 0.10179155988032773,
+          "ci95": 0.05151363678359529,
+          "min": 0.40542393922805786,
+          "max": 0.7068745493888855,
+          "n": 15,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      },
+      "short": {
+        "wer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 15,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": NaN,
+          "std": 0.0,
+          "ci95": 0.0,
+          "min": NaN,
+          "max": NaN,
+          "n": 0,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.9013089974721273,
+          "std": 0.31976465053174447,
+          "ci95": 0.16182324038546336,
+          "min": 3.187760591506958,
+          "max": 4.256156921386719,
+          "n": 15,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.5985777777777779,
+          "std": 0.31729310135789623,
+          "ci95": 0.16057246393028285,
+          "min": 1.3866666666666667,
+          "max": 2.688,
+          "n": 15,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.3655112057924271,
+          "std": 0.12722293952986424,
+          "ci95": 0.06438369060448308,
+          "min": 0.14443372189998627,
+          "max": 0.6252151727676392,
+          "n": 15,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 1,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-25 19:44:57 UTC",
+      "git": {
+        "commit_sha": "a6c0549dff309e92d24d92ad9c5183c2c4f5aac6",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "f642df0837497f21926367217119e7b3edf923dfc325069bcf7f2f088ac08a52",
+        "n_files": 64
+      },
+      "metrics_version": 2,
+      "language": "en",
+      "seeds": [
+        1
+      ],
+      "summary": {
+        "num_sentences": 20,
+        "num_seeds": 1,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.043333333333333335,
+          "std": 0.12144355895516198,
+          "ci95": 0.05322498643763612,
+          "min": 0.0,
+          "max": 0.5,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.01175595238095238,
+          "std": 0.04789700946441566,
+          "ci95": 0.020991789939951305,
+          "min": 0.0,
+          "max": 0.21428571428571427,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.45254003300386314,
+          "std": 0.057931137882142,
+          "ci95": 0.02753871488121014,
+          "min": 0.3034742474555969,
+          "max": 0.5299863815307617,
+          "n": 17,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.13900306224823,
+          "std": 0.29934038037886374,
+          "ci95": 0.13119170603180555,
+          "min": 3.565297842025757,
+          "max": 4.47378396987915,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0466104013968458,
+          "std": 0.24601396488013752,
+          "ci95": 0.10782037398170174,
+          "min": 0.6906666666666667,
+          "max": 1.5786666666666667,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4184080518782139,
+          "std": 0.10350430110412684,
+          "ci95": 0.04536276003355709,
+          "min": 0.14443372189998627,
+          "max": 0.5299863815307617,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "harvard": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.42681773006916046,
+              "std": 0.05244062498742804,
+              "ci95": 0.051391812487679475,
+              "min": 0.3767704367637634,
+              "max": 0.4778188467025757,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.3481035232543945,
+              "std": 0.15447759302051983,
+              "ci95": 0.15138804116010943,
+              "min": 4.125491142272949,
+              "max": 4.456215858459473,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9982214322548084,
+              "std": 0.0699189425905894,
+              "ci95": 0.0685205637387776,
+              "min": 0.9102222222222222,
+              "max": 1.0797948717948718,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.42681773006916046,
+              "std": 0.05244062498742804,
+              "ci95": 0.051391812487679475,
+              "min": 0.3767704367637634,
+              "max": 0.4778188467025757,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "sibilant": {
+            "wer": {
+              "mean": 0.175,
+              "std": 0.2362907813126304,
+              "ci95": 0.2315649656863778,
+              "min": 0.0,
+              "max": 0.5,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.05357142857142857,
+              "std": 0.10714285714285714,
+              "ci95": 0.105,
+              "min": 0.0,
+              "max": 0.21428571428571427,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.41832737624645233,
+              "std": 0.07863155502181196,
+              "ci95": 0.07705892392137571,
+              "min": 0.3034742474555969,
+              "max": 0.48139894008636475,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.135869741439819,
+              "std": 0.2765836762218332,
+              "ci95": 0.27105200269739654,
+              "min": 3.8346614837646484,
+              "max": 4.4203362464904785,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.1484283934521222,
+              "std": 0.2004490863529855,
+              "ci95": 0.1964401046259258,
+              "min": 0.9855999999999999,
+              "max": 1.4320683760683761,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.41832737624645233,
+              "std": 0.07863155502181196,
+              "ci95": 0.07705892392137571,
+              "min": 0.3034742474555969,
+              "max": 0.48139894008636475,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "numbers": {
+            "wer": {
+              "mean": 0.05555555555555555,
+              "std": 0.09622504486493763,
+              "ci95": 0.1088888888888889,
+              "min": 0.0,
+              "max": 0.16666666666666666,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.006944444444444444,
+              "std": 0.012028130608117204,
+              "ci95": 0.013611111111111112,
+              "min": 0.0,
+              "max": 0.020833333333333332,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.49697407086690265,
+              "std": 0.029375852934961352,
+              "ci95": 0.033241906935362595,
+              "min": 0.47371652722358704,
+              "max": 0.5299863815307617,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.354508876800537,
+              "std": 0.2022950148053484,
+              "ci95": 0.22891835925703097,
+              "min": 4.120936393737793,
+              "max": 4.47378396987915,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.791007060572278,
+              "std": 0.09106338097342777,
+              "ci95": 0.1030479163359189,
+              "min": 0.6906666666666667,
+              "max": 0.8684057971014494,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.49697407086690265,
+              "std": 0.029375852934961352,
+              "ci95": 0.033241906935362595,
+              "min": 0.47371652722358704,
+              "max": 0.5299863815307617,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "long_complex": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4959050218264262,
+              "std": 0.0220602114917572,
+              "ci95": 0.02496347932456635,
+              "min": 0.47322025895118713,
+              "max": 0.5172825455665588,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.304054578145345,
+              "std": 0.12202122990879803,
+              "ci95": 0.13808002027199978,
+              "min": 4.1821818351745605,
+              "max": 4.4262237548828125,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.0014488600272264,
+              "std": 0.14046859790995309,
+              "ci95": 0.15895518231936143,
+              "min": 0.9118233995584989,
+              "max": 1.1633379953379954,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4959050218264262,
+              "std": 0.0220602114917572,
+              "ci95": 0.02496347932456635,
+              "min": 0.47322025895118713,
+              "max": 0.5172825455665588,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "prosody_questions": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.44465428590774536,
+              "std": 0.050588608951931895,
+              "ci95": 0.05724640011280012,
+              "min": 0.40542393922805786,
+              "max": 0.5017520189285278,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.648777961730957,
+              "std": 0.08525377957135327,
+              "ci95": 0.09647373346650952,
+              "min": 3.565297842025757,
+              "max": 3.735701084136963,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.843635876659115,
+              "std": 0.03503735477453436,
+              "ci95": 0.039648499373108874,
+              "min": 0.814717299578059,
+              "max": 0.8825982905982906,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.44465428590774536,
+              "std": 0.050588608951931895,
+              "ci95": 0.05724640011280012,
+              "min": 0.40542393922805786,
+              "max": 0.5017520189285278,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "short": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": NaN,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": NaN,
+              "max": NaN,
+              "n": 0,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.9740479787190757,
+              "std": 0.19578517159717632,
+              "ci95": 0.22155177818893498,
+              "min": 3.757396697998047,
+              "max": 4.138306617736816,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.479111111111111,
+              "std": 0.09619732806022173,
+              "ci95": 0.10885752437174784,
+              "min": 1.3866666666666667,
+              "max": 1.5786666666666667,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.22499349216620126,
+              "std": 0.09439533034684953,
+              "ci95": 0.10681837199655457,
+              "min": 0.14443372189998627,
+              "max": 0.32885852456092834,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "1": [
+          {
+            "id": "en_01",
+            "category": "harvard",
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4778188467025757,
+            "utmos": 4.361820220947266,
+            "duration_s": 2.965333333333333,
+            "duration_ratio": 1.0125528455284554,
+            "rms": 0.13582396507263184,
+            "peak": 0.6866791844367981,
+            "hf_ratio": 0.007104732561856508,
+            "synthesis_time_s": 1.783607006072998,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_11",
+            "category": "sibilant",
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "She sells seashells by the seashore, with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.44862473011016846,
+            "utmos": 3.9743762016296387,
+            "duration_s": 4.128,
+            "duration_ratio": 1.032,
+            "rms": 0.12481849640607834,
+            "peak": 0.8315442800521851,
+            "hf_ratio": 0.028132036328315735,
+            "synthesis_time_s": 2.1096887588500977,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_21",
+            "category": "numbers",
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.5299863815307617,
+            "utmos": 4.468806266784668,
+            "duration_s": 5.706666666666667,
+            "duration_ratio": 0.8684057971014494,
+            "rms": 0.1303858458995819,
+            "peak": 0.7965692281723022,
+            "hf_ratio": 0.004316655918955803,
+            "synthesis_time_s": 2.9222629070281982,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_31",
+            "category": "long_complex",
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4972122609615326,
+            "utmos": 4.1821818351745605,
+            "duration_s": 8.96,
+            "duration_ratio": 0.9291851851851853,
+            "rms": 0.13766390085220337,
+            "peak": 0.8636789321899414,
+            "hf_ratio": 0.003928972873836756,
+            "synthesis_time_s": 4.492344617843628,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_41",
+            "category": "prosody_questions",
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5017520189285278,
+            "utmos": 3.6453349590301514,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.814717299578059,
+            "rms": 0.1357567310333252,
+            "peak": 0.7657594084739685,
+            "hf_ratio": 0.009016381576657295,
+            "synthesis_time_s": 2.314089298248291,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_51",
+            "category": "short",
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.14443372189998627,
+            "utmos": 4.138306617736816,
+            "duration_s": 0.736,
+            "duration_ratio": 1.472,
+            "rms": 0.09438551962375641,
+            "peak": 0.6319437026977539,
+            "hf_ratio": 0.023392189294099808,
+            "synthesis_time_s": 0.4216318130493164,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_02",
+            "category": "harvard",
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4659877419471741,
+            "utmos": 4.125491142272949,
+            "duration_s": 2.7306666666666666,
+            "duration_ratio": 0.9102222222222222,
+            "rms": 0.12274915724992752,
+            "peak": 0.6194412112236023,
+            "hf_ratio": 0.021884789690375328,
+            "synthesis_time_s": 1.391834020614624,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_12",
+            "category": "sibilant",
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The sixth, sixth sheikh's sixth sheep is sick.",
+            "wer": 0.5,
+            "cer": 0.21428571428571427,
+            "secs": 0.3034742474555969,
+            "utmos": 4.4203362464904785,
+            "duration_s": 3.989333333333333,
+            "duration_ratio": 1.4320683760683761,
+            "rms": 0.09965173155069351,
+            "peak": 0.8695818185806274,
+            "hf_ratio": 0.056498944759368896,
+            "synthesis_time_s": 2.0159897804260254,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_22",
+            "category": "numbers",
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47371652722358704,
+            "utmos": 4.47378396987915,
+            "duration_s": 7.104,
+            "duration_ratio": 0.6906666666666667,
+            "rms": 0.1379884034395218,
+            "peak": 0.6898881793022156,
+            "hf_ratio": 0.005839132703840733,
+            "synthesis_time_s": 3.577944755554199,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_32",
+            "category": "long_complex",
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47322025895118713,
+            "utmos": 4.4262237548828125,
+            "duration_s": 9.834666666666667,
+            "duration_ratio": 0.9118233995584989,
+            "rms": 0.12920384109020233,
+            "peak": 0.8346638679504395,
+            "hf_ratio": 0.012178048491477966,
+            "synthesis_time_s": 5.046654939651489,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_42",
+            "category": "prosody_questions",
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.40542393922805786,
+            "utmos": 3.735701084136963,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8825982905982906,
+            "rms": 0.13126830756664276,
+            "peak": 0.7815252542495728,
+            "hf_ratio": 0.006113761104643345,
+            "synthesis_time_s": 2.5037052631378174,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_52",
+            "category": "short",
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.2016882300376892,
+            "utmos": 3.757396697998047,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.12232454866170883,
+            "peak": 0.7245169878005981,
+            "hf_ratio": 0.009575307369232178,
+            "synthesis_time_s": 0.40167713165283203,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_03",
+            "category": "harvard",
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.38669389486312866,
+            "utmos": 4.456215858459473,
+            "duration_s": 2.688,
+            "duration_ratio": 0.9903157894736843,
+            "rms": 0.15284858644008636,
+            "peak": 0.7443659901618958,
+            "hf_ratio": 0.004111438523977995,
+            "synthesis_time_s": 1.376709222793579,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_13",
+            "category": "sibilant",
+            "text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4398115873336792,
+            "utmos": 3.8346614837646484,
+            "duration_s": 4.8213333333333335,
+            "duration_ratio": 1.144045197740113,
+            "rms": 0.12669317424297333,
+            "peak": 0.8254716396331787,
+            "hf_ratio": 0.009946951642632484,
+            "synthesis_time_s": 2.6477324962615967,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_23",
+            "category": "numbers",
+            "text": "The ticket costs $25.50 for adults and $12.00 for children.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The ticket costs $25.50 for adults and $12 for children.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48721930384635925,
+            "utmos": 4.120936393737793,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8139487179487179,
+            "rms": 0.13267023861408234,
+            "peak": 0.8368954658508301,
+            "hf_ratio": 0.007630703505128622,
+            "synthesis_time_s": 2.8226099014282227,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_33",
+            "category": "long_complex",
+            "text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5172825455665588,
+            "utmos": 4.303758144378662,
+            "duration_s": 11.882666666666667,
+            "duration_ratio": 1.1633379953379954,
+            "rms": 0.1356356292963028,
+            "peak": 0.8189604878425598,
+            "hf_ratio": 0.008015801198780537,
+            "synthesis_time_s": 6.8762383460998535,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_43",
+            "category": "prosody_questions",
+            "text": "What an extraordinary performance by the symphony orchestra tonight!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "What an extraordinary performance by the Symphony Orchestra tonight!",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4267868995666504,
+            "utmos": 3.565297842025757,
+            "duration_s": 3.989333333333333,
+            "duration_ratio": 0.833592039800995,
+            "rms": 0.14696046710014343,
+            "peak": 0.7138577699661255,
+            "hf_ratio": 0.007404675707221031,
+            "synthesis_time_s": 2.4738972187042236,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_53",
+            "category": "short",
+            "text": "Seven.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "7.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.32885852456092834,
+            "utmos": 4.026440620422363,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.1219756156206131,
+            "peak": 0.8518118858337402,
+            "hf_ratio": 0.006295070052146912,
+            "synthesis_time_s": 0.5394787788391113,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_04",
+            "category": "harvard",
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3767704367637634,
+            "utmos": 4.448886871337891,
+            "duration_s": 3.008,
+            "duration_ratio": 1.0797948717948718,
+            "rms": 0.1278132051229477,
+            "peak": 0.8153083920478821,
+            "hf_ratio": 0.018314940854907036,
+            "synthesis_time_s": 1.943455696105957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_14",
+            "category": "sibilant",
+            "text": "Crisp sparkling cider was served in silver glasses.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Crisp, sparkling cider was served in silver glasses.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48139894008636475,
+            "utmos": 4.314105033874512,
+            "duration_s": 3.52,
+            "duration_ratio": 0.9855999999999999,
+            "rms": 0.11862856149673462,
+            "peak": 0.8337365388870239,
+            "hf_ratio": 0.019579913467168808,
+            "synthesis_time_s": 2.1799490451812744,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-25 19:45:53 UTC",
+      "git": {
+        "commit_sha": "a6c0549dff309e92d24d92ad9c5183c2c4f5aac6",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "f642df0837497f21926367217119e7b3edf923dfc325069bcf7f2f088ac08a52",
+        "n_files": 64
+      },
+      "metrics_version": 2,
+      "language": "en",
+      "seeds": [
+        1
+      ],
+      "summary": {
+        "num_sentences": 20,
+        "num_seeds": 1,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.03958333333333334,
+          "std": 0.08647055240224003,
+          "ci95": 0.037897390511779816,
+          "min": 0.0,
+          "max": 0.3,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.010746635610766046,
+          "std": 0.03005718475144603,
+          "ci95": 0.013173142030034675,
+          "min": 0.0,
+          "max": 0.10714285714285714,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6080662380246555,
+          "std": 0.08551820266032266,
+          "ci95": 0.04065277303904209,
+          "min": 0.3246043026447296,
+          "max": 0.6993889212608337,
+          "n": 17,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.139924788475037,
+          "std": 0.26454101883766395,
+          "ci95": 0.11594021338778153,
+          "min": 3.6063473224639893,
+          "max": 4.440156936645508,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0358840194699446,
+          "std": 0.24641432902356813,
+          "ci95": 0.10799584130403275,
+          "min": 0.7487407407407407,
+          "max": 1.5786666666666667,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5786809831857681,
+          "std": 0.10783847095892142,
+          "ci95": 0.0472622937241419,
+          "min": 0.3246043026447296,
+          "max": 0.6993889212608337,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "harvard": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6034623831510544,
+              "std": 0.035029719907473555,
+              "ci95": 0.034329125509324085,
+              "min": 0.5692957043647766,
+              "max": 0.6453996300697327,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.285734534263611,
+              "std": 0.11379559602267851,
+              "ci95": 0.11151968410222494,
+              "min": 4.181711196899414,
+              "max": 4.440156936645508,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9101468242212787,
+              "std": 0.06361126938336018,
+              "ci95": 0.06233904399569297,
+              "min": 0.8497777777777777,
+              "max": 0.9993846153846153,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6034623831510544,
+              "std": 0.035029719907473555,
+              "ci95": 0.034329125509324085,
+              "min": 0.5692957043647766,
+              "max": 0.6453996300697327,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "sibilant": {
+            "wer": {
+              "mean": 0.08125,
+              "std": 0.09868932735272509,
+              "ci95": 0.09671554080567059,
+              "min": 0.0,
+              "max": 0.2,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.026785714285714284,
+              "std": 0.05357142857142857,
+              "ci95": 0.0525,
+              "min": 0.0,
+              "max": 0.10714285714285714,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5224573686718941,
+              "std": 0.14395799055333783,
+              "ci95": 0.14107883074227107,
+              "min": 0.3246043026447296,
+              "max": 0.6563019752502441,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.084836483001709,
+              "std": 0.24917227164122052,
+              "ci95": 0.2441888262083961,
+              "min": 3.8135223388671875,
+              "max": 4.413092613220215,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.1243150050702593,
+              "std": 0.14910459395293937,
+              "ci95": 0.14612250207388058,
+              "min": 1.0426666666666666,
+              "max": 1.3478290598290599,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5224573686718941,
+              "std": 0.14395799055333783,
+              "ci95": 0.14107883074227107,
+              "min": 0.3246043026447296,
+              "max": 0.6563019752502441,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "numbers": {
+            "wer": {
+              "mean": 0.15555555555555556,
+              "std": 0.15030832509409647,
+              "ci95": 0.17008988183085602,
+              "min": 0.0,
+              "max": 0.3,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.035929951690821256,
+              "std": 0.04540143260532312,
+              "ci95": 0.05137655749910479,
+              "min": 0.0,
+              "max": 0.08695652173913043,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.65001380443573,
+              "std": 0.005564892412185276,
+              "ci95": 0.0062972685790854905,
+              "min": 0.6467798948287964,
+              "max": 0.6564395427703857,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.384555657704671,
+              "std": 0.028902169990962765,
+              "ci95": 0.03270588422391549,
+              "min": 4.354178428649902,
+              "max": 4.411713123321533,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8287314918039556,
+              "std": 0.09362576273638824,
+              "ci95": 0.10594752426511805,
+              "min": 0.7487407407407407,
+              "max": 0.9317101449275362,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.65001380443573,
+              "std": 0.005564892412185276,
+              "ci95": 0.0062972685790854905,
+              "min": 0.6467798948287964,
+              "max": 0.6564395427703857,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "long_complex": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.675236721833547,
+              "std": 0.02217672724005621,
+              "ci95": 0.025095329305911067,
+              "min": 0.6557910442352295,
+              "max": 0.6993889212608337,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.099810441335042,
+              "std": 0.258036492501219,
+              "ci95": 0.2919957792763983,
+              "min": 3.852961540222168,
+              "max": 4.367741107940674,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9729556242792445,
+              "std": 0.039693645746983,
+              "ci95": 0.04491758863199103,
+              "min": 0.9335805739514348,
+              "max": 1.012960372960373,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.675236721833547,
+              "std": 0.02217672724005621,
+              "ci95": 0.025095329305911067,
+              "min": 0.6557910442352295,
+              "max": 0.6993889212608337,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "prosody_questions": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6192318201065063,
+              "std": 0.027627712493111745,
+              "ci95": 0.03126369980018364,
+              "min": 0.5873302221298218,
+              "max": 0.6352634429931641,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.9755268891652427,
+              "std": 0.4073559666215269,
+              "ci95": 0.46096667089048,
+              "min": 3.6063473224639893,
+              "max": 4.412542343139648,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8769239079943785,
+              "std": 0.12439161177275439,
+              "ci95": 0.14076235986218508,
+              "min": 0.7658119658119659,
+              "max": 1.0113080168776372,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6192318201065063,
+              "std": 0.027627712493111745,
+              "ci95": 0.03126369980018364,
+              "min": 0.5873302221298218,
+              "max": 0.6352634429931641,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "short": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": NaN,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": NaN,
+              "max": NaN,
+              "n": 0,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.978844245274862,
+              "std": 0.3141434950122282,
+              "ci95": 0.35548682956258043,
+              "min": 3.6171371936798096,
+              "max": 4.183407306671143,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.5146666666666668,
+              "std": 0.11085125168440811,
+              "ci95": 0.12543999999999997,
+              "min": 1.3866666666666667,
+              "max": 1.5786666666666667,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4121645390987396,
+              "std": 0.055123542561771474,
+              "ci95": 0.062378160587980125,
+              "min": 0.36100196838378906,
+              "max": 0.4705390930175781,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "1": [
+          {
+            "id": "en_01",
+            "category": "harvard",
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6453996300697327,
+            "utmos": 4.22238302230835,
+            "duration_s": 2.6453333333333333,
+            "duration_ratio": 0.9032845528455286,
+            "rms": 0.14208926260471344,
+            "peak": 0.629777193069458,
+            "hf_ratio": 0.01003982312977314,
+            "synthesis_time_s": 1.9008800983428955,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_11",
+            "category": "sibilant",
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.515327513217926,
+            "utmos": 4.096836566925049,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 1.0426666666666666,
+            "rms": 0.12688781321048737,
+            "peak": 0.78119957447052,
+            "hf_ratio": 0.0123576819896698,
+            "synthesis_time_s": 3.2264719009399414,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_21",
+            "category": "numbers",
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.6564395427703857,
+            "utmos": 4.411713123321533,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 0.9317101449275362,
+            "rms": 0.1379455029964447,
+            "peak": 0.7492887377738953,
+            "hf_ratio": 0.0033223163336515427,
+            "synthesis_time_s": 3.3354299068450928,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_31",
+            "category": "long_complex",
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6993889212608337,
+            "utmos": 3.852961540222168,
+            "duration_s": 9.376,
+            "duration_ratio": 0.9723259259259259,
+            "rms": 0.14564359188079834,
+            "peak": 0.7249033451080322,
+            "hf_ratio": 0.002180695068091154,
+            "synthesis_time_s": 4.836609363555908,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_41",
+            "category": "prosody_questions",
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6352634429931641,
+            "utmos": 4.412542343139648,
+            "duration_s": 5.706666666666667,
+            "duration_ratio": 1.0113080168776372,
+            "rms": 0.13762779533863068,
+            "peak": 0.6156091690063477,
+            "hf_ratio": 0.0040166908875107765,
+            "synthesis_time_s": 3.1276357173919678,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_51",
+            "category": "short",
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36100196838378906,
+            "utmos": 4.183407306671143,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.11379820853471756,
+            "peak": 0.7508783340454102,
+            "hf_ratio": 0.011979477480053902,
+            "synthesis_time_s": 0.48002052307128906,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_02",
+            "category": "harvard",
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5692957043647766,
+            "utmos": 4.181711196899414,
+            "duration_s": 2.5493333333333332,
+            "duration_ratio": 0.8497777777777777,
+            "rms": 0.14592628180980682,
+            "peak": 0.586763858795166,
+            "hf_ratio": 0.0027905211318284273,
+            "synthesis_time_s": 1.3966193199157715,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_12",
+            "category": "sibilant",
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The six sick shakes. Sixth sheep is sick.",
+            "wer": 0.125,
+            "cer": 0.10714285714285714,
+            "secs": 0.3246043026447296,
+            "utmos": 4.413092613220215,
+            "duration_s": 3.7546666666666666,
+            "duration_ratio": 1.3478290598290599,
+            "rms": 0.10998869687318802,
+            "peak": 0.6183338165283203,
+            "hf_ratio": 0.03308432921767235,
+            "synthesis_time_s": 2.017609119415283,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_22",
+            "category": "numbers",
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6468219757080078,
+            "utmos": 4.387775421142578,
+            "duration_s": 7.701333333333333,
+            "duration_ratio": 0.7487407407407407,
+            "rms": 0.13667987287044525,
+            "peak": 0.6467130184173584,
+            "hf_ratio": 0.0011674402048811316,
+            "synthesis_time_s": 3.987295150756836,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_32",
+            "category": "long_complex",
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6557910442352295,
+            "utmos": 4.078728675842285,
+            "duration_s": 10.069333333333333,
+            "duration_ratio": 0.9335805739514348,
+            "rms": 0.13777315616607666,
+            "peak": 0.7734653949737549,
+            "hf_ratio": 0.006032064091414213,
+            "synthesis_time_s": 5.1913158893585205,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_42",
+            "category": "prosody_questions",
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5873302221298218,
+            "utmos": 3.90769100189209,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7658119658119659,
+            "rms": 0.1262456327676773,
+            "peak": 0.6087677478790283,
+            "hf_ratio": 0.00647758599370718,
+            "synthesis_time_s": 2.219674587249756,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_52",
+            "category": "short",
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4705390930175781,
+            "utmos": 3.6171371936798096,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.11997963488101959,
+            "peak": 0.6238718032836914,
+            "hf_ratio": 0.01349630393087864,
+            "synthesis_time_s": 0.48212552070617676,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_03",
+            "category": "harvard",
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "It is easy to tell the depth of a well",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.618615984916687,
+            "utmos": 4.298686981201172,
+            "duration_s": 2.4106666666666667,
+            "duration_ratio": 0.888140350877193,
+            "rms": 0.13602542877197266,
+            "peak": 0.6888831257820129,
+            "hf_ratio": 0.0029917689971625805,
+            "synthesis_time_s": 1.3399481773376465,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_13",
+            "category": "sibilant",
+            "text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5935956835746765,
+            "utmos": 4.015894412994385,
+            "duration_s": 4.448,
+            "duration_ratio": 1.0554576271186442,
+            "rms": 0.13495580852031708,
+            "peak": 0.8458250761032104,
+            "hf_ratio": 0.010384686291217804,
+            "synthesis_time_s": 2.4757070541381836,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_23",
+            "category": "numbers",
+            "text": "The ticket costs $25.50 for adults and $12.00 for children.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The ticket costs 25 to 50 cents for adults and $12 for children.",
+            "wer": 0.3,
+            "cer": 0.08695652173913043,
+            "secs": 0.6467798948287964,
+            "utmos": 4.354178428649902,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.8057435897435897,
+            "rms": 0.12034398317337036,
+            "peak": 0.7119654417037964,
+            "hf_ratio": 0.006756587885320187,
+            "synthesis_time_s": 2.785059690475464,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_33",
+            "category": "long_complex",
+            "text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6705302000045776,
+            "utmos": 4.367741107940674,
+            "duration_s": 10.346666666666666,
+            "duration_ratio": 1.012960372960373,
+            "rms": 0.14868539571762085,
+            "peak": 0.7450340986251831,
+            "hf_ratio": 0.002949352143332362,
+            "synthesis_time_s": 5.4202210903167725,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_43",
+            "category": "prosody_questions",
+            "text": "What an extraordinary performance by the symphony orchestra tonight!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "What an extraordinary performance by the symphony orchestra tonight.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6351017951965332,
+            "utmos": 3.6063473224639893,
+            "duration_s": 4.085333333333334,
+            "duration_ratio": 0.8536517412935324,
+            "rms": 0.14087368547916412,
+            "peak": 0.6785311698913574,
+            "hf_ratio": 0.0029264132026582956,
+            "synthesis_time_s": 2.2236077785491943,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_53",
+            "category": "short",
+            "text": "Seven.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "7.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4049525558948517,
+            "utmos": 4.135988235473633,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.09709547460079193,
+            "peak": 0.6411964893341064,
+            "hf_ratio": 0.01853003352880478,
+            "synthesis_time_s": 0.42795634269714355,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_04",
+            "category": "harvard",
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "These days a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5805382132530212,
+            "utmos": 4.440156936645508,
+            "duration_s": 2.784,
+            "duration_ratio": 0.9993846153846153,
+            "rms": 0.13956429064273834,
+            "peak": 0.5898125171661377,
+            "hf_ratio": 0.004702973645180464,
+            "synthesis_time_s": 1.5171091556549072,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_14",
+            "category": "sibilant",
+            "text": "Crisp sparkling cider was served in silver glasses.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Crisp, sparkling cider was served in silver glasses.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6563019752502441,
+            "utmos": 3.8135223388671875,
+            "duration_s": 3.7546666666666666,
+            "duration_ratio": 1.0513066666666666,
+            "rms": 0.13280902802944183,
+            "peak": 0.7345863580703735,
+            "hf_ratio": 0.014886279590427876,
+            "synthesis_time_s": 1.9819328784942627,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-25 19:46:43 UTC",
+      "git": {
+        "commit_sha": "a6c0549dff309e92d24d92ad9c5183c2c4f5aac6",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "f642df0837497f21926367217119e7b3edf923dfc325069bcf7f2f088ac08a52",
+        "n_files": 64
+      },
+      "metrics_version": 2,
+      "language": "en",
+      "seeds": [
+        1
+      ],
+      "summary": {
+        "num_sentences": 20,
+        "num_seeds": 1,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.035833333333333335,
+          "std": 0.07766229940285063,
+          "ci95": 0.0340370034277282,
+          "min": 0.0,
+          "max": 0.25,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.011057194616977227,
+          "std": 0.03996652653087849,
+          "ci95": 0.017516102548928256,
+          "min": 0.0,
+          "max": 0.17857142857142858,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6080981142380658,
+          "std": 0.06836534380508644,
+          "ci95": 0.03249882152555725,
+          "min": 0.4191000461578369,
+          "max": 0.7045066356658936,
+          "n": 17,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.271265733242035,
+          "std": 0.21327381042794527,
+          "ci95": 0.09347136863570867,
+          "min": 3.6791763305664062,
+          "max": 4.4992780685424805,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9553678704895907,
+          "std": 0.24275680633179658,
+          "ci95": 0.1063928613078951,
+          "min": 0.7138461538461538,
+          "max": 1.5786666666666667,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.575410957634449,
+          "std": 0.12275121179268031,
+          "ci95": 0.053798090562225766,
+          "min": 0.21119636297225952,
+          "max": 0.7045066356658936,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "harvard": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6218924671411514,
+              "std": 0.06012759801804502,
+              "ci95": 0.05892504605768412,
+              "min": 0.5606579184532166,
+              "max": 0.7045066356658936,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.398817658424377,
+              "std": 0.04299797266177602,
+              "ci95": 0.0421380132085405,
+              "min": 4.342711448669434,
+              "max": 4.447230815887451,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9193970793149226,
+              "std": 0.09234853880951796,
+              "ci95": 0.0905015680333276,
+              "min": 0.8016842105263158,
+              "max": 1.0147008547008547,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6218924671411514,
+              "std": 0.06012759801804502,
+              "ci95": 0.05892504605768412,
+              "min": 0.5606579184532166,
+              "max": 0.7045066356658936,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "sibilant": {
+            "wer": {
+              "mean": 0.1125,
+              "std": 0.13149778198382917,
+              "ci95": 0.1288678263441526,
+              "min": 0.0,
+              "max": 0.25,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.044642857142857144,
+              "std": 0.08928571428571429,
+              "ci95": 0.0875,
+              "min": 0.0,
+              "max": 0.17857142857142858,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5191316455602646,
+              "std": 0.0712302044595225,
+              "ci95": 0.06980560037033204,
+              "min": 0.4191000461578369,
+              "max": 0.587822675704956,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.362040400505066,
+              "std": 0.07924606621922513,
+              "ci95": 0.07766114489484062,
+              "min": 4.263479232788086,
+              "max": 4.4557204246521,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9201075474431407,
+              "std": 0.08423516240624607,
+              "ci95": 0.08255045915812115,
+              "min": 0.8106666666666666,
+              "max": 1.0005333333333333,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5191316455602646,
+              "std": 0.0712302044595225,
+              "ci95": 0.06980560037033204,
+              "min": 0.4191000461578369,
+              "max": 0.587822675704956,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "numbers": {
+            "wer": {
+              "mean": 0.08888888888888889,
+              "std": 0.08388704928078611,
+              "ci95": 0.09492713254821912,
+              "min": 0.0,
+              "max": 0.16666666666666666,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.014190821256038646,
+              "std": 0.01229795401836733,
+              "ci95": 0.013916445043452595,
+              "min": 0.0,
+              "max": 0.021739130434782608,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6078872084617615,
+              "std": 0.018041657178786717,
+              "ci95": 0.020416057032446932,
+              "min": 0.59422767162323,
+              "max": 0.6283391714096069,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.352972666422526,
+              "std": 0.12670462585514167,
+              "ci95": 0.14337978169627225,
+              "min": 4.279489517211914,
+              "max": 4.4992780685424805,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.7650941822536025,
+              "std": 0.061089091499022675,
+              "ci95": 0.06912881470616042,
+              "min": 0.7138461538461538,
+              "max": 0.8326956521739132,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6078872084617615,
+              "std": 0.018041657178786717,
+              "ci95": 0.020416057032446932,
+              "min": 0.59422767162323,
+              "max": 0.6283391714096069,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "long_complex": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6566270987192789,
+              "std": 0.005824516769324521,
+              "ci95": 0.006591061196351243,
+              "min": 0.6499204635620117,
+              "max": 0.6604171991348267,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.345548311869304,
+              "std": 0.16065230848018291,
+              "ci95": 0.1817952009520581,
+              "min": 4.160686492919922,
+              "max": 4.451348781585693,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8435879943565006,
+              "std": 0.09549919735392673,
+              "ci95": 0.10806751510737829,
+              "min": 0.7811282051282051,
+              "max": 0.953520987654321,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6566270987192789,
+              "std": 0.005824516769324521,
+              "ci95": 0.006591061196351243,
+              "min": 0.6499204635620117,
+              "max": 0.6604171991348267,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "prosody_questions": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.660009523232778,
+              "std": 0.014561769515202893,
+              "ci95": 0.016478193436980166,
+              "min": 0.6483076810836792,
+              "max": 0.6763172745704651,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.140479167302449,
+              "std": 0.2413386130032798,
+              "ci95": 0.27310034983925724,
+              "min": 3.8680169582366943,
+              "max": 4.327381610870361,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8286530131986395,
+              "std": 0.025170544655785304,
+              "ci95": 0.0284831526360276,
+              "min": 0.8135323383084577,
+              "max": 0.8577094017094018,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.660009523232778,
+              "std": 0.014561769515202893,
+              "ci95": 0.016478193436980166,
+              "min": 0.6483076810836792,
+              "max": 0.6763172745704651,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "short": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": NaN,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": NaN,
+              "max": NaN,
+              "n": 0,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.954960664113363,
+              "std": 0.2770787528963075,
+              "ci95": 0.3135441254399616,
+              "min": 3.6791763305664062,
+              "max": 4.233315944671631,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.479111111111111,
+              "std": 0.09619732806022173,
+              "ci95": 0.10885752437174784,
+              "min": 1.3866666666666667,
+              "max": 1.5786666666666667,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.3901837368806203,
+              "std": 0.212623132274916,
+              "ci95": 0.24060572440353376,
+              "min": 0.21119636297225952,
+              "max": 0.6252151727676392,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "1": [
+          {
+            "id": "en_01",
+            "category": "harvard",
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6158215999603271,
+            "utmos": 4.399118423461914,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 0.9652032520325203,
+            "rms": 0.12407951056957245,
+            "peak": 0.726577877998352,
+            "hf_ratio": 0.022408396005630493,
+            "synthesis_time_s": 1.5313570499420166,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_11",
+            "category": "sibilant",
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.533169150352478,
+            "utmos": 4.377474308013916,
+            "duration_s": 3.2426666666666666,
+            "duration_ratio": 0.8106666666666666,
+            "rms": 0.10667577385902405,
+            "peak": 0.6019675731658936,
+            "hf_ratio": 0.05198720470070839,
+            "synthesis_time_s": 1.7250542640686035,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_21",
+            "category": "numbers",
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.59422767162323,
+            "utmos": 4.280150413513184,
+            "duration_s": 5.472,
+            "duration_ratio": 0.8326956521739132,
+            "rms": 0.12400893867015839,
+            "peak": 0.9560806751251221,
+            "hf_ratio": 0.007757948711514473,
+            "synthesis_time_s": 2.872225046157837,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_31",
+            "category": "long_complex",
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6595436334609985,
+            "utmos": 4.451348781585693,
+            "duration_s": 9.194666666666667,
+            "duration_ratio": 0.953520987654321,
+            "rms": 0.10923289507627487,
+            "peak": 0.780753493309021,
+            "hf_ratio": 0.009674017317593098,
+            "synthesis_time_s": 4.717639446258545,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_41",
+            "category": "prosody_questions",
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6554036140441895,
+            "utmos": 4.327381610870361,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.814717299578059,
+            "rms": 0.12644854187965393,
+            "peak": 0.824040949344635,
+            "hf_ratio": 0.016804305836558342,
+            "synthesis_time_s": 2.392794370651245,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_51",
+            "category": "short",
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.21119636297225952,
+            "utmos": 3.952389717102051,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.08283022791147232,
+            "peak": 0.5620725154876709,
+            "hf_ratio": 0.11009612679481506,
+            "synthesis_time_s": 0.45017576217651367,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_02",
+            "category": "harvard",
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6065837144851685,
+            "utmos": 4.406209945678711,
+            "duration_s": 2.688,
+            "duration_ratio": 0.896,
+            "rms": 0.12253282964229584,
+            "peak": 0.7375548481941223,
+            "hf_ratio": 0.006720440462231636,
+            "synthesis_time_s": 1.426703929901123,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_12",
+            "category": "sibilant",
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The six sick shakes six sheep is sick.",
+            "wer": 0.25,
+            "cer": 0.17857142857142858,
+            "secs": 0.4191000461578369,
+            "utmos": 4.263479232788086,
+            "duration_s": 2.506666666666667,
+            "duration_ratio": 0.8998290598290599,
+            "rms": 0.11465653777122498,
+            "peak": 0.8334879875183105,
+            "hf_ratio": 0.07846321165561676,
+            "synthesis_time_s": 1.3377890586853027,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_22",
+            "category": "numbers",
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6010947823524475,
+            "utmos": 4.4992780685424805,
+            "duration_s": 7.701333333333333,
+            "duration_ratio": 0.7487407407407407,
+            "rms": 0.11537546664476395,
+            "peak": 0.8338470458984375,
+            "hf_ratio": 0.009008191525936127,
+            "synthesis_time_s": 4.239811420440674,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_32",
+            "category": "long_complex",
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6604171991348267,
+            "utmos": 4.424609661102295,
+            "duration_s": 8.586666666666666,
+            "duration_ratio": 0.7961147902869756,
+            "rms": 0.10088084638118744,
+            "peak": 0.931021511554718,
+            "hf_ratio": 0.0354512482881546,
+            "synthesis_time_s": 4.378068208694458,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_42",
+            "category": "prosody_questions",
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6763172745704651,
+            "utmos": 4.226038932800293,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 0.8577094017094018,
+            "rms": 0.11514635384082794,
+            "peak": 0.7493135929107666,
+            "hf_ratio": 0.0195905901491642,
+            "synthesis_time_s": 2.4354937076568604,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_52",
+            "category": "short",
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3341396749019623,
+            "utmos": 3.6791763305664062,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.10901477932929993,
+            "peak": 0.6383264660835266,
+            "hf_ratio": 0.06662970781326294,
+            "synthesis_time_s": 0.407620906829834,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_03",
+            "category": "harvard",
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5606579184532166,
+            "utmos": 4.342711448669434,
+            "duration_s": 2.176,
+            "duration_ratio": 0.8016842105263158,
+            "rms": 0.13286563754081726,
+            "peak": 0.6940306425094604,
+            "hf_ratio": 0.007589101791381836,
+            "synthesis_time_s": 1.1697568893432617,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_13",
+            "category": "sibilant",
+            "text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5364347100257874,
+            "utmos": 4.4557204246521,
+            "duration_s": 4.085333333333334,
+            "duration_ratio": 0.9694011299435029,
+            "rms": 0.12621939182281494,
+            "peak": 0.9266982078552246,
+            "hf_ratio": 0.042449817061424255,
+            "synthesis_time_s": 2.117980480194092,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_23",
+            "category": "numbers",
+            "text": "The ticket costs $25.50 for adults and $12.00 for children.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The ticket costs 25.50 cents for adults and 12 dollars for children.",
+            "wer": 0.1,
+            "cer": 0.021739130434782608,
+            "secs": 0.6283391714096069,
+            "utmos": 4.279489517211914,
+            "duration_s": 4.64,
+            "duration_ratio": 0.7138461538461538,
+            "rms": 0.12607601284980774,
+            "peak": 0.8840616345405579,
+            "hf_ratio": 0.018101779744029045,
+            "synthesis_time_s": 2.3875925540924072,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_33",
+            "category": "long_complex",
+            "text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6499204635620117,
+            "utmos": 4.160686492919922,
+            "duration_s": 7.978666666666666,
+            "duration_ratio": 0.7811282051282051,
+            "rms": 0.11843068152666092,
+            "peak": 0.8771268129348755,
+            "hf_ratio": 0.024094650521874428,
+            "synthesis_time_s": 4.010462999343872,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_43",
+            "category": "prosody_questions",
+            "text": "What an extraordinary performance by the symphony orchestra tonight!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "What an extraordinary performance by the Symphony Orchestra tonight!",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6483076810836792,
+            "utmos": 3.8680169582366943,
+            "duration_s": 3.8933333333333335,
+            "duration_ratio": 0.8135323383084577,
+            "rms": 0.12489811331033707,
+            "peak": 0.8909338712692261,
+            "hf_ratio": 0.01678067073225975,
+            "synthesis_time_s": 2.039618492126465,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_53",
+            "category": "short",
+            "text": "Seven.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "7.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6252151727676392,
+            "utmos": 4.233315944671631,
+            "duration_s": 0.736,
+            "duration_ratio": 1.472,
+            "rms": 0.1025470495223999,
+            "peak": 0.6707650423049927,
+            "hf_ratio": 0.03794559836387634,
+            "synthesis_time_s": 0.4278109073638916,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_04",
+            "category": "harvard",
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7045066356658936,
+            "utmos": 4.447230815887451,
+            "duration_s": 2.8266666666666667,
+            "duration_ratio": 1.0147008547008547,
+            "rms": 0.1208515539765358,
+            "peak": 0.7095611095428467,
+            "hf_ratio": 0.011524920351803303,
+            "synthesis_time_s": 1.4816265106201172,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_14",
+            "category": "sibilant",
+            "text": "Crisp sparkling cider was served in silver glasses.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Crisp, sparkling cider was served in silver glasses.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.587822675704956,
+            "utmos": 4.351487636566162,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 1.0005333333333333,
+            "rms": 0.11083942651748657,
+            "peak": 0.7735406756401062,
+            "hf_ratio": 0.07561533153057098,
+            "synthesis_time_s": 1.7916069030761719,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-25 19:47:47 UTC",
+      "git": {
+        "commit_sha": "a6c0549dff309e92d24d92ad9c5183c2c4f5aac6",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "f642df0837497f21926367217119e7b3edf923dfc325069bcf7f2f088ac08a52",
+        "n_files": 64
+      },
+      "metrics_version": 2,
+      "language": "en",
+      "seeds": [
+        1
+      ],
+      "summary": {
+        "num_sentences": 20,
+        "num_seeds": 1,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.04833333333333333,
+          "std": 0.12162400117089846,
+          "ci95": 0.05330406872547402,
+          "min": 0.0,
+          "max": 0.5,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.023557194616977223,
+          "std": 0.0955541341729087,
+          "ci95": 0.04187844575018486,
+          "min": 0.0,
+          "max": 0.42857142857142855,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.6648894828908584,
+          "std": 0.03451390772691324,
+          "ci95": 0.01640687027866672,
+          "min": 0.6007754802703857,
+          "max": 0.7099874019622803,
+          "n": 17,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.891315984725952,
+          "std": 0.29570763895403873,
+          "ci95": 0.12959958690477028,
+          "min": 3.187760591506958,
+          "max": 4.324032783508301,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.2870922124802555,
+          "std": 0.5002685709508881,
+          "ci95": 0.21925236820396102,
+          "min": 0.8711111111111112,
+          "max": 2.688,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.6322986841201782,
+          "std": 0.09099963341037129,
+          "ci95": 0.039882347781697636,
+          "min": 0.3646470606327057,
+          "max": 0.7099874019622803,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 1,
+          "nan": 0
+        },
+        "by_category": {
+          "harvard": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6414293050765991,
+              "std": 0.017310753066919322,
+              "ci95": 0.016964538005580936,
+              "min": 0.6261321902275085,
+              "max": 0.6611971855163574,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.051209807395935,
+              "std": 0.14854018548658324,
+              "ci95": 0.14556938177685158,
+              "min": 3.8375391960144043,
+              "max": 4.181974411010742,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.0867463217142292,
+              "std": 0.043332189871969365,
+              "ci95": 0.04246554607452998,
+              "min": 1.0346666666666666,
+              "max": 1.1400325203252033,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6414293050765991,
+              "std": 0.017310753066919322,
+              "ci95": 0.016964538005580936,
+              "min": 0.6261321902275085,
+              "max": 0.6611971855163574,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "sibilant": {
+            "wer": {
+              "mean": 0.175,
+              "std": 0.2362907813126304,
+              "ci95": 0.2315649656863778,
+              "min": 0.0,
+              "max": 0.5,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.10714285714285714,
+              "std": 0.21428571428571427,
+              "ci95": 0.21,
+              "min": 0.0,
+              "max": 0.42857142857142855,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6320663094520569,
+              "std": 0.028407692205060106,
+              "ci95": 0.027839538360958902,
+              "min": 0.6007754802703857,
+              "max": 0.6651703119277954,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.778958559036255,
+              "std": 0.25072994731913556,
+              "ci95": 0.24571534837275286,
+              "min": 3.443887948989868,
+              "max": 4.022974014282227,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.6496776010430247,
+              "std": 0.6348573008276078,
+              "ci95": 0.6221601548110557,
+              "min": 0.928,
+              "max": 2.3564293785310735,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6320663094520569,
+              "std": 0.028407692205060106,
+              "ci95": 0.027839538360958902,
+              "min": 0.6007754802703857,
+              "max": 0.6651703119277954,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 1,
+              "nan": 0
+            }
+          },
+          "numbers": {
+            "wer": {
+              "mean": 0.08888888888888889,
+              "std": 0.08388704928078611,
+              "ci95": 0.09492713254821912,
+              "min": 0.0,
+              "max": 0.16666666666666666,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.014190821256038646,
+              "std": 0.01229795401836733,
+              "ci95": 0.013916445043452595,
+              "min": 0.0,
+              "max": 0.021739130434782608,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6795393625895182,
+              "std": 0.03099290477330345,
+              "ci95": 0.03507177335111696,
+              "min": 0.643751859664917,
+              "max": 0.6974666118621826,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.220982551574707,
+              "std": 0.09076199140011826,
+              "ci95": 0.10270686192740776,
+              "min": 4.152927875518799,
+              "max": 4.324032783508301,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9554792518270779,
+              "std": 0.09600585761628187,
+              "ci95": 0.1086408551675408,
+              "min": 0.8711111111111112,
+              "max": 1.0599420289855073,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6795393625895182,
+              "std": 0.03099290477330345,
+              "ci95": 0.03507177335111696,
+              "min": 0.643751859664917,
+              "max": 0.6974666118621826,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "long_complex": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.6979956030845642,
+              "std": 0.014303814028052197,
+              "ci95": 0.01618628932388719,
+              "min": 0.6821637153625488,
+              "max": 0.7099874019622803,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.9638846715291343,
+              "std": 0.0638437142913334,
+              "ci95": 0.07224596383904712,
+              "min": 3.9017434120178223,
+              "max": 4.029304504394531,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.045080999767681,
+              "std": 0.0833863589104687,
+              "ci95": 0.09436054805685563,
+              "min": 0.9859955849889623,
+              "max": 1.1404641975308643,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.6979956030845642,
+              "std": 0.014303814028052197,
+              "ci95": 0.01618628932388719,
+              "min": 0.6821637153625488,
+              "max": 0.7099874019622803,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "prosody_questions": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.692177951335907,
+              "std": 0.01913393095325092,
+              "ci95": 0.02165208116556966,
+              "min": 0.6705427765846252,
+              "max": 0.7068745493888855,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.8719278971354165,
+              "std": 0.30788366921471,
+              "ci95": 0.348403169828397,
+              "min": 3.5636489391326904,
+              "max": 4.179414749145508,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.047044823486161,
+              "std": 0.20690706590612143,
+              "ci95": 0.2341373863883443,
+              "min": 0.8825982905982906,
+              "max": 1.279363184079602,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.692177951335907,
+              "std": 0.01913393095325092,
+              "ci95": 0.02165208116556966,
+              "min": 0.6705427765846252,
+              "max": 0.7068745493888855,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "short": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": NaN,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": NaN,
+              "max": NaN,
+              "n": 0,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.44508695602417,
+              "std": 0.22285357150682758,
+              "ci95": 0.2521825562186994,
+              "min": 3.187760591506958,
+              "max": 3.574784994125366,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.8844444444444448,
+              "std": 0.7024899630230658,
+              "ci95": 0.7949422277385795,
+              "min": 1.3866666666666667,
+              "max": 2.688,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.44761749108632404,
+              "std": 0.09460502928596773,
+              "ci95": 0.10705566868489397,
+              "min": 0.3646470606327057,
+              "max": 0.550641655921936,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "1": [
+          {
+            "id": "en_01",
+            "category": "harvard",
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6506878733634949,
+            "utmos": 4.093482971191406,
+            "duration_s": 3.3386666666666667,
+            "duration_ratio": 1.1400325203252033,
+            "rms": 0.13053227961063385,
+            "peak": 0.9302563667297363,
+            "hf_ratio": 0.018217036500573158,
+            "synthesis_time_s": 1.8535165786743164,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_11",
+            "category": "sibilant",
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "She sells seashells by the seashore with fresh sunshine.",
+            "wer": 0.2,
+            "cer": 0.0,
+            "secs": 0.6180380582809448,
+            "utmos": 4.022974014282227,
+            "duration_s": 3.712,
+            "duration_ratio": 0.928,
+            "rms": 0.11295141279697418,
+            "peak": 0.8612585663795471,
+            "hf_ratio": 0.03843534737825394,
+            "synthesis_time_s": 1.918710708618164,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_21",
+            "category": "numbers",
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.643751859664917,
+            "utmos": 4.1859869956970215,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 1.0599420289855073,
+            "rms": 0.12161142379045486,
+            "peak": 0.933907687664032,
+            "hf_ratio": 0.019289327785372734,
+            "synthesis_time_s": 3.508963108062744,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_31",
+            "category": "long_complex",
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6821637153625488,
+            "utmos": 3.9017434120178223,
+            "duration_s": 10.997333333333334,
+            "duration_ratio": 1.1404641975308643,
+            "rms": 0.1300477832555771,
+            "peak": 0.9398912787437439,
+            "hf_ratio": 0.009110813029110432,
+            "synthesis_time_s": 5.606212377548218,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_41",
+            "category": "prosody_questions",
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6705427765846252,
+            "utmos": 4.179414749145508,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9791729957805906,
+            "rms": 0.12265089154243469,
+            "peak": 0.957618772983551,
+            "hf_ratio": 0.017999107018113136,
+            "synthesis_time_s": 3.0740671157836914,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_51",
+            "category": "short",
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42756375670433044,
+            "utmos": 3.574784994125366,
+            "duration_s": 0.6933333333333334,
+            "duration_ratio": 1.3866666666666667,
+            "rms": 0.12369542568922043,
+            "peak": 0.9150688052177429,
+            "hf_ratio": 0.040833789855241776,
+            "synthesis_time_s": 0.5589039325714111,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_02",
+            "category": "harvard",
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6261321902275085,
+            "utmos": 3.8375391960144043,
+            "duration_s": 3.104,
+            "duration_ratio": 1.0346666666666666,
+            "rms": 0.11695645749568939,
+            "peak": 0.8385685682296753,
+            "hf_ratio": 0.005414736922830343,
+            "synthesis_time_s": 1.9792883396148682,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_12",
+            "category": "sibilant",
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The six, six, six, six, six sheep is sick.",
+            "wer": 0.5,
+            "cer": 0.42857142857142855,
+            "secs": 0.6007754802703857,
+            "utmos": 3.9039692878723145,
+            "duration_s": 5.472,
+            "duration_ratio": 1.9643076923076925,
+            "rms": 0.09096026420593262,
+            "peak": 0.8571616411209106,
+            "hf_ratio": 0.12964923679828644,
+            "synthesis_time_s": 3.355865240097046,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_22",
+            "category": "numbers",
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6973996162414551,
+            "utmos": 4.324032783508301,
+            "duration_s": 8.96,
+            "duration_ratio": 0.8711111111111112,
+            "rms": 0.1272735744714737,
+            "peak": 0.8800349235534668,
+            "hf_ratio": 0.00447855656966567,
+            "synthesis_time_s": 4.786296129226685,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_32",
+            "category": "long_complex",
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7018356919288635,
+            "utmos": 3.960606098175049,
+            "duration_s": 10.634666666666666,
+            "duration_ratio": 0.9859955849889623,
+            "rms": 0.136223703622818,
+            "peak": 0.9579550623893738,
+            "hf_ratio": 0.013585364446043968,
+            "synthesis_time_s": 5.460705280303955,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_42",
+            "category": "prosody_questions",
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6991165280342102,
+            "utmos": 3.5636489391326904,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8825982905982906,
+            "rms": 0.12208680808544159,
+            "peak": 0.9432533979415894,
+            "hf_ratio": 0.03016475960612297,
+            "synthesis_time_s": 2.460559129714966,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_52",
+            "category": "short",
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3646470606327057,
+            "utmos": 3.187760591506958,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.1343315988779068,
+            "peak": 0.9350292682647705,
+            "hf_ratio": 0.03298075497150421,
+            "synthesis_time_s": 0.4522891044616699,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_03",
+            "category": "harvard",
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6276999711990356,
+            "utmos": 4.0918426513671875,
+            "duration_s": 2.965333333333333,
+            "duration_ratio": 1.0924912280701753,
+            "rms": 0.11936573684215546,
+            "peak": 0.8449705243110657,
+            "hf_ratio": 0.012634341605007648,
+            "synthesis_time_s": 1.6827044486999512,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_13",
+            "category": "sibilant",
+            "text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6651703119277954,
+            "utmos": 3.443887948989868,
+            "duration_s": 9.930666666666667,
+            "duration_ratio": 2.3564293785310735,
+            "rms": 0.11582444608211517,
+            "peak": 0.9316078424453735,
+            "hf_ratio": 0.02155184932053089,
+            "synthesis_time_s": 5.08725905418396,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_23",
+            "category": "numbers",
+            "text": "The ticket costs $25.50 for adults and $12.00 for children.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The ticket costs 25.50 cents for adults and 12 dollars for children.",
+            "wer": 0.1,
+            "cer": 0.021739130434782608,
+            "secs": 0.6974666118621826,
+            "utmos": 4.152927875518799,
+            "duration_s": 6.08,
+            "duration_ratio": 0.9353846153846154,
+            "rms": 0.12292236089706421,
+            "peak": 0.9318413138389587,
+            "hf_ratio": 0.032426100224256516,
+            "synthesis_time_s": 3.146524667739868,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_33",
+            "category": "long_complex",
+            "text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7099874019622803,
+            "utmos": 4.029304504394531,
+            "duration_s": 10.304,
+            "duration_ratio": 1.008783216783217,
+            "rms": 0.12551230192184448,
+            "peak": 0.93351149559021,
+            "hf_ratio": 0.010519075207412243,
+            "synthesis_time_s": 5.294903755187988,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_43",
+            "category": "prosody_questions",
+            "text": "What an extraordinary performance by the symphony orchestra tonight!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "What an extraordinary performance by the Symphony Orchestra tonight!",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.7068745493888855,
+            "utmos": 3.8727200031280518,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.279363184079602,
+            "rms": 0.10638817399740219,
+            "peak": 0.8767523169517517,
+            "hf_ratio": 0.026930326595902443,
+            "synthesis_time_s": 3.141587257385254,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_53",
+            "category": "short",
+            "text": "Seven.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Seven.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.550641655921936,
+            "utmos": 3.5727152824401855,
+            "duration_s": 1.344,
+            "duration_ratio": 2.688,
+            "rms": 0.11112751811742783,
+            "peak": 0.8954998254776001,
+            "hf_ratio": 0.012288471683859825,
+            "synthesis_time_s": 0.7364501953125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_04",
+            "category": "harvard",
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "These days, a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6611971855163574,
+            "utmos": 4.181974411010742,
+            "duration_s": 3.008,
+            "duration_ratio": 1.0797948717948718,
+            "rms": 0.12444451451301575,
+            "peak": 0.9384605288505554,
+            "hf_ratio": 0.01912851631641388,
+            "synthesis_time_s": 1.572908878326416,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_14",
+            "category": "sibilant",
+            "text": "Crisp sparkling cider was served in silver glasses.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Crisp, sparkling cider was served in silver glasses.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6442813873291016,
+            "utmos": 3.7450029850006104,
+            "duration_s": 4.8213333333333335,
+            "duration_ratio": 1.3499733333333332,
+            "rms": 0.11004296690225601,
+            "peak": 0.9560081958770752,
+            "hf_ratio": 0.0427551232278347,
+            "synthesis_time_s": 2.5102486610412598,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-25 19:48:48 UTC",
+      "git": {
+        "commit_sha": "a6c0549dff309e92d24d92ad9c5183c2c4f5aac6",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "f642df0837497f21926367217119e7b3edf923dfc325069bcf7f2f088ac08a52",
+        "n_files": 64
+      },
+      "metrics_version": 2,
+      "language": "en",
+      "seeds": [
+        1
+      ],
+      "summary": {
+        "num_sentences": 20,
+        "num_seeds": 1,
+        "total_evaluations": 20,
+        "wer": {
+          "mean": 0.02583333333333333,
+          "std": 0.06764090772351314,
+          "ci95": 0.02964493487499492,
+          "min": 0.0,
+          "max": 0.25,
+          "n": 20,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.011057194616977227,
+          "std": 0.03996652653087849,
+          "ci95": 0.017516102548928256,
+          "min": 0.0,
+          "max": 0.17857142857142858,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.46860574273502126,
+          "std": 0.05317199318666605,
+          "ci95": 0.02527636109983315,
+          "min": 0.32319414615631104,
+          "max": 0.530826985836029,
+          "n": 17,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 4.132531225681305,
+          "std": 0.19040022400482134,
+          "ci95": 0.08344657738596968,
+          "min": 3.7658824920654297,
+          "max": 4.400796413421631,
+          "n": 20,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.214977952206506,
+          "std": 0.2424617581186892,
+          "ci95": 0.1062635507271101,
+          "min": 0.8251623931623931,
+          "max": 1.664,
+          "n": 20,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4512043967843056,
+          "std": 0.06712988547984822,
+          "ci95": 0.029420969501924472,
+          "min": 0.31667080521583557,
+          "max": 0.530826985836029,
+          "n": 20,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "harvard": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4356120899319649,
+              "std": 0.05246259910440255,
+              "ci95": 0.0514133471223145,
+              "min": 0.36056625843048096,
+              "max": 0.4803885221481323,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.9275137782096863,
+              "std": 0.24539531277551807,
+              "ci95": 0.24048740652000772,
+              "min": 3.7658824920654297,
+              "max": 4.292274475097656,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.2124024883973537,
+              "std": 0.13749559462170952,
+              "ci95": 0.1347456827292753,
+              "min": 1.0767719298245615,
+              "max": 1.3949918699186994,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4356120899319649,
+              "std": 0.05246259910440255,
+              "ci95": 0.0514133471223145,
+              "min": 0.36056625843048096,
+              "max": 0.4803885221481323,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "sibilant": {
+            "wer": {
+              "mean": 0.0625,
+              "std": 0.125,
+              "ci95": 0.1225,
+              "min": 0.0,
+              "max": 0.25,
+              "n": 4,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.044642857142857144,
+              "std": 0.08928571428571429,
+              "ci95": 0.0875,
+              "min": 0.0,
+              "max": 0.17857142857142858,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.45010099560022354,
+              "std": 0.0912602429977316,
+              "ci95": 0.08943503813777696,
+              "min": 0.32319414615631104,
+              "max": 0.530826985836029,
+              "n": 4,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.259769678115845,
+              "std": 0.058904228174188354,
+              "ci95": 0.057726143610704585,
+              "min": 4.209758758544922,
+              "max": 4.342769622802734,
+              "n": 4,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.3205038389106185,
+              "std": 0.12165436550062897,
+              "ci95": 0.11922127819061638,
+              "min": 1.213811965811966,
+              "max": 1.4933333333333332,
+              "n": 4,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.45010099560022354,
+              "std": 0.0912602429977316,
+              "ci95": 0.08943503813777696,
+              "min": 0.32319414615631104,
+              "max": 0.530826985836029,
+              "n": 4,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "numbers": {
+            "wer": {
+              "mean": 0.08888888888888889,
+              "std": 0.08388704928078611,
+              "ci95": 0.09492713254821912,
+              "min": 0.0,
+              "max": 0.16666666666666666,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.014190821256038646,
+              "std": 0.01229795401836733,
+              "ci95": 0.013916445043452595,
+              "min": 0.0,
+              "max": 0.021739130434782608,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4877329071362813,
+              "std": 0.017890754192711706,
+              "ci95": 0.02024529422836836,
+              "min": 0.46877628564834595,
+              "max": 0.5043220520019531,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.125056664148967,
+              "std": 0.14759795890380398,
+              "ci95": 0.1670228137577031,
+              "min": 3.990943193435669,
+              "max": 4.283192157745361,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9924579875304514,
+              "std": 0.14404223910275524,
+              "ci95": 0.16299913802047827,
+              "min": 0.8887407407407407,
+              "max": 1.156923076923077,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4877329071362813,
+              "std": 0.017890754192711706,
+              "ci95": 0.02024529422836836,
+              "min": 0.46877628564834595,
+              "max": 0.5043220520019531,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "long_complex": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.48971955974896747,
+              "std": 0.01716891806620811,
+              "ci95": 0.019428459755750967,
+              "min": 0.46990320086479187,
+              "max": 0.5001333951950073,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.164820512135823,
+              "std": 0.21173764229008343,
+              "ci95": 0.2396036981565625,
+              "min": 3.9914307594299316,
+              "max": 4.400796413421631,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.1072082831294017,
+              "std": 0.07962343552087285,
+              "ci95": 0.09010239938628635,
+              "min": 1.015664459161148,
+              "max": 1.1603753086419755,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.48971955974896747,
+              "std": 0.01716891806620811,
+              "ci95": 0.019428459755750967,
+              "min": 0.46990320086479187,
+              "max": 0.5001333951950073,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "prosody_questions": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.49702929457028705,
+              "std": 0.009527753921333681,
+              "ci95": 0.010781668530858848,
+              "min": 0.48887696862220764,
+              "max": 0.50750333070755,
+              "n": 3,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.190347909927368,
+              "std": 0.18746152128821317,
+              "ci95": 0.2121326811657554,
+              "min": 3.9742977619171143,
+              "max": 4.309930324554443,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9874227520840027,
+              "std": 0.1463948667446959,
+              "ci95": 0.16566138681713796,
+              "min": 0.8251623931623931,
+              "max": 1.109603375527426,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.49702929457028705,
+              "std": 0.009527753921333681,
+              "ci95": 0.010781668530858848,
+              "min": 0.48887696862220764,
+              "max": 0.50750333070755,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          },
+          "short": {
+            "wer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": 0.0,
+              "max": 0.0,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": NaN,
+              "std": 0.0,
+              "ci95": 0.0,
+              "min": NaN,
+              "max": NaN,
+              "n": 0,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 4.153605143229167,
+              "std": 0.15274847339590775,
+              "ci95": 0.1728511695775262,
+              "min": 3.978053569793701,
+              "max": 4.256156921386719,
+              "n": 3,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.6355555555555554,
+              "std": 0.049267222970848026,
+              "ci95": 0.05575111111111107,
+              "min": 1.5786666666666667,
+              "max": 1.664,
+              "n": 3,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.35259676973025006,
+              "std": 0.0550805164290967,
+              "ci95": 0.062329471935387466,
+              "min": 0.31667080521583557,
+              "max": 0.4160114526748657,
+              "n": 3,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "1": [
+          {
+            "id": "en_01",
+            "category": "harvard",
+            "text": "The birch canoe slid on the smooth planks.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The birch canoe slid on the smooth planks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4803885221481323,
+            "utmos": 4.292274475097656,
+            "duration_s": 4.085333333333334,
+            "duration_ratio": 1.3949918699186994,
+            "rms": 0.12056666612625122,
+            "peak": 0.8088396191596985,
+            "hf_ratio": 0.03127479925751686,
+            "synthesis_time_s": 2.0925514698028564,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_11",
+            "category": "sibilant",
+            "text": "She sells sea shells by the seashore with fresh sunshine.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "She sells sea shells by the seashore with fresh sunshine.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4477264881134033,
+            "utmos": 4.209758758544922,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 1.3093333333333332,
+            "rms": 0.10688503086566925,
+            "peak": 0.6300019025802612,
+            "hf_ratio": 0.09171581268310547,
+            "synthesis_time_s": 2.6111228466033936,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_21",
+            "category": "numbers",
+            "text": "The flight departs at 07:30 from gate 42 with 150 passengers.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The flight departs at 7.30 from gate 42 with 150 passengers.",
+            "wer": 0.16666666666666666,
+            "cer": 0.020833333333333332,
+            "secs": 0.46877628564834595,
+            "utmos": 4.101034641265869,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 0.9317101449275362,
+            "rms": 0.13537536561489105,
+            "peak": 0.8693138957023621,
+            "hf_ratio": 0.02399248443543911,
+            "synthesis_time_s": 3.12372088432312,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_31",
+            "category": "long_complex",
+            "text": "Artificial intelligence is rapidly transforming how we communicate, work, and build open technology across distributed computing clusters.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Artificial intelligence is rapidly transforming how we communicate, work and build open technology across distributed computing clusters.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5001333951950073,
+            "utmos": 4.400796413421631,
+            "duration_s": 11.189333333333334,
+            "duration_ratio": 1.1603753086419755,
+            "rms": 0.13207696378231049,
+            "peak": 0.8711659908294678,
+            "hf_ratio": 0.016289344057440758,
+            "synthesis_time_s": 5.673238515853882,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_41",
+            "category": "prosody_questions",
+            "text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Could you please explain how the acoustic feature extraction works in real time?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.50750333070755,
+            "utmos": 4.309930324554443,
+            "duration_s": 6.261333333333333,
+            "duration_ratio": 1.109603375527426,
+            "rms": 0.12504354119300842,
+            "peak": 0.7525032758712769,
+            "hf_ratio": 0.025787025690078735,
+            "synthesis_time_s": 3.202152967453003,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_51",
+            "category": "short",
+            "text": "Yes.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Yes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.31667080521583557,
+            "utmos": 4.22660493850708,
+            "duration_s": 0.832,
+            "duration_ratio": 1.664,
+            "rms": 0.11110369116067886,
+            "peak": 0.6169986128807068,
+            "hf_ratio": 0.08707134425640106,
+            "synthesis_time_s": 0.4742603302001953,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_02",
+            "category": "harvard",
+            "text": "Glue the sheet to the dark blue background.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Glue the sheet to the dark blue background.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44174543023109436,
+            "utmos": 3.8053243160247803,
+            "duration_s": 3.4346666666666668,
+            "duration_ratio": 1.1448888888888888,
+            "rms": 0.1225123181939125,
+            "peak": 0.6567002534866333,
+            "hf_ratio": 0.009421604685485363,
+            "synthesis_time_s": 1.7769865989685059,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_12",
+            "category": "sibilant",
+            "text": "The six sick sheiks' sixth sheep is sick.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The sixth sick shakes, sixth sheep is sick.",
+            "wer": 0.25,
+            "cer": 0.17857142857142858,
+            "secs": 0.32319414615631104,
+            "utmos": 4.342769622802734,
+            "duration_s": 3.3813333333333335,
+            "duration_ratio": 1.213811965811966,
+            "rms": 0.10122013837099075,
+            "peak": 0.8119518160820007,
+            "hf_ratio": 0.2529153525829315,
+            "synthesis_time_s": 1.7580502033233643,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_22",
+            "category": "numbers",
+            "text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "In 1984, the population reached 4,800,000 across 350 districts.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4901003837585449,
+            "utmos": 3.990943193435669,
+            "duration_s": 9.141333333333334,
+            "duration_ratio": 0.8887407407407407,
+            "rms": 0.13722482323646545,
+            "peak": 0.783772349357605,
+            "hf_ratio": 0.006741703487932682,
+            "synthesis_time_s": 4.564443588256836,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_32",
+            "category": "long_complex",
+            "text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians, and urban planners.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The comprehensive preservation of historical architectural monuments requires sustained cooperation among civil engineers, historians and urban planners.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.46990320086479187,
+            "utmos": 4.102234363555908,
+            "duration_s": 10.954666666666666,
+            "duration_ratio": 1.015664459161148,
+            "rms": 0.1295582354068756,
+            "peak": 0.7615537643432617,
+            "hf_ratio": 0.03530567139387131,
+            "synthesis_time_s": 5.459006309509277,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_42",
+            "category": "prosody_questions",
+            "text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Where did you leave the keys to the sound recording studio yesterday afternoon?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48887696862220764,
+            "utmos": 4.286815643310547,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.8251623931623931,
+            "rms": 0.14336109161376953,
+            "peak": 0.8566135168075562,
+            "hf_ratio": 0.022196685895323753,
+            "synthesis_time_s": 2.295973300933838,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_52",
+            "category": "short",
+            "text": "Thanks!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Thanks.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.32510805130004883,
+            "utmos": 3.978053569793701,
+            "duration_s": 0.832,
+            "duration_ratio": 1.664,
+            "rms": 0.11467844247817993,
+            "peak": 0.6585026383399963,
+            "hf_ratio": 0.043932490050792694,
+            "synthesis_time_s": 0.4785761833190918,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_03",
+            "category": "harvard",
+            "text": "It is easy to tell the depth of a well.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "It is easy to tell the depth of a well.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36056625843048096,
+            "utmos": 3.7658824920654297,
+            "duration_s": 2.9226666666666667,
+            "duration_ratio": 1.0767719298245615,
+            "rms": 0.13663828372955322,
+            "peak": 0.6665545701980591,
+            "hf_ratio": 0.00843153428286314,
+            "synthesis_time_s": 1.5706133842468262,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_13",
+            "category": "sibilant",
+            "text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Sally swiftly swept seven slippery steps outside the museum.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.530826985836029,
+            "utmos": 4.2586846351623535,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 1.2655367231638417,
+            "rms": 0.125344917178154,
+            "peak": 0.8066926598548889,
+            "hf_ratio": 0.07605360448360443,
+            "synthesis_time_s": 2.824171543121338,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_23",
+            "category": "numbers",
+            "text": "The ticket costs $25.50 for adults and $12.00 for children.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "The ticket costs 25.50 cents for adults and 12 dollars for children.",
+            "wer": 0.1,
+            "cer": 0.021739130434782608,
+            "secs": 0.5043220520019531,
+            "utmos": 4.283192157745361,
+            "duration_s": 7.52,
+            "duration_ratio": 1.156923076923077,
+            "rms": 0.12335410714149475,
+            "peak": 0.856366753578186,
+            "hf_ratio": 0.0377252921462059,
+            "synthesis_time_s": 3.797910690307617,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_33",
+            "category": "long_complex",
+            "text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Recent astronomical observations suggest that water ice may be widely distributed across permanently shadowed craters near the lunar south pole.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49912208318710327,
+            "utmos": 3.9914307594299316,
+            "duration_s": 11.701333333333332,
+            "duration_ratio": 1.1455850815850817,
+            "rms": 0.1455761045217514,
+            "peak": 0.8953222632408142,
+            "hf_ratio": 0.022703075781464577,
+            "synthesis_time_s": 6.002140998840332,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_43",
+            "category": "prosody_questions",
+            "text": "What an extraordinary performance by the symphony orchestra tonight!",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "What an extraordinary performance by the symphony orchestra tonight!",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4947075843811035,
+            "utmos": 3.9742977619171143,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 1.0275024875621892,
+            "rms": 0.1428152322769165,
+            "peak": 0.8240506052970886,
+            "hf_ratio": 0.024263834580779076,
+            "synthesis_time_s": 2.567359209060669,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_53",
+            "category": "short",
+            "text": "Seven.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "7.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4160114526748657,
+            "utmos": 4.256156921386719,
+            "duration_s": 0.7893333333333333,
+            "duration_ratio": 1.5786666666666667,
+            "rms": 0.126324862241745,
+            "peak": 0.6974549889564514,
+            "hf_ratio": 0.04456482455134392,
+            "synthesis_time_s": 0.4525916576385498,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_04",
+            "category": "harvard",
+            "text": "These days a chicken leg is a rare dish.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "These days a chicken leg is a rare dish.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45974814891815186,
+            "utmos": 3.846573829650879,
+            "duration_s": 3.4346666666666668,
+            "duration_ratio": 1.232957264957265,
+            "rms": 0.12809117138385773,
+            "peak": 0.7827620506286621,
+            "hf_ratio": 0.014619462192058563,
+            "synthesis_time_s": 1.7710967063903809,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "en_14",
+            "category": "sibilant",
+            "text": "Crisp sparkling cider was served in silver glasses.",
+            "lang": "en",
+            "seed": 1,
+            "asr_text": "Crisp, sparkling cider was served in silver glasses.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49865636229515076,
+            "utmos": 4.227865695953369,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 1.4933333333333332,
+            "rms": 0.12697520852088928,
+            "peak": 0.6665537357330322,
+            "hf_ratio": 0.103713259100914,
+            "synthesis_time_s": 2.7135565280914307,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

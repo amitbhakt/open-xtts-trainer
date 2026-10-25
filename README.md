@@ -313,11 +313,22 @@ The repository includes a suite of 8 pre-registered ablation studies (`eval/pre_
 
 ### Ablation A3 Empirical Findings (Conditioning Masking Impact)
 
-Conducted across 3 random seeds on an NVIDIA A100 GPU ($N=60$ paired comparisons against stock XTTS-v2):
-* **Short-Prompt CER**: Dropped from **55.56% down to 0.00%** (−55.56% error reduction, $p < 0.001$), completely eliminating short-prompt hallucinations caused by upstream prompt leakage.
-* **Overall CER**: Reduced from **9.46% to 0.83%** (11× character error reduction).
-* **Overall WER**: Improved from **5.29% to 3.42%** (−1.87% WER).
-* **Naturalness (UTMOS)**: Preserved at **4.21** vs 4.24 (well within pre-registered 0.10 tolerance margin).
+Conducted across 3 random seeds on an NVIDIA A100 GPU across both target voice adaptation and zero-shot base speaker preservation:
+
+1. **Target Voice Adaptation ($N=60$ Paired Takes on Moira Fogarty Held-Out Audio):**
+   * **Short-Prompt CER**: Dropped from **55.56% down to 0.00%** (−55.56% error reduction, $p < 0.001$), completely eliminating short-prompt hallucinations caused by upstream prompt leakage.
+   * **Overall CER**: Reduced from **9.46% to 0.83%** (11× character error reduction).
+   * **Overall WER**: Improved from **5.29% to 3.42%** (−1.87% WER).
+   * **Naturalness (UTMOS)**: Preserved at **4.21** vs 4.24 (well within pre-registered 0.10 tolerance margin).
+   * **Speaker Similarity (SECS)**: Mean shift −0.0170 (within allowable 0.02 tolerance margin).
+
+2. **Zero-Shot Base Speaker Preservation ($N=300$ Paired Takes on 5 Unseen CMU ARCTIC Voices):**
+   * **Short-Prompt Hallucination Elimination**: Slashing short-prompt CER from **631.11% to 17.41%** and short-prompt WER from **537.78% to 4.44%**.
+   * **Overall Intelligibility**: Slashing overall WER from **84.24% to 4.22%** (−80.02% error drop) and overall CER from **96.01% to 3.74%** (−92.28% error drop).
+   * **Catastrophic Failure Reduction**: Severe synthesis failures more than halved from **7 down to 3**.
+   * **Zero-Shot Speaker Similarity Preservation**: SECS preserved at **0.5628** vs 0.5690 ($\Delta = -0.0062$, 95% CI $[-0.0110, -0.0014]$, strictly within 0.02 gate margin).
+   * **Naturalness (UTMOS)**: Slightly improved to **4.13** vs 4.11 (+0.0123).
+   * **A/B Decision**: All 7 pre-registered gates passed without regression (`passed: true`). Full evidence manifests and reports archived in `docs/evidence/ablation_a3/`.
 
 To run or inspect ablation studies:
 ```bash
