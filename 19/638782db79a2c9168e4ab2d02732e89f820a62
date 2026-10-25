@@ -1,0 +1,15 @@
+scripts/modal_run_eval.py
+  ai_agent 3,8-9,11-12,16,21-22,30-31,44-48,54,80
+scripts/run_run5_pipeline.py
+  ai_agent 1-247
+notebooks/phase0_phase1_colab.ipynb
+  ai_agent 9,14,19,23-24,33,55-60,62,82,103,252,325,467-468,565
+scripts/modal_jupyter.py
+  ai_agent 10-11,19,25,33-34,48-52,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "19638782db79a2c9168e4ab2d02732e89f820a62",
+  "prompts": {}
+}
