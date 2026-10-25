@@ -16,6 +16,8 @@ import random
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import torch
+from trainer import Trainer, TrainerArgs
+from trainer.trainer import rank_zero_only
 
 from xtts_trainer.data import load_validated_dataset
 from xtts_trainer.models import load_state_strict, safe_torch_load
@@ -25,6 +27,56 @@ from xtts_trainer.stage2_gpt.gpt_trainer import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class ProjectTrainer(Trainer):
+    """Trainer subclass that stamps spec_hash on all intermediate checkpoints (Phase 2 audit requirement)."""
+
+    @rank_zero_only
+    def save_checkpoint(self) -> None:
+        eval_loss = self._pick_target_avg_loss(self.keep_avg_eval)
+        train_loss = self._pick_target_avg_loss(self.keep_avg_train)
+
+        from trainer.io import save_checkpoint as trainer_save_checkpoint
+        from xtts_trainer.models.checkpoint_io import SPEC_HASH_KEY, spec_hash
+
+        trainer_save_checkpoint(
+            self.config,
+            self._get_model(),
+            self.output_path,
+            current_step=self.total_steps_done,
+            epoch=self.epochs_done,
+            optimizer=self.optimizer,
+            scheduler=self.scheduler,
+            scaler=self.scaler if self.use_amp_scaler else None,
+            model_loss={"train_loss": train_loss, "eval_loss": eval_loss},
+            save_n_checkpoints=self.config.save_n_checkpoints,
+            **{SPEC_HASH_KEY: spec_hash()},
+        )
+
+    @rank_zero_only
+    def save_best_model(self) -> None:
+        eval_loss = self._pick_target_avg_loss(self.keep_avg_eval)
+        train_loss = self._pick_target_avg_loss(self.keep_avg_train) or float("inf")
+
+        from trainer.io import save_best_model as trainer_save_best_model
+        from xtts_trainer.models.checkpoint_io import SPEC_HASH_KEY, spec_hash
+
+        self.best_loss = trainer_save_best_model(
+            {"train_loss": train_loss, "eval_loss": eval_loss},
+            self.best_loss,
+            self.config,
+            self._get_model(),
+            self.output_path,
+            current_step=self.total_steps_done,
+            epoch=self.epochs_done,
+            optimizer=self.optimizer,
+            scheduler=self.scheduler,
+            scaler=self.scaler if self.use_amp_scaler else None,
+            keep_all_best=self.config.save_all_best,
+            keep_after=self.config.save_best_after,
+            **{SPEC_HASH_KEY: spec_hash()},
+        )
 
 
 def split_samples(samples: List[Dict[str, Any]], eval_fraction: float, seed: int) -> Tuple[List, List]:
@@ -93,8 +145,6 @@ def train_gpt(
     from random weights (tests with a reduced architecture only). dvae_path overrides base_dir/dvae.pth; a
     Stage-1-trained DVAE needs retrain_for_new_dvae (see ProjectGPTTrainer).
     """
-    from trainer import Trainer, TrainerArgs
-
     vocab_path = vocab_path or os.path.join(base_dir, "vocab.json")
     languages = [l.lower() for l in languages]
     samples = load_samples([dataset_path], vocab_path, languages)
@@ -119,7 +169,7 @@ def train_gpt(
         model.cuda()  # the Trainer would move it anyway; evaluating the base model on CPU is needlessly slow
     loss_before = eval_loss(model, config, eval_samples)
     logger.info("Eval loss before training: %.4f", loss_before)
-    trainer = Trainer(
+    trainer = ProjectTrainer(
         # start_with_eval would make epoch 0 eval-only (trainer._fit skips train_epoch), silently training N-1 epochs
         TrainerArgs(restore_path=None, skip_train_epoch=False, start_with_eval=False, grad_accum_steps=grad_accum_steps),
         config, output_path=output_dir, model=model, train_samples=train_samples, eval_samples=eval_samples,
