@@ -372,7 +372,7 @@ def test_failures_gate_rejects_empty_selection():
         check_gate(f_gate, [])
 
 
-def test_run_ablation_scalar_selectors(base, tmp_path):
+def test_run_ablation_scalar_selectors(base, tmp_path, monkeypatch):
     from scripts.run_ablation import run_ablation
 
     tuned = tuned_from(base)
@@ -401,5 +401,6 @@ def test_run_ablation_scalar_selectors(base, tmp_path):
         }
     }), encoding="utf-8")
 
-    res = run_ablation("CUSTOM", str(tuned_file), str(base_file), output_dir=str(tmp_path), dry_run=True, prereg_path=str(custom_prereg))
+    monkeypatch.setattr("scripts.run_ablation.PREREG_PATH", str(custom_prereg))
+    res = run_ablation("CUSTOM", str(tuned_file), str(base_file), output_dir=str(tmp_path), dry_run=True)
     assert res["dry_run"] is True and res["passed"] is True

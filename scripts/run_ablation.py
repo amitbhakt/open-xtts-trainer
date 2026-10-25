@@ -91,10 +91,8 @@ def run_ablation(
     output_dir: Optional[str] = None,
     report_path: Optional[str] = None,
     dry_run: bool = False,
-    prereg_path: Optional[str] = None,
 ) -> Dict[str, Any]:
-    target_prereg = prereg_path or PREREG_PATH
-    prereg = load_preregistered_ablations(target_prereg)
+    prereg = load_preregistered_ablations()
     ablations = prereg.get("ablations", {})
     if ablation_id not in ablations:
         valid = ", ".join(sorted(ablations.keys()))
@@ -133,7 +131,7 @@ def run_ablation(
     with open(base_manifest_path, "r", encoding="utf-8") as f:
         base_data = json.load(f)
 
-    gates = load_ablation_gates(ablation_id, target_prereg)
+    gates = load_ablation_gates(ablation_id, PREREG_PATH)
 
     print(f"Ablation: {ablation_id} - {ablation_info.get('title')}")
     print(f"Base manifest:      {base_manifest_path}")
