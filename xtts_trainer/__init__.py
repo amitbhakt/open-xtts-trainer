@@ -24,7 +24,10 @@ def patch_xtts_prevent_checkpoint_mutation() -> None:
         import pickle
         import torch
         from TTS.tts.configs.xtts_config import XttsConfig
-        from TTS.utils.io import load_fsspec
+        try:
+            from trainer.io import load_fsspec
+        except ImportError:
+            from TTS.utils.io import load_fsspec
         from TTS.tts.models.xtts import _legacy_safe_globals, is_pytorch_at_least_2_4
 
         try:
