@@ -88,8 +88,12 @@ def merge_manifests(seed_manifests: List[Dict[str, Any]], label: str, output_pat
 
 def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, source: str = "art_of_war_short") -> str:
     """Resolve a valid dataset_train.jsonl with held-out target voice locks."""
+    if dataset_arg is not None:
+        if not os.path.exists(dataset_arg):
+            raise FileNotFoundError(f"Supplied explicit --dataset does not exist: {dataset_arg}")
+        return os.path.abspath(dataset_arg)
+
     candidates = [
-        dataset_arg,
         os.path.join(REPO_ROOT, "data_moira_fogarty", "dataset_train.jsonl"),
         os.path.join(REPO_ROOT, "runs", "results_target_speaker_s20", "evidence", "dataset_train.jsonl"),
         os.path.join(REPO_ROOT, "my_data", "dataset_train.jsonl"),
@@ -111,7 +115,10 @@ def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, so
             logger.warning("Target voices lock verification failed (%s); will rebuild.", e)
 
     if dry_run:
-        return train_candidate or os.path.abspath(os.path.join(REPO_ROOT, "data_moira_fogarty", "dataset_train.jsonl"))
+        if train_candidate and os.path.exists(train_candidate):
+            return train_candidate
+        fallback = os.path.abspath(os.path.join(REPO_ROOT, "data_moira_fogarty", "dataset_train.jsonl"))
+        return fallback
 
     data_dir = os.path.dirname(train_candidate) if train_candidate else os.path.join(REPO_ROOT, "data_moira_fogarty")
     dataset_path = os.path.join(data_dir, "dataset.jsonl")
@@ -155,6 +162,9 @@ def run_ablation_a3(
     voices: str = "target",
 ) -> dict:
     seeds = seeds or [1, 2, 3]
+    if len(seeds) != len(set(seeds)):
+        raise ValueError(f"Duplicate seeds are not allowed: {seeds}")
+
     output_dir = os.path.abspath(output_dir)
     os.makedirs(output_dir, exist_ok=True)
 
@@ -180,7 +190,7 @@ def run_ablation_a3(
     print("=" * 70)
     print(f"Dataset:            {dataset_path or '(not required for base evaluation)'}")
     print(f"Base Directory:     {base_dir}")
-    print(f"Voices:             {voices} (N={subset_size * len(seeds) * (5 if voices == 'base' else 1)})")
+    print(f"Voices:             {voices} (N={subset_size * len(seeds) * (5 if voices in ('base', 'arctic') else 1)})")
     print(f"Random Seeds:       {seeds}")
     print(f"Epochs per run:     {epochs}")
     print(f"Eval Batch Size:    {eval_batch_size} (batched Whisper inference)")
@@ -188,6 +198,17 @@ def run_ablation_a3(
     print("=" * 70 + "\n")
 
     if dry_run:
+        prereqs_ok = True
+        missing = []
+        if not os.path.exists(base_dir):
+            prereqs_ok = False
+            missing.append(base_dir)
+        if not skip_training and (not dataset_path or not os.path.exists(dataset_path)):
+            prereqs_ok = False
+            missing.append(str(dataset_path))
+        if not prereqs_ok:
+            print(f"[DRY RUN] Prerequisite check failed: missing {missing}")
+            return {"dry_run": True, "passed": False, "plan": plan, "missing": missing}
         print("[DRY RUN] All prerequisites verified. Plan is valid.")
         return {"dry_run": True, "passed": True, "plan": plan}
 
@@ -226,13 +247,34 @@ def run_ablation_a3(
         manifest_path = os.path.join(output_dir, f"manifest_{mode}{voice_tag}_s{subset_size}.json")
         manifests[mode] = manifest_path
         if os.path.exists(manifest_path):
-            logger.info("Reusing existing evaluation manifest: %s", manifest_path)
-            continue
+            try:
+                with open(manifest_path, "r", encoding="utf-8") as f:
+                    cached_data = json.load(f)
+                if (
+                    cached_data.get("seeds") == seeds
+                    and cached_data.get("subset_size") == subset_size
+                    and cached_data.get("batch_size") == eval_batch_size
+                    and cached_data.get("voices") in (voices, eval_voices)
+                ):
+                    logger.info("Reusing existing evaluation manifest: %s", manifest_path)
+                    continue
+                else:
+                    logger.warning(
+                        "Manifest %s inputs mismatch (seeds=%s, subset=%s, batch=%s, voices=%s); re-evaluating.",
+                        manifest_path, cached_data.get("seeds"), cached_data.get("subset_size"),
+                        cached_data.get("batch_size"), cached_data.get("voices"),
+                    )
+            except (json.JSONDecodeError, OSError, KeyError, TypeError, ValueError) as e:
+                logger.warning("Failed to validate cached manifest %s (%s); re-evaluating.", manifest_path, e)
 
-        seed_exports = [os.path.join(out_path, f"seed_{s}", "export") for s in seeds]
-        all_seed_exports_exist = all(os.path.exists(p) for p in seed_exports)
-
-        if all_seed_exports_exist and len(seeds) > 1:
+        if len(seeds) > 1:
+            seed_exports = [os.path.join(out_path, f"seed_{s}", "export") for s in seeds]
+            missing_exports = [p for p in seed_exports if not os.path.exists(p)]
+            if missing_exports:
+                raise FileNotFoundError(
+                    f"Incomplete seed exports for variant '{mode}': missing {missing_exports}. "
+                    "All seeds must be trained and exported before multi-seed evaluation."
+                )
             seed_manifest_data = []
             for s, s_export in zip(seeds, seed_exports):
                 s_manifest_path = os.path.join(output_dir, f"manifest_{mode}{voice_tag}_seed_{s}_s{subset_size}.json")
@@ -253,23 +295,24 @@ def run_ablation_a3(
                     seed_manifest_data.append(json.load(f))
             merge_manifests(seed_manifest_data, label=f"a3_{mode}_{voices}", output_path=manifest_path)
         else:
-            primary_export = os.path.join(out_path, f"seed_{seeds[0]}", "export")
-            if not os.path.exists(primary_export):
-                primary_export = os.path.join(out_path, "export")
-            if not os.path.exists(primary_export):
+            s = seeds[0]
+            s_export = os.path.join(out_path, f"seed_{s}", "export")
+            if not os.path.exists(s_export):
+                s_export = os.path.join(out_path, "export")
+            if not os.path.exists(s_export):
                 raise FileNotFoundError(
                     f"No trained checkpoint found for variant '{mode}' in {out_path}. "
                     "Ensure training was not skipped without existing models."
                 )
 
-            print(f"\n>>> Evaluating {mode.upper()} model ({primary_export}) with voices '{eval_voices}', batch size {eval_batch_size}...")
+            print(f"\n>>> Evaluating {mode.upper()} model ({s_export}) with voices '{eval_voices}', batch size {eval_batch_size}...")
             run_cmd([
                 sys.executable, "scripts/run_eval_baseline.py",
-                "--checkpoint_dir", primary_export,
+                "--checkpoint_dir", s_export,
                 "--voices", eval_voices,
                 "--languages", "en",
                 "--label", f"a3_{mode}_{voices}",
-                "--seeds", *[str(s) for s in seeds],
+                "--seeds", str(s),
                 "--subset_size", str(subset_size),
                 "--batch_size", str(eval_batch_size),
                 "--output", manifest_path,
@@ -312,13 +355,15 @@ def main():
     parser.add_argument("--subset_size", type=int, default=20, help="Eval subset size (default: 20)")
     parser.add_argument("--dry_run", action="store_true", help="Validate plan without running training or eval")
     parser.add_argument("--skip_training", action="store_true", help="Skip training if checkpoints already exist")
-    parser.add_argument("--voices", choices=["target", "base", "arctic", "all"], default="target",
+    parser.add_argument("--voices", choices=["target", "base", "arctic"], default="target",
                         help="Voices to evaluate: 'target' (Moira Fogarty, N=60) or 'base'/'arctic' (5 CMU ARCTIC voices, N=300)")
     args = parser.parse_args()
 
     dataset_path = None
-    if not (args.skip_training and args.voices != "target"):
+    if not args.skip_training:
         dataset_path = resolve_dataset(args.dataset, dry_run=args.dry_run)
+    else:
+        dataset_path = args.dataset
 
     report = run_ablation_a3(
         dataset_path=dataset_path,

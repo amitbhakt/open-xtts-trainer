@@ -23,12 +23,16 @@ def default_asr_model(lang: str) -> str:
 
 
 @lru_cache(maxsize=4)
-def load_asr(model_name: str, device: Optional[str] = None) -> Any:
-    """Load (and cache) a Hugging Face Whisper ASR pipeline. Failures propagate; there is no fallback model."""
+def _load_asr_cached(model_name: str, device: str) -> Any:
     from transformers import pipeline
 
+    return pipeline("automatic-speech-recognition", model=model_name, device=device)
+
+
+def load_asr(model_name: str, device: Optional[str] = None) -> Any:
+    """Load (and cache) a Hugging Face Whisper ASR pipeline. Failures propagate; there is no fallback model."""
     dev = device or default_asr_device()
-    return pipeline("automatic-speech-recognition", model=model_name, device=dev)
+    return _load_asr_cached(model_name, dev)
 
 
 def _generate_kwargs(model_name: str, lang: str) -> dict:

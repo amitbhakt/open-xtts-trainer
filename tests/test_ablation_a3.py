@@ -66,13 +66,27 @@ def test_masking_mode_forward_routing(tmp_path, dummy_dvae, monkeypatch):
     m_upstream.forward(dummy_input, torch.tensor([3]), dummy_input, torch.tensor([3]), None, None, None)
     assert called_gpt is True
 
+    # Test per_sample routing
+    m_persample = ProjectGPTTrainer(cfg, masking_mode="per_sample")
+    called_gpt_losses = False
 
-def test_ablation_a3_dry_run():
-    dataset_path = resolve_dataset(dry_run=True)
+    def mock_gpt_losses(*args, **kwargs):
+        nonlocal called_gpt_losses
+        called_gpt_losses = True
+        return torch.tensor(0.0), torch.tensor(0.0), torch.zeros(1, 10, 1024)
+
+    monkeypatch.setattr("xtts_trainer.stage2_gpt.gpt_trainer.gpt_losses", mock_gpt_losses)
+    m_persample.forward(dummy_input, torch.tensor([3]), dummy_input, torch.tensor([3]), None, None, None)
+    assert called_gpt_losses is True
+
+
+def test_ablation_a3_dry_run(tmp_path):
+    dummy_ds = tmp_path / "dataset_train.jsonl"
+    dummy_ds.write_text('{"audio_path": "a.wav", "text": "hello"}\n', encoding="utf-8")
     report = run_ablation_a3(
-        dataset_path=dataset_path,
+        dataset_path=str(dummy_ds),
         base_dir="xtts_base",
-        output_dir="runs/test_a3_dry_run",
+        output_dir=str(tmp_path / "runs"),
         dry_run=True,
     )
     assert report["dry_run"] is True
@@ -80,6 +94,16 @@ def test_ablation_a3_dry_run():
     plan = report["plan"]
     assert plan["ablation_id"] == "A3"
     assert plan["variants"] == ["upstream", "per_sample"]
+
+    # Verify invalid prerequisite reports passed: false
+    failed_report = run_ablation_a3(
+        dataset_path=str(tmp_path / "nonexistent.jsonl"),
+        base_dir="xtts_base",
+        output_dir=str(tmp_path / "runs"),
+        dry_run=True,
+    )
+    assert failed_report["dry_run"] is True
+    assert failed_report["passed"] is False
     assert plan["eval_batch_size"] == 16
 
 

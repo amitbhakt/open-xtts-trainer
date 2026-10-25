@@ -90,18 +90,18 @@ def get_git_info(repo_dir: str = ".") -> Dict[str, Any]:
     return {"commit_sha": sha, "is_dirty": is_dirty}
 
 
-def aggregate_metric(values: List[float]) -> Dict[str, float]:
+def aggregate_metric(values: List[float]) -> Dict[str, Any]:
     """Mean, sample std, 95% CI half-width, min and max over finite values; n_nan counts the excluded ones."""
     arr = np.asarray(values, dtype=np.float64)
     finite = arr[np.isfinite(arr)]
     n = len(finite)
     std = float(np.std(finite, ddof=1)) if n > 1 else 0.0
     return {
-        "mean": float(np.mean(finite)) if n else float("nan"),
+        "mean": float(np.mean(finite)) if n else None,
         "std": std,
         "ci95": float(1.96 * std / np.sqrt(n)) if n > 1 else 0.0,
-        "min": float(np.min(finite)) if n else float("nan"),
-        "max": float(np.max(finite)) if n else float("nan"),
+        "min": float(np.min(finite)) if n else None,
+        "max": float(np.max(finite)) if n else None,
         "n": n,
         "n_nan": int(len(arr) - n),
     }

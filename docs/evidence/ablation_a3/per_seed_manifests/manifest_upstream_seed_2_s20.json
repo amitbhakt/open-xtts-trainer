@@ -419,11 +419,11 @@
           "n_nan": 0
         },
         "secs": {
-          "mean": NaN,
+          "mean": null,
           "std": 0.0,
           "ci95": 0.0,
-          "min": NaN,
-          "max": NaN,
+          "min": null,
+          "max": null,
           "n": 0,
           "n_nan": 0
         },
@@ -875,11 +875,11 @@
               "n_nan": 0
             },
             "secs": {
-              "mean": NaN,
+              "mean": null,
               "std": 0.0,
               "ci95": 0.0,
-              "min": NaN,
-              "max": NaN,
+              "min": null,
+              "max": null,
               "n": 0,
               "n_nan": 0
             },
