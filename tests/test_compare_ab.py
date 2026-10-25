@@ -71,6 +71,18 @@ def test_failure_count_gate(base):
     assert gate(report, "failures") == {**gate(report, "failures"), "base": 0, "tuned": 1, "passed": False}
 
 
+def test_failure_count_does_not_double_count_overlapping_flags(base):
+    def multiple_failures_on_single_utterance(r, done=[]):
+        if not done:
+            r["failures"]["is_too_long"] = True
+            r["failures"]["is_empty"] = True
+            r["failures"]["has_nan"] = True
+            done.append(1)
+
+    report = compare_ab(base, tuned_from(base, multiple_failures_on_single_utterance), GATES)
+    assert gate(report, "failures") == {**gate(report, "failures"), "base": 0, "tuned": 1, "passed": False}
+
+
 def test_target_speaker_gate_counts_only_its_voices(base):
     gates = {"gates": [{"metric": "secs", "rule": "better", "margin": 0.0, "voices": ["arctic_slt"]}]}
     tuned = tuned_from(base, lambda r: r.update(secs=r["secs"] + 0.05), voice="arctic_slt")
@@ -109,3 +121,20 @@ def test_gates_file_is_pre_registered_and_well_formed():
     assert GATES["version"] == 1 and GATES["gates"]
     for g in GATES["gates"]:
         assert g["rule"] in ("not_worse", "better") and "margin" in g and g["why"]
+
+
+def test_failures_gate_requires_metadata_and_counts_utterance_once():
+    from scripts.compare_ab import failures
+
+    # Clean utterance
+    clean = [{"failures": {"nan_audio": False, "empty_audio": False}}]
+    assert failures(clean) == 0
+
+    # Utterance with multiple failure flags is only counted once
+    multiple_flags = [{"failures": {"nan_audio": True, "empty_audio": True}}]
+    assert failures(multiple_flags) == 1
+
+    # Missing failure metadata must raise KeyError rather than silently counting as clean
+    missing_failures = [{}]
+    with pytest.raises(KeyError):
+        failures(missing_failures)

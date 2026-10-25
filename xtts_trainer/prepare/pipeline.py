@@ -56,13 +56,26 @@ def phrase_windows(phrases: Sequence[Tuple[str, float, Optional[float]]], audio_
                    target_s: float = WINDOW_TARGET_S) -> List[Tuple[float, float, str]]:
     """Group consecutive Whisper phrases into (start_s, end_s, text) windows of about target_s."""
     windows: List[List] = []
+    last_end = 0.0
     for text, start, end in phrases:
-        end = audio_s if end is None else min(end, audio_s)
-        if windows and end - windows[-1][0] <= target_s:
-            windows[-1][1] = end
+        text = text.strip()
+        if not text:
+            continue
+        start = min(audio_s, max(last_end, 0.0 if start is None else float(start)))
+        if start >= audio_s:
+            continue
+        if end is None or float(end) <= start:
+            end = min(audio_s, start + target_s)
+        else:
+            end = min(audio_s, float(end))
+        if end - start > 50.0:
+            end = min(audio_s, start + target_s)
+        if windows and (end - windows[-1][0]) <= target_s and start >= windows[-1][0]:
+            windows[-1][1] = max(windows[-1][1], end)
             windows[-1][2] += " " + text
         else:
             windows.append([start, end, text])
+        last_end = max(last_end, end)
     return [(s, e, t) for s, e, t in windows]
 
 
@@ -97,6 +110,7 @@ def prepare_recording(
     clip_prefix: str = "clip",
     source: Optional[str] = None,
     max_seconds: Optional[float] = None,
+    device: str = "cpu",
 ) -> Tuple[List[DatasetRecord], dict]:
     """Prepare one recording. Returns (records, report); writes clips under output_dir/clips.
 
@@ -104,7 +118,7 @@ def prepare_recording(
     Without it, phrase_transcriber (default: Whisper asr_model) transcribes the recording.
     """
     config = config or PrepConfig()
-    aligner = aligner or CtcAligner()
+    aligner = aligner or CtcAligner(device=device)
     out_rate = SPEC.output_sample_rate
     audio = load_mono(input_file, out_rate)
     if max_seconds is not None:
@@ -120,7 +134,7 @@ def prepare_recording(
         asr_model = asr_model or default_asr_model(lang)
         transcript_source = f"asr:{asr_model}"
         if phrase_transcriber is None:
-            phrase_transcriber = lambda a, sr, l: transcribe_phrases(a, sr, l, asr_model)  # noqa: E731
+            phrase_transcriber = lambda a, sr, l: transcribe_phrases(a, sr, l, asr_model, device=device)  # noqa: E731
         phrases = phrase_transcriber(audio, out_rate, lang)
         if not phrases:
             raise RuntimeError(f"ASR produced no transcript for {input_file}")

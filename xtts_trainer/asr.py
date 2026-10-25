@@ -49,15 +49,82 @@ def transcribe_phrases(
     """Long-form transcription as (text, start_s, end_s) phrases.
 
     The phrase times only window the recording for forced alignment; they are never used as cut points
-    (Whisper's timestamps are contiguous and don't locate pauses). end_s may be None for the final phrase.
+    (Whisper's timestamps are contiguous and don't locate pauses). Phrases are bounded to <= 20s.
     """
+    audio_s = float(len(audio) / sample_rate)
     asr = load_asr(model_name, device)
     asr_input = {"raw": np.asarray(audio, dtype=np.float32), "sampling_rate": sample_rate}
-    out = asr(asr_input, return_timestamps=True, chunk_length_s=30, generate_kwargs=_generate_kwargs(model_name, lang))
+    out = asr(
+        asr_input,
+        return_timestamps="word",
+        chunk_length_s=30,
+        generate_kwargs=_generate_kwargs(model_name, lang),
+    )
+    chunks = out.get("chunks", [])
+    if not chunks:
+        raw_text = out.get("text", "").strip()
+        if not raw_text:
+            return []
+        if audio_s > 50.0:
+            raise RuntimeError(
+                f"ASR produced no word timestamps for a {audio_s:.1f}s recording (>50s); "
+                "cannot safely window long-form transcript for forced alignment"
+            )
+        return [(raw_text, 0.0, audio_s)]
+
     phrases = []
-    for chunk in out.get("chunks", []):
-        text = chunk["text"].strip()
-        start, end = chunk["timestamp"]
-        if text:
-            phrases.append((text, float(start), None if end is None else float(end)))
+    curr_words = []
+    win_start = None
+    last_end = 0.0
+    last_chunk_unclosed = False
+
+    for chunk in chunks:
+        text = chunk.get("text", "").strip()
+        if not text:
+            continue
+        ts = chunk.get("timestamp")
+        start = float(ts[0]) if (ts and ts[0] is not None) else last_end
+        start = min(audio_s, max(0.0, start))
+        unclosed = not (ts and len(ts) > 1 and ts[1] is not None)
+        if not unclosed:
+            end = min(audio_s, max(start, float(ts[1])))
+        else:
+            end = None
+
+        # Split before adding a word that would cause the phrase to exceed 20s
+        projected_end = end if end is not None else start
+        if curr_words and win_start is not None and (projected_end - win_start > 20.0):
+            phrase_end = None if last_chunk_unclosed else last_end
+            phrases.append((" ".join(curr_words), win_start, phrase_end))
+            curr_words = []
+            win_start = None
+            last_chunk_unclosed = False
+
+        if win_start is None:
+            win_start = start
+        curr_words.append(text)
+        if end is not None:
+            last_end = max(last_end, end)
+            last_chunk_unclosed = False
+        else:
+            last_chunk_unclosed = True
+
+        # Handle a single oversized word explicitly, or natural punctuation split
+        win_dur = (last_end if not last_chunk_unclosed else start) - win_start
+        if not last_chunk_unclosed and (last_end - win_start > 20.0):
+            phrases.append((" ".join(curr_words), win_start, last_end))
+            curr_words = []
+            win_start = None
+            last_chunk_unclosed = False
+        elif win_dur >= 5.0 and text.endswith((".", "!", "?")):
+            phrase_end = None if last_chunk_unclosed else last_end
+            phrases.append((" ".join(curr_words), win_start, phrase_end))
+            curr_words = []
+            win_start = None
+            last_chunk_unclosed = False
+
+    if curr_words and win_start is not None:
+        phrase_end = None if last_chunk_unclosed else last_end
+        phrases.append((" ".join(curr_words), win_start, phrase_end))
+
     return phrases

@@ -1,0 +1,32 @@
+{
+  "best_checkpoint": "runs/moira_fogarty_finetune/stage2_gpt-October-25-2026_02+38PM-3680f31/best_model.pth",
+  "best_step": 190,
+  "eval_loss_before": 3.947402000427246,
+  "eval_loss_best": 3.101566195487976,
+  "improved": true,
+  "train_clips": 75,
+  "eval_clips": 8,
+  "language_shares": {
+    "en": 1.0
+  },
+  "languages": [
+    "en",
+    "es",
+    "fr",
+    "de",
+    "it",
+    "pt",
+    "pl",
+    "tr",
+    "ru",
+    "nl",
+    "cs",
+    "ar",
+    "zh-cn",
+    "hu",
+    "ko",
+    "ja",
+    "hi"
+  ],
+  "retrain_for_new_dvae": false
+}

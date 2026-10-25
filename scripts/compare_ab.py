@@ -75,7 +75,7 @@ def paired_stats(pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]], metric: str
 
 
 def failures(results) -> int:
-    return sum(sum(bool(v) for v in r["failures"].values()) for r in results)
+    return sum(bool(any(r["failures"].values())) for r in results)
 
 
 def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:

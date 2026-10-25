@@ -1,0 +1,54 @@
+{
+  "dataset": "data_moira_fogarty/dataset.jsonl",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "only 0/85 clips are under 1.5s; short-utterance coverage helps avoid short-text hallucination (docs/recipe_design.md §3, ablation A1)",
+    "punctuation/pause disagreements {'unpunctuated_pause': 18, 'punctuation_without_pause': 9} (e.g. line 4 unpunctuated_pause after 'LibriVox' gap 0.541s; line 6 punctuation_without_pause after '1.' gap 0.0s; line 8 unpunctuated_pause after 'safety' gap 0.32s); [E4] check, set strict_pauses to make it blocking (docs/recipe_design.md A6)",
+    "dataset has ASR transcripts but no ASR cross-check was run (set asr_cer_max)"
+  ],
+  "stats": {
+    "clips": 85,
+    "hours": 0.1084,
+    "speakers": {
+      "moira_fogarty": 85
+    },
+    "languages": {
+      "en": 85
+    },
+    "transcript_sources": {
+      "asr": 85
+    },
+    "duration_s": {
+      "min": 3.002,
+      "max": 9.026,
+      "histogram": {
+        "5-6s": 17,
+        "3-4s": 32,
+        "4-5s": 24,
+        "6-7s": 6,
+        "7-8s": 5,
+        "9-10s": 1
+      }
+    },
+    "short_clip_fraction": 0.0,
+    "single_word_fraction": 0.0,
+    "eval_overlap_checked": true,
+    "reference_overlap_checked": true,
+    "target_holdout_checked": false,
+    "target_holdout_checked_note": "Target-holdout leakage check was not performed on this archived dataset.jsonl report (target_holdout_checked: false); holdouts were partitioned during scripts/build_target_voices.py.",
+    "asr_checked": false,
+    "realigned": false,
+    "aligned_clips": 85,
+    "pause_issues": {
+      "unpunctuated_pause": 18,
+      "punctuation_without_pause": 9
+    },
+    "text_checked": true,
+    "limits": {
+      "min_duration_s": 0.5,
+      "max_duration_s": 11.61,
+      "max_text_tokens": 200
+    }
+  }
+}

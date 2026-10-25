@@ -1,0 +1,25 @@
+{
+  "format": "open-xtts-target-voices",
+  "version": 1,
+  "dataset": "/root/open-xtts-trainer/data_moira_fogarty/dataset.jsonl",
+  "seed": 0,
+  "train_dataset": "/root/open-xtts-trainer/data_moira_fogarty/dataset_train.jsonl",
+  "voices": {
+    "target_moira_fogarty": {
+      "speaker": "moira_fogarty",
+      "clip_sha256": "f285f274a8eb6ad94a7ec09f97d1de0d17c8d0f9b50719e4498aea080101769e",
+      "duration_s": 7.63,
+      "source_clips": [
+        {
+          "audio": "clips/art_of_war_short_0002.wav",
+          "sha256": "d3487e797f01349ad4ba57f3d71919e8d65b885d85accf49b028f2603b8c01c7"
+        },
+        {
+          "audio": "clips/art_of_war_short_0042.wav",
+          "sha256": "3342a0a23c1743328284c35f3d7c19a25b4e1688af99d29d03ffa2cca0df1d91"
+        }
+      ],
+      "transcript": "For more information, and to find out how you can volunteer, The general who loses a battle makes but few calculations beforehand."
+    }
+  }
+}

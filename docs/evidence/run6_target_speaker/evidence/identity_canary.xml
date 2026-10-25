@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="95.087" timestamp="2026-10-25T15:40:50.742537+00:00" hostname="modal"><testcase classname="tests.test_invariants" name="test_identity_canary_released_model" time="92.023" /></testsuite></testsuites>
