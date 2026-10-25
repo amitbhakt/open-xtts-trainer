@@ -1,0 +1,11 @@
+eval/provenance.py
+  ai_agent 114-115,118
+tests/test_provenance.py
+  ai_agent 156-166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "126603a5b53a3ee348ec0bd2613eae41153520db",
+  "prompts": {}
+}
