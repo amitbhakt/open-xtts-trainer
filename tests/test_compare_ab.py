@@ -134,7 +134,9 @@ def test_pre_registered_ablations_file_is_well_formed():
     assert data["version"] == 1
     assert "date" in data and data["description"]
     assert "calibration" in data and "global_guardrails" in data
-    guardrails = {g["metric"]: g for g in data["global_guardrails"]}
+    guardrails_list = data["global_guardrails"]
+    assert len(guardrails_list) == len({g["metric"] for g in guardrails_list})
+    guardrails = {g["metric"]: g for g in guardrails_list}
     assert set(guardrails.keys()) == {"wer", "cer", "secs", "utmos", "failures"}
     for g in guardrails.values():
         assert g["rule"] == "not_worse" and "margin" in g and g["why"]
@@ -148,6 +150,29 @@ def test_pre_registered_ablations_file_is_well_formed():
         assert item["decision_rule"]
         assert isinstance(item["citations"], list) and len(item["citations"]) > 0
         assert item["status"] == "pre_registered"
+        assert "gates" in item and isinstance(item["gates"], list) and len(item["gates"]) > 0
+        for g in item["gates"]:
+            assert g["metric"] in {"wer", "cer", "secs", "utmos", "duration_ratio", "failures"}
+            assert g["rule"] in ("not_worse", "better")
+            assert "margin" in g and "why" in g
+
+
+def test_gate_category_filtering(base):
+    from scripts.compare_ab import check_gate, utterances
+
+    b_utts = utterances(base)
+    pairs = [(b_utts[k], b_utts[k]) for k in sorted(b_utts)]
+
+    # Valid category slice - only scores matching pairs
+    short_gate = {"metric": "cer", "rule": "not_worse", "margin": 0.01, "category": "short"}
+    res = check_gate(short_gate, pairs)
+    assert res["passed"]
+    assert res["n"] == 20  # 10 short sentences x 2 seeds
+
+    # Unknown category raises ValueError
+    unknown_gate = {"metric": "cer", "rule": "not_worse", "margin": 0.01, "category": "nonexistent_category"}
+    with pytest.raises(ValueError, match="not in the manifests"):
+        check_gate(unknown_gate, pairs)
 
 
 def test_load_ablation_gates():
@@ -156,7 +181,8 @@ def test_load_ablation_gates():
     gates = load_ablation_gates("A3")
     assert gates["ablation_id"] == "A3"
     assert "Conditioning Masking Impact" in gates["title"]
-    assert len(gates["gates"]) >= 5
+    # 5 global guardrails + 2 ablation-specific gates
+    assert len(gates["gates"]) == 7
     with pytest.raises(ValueError, match="Unknown ablation ID 'INVALID'"):
         load_ablation_gates("INVALID")
 
@@ -169,6 +195,45 @@ def test_compare_ab_with_ablation_gates(base):
     report = compare_ab(base, tuned, gates)
     assert report["passed"]
     assert report["gates_version"] == 1
+
+
+def test_compare_ab_cli_rejects_gates_and_ablation_together(base, tmp_path):
+    import subprocess
+
+    base_file = tmp_path / "base.json"
+    tuned_file = tmp_path / "tuned.json"
+    base_file.write_text(json.dumps(base), encoding="utf-8")
+    tuned_file.write_text(json.dumps(tuned_from(base)), encoding="utf-8")
+
+    cmd = [
+        sys.executable,
+        "scripts/compare_ab.py",
+        str(base_file),
+        str(tuned_file),
+        "--gates",
+        "eval/gates.json",
+        "--ablation",
+        "A3",
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode != 0
+    assert "Cannot specify both --gates and --ablation" in res.stderr
+
+
+def test_run_ablation_find_default_baseline():
+    from scripts.run_ablation import find_default_baseline
+
+    # Existing baselines in eval/baselines/
+    assert find_default_baseline(12, "en") is not None
+    assert find_default_baseline(12, "de") is not None
+    assert find_default_baseline(12, "es") is not None
+    assert find_default_baseline(12, "fr") is not None
+    assert find_default_baseline(12, "hi") is not None
+    assert find_default_baseline(20, "en") is not None
+
+    # Missing subset size or unsupported language returns None without falling back to a different subset
+    assert find_default_baseline(99, "en") is None
+    assert find_default_baseline(12, "nonexistent_lang") is None
 
 
 def test_run_ablation_runner(base, tmp_path):
@@ -188,6 +253,35 @@ def test_run_ablation_runner(base, tmp_path):
     report = run_ablation("A3", str(tuned_file), str(base_file), output_dir=str(tmp_path))
     assert report["passed"] is True
     assert (tmp_path / "ab_report.json").is_file()
+
+
+def test_run_ablation_runner_dry_run_rejects_invalid_inputs(base, tmp_path):
+    from scripts.run_ablation import run_ablation
+
+    base_file = tmp_path / "base.json"
+    base_file.write_text(json.dumps(base), encoding="utf-8")
+
+    # 1. Identical checkpoint rejection
+    identical_candidate = tmp_path / "identical.json"
+    identical_candidate.write_text(json.dumps(base), encoding="utf-8")
+    with pytest.raises(ValueError, match="same checkpoint"):
+        run_ablation("A3", str(identical_candidate), str(base_file), output_dir=str(tmp_path), dry_run=True)
+
+    # 2. Mismatched input keys (e.g. batch_size)
+    mismatched_tuned = tuned_from(base)
+    mismatched_tuned["batch_size"] = 99
+    mismatched_file = tmp_path / "mismatched.json"
+    mismatched_file.write_text(json.dumps(mismatched_tuned), encoding="utf-8")
+    with pytest.raises(ValueError, match="manifests were measured on different inputs"):
+        run_ablation("A3", str(mismatched_file), str(base_file), output_dir=str(tmp_path), dry_run=True)
+
+    # 3. Mismatched / unpaired utterances
+    unpaired_tuned = tuned_from(base)
+    unpaired_tuned["runs"] = unpaired_tuned["runs"][:-1]
+    unpaired_file = tmp_path / "unpaired.json"
+    unpaired_file.write_text(json.dumps(unpaired_tuned), encoding="utf-8")
+    with pytest.raises(ValueError, match="utterance sets differ"):
+        run_ablation("A3", str(unpaired_file), str(base_file), output_dir=str(tmp_path), dry_run=True)
 
 
 def test_failures_gate_requires_metadata_and_counts_utterance_once():

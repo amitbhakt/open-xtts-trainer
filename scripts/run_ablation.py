@@ -3,7 +3,7 @@
 Implements REMEDIATION_PLAN.md §12.3.C Item 8 (Ablations runner):
 - Discovers and lists pre-registered ablations (A1..A8) from eval/pre_registered_ablations.json.
 - Discovers or verifies baseline manifests matching requested ablation parameters.
-- Runs candidate evaluations or consumes pre-computed candidate manifests.
+- Consumes pre-computed candidate manifests and compares them to a base manifest via scripts/compare_ab.py.
 - Evaluates hypotheses headlessly via scripts/compare_ab.py against pre-registered decision rules.
 
 Usage:
@@ -32,14 +32,10 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-from scripts.compare_ab import compare_ab, load_ablation_gates
+from scripts.compare_ab import compare_ab, load_ablation_gates, utterances, validate_manifest_pair
 
 
 PREREG_PATH = os.path.join(REPO_ROOT, "eval", "pre_registered_ablations.json")
-DEFAULT_BASELINES = {
-    "s12_en": os.path.join(REPO_ROOT, "eval", "baselines", "base_xtts_s12_en.json"),
-    "s20_en": os.path.join(REPO_ROOT, "eval", "baselines", "base_xtts_s20_en.json"),
-}
 
 
 def load_preregistered_ablations(path: str = PREREG_PATH) -> Dict[str, Any]:
@@ -78,14 +74,12 @@ def print_ablation_info(prereg_data: Dict[str, Any], aid: str) -> None:
     print()
 
 
-def find_default_baseline(subset_size: int = 12) -> Optional[str]:
-    key = f"s{subset_size}_en"
-    candidate = DEFAULT_BASELINES.get(key)
-    if candidate and os.path.exists(candidate):
+def find_default_baseline(subset_size: int = 12, language: str = "en") -> Optional[str]:
+    """Find matching baseline in eval/baselines/ for given subset size and language."""
+    filename = f"base_xtts_s{subset_size}_{language}.json"
+    candidate = os.path.join(REPO_ROOT, "eval", "baselines", filename)
+    if os.path.exists(candidate):
         return candidate
-    for fallback in DEFAULT_BASELINES.values():
-        if os.path.exists(fallback):
-            return fallback
     return None
 
 
@@ -117,10 +111,12 @@ def run_ablation(
     # Resolve baseline manifest
     if not base_manifest_path:
         subset_size = candidate_data.get("subset_size", 12)
-        base_manifest_path = find_default_baseline(subset_size)
+        languages = candidate_data.get("languages", ["en"])
+        language = languages[0] if languages else "en"
+        base_manifest_path = find_default_baseline(subset_size, language)
         if not base_manifest_path:
             raise FileNotFoundError(
-                f"No default baseline manifest found for subset size {subset_size}. "
+                f"No default baseline manifest found for subset size {subset_size} and language {language!r}. "
                 "Specify --base_manifest explicitly."
             )
 
@@ -135,6 +131,19 @@ def run_ablation(
     print(f"Base manifest:      {base_manifest_path}")
     print(f"Candidate manifest: {candidate_manifest_path}")
     print(f"Decision rule:      {ablation_info.get('decision_rule')}")
+
+    # Validate manifest compatibility, schema, and utterance pairing
+    validate_manifest_pair(base_data, candidate_data)
+
+    # Validate gate voice/category requirements against manifest utterances
+    b_utts = utterances(base_data)
+    available_voices = {u["speaker_id"] for u in b_utts.values()}
+    available_categories = {u.get("category") for u in b_utts.values() if u.get("category")}
+    for g in gates.get("gates", []):
+        if g.get("voices") and not any(v in available_voices for v in g["voices"]):
+            raise ValueError(f"Gate names voices {g['voices']} not found in manifests")
+        if g.get("category") and g["category"] not in available_categories:
+            raise ValueError(f"Gate names category {g['category']!r} not found in manifests")
 
     if dry_run:
         print("\n[DRY RUN] Inputs and pre-registered gates verified successfully. Skipping paired computation.")

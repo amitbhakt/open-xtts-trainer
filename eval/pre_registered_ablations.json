@@ -61,7 +61,22 @@
         "cer_short_prompts",
         "duration_ratio_failures"
       ],
-      "decision_rule": "Adopt the most computationally efficient configuration where the 95% CI upper bound of short-prompt CER falls within the long-prompt CER confidence interval without causing SECS regression on held-out speakers (SECS worst CI improvement >= -0.02).",
+      "decision_rule": "Compare all 12 grid configurations against baseline. A cell is eligible if its short-prompt CER 95% CI upper bound is <= baseline long-prompt CER 95% CI upper bound (category 'long_complex', CER margin <= 0.01) and held-out speaker similarity does not regress (SECS worst CI improvement >= -0.02). Among eligible cells, adopt the most computationally efficient configuration, defined as the minimum short_clip_mix_ratio (primary) and fewest total training steps to reach the validation loss plateau (secondary; GPU-hours tiebreaker).",
+      "gates": [
+        {
+          "metric": "cer",
+          "rule": "not_worse",
+          "margin": 0.01,
+          "category": "short",
+          "why": "Short-prompt CER must remain within the pre-registered 95% CI noise floor (margin 0.01) without hallucination regressions."
+        },
+        {
+          "metric": "failures",
+          "rule": "not_worse",
+          "margin": 0,
+          "why": "Candidate must produce zero additional duration or audio failures on short prompts."
+        }
+      ],
       "citations": [
         "Casanova et al. (Interspeech 2024, arXiv:2406.04904)",
         "Chen et al. (VALL-E 2, 2024, arXiv:2406.05370)"
@@ -89,7 +104,21 @@
         "end_to_end_wer",
         "end_to_end_secs"
       ],
-      "decision_rule": "Recommend Stage 1 DVAE fine-tuning only if downstream Stage 2 end-to-end intelligibility (WER) or SECS shows a statistically significant gain (lower bound of 95% CI improvement > 0.0) over stock DVAE on the target domain.",
+      "decision_rule": "Documented architectural exception to the default frozen-DVAE invariant (README.md Stage 1 Invariant): Retraining or fine-tuning the Stage 1 DVAE alters discrete codebook token assignments and invalidates pretrained Stage 2 GPT checkpoints, requiring a mandatory Stage 2 GPT retrain from scratch. Recommend Stage 1 DVAE fine-tuning only for acoustic-shifted domains where downstream Stage 2 end-to-end intelligibility (WER lower 95% CI improvement > 0.0) or SECS (lower 95% CI improvement > 0.0) demonstrates statistically significant gains over stock DVAE that justify the full Stage 2 retraining compute cost.",
+      "gates": [
+        {
+          "metric": "wer",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "End-to-end intelligibility must not regress beyond the noise floor under Stage 1 DVAE adaptation."
+        },
+        {
+          "metric": "secs",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "End-to-end speaker similarity must not regress beyond the noise floor under Stage 1 DVAE adaptation."
+        }
+      ],
       "citations": [
         "Zheng et al. (Online Clustered Codebook, ICCV 2023)",
         "Casanova et al. (Interspeech 2024, arXiv:2406.04904)"
@@ -113,6 +142,21 @@
         "secs"
       ],
       "decision_rule": "Retain per-sample masking fix (mandatory correctness); report measured effect sizes on duration ratio stability and short-prompt CER in paper table.",
+      "gates": [
+        {
+          "metric": "cer",
+          "rule": "not_worse",
+          "margin": 0.01,
+          "category": "short",
+          "why": "Per-sample conditioning masking must not regress short-prompt character error rate beyond the noise floor."
+        },
+        {
+          "metric": "secs",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "Per-sample conditioning masking must preserve speaker similarity within the 95% CI noise floor margin."
+        }
+      ],
       "citations": [
         "Casanova et al. (Interspeech 2024, arXiv:2406.04904)"
       ],
@@ -133,6 +177,20 @@
         "cer"
       ],
       "decision_rule": "Adopt cross-clip prompting as default if SECS on held-out evaluation clips improves beyond the noise floor (worst CI improvement > +0.02) without regressing intelligibility (CER CI <= +0.01).",
+      "gates": [
+        {
+          "metric": "secs",
+          "rule": "better",
+          "margin": 0.02,
+          "why": "Cross-clip prompt conditioning must improve speaker similarity beyond the 0.02 noise floor margin."
+        },
+        {
+          "metric": "cer",
+          "rule": "not_worse",
+          "margin": 0.01,
+          "why": "Cross-clip prompting must not regress character error rate beyond the 0.01 margin."
+        }
+      ],
       "citations": [
         "Casanova et al. (YourTTS, ICML 2022, arXiv:2112.02418)"
       ],
@@ -155,6 +213,14 @@
         "base_language_cer_preservation"
       ],
       "decision_rule": "Select the representation with the lowest target CER that preserves base language tokenization identity (test_extended_tokenizer_preserves_base passes and base CER CI degradation <= +0.01).",
+      "gates": [
+        {
+          "metric": "cer",
+          "rule": "not_worse",
+          "margin": 0.01,
+          "why": "Base language CER must be preserved within the 0.01 noise floor margin when extending text representation."
+        }
+      ],
       "citations": [
         "Minixhofer et al. (WECHSEL, NAACL 2022, arXiv:2112.06598)",
         "Dobler et al. (FOCUS, EMNLP 2023, arXiv:2305.14481)",
@@ -177,7 +243,21 @@
         "utmos",
         "cer"
       ],
-      "decision_rule": "Make alignment pause-consistency validator blocking if candidate achieves statistically significant gain in UTMOS (worst CI improvement > +0.10) or reduces duration anomalies.",
+      "decision_rule": "Make alignment pause-consistency validator blocking if candidate achieves statistically significant gain in UTMOS (worst 95% CI improvement > +0.10) while maintaining zero duration_ratio failure regressions (failures difference <= 0, eval/harness.py duration_ratio failure count).",
+      "gates": [
+        {
+          "metric": "utmos",
+          "rule": "better",
+          "margin": 0.10,
+          "why": "Alignment pause-consistency must achieve statistically significant naturalness improvement (worst 95% CI improvement > +0.10)."
+        },
+        {
+          "metric": "failures",
+          "rule": "not_worse",
+          "margin": 0,
+          "why": "Candidate must produce zero duration_ratio failure regressions under alignment pause validation."
+        }
+      ],
       "citations": [
         "Saeki et al. (UTMOS, Interspeech 2022)"
       ],
@@ -200,6 +280,20 @@
         "base_language_secs_retention"
       ],
       "decision_rule": "Select the minimum replay ratio where base-language WER and SECS degradation remains within noise margins (WER degradation <= 0.02, SECS degradation <= 0.02) while minimizing training step overhead on target CER.",
+      "gates": [
+        {
+          "metric": "wer",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "Base-language WER must not degrade beyond the 0.02 noise floor margin under multilingual replay."
+        },
+        {
+          "metric": "secs",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "Base-language speaker similarity SECS must not degrade beyond the 0.02 margin under multilingual replay."
+        }
+      ],
       "citations": [
         "Yang et al. (Lifelong Multilingual TTS, 2021, arXiv:2110.04482)"
       ],
@@ -223,6 +317,20 @@
         "validation_mel_l1"
       ],
       "decision_rule": "Retain Stage 3 vocoder fine-tuning only if the tuned decoder achieves a statistically significant improvement in predicted naturalness (UTMOS lower 95% CI > 0.0) without regressing speaker similarity (SECS CI >= -0.02).",
+      "gates": [
+        {
+          "metric": "utmos",
+          "rule": "better",
+          "margin": 0.0,
+          "why": "Tuned Stage 3 HiFi-GAN decoder must achieve statistically significant naturalness improvement (UTMOS lower 95% CI > 0.0)."
+        },
+        {
+          "metric": "secs",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "Speaker similarity SECS must not regress beyond the 0.02 noise floor margin under vocoder fine-tuning."
+        }
+      ],
       "citations": [
         "Kong et al. (HiFi-GAN, NeurIPS 2020, arXiv:2010.05646)",
         "Casanova et al. (Interspeech 2024, arXiv:2406.04904)"

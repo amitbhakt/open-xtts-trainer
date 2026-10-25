@@ -118,8 +118,11 @@ def load_ablation_gates(ablation_id: str, prereg_path: str = "eval/pre_registere
         valid = ", ".join(sorted(ablations.keys()))
         raise ValueError(f"Unknown ablation ID {ablation_id!r}. Valid IDs: {valid}")
     ablation = ablations[ablation_id]
+    ablation_gates = ablation.get("gates", [])
+    if not ablation_gates:
+        raise ValueError(f"Ablation {ablation_id!r} has no pre-registered hypothesis gates")
     gates = list(data.get("global_guardrails", []))
-    for g in ablation.get("gates", []):
+    for g in ablation_gates:
         gates.append(g)
     return {
         "version": data.get("version", 1),
@@ -139,7 +142,8 @@ def _input(manifest: Dict[str, Any], key: str) -> Any:
     return manifest.get(key)
 
 
-def compare_ab(base: Dict[str, Any], tuned: Dict[str, Any], gates: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def validate_manifest_pair(base: Dict[str, Any], tuned: Dict[str, Any]) -> None:
+    """Validate manifest compatibility, schema, and utterance alignment."""
     mismatched = [k for k in SAME_INPUT_KEYS if _input(base, k) != _input(tuned, k)]
     if mismatched:
         raise ValueError(f"manifests were measured on different inputs: {mismatched}; an A/B needs identical inputs")
@@ -148,6 +152,11 @@ def compare_ab(base: Dict[str, Any], tuned: Dict[str, Any], gates: Optional[Dict
     b_utts, t_utts = utterances(base), utterances(tuned)
     if b_utts.keys() != t_utts.keys():
         raise ValueError(f"utterance sets differ: {len(b_utts.keys() ^ t_utts.keys())} unpaired")
+
+
+def compare_ab(base: Dict[str, Any], tuned: Dict[str, Any], gates: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    validate_manifest_pair(base, tuned)
+    b_utts, t_utts = utterances(base), utterances(tuned)
     keys = sorted(b_utts)
     pairs = [(b_utts[k], t_utts[k]) for k in keys]
 
@@ -182,6 +191,9 @@ def main():
     parser.add_argument("--ablation", default=None, help="Pre-registered ablation ID (e.g. A1..A8) from eval/pre_registered_ablations.json")
     parser.add_argument("--report", default=None)
     args = parser.parse_args()
+
+    if args.gates and args.ablation:
+        parser.error("Cannot specify both --gates and --ablation")
 
     with open(args.base, "r", encoding="utf-8") as f:
         base_manifest = json.load(f)
