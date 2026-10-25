@@ -150,6 +150,46 @@ def test_pre_registered_ablations_file_is_well_formed():
         assert item["status"] == "pre_registered"
 
 
+def test_load_ablation_gates():
+    from scripts.compare_ab import load_ablation_gates
+
+    gates = load_ablation_gates("A3")
+    assert gates["ablation_id"] == "A3"
+    assert "Conditioning Masking Impact" in gates["title"]
+    assert len(gates["gates"]) >= 5
+    with pytest.raises(ValueError, match="Unknown ablation ID 'INVALID'"):
+        load_ablation_gates("INVALID")
+
+
+def test_compare_ab_with_ablation_gates(base):
+    from scripts.compare_ab import load_ablation_gates
+
+    tuned = tuned_from(base)
+    gates = load_ablation_gates("A3")
+    report = compare_ab(base, tuned, gates)
+    assert report["passed"]
+    assert report["gates_version"] == 1
+
+
+def test_run_ablation_runner(base, tmp_path):
+    from scripts.run_ablation import run_ablation
+
+    tuned = tuned_from(base)
+    base_file = tmp_path / "base.json"
+    tuned_file = tmp_path / "tuned.json"
+    base_file.write_text(json.dumps(base), encoding="utf-8")
+    tuned_file.write_text(json.dumps(tuned), encoding="utf-8")
+
+    # Dry run
+    dry_report = run_ablation("A3", str(tuned_file), str(base_file), output_dir=str(tmp_path), dry_run=True)
+    assert dry_report["dry_run"] is True and dry_report["passed"] is True
+
+    # Full execution
+    report = run_ablation("A3", str(tuned_file), str(base_file), output_dir=str(tmp_path))
+    assert report["passed"] is True
+    assert (tmp_path / "ab_report.json").is_file()
+
+
 def test_failures_gate_requires_metadata_and_counts_utterance_once():
     from scripts.compare_ab import failures
 

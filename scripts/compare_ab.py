@@ -80,9 +80,16 @@ def failures(results) -> int:
 
 def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:
     voices = gate.get("voices")
-    selected = [p for p in pairs if voices is None or p[0]["speaker_id"] in voices]
+    category = gate.get("category")
+    selected = [
+        p for p in pairs
+        if (voices is None or p[0]["speaker_id"] in voices)
+        and (category is None or p[0].get("category") == category)
+    ]
     if voices and not selected:
         raise ValueError(f"gate {gate} names voices not in the manifests")
+    if category and not selected:
+        raise ValueError(f"gate {gate} names category {category!r} not in the manifests")
     if gate["metric"] == "failures":
         base, tuned = failures(b for b, _ in selected), failures(t for _, t in selected)
         return {**gate, "base": base, "tuned": tuned, "passed": tuned <= base + gate.get("margin", 0)}
@@ -100,6 +107,27 @@ def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:
     else:
         raise ValueError(f"unknown gate rule {gate['rule']!r}")
     return {**gate, **stats, "improvement_ci95": [worst, best], "passed": bool(passed)}
+
+
+def load_ablation_gates(ablation_id: str, prereg_path: str = "eval/pre_registered_ablations.json") -> Dict[str, Any]:
+    """Load pre-registered decision rules and guardrails for a specific ablation."""
+    with open(prereg_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    ablations = data.get("ablations", {})
+    if ablation_id not in ablations:
+        valid = ", ".join(sorted(ablations.keys()))
+        raise ValueError(f"Unknown ablation ID {ablation_id!r}. Valid IDs: {valid}")
+    ablation = ablations[ablation_id]
+    gates = list(data.get("global_guardrails", []))
+    for g in ablation.get("gates", []):
+        gates.append(g)
+    return {
+        "version": data.get("version", 1),
+        "ablation_id": ablation_id,
+        "title": ablation.get("title"),
+        "decision_rule": ablation.get("decision_rule"),
+        "gates": gates,
+    }
 
 
 def _input(manifest: Dict[str, Any], key: str) -> Any:
@@ -150,25 +178,43 @@ def main():
     parser = argparse.ArgumentParser(description="Paired A/B of two eval manifests against pre-registered gates.")
     parser.add_argument("base")
     parser.add_argument("tuned")
-    parser.add_argument("--gates", default="eval/gates.json")
+    parser.add_argument("--gates", default=None, help="Path to gates.json (default: eval/gates.json if --ablation not specified)")
+    parser.add_argument("--ablation", default=None, help="Pre-registered ablation ID (e.g. A1..A8) from eval/pre_registered_ablations.json")
     parser.add_argument("--report", default=None)
     args = parser.parse_args()
-    manifests = []
-    for path in (args.base, args.tuned, args.gates):
-        with open(path, "r", encoding="utf-8") as f:
-            manifests.append(json.load(f))
-    report = compare_ab(*manifests)
+
+    with open(args.base, "r", encoding="utf-8") as f:
+        base_manifest = json.load(f)
+    with open(args.tuned, "r", encoding="utf-8") as f:
+        tuned_manifest = json.load(f)
+
+    if args.ablation:
+        gates = load_ablation_gates(args.ablation)
+    else:
+        gates_path = args.gates or "eval/gates.json"
+        with open(gates_path, "r", encoding="utf-8") as f:
+            gates = json.load(f)
+
+    report = compare_ab(base_manifest, tuned_manifest, gates)
     if args.report:
         with open(args.report, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2)
     print(f"{report['pairs']} paired utterances")
+    if args.ablation:
+        print(f"Ablation: {args.ablation} - {gates.get('title')}")
+        print(f"Decision rule: {gates.get('decision_rule')}")
     for m, s in report["overall"].items():
         if s["n"]:
             print(f"  {m:15s} base {s['base']:.4f}  tuned {s['tuned']:.4f}  diff {s['diff']:+.4f}  "
                   f"95% CI [{s['ci95'][0]:+.4f}, {s['ci95'][1]:+.4f}]  (n={s['n']})")
     for g in report["gates"]:
-        print(f"  [{'PASS' if g['passed'] else 'FAIL'}] {g['metric']} {g['rule']} margin {g.get('margin', 0)}"
-              + (f" voices {g['voices']}" if g.get("voices") else ""))
+        details = []
+        if g.get("voices"):
+            details.append(f"voices {g['voices']}")
+        if g.get("category"):
+            details.append(f"category {g['category']}")
+        det_str = f" ({', '.join(details)})" if details else ""
+        print(f"  [{'PASS' if g['passed'] else 'FAIL'}] {g['metric']} {g['rule']} margin {g.get('margin', 0)}{det_str}")
     print("A/B PASSED" if report["passed"] else "A/B FAILED")
     sys.exit(0 if report["passed"] else 1)
 
