@@ -142,7 +142,7 @@ def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, so
 
 
 def run_ablation_a3(
-    dataset_path: str,
+    dataset_path: Optional[str] = None,
     base_dir: str = "xtts_base",
     output_dir: str = "runs/ablations/a3",
     seeds: Optional[List[int]] = None,
@@ -152,6 +152,7 @@ def run_ablation_a3(
     subset_size: int = 20,
     dry_run: bool = False,
     skip_training: bool = False,
+    voices: str = "target",
 ) -> dict:
     seeds = seeds or [1, 2, 3]
     output_dir = os.path.abspath(output_dir)
@@ -170,14 +171,16 @@ def run_ablation_a3(
         "batch_size": batch_size,
         "eval_batch_size": eval_batch_size,
         "eval_subset_size": subset_size,
+        "voices": voices,
         "variants": ["upstream", "per_sample"],
     }
 
     print("\n" + "=" * 70)
     print(" Ablation A3: Conditioning Masking Impact (F2 Bug Verification)")
     print("=" * 70)
-    print(f"Dataset:            {dataset_path}")
+    print(f"Dataset:            {dataset_path or '(not required for base evaluation)'}")
     print(f"Base Directory:     {base_dir}")
+    print(f"Voices:             {voices} (N={subset_size * len(seeds) * (5 if voices == 'base' else 1)})")
     print(f"Random Seeds:       {seeds}")
     print(f"Epochs per run:     {epochs}")
     print(f"Eval Batch Size:    {eval_batch_size} (batched Whisper inference)")
@@ -217,8 +220,9 @@ def run_ablation_a3(
 
     # 2. Evaluate both variants with batched Whisper inference
     manifests = {}
+    voice_tag = f"_{voices}" if voices != "target" else ""
     for mode, out_path in variants.items():
-        manifest_path = os.path.join(output_dir, f"manifest_{mode}_s{subset_size}.json")
+        manifest_path = os.path.join(output_dir, f"manifest_{mode}{voice_tag}_s{subset_size}.json")
         manifests[mode] = manifest_path
         if os.path.exists(manifest_path):
             logger.info("Reusing existing evaluation manifest: %s", manifest_path)
@@ -230,15 +234,15 @@ def run_ablation_a3(
         if all_seed_exports_exist and len(seeds) > 1:
             seed_manifest_data = []
             for s, s_export in zip(seeds, seed_exports):
-                s_manifest_path = os.path.join(output_dir, f"manifest_{mode}_seed_{s}_s{subset_size}.json")
+                s_manifest_path = os.path.join(output_dir, f"manifest_{mode}{voice_tag}_seed_{s}_s{subset_size}.json")
                 if not os.path.exists(s_manifest_path):
-                    print(f"\n>>> Evaluating {mode.upper()} seed {s} ({s_export}) with batch size {eval_batch_size}...")
+                    print(f"\n>>> Evaluating {mode.upper()} seed {s} ({s_export}) with voices '{voices}', batch size {eval_batch_size}...")
                     run_cmd([
                         sys.executable, "scripts/run_eval_baseline.py",
                         "--checkpoint_dir", s_export,
-                        "--voices", "target",
+                        "--voices", voices,
                         "--languages", "en",
-                        "--label", f"a3_{mode}_s{s}",
+                        "--label", f"a3_{mode}_{voices}_s{s}",
                         "--seeds", str(s),
                         "--subset_size", str(subset_size),
                         "--batch_size", str(eval_batch_size),
@@ -246,7 +250,7 @@ def run_ablation_a3(
                     ])
                 with open(s_manifest_path, "r", encoding="utf-8") as f:
                     seed_manifest_data.append(json.load(f))
-            merge_manifests(seed_manifest_data, label=f"a3_{mode}", output_path=manifest_path)
+            merge_manifests(seed_manifest_data, label=f"a3_{mode}_{voices}", output_path=manifest_path)
         else:
             primary_export = os.path.join(out_path, f"seed_{seeds[0]}", "export")
             if not os.path.exists(primary_export):
@@ -257,13 +261,13 @@ def run_ablation_a3(
                     "Ensure training was not skipped without existing models."
                 )
 
-            print(f"\n>>> Evaluating {mode.upper()} model ({primary_export}) with batch size {eval_batch_size}...")
+            print(f"\n>>> Evaluating {mode.upper()} model ({primary_export}) with voices '{voices}', batch size {eval_batch_size}...")
             run_cmd([
                 sys.executable, "scripts/run_eval_baseline.py",
                 "--checkpoint_dir", primary_export,
-                "--voices", "target",
+                "--voices", voices,
                 "--languages", "en",
-                "--label", f"a3_{mode}",
+                "--label", f"a3_{mode}_{voices}",
                 "--seeds", *[str(s) for s in seeds],
                 "--subset_size", str(subset_size),
                 "--batch_size", str(eval_batch_size),
@@ -278,7 +282,7 @@ def run_ablation_a3(
         persample_manifest = json.load(f)
 
     report = compare_ab(upstream_manifest, persample_manifest, gates)
-    report_file = os.path.join(output_dir, "ab_report.json")
+    report_file = os.path.join(output_dir, f"ab_report_{voices}.json" if voices != "target" else "ab_report.json")
     with open(report_file, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
 
@@ -289,7 +293,7 @@ def run_ablation_a3(
         print(f"  [{status}] {g['metric']} {g['rule']} margin {g.get('margin', 0)}")
 
     passed_str = "PASSED" if report["passed"] else "FAILED"
-    print(f"\nAblation A3 Decision: {passed_str}\n")
+    print(f"\nAblation A3 ({voices}) Decision: {passed_str}\n")
     return report
 
 
@@ -307,9 +311,14 @@ def main():
     parser.add_argument("--subset_size", type=int, default=20, help="Eval subset size (default: 20)")
     parser.add_argument("--dry_run", action="store_true", help="Validate plan without running training or eval")
     parser.add_argument("--skip_training", action="store_true", help="Skip training if checkpoints already exist")
+    parser.add_argument("--voices", choices=["target", "base", "all"], default="target",
+                        help="Voices to evaluate: 'target' (Moira Fogarty, N=60) or 'base' (5 CMU ARCTIC voices, N=300)")
     args = parser.parse_args()
 
-    dataset_path = resolve_dataset(args.dataset, dry_run=args.dry_run)
+    dataset_path = None
+    if not (args.skip_training and args.voices != "target"):
+        dataset_path = resolve_dataset(args.dataset, dry_run=args.dry_run)
+
     report = run_ablation_a3(
         dataset_path=dataset_path,
         base_dir=args.base_dir,
@@ -321,6 +330,7 @@ def main():
         subset_size=args.subset_size,
         dry_run=args.dry_run,
         skip_training=args.skip_training,
+        voices=args.voices,
     )
     sys.exit(0 if report.get("passed", False) else 1)
 
