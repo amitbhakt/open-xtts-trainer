@@ -99,7 +99,7 @@ def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, so
         from eval.target_voices import verify_target_voices
         try:
             verify_target_voices(os.path.join(REPO_ROOT, "eval", "target_voices"))
-        except (RuntimeError, FileNotFoundError, ValueError) as e:
+        except (RuntimeError, FileNotFoundError, ValueError, KeyError, TypeError) as e:
             raise RuntimeError(
                 f"Target voice lock verification failed for explicit --dataset {dataset_arg}: {e}"
             ) from e
@@ -123,7 +123,7 @@ def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, so
             from eval.target_voices import verify_target_voices
             verify_target_voices(os.path.join(REPO_ROOT, "eval", "target_voices"))
             return train_candidate
-        except (RuntimeError, FileNotFoundError, ValueError) as e:
+        except (RuntimeError, FileNotFoundError, ValueError, KeyError, TypeError) as e:
             logger.warning("Target voices lock verification failed (%s); will rebuild.", e)
 
     if dry_run:

@@ -189,7 +189,7 @@ def test_resolve_dataset_explicit_validation(tmp_path, monkeypatch):
     with pytest.raises(FileNotFoundError, match="Target voice lock not found"):
         resolve_dataset(str(ds_file))
 
-    # 3. Target-voice lock verification failure raises RuntimeError
+    # 3. Target-voice lock verification failure (checksum or malformed lock) raises RuntimeError
     monkeypatch.setattr("os.path.exists", lambda p: True)
     import eval.target_voices as tv_mod
 
@@ -197,6 +197,21 @@ def test_resolve_dataset_explicit_validation(tmp_path, monkeypatch):
         raise RuntimeError("checksum mismatch")
 
     monkeypatch.setattr(tv_mod, "verify_target_voices", mock_verify_fail)
+    with pytest.raises(RuntimeError, match="Target voice lock verification failed"):
+        resolve_dataset(str(ds_file))
+
+    # Structural exceptions from malformed lock (KeyError, TypeError) are also caught
+    def mock_verify_key_error(path):
+        raise KeyError("missing 'voices' key in lock")
+
+    monkeypatch.setattr(tv_mod, "verify_target_voices", mock_verify_key_error)
+    with pytest.raises(RuntimeError, match="Target voice lock verification failed"):
+        resolve_dataset(str(ds_file))
+
+    def mock_verify_type_error(path):
+        raise TypeError("expected dict for voice entry")
+
+    monkeypatch.setattr(tv_mod, "verify_target_voices", mock_verify_type_error)
     with pytest.raises(RuntimeError, match="Target voice lock verification failed"):
         resolve_dataset(str(ds_file))
 
