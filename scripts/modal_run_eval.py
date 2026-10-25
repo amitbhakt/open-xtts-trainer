@@ -23,9 +23,10 @@ app = modal.App.lookup("open-xtts-runner", create_if_missing=True)
 # Pinned commit SHA for reproducible execution
 PINNED_COMMIT = "a9dbbd87fae511eeb8053787754f762391ce4dd7"
 
-# Persistent volumes for base models, training runs, and baseline results
+# Persistent volumes for base models, training runs, checkpoints, and baseline results
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
 volume_runs = modal.Volume.from_name("open-xtts-runs", create_if_missing=True)
+volume_checkpoints = modal.Volume.from_name("open-xtts-checkpoints", create_if_missing=True)
 volume_baselines = modal.Volume.from_name("open-xtts-baselines", create_if_missing=True)
 
 image = (
@@ -49,6 +50,7 @@ image = (
     volumes={
         "/root/open-xtts-trainer/xtts_base": volume_cache,
         "/root/open-xtts-trainer/runs": volume_runs,
+        "/root/open-xtts-trainer/checkpoints": volume_checkpoints,
         "/root/open-xtts-trainer/eval/baselines": volume_baselines,
     },
     timeout=7200,
@@ -64,6 +66,7 @@ def run_command_remote(cmd: str):
     )
     volume_cache.commit()
     volume_runs.commit()
+    volume_checkpoints.commit()
     volume_baselines.commit()
     return proc.returncode
 

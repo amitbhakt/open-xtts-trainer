@@ -29,6 +29,7 @@ PINNED_COMMIT = "a9dbbd87fae511eeb8053787754f762391ce4dd7"
 # Persistent volumes for base models, training runs, and baseline evidence
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
 volume_runs = modal.Volume.from_name("open-xtts-runs", create_if_missing=True)
+volume_checkpoints = modal.Volume.from_name("open-xtts-checkpoints", create_if_missing=True)
 volume_baselines = modal.Volume.from_name("open-xtts-baselines", create_if_missing=True)
 
 # Container image with PyTorch, locked dependencies, and JupyterLab
@@ -75,6 +76,7 @@ def main(gpu: str = "A10G", timeout_hours: float = 4.0):
             volumes={
                 "/root/open-xtts-trainer/xtts_base": volume_cache,
                 "/root/open-xtts-trainer/runs": volume_runs,
+                "/root/open-xtts-trainer/checkpoints": volume_checkpoints,
                 "/root/open-xtts-trainer/eval/baselines": volume_baselines,
             },
             timeout=timeout_seconds,
@@ -97,6 +99,7 @@ def main(gpu: str = "A10G", timeout_hours: float = 4.0):
         print("\nPersistent storage mounted at:")
         print(" - /root/open-xtts-trainer/xtts_base (base models)")
         print(" - /root/open-xtts-trainer/runs (training checkpoints)")
+        print(" - /root/open-xtts-trainer/checkpoints (documented model exports & checkpoints)")
         print(" - /root/open-xtts-trainer/eval/baselines (baseline manifests)")
         print("\nPress Ctrl+C in this terminal to shut down the GPU sandbox.\n")
 
