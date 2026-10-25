@@ -56,15 +56,15 @@ Every number in this README comes from the evaluation harness (`eval/`, `scripts
 links to the manifest that produced it. Training losses are not results: the earlier convergence table was
 removed because no manifest backed it (docs/recipe_design.md §6, phase 8).
 
-**Measured: stock XTTS-v2 baseline**, full multilingual baseline across 5 languages, 12 sentences × 5 CMU ARCTIC voices × 3 seeds (900 utterances total; [index](eval/baselines/base_xtts_s12_index.json), [run notes](docs/evidence/run5/README.md)):
+**Measured: stock XTTS-v2 baseline**, full multilingual baseline across 5 languages, 12 sentences × 5 CMU ARCTIC voices × 3 seeds (900 utterances total; values: mean ± 95% CI half-width; speaker similarity uses ECAPA2 on clips ≥ 2 s, English n = 150; [index](eval/baselines/base_xtts_s12_index.json), [run notes](docs/evidence/run5/README.md)):
 
 | Language | WER (Whisper large-v3) | CER | Speaker similarity, ECAPA2 (clips ≥ 2 s) | UTMOS | Duration ratio |
 |---|---|---|---|---|---|
-| **English (`en`)** | 0.021 ± 0.007 | 0.013 ± 0.004 | 0.575 ± 0.017 | 4.036 ± 0.057 | 1.060 ± 0.048 |
-| **Spanish (`es`)** | 0.099 ± 0.075 | 0.082 ± 0.049 | 0.511 ± 0.006 | 3.287 ± 0.055 | 1.078 ± 0.065 |
-| **French (`fr`)** | 0.042 ± 0.012 | 0.031 ± 0.009 | 0.450 ± 0.007 | 3.302 ± 0.055 | 0.938 ± 0.051 |
-| **German (`de`)** | 0.052 ± 0.017 | 0.031 ± 0.011 | 0.512 ± 0.009 | 3.438 ± 0.039 | 1.062 ± 0.026 |
-| **Hindi (`hi`)** | 0.100 ± 0.011 | 0.047 ± 0.007 | 0.542 ± 0.011 | 3.454 ± 0.037 | 1.290 ± 0.020 |
+| **English (`en`)** | 0.060 ± 0.018 | 0.020 ± 0.009 | 0.575 ± 0.017 | 4.036 ± 0.057 | 1.060 ± 0.048 |
+| **Spanish (`es`)** | 0.099 ± 0.075 | 0.083 ± 0.049 | 0.511 ± 0.006 | 3.287 ± 0.055 | 1.078 ± 0.065 |
+| **French (`fr`)** | 0.043 ± 0.012 | 0.031 ± 0.009 | 0.450 ± 0.007 | 3.302 ± 0.055 | 0.938 ± 0.051 |
+| **German (`de`)** | 0.053 ± 0.017 | 0.032 ± 0.011 | 0.512 ± 0.009 | 3.439 ± 0.039 | 1.062 ± 0.026 |
+| **Hindi (`hi`)** | 0.101 ± 0.011 | 0.047 ± 0.007 | 0.542 ± 0.011 | 3.454 ± 0.037 | 1.291 ± 0.020 |
 
 **Not yet measured: fine-tuned models.** The three stages run end to end and are covered by tests, but no
 fine-tune has yet been compared against this baseline. That comparison (`scripts/compare_ab.py`) is what will

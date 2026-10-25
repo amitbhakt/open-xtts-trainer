@@ -61,7 +61,9 @@ def test_speaker_similarity_resamples_to_16k():
 
 def test_utmos_predictor_passes_16k():
     mos = FakeMOS()
-    score = UTMOSPredictor(model=mos).score(np.zeros(SPEC.output_sample_rate, dtype=np.float32), SPEC.output_sample_rate)
+    score = UTMOSPredictor(model=mos).score(
+        np.zeros(SPEC.output_sample_rate, dtype=np.float32), SPEC.output_sample_rate
+    )
     assert score == pytest.approx(3.5)
     assert mos.calls[-1] == ((1, UTMOS_SAMPLE_RATE), UTMOS_SAMPLE_RATE)
 
@@ -85,8 +87,9 @@ def test_harness_uses_ecapa2_not_xtts_encoder(monkeypatch, tmp_path):
     )
     monkeypatch.setattr(harness_module, "asr_transcribe", lambda audio, sr, lang, model_name, device: "hello world")
     enc, mos = FakeEncoder(), FakeMOS()
-    harness = EvaluationHarness(device="cpu", speaker_similarity=SpeakerSimilarity(model=enc),
-                                mos_predictor=UTMOSPredictor(model=mos))
+    harness = EvaluationHarness(
+        device="cpu", speaker_similarity=SpeakerSimilarity(model=enc), mos_predictor=UTMOSPredictor(model=mos)
+    )
     manifest = harness.run_benchmark(model, ref_path, seeds=[1, 2], subset_size=2, language="en")
 
     summary = manifest["summary"]
@@ -102,8 +105,11 @@ def test_harness_uses_ecapa2_not_xtts_encoder(monkeypatch, tmp_path):
 def test_harness_flags_babbling_with_the_absolute_excess_rule(monkeypatch):
     """A 1.15 s "Yes." (ratio ~2.3, run 2) is a normal take; 3 s of it is babbling."""
     monkeypatch.setattr(harness_module, "asr_transcribe", lambda audio, sr, lang, model_name, device: "yes")
-    harness = EvaluationHarness(device="cpu", speaker_similarity=SpeakerSimilarity(model=FakeEncoder()),
-                                mos_predictor=UTMOSPredictor(model=FakeMOS()))
+    harness = EvaluationHarness(
+        device="cpu",
+        speaker_similarity=SpeakerSimilarity(model=FakeEncoder()),
+        mos_predictor=UTMOSPredictor(model=FakeMOS()),
+    )
     ref = harness.speaker_similarity.embed(np.random.RandomState(0).randn(16000).astype(np.float32), 16000)
 
     def take(seconds):
@@ -120,8 +126,15 @@ def test_headline_secs_excludes_short_clips():
     from eval.harness import HEADLINE_SECS_MIN_S, summarize_results
 
     def result(duration, secs):
-        return {"wer": 0.0, "cer": 0.0, "secs": secs, "utmos": 4.0, "duration_ratio": 1.0, "duration_s": duration,
-                "failures": {"is_empty": False, "is_too_long": False, "is_nan": False}}
+        return {
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": secs,
+            "utmos": 4.0,
+            "duration_ratio": 1.0,
+            "duration_s": duration,
+            "failures": {"is_empty": False, "is_too_long": False, "is_nan": False},
+        }
 
     s = summarize_results([result(0.8, 0.2), result(HEADLINE_SECS_MIN_S, 0.6), result(5.0, 0.7)])
     assert s["secs"]["n"] == 2 and s["secs"]["mean"] == pytest.approx(0.65)
@@ -154,8 +167,11 @@ def test_harness_rejects_unknown_language(monkeypatch, tmp_path):
     ref_path = str(tmp_path / "ref.wav")
     sf.write(ref_path, np.zeros(16000 * 7, dtype=np.float32), 16000)
     model = SimpleNamespace(get_conditioning_latents=lambda audio_path: (None, None))
-    harness = EvaluationHarness(device="cpu", speaker_similarity=SpeakerSimilarity(model=FakeEncoder()),
-                                mos_predictor=UTMOSPredictor(model=FakeMOS()))
+    harness = EvaluationHarness(
+        device="cpu",
+        speaker_similarity=SpeakerSimilarity(model=FakeEncoder()),
+        mos_predictor=UTMOSPredictor(model=FakeMOS()),
+    )
     with pytest.raises(ValueError, match="no sentences"):
         harness.run_benchmark(model, ref_path, seeds=[1], language="xx")
 
@@ -164,16 +180,21 @@ def test_harness_rejects_unknown_language(monkeypatch, tmp_path):
 # Reference voices
 # ---------------------------------------------------------------------------
 
+
 def _make_arctic_tarballs(src_dir, speakers, utterances, sr=16000):
     for spk in speakers:
         tar_path = os.path.join(src_dir, f"cmu_us_{spk}_arctic.tar.bz2")
         with tarfile.open(tar_path, "w:bz2") as tar:
+
             def add(name, data):
                 info = tarfile.TarInfo(name)
                 info.size = len(data)
                 tar.addfile(info, io.BytesIO(data))
-            add(f"cmu_us_{spk}_arctic/etc/txt.done.data",
-                "\n".join(f'( {u} "Sentence {u[-2:]} for {spk}." )' for u in utterances).encode())
+
+            add(
+                f"cmu_us_{spk}_arctic/etc/txt.done.data",
+                "\n".join(f'( {u} "Sentence {u[-2:]} for {spk}." )' for u in utterances).encode(),
+            )
             rng = np.random.RandomState(zlib.crc32(spk.encode()) % 1000)
             for utt in utterances:
                 speech = (rng.randn(int(2.0 * sr)) * 0.2).astype(np.float32)
@@ -253,13 +274,21 @@ def test_reference_voices_build_lock_and_verify(tmp_path):
 # Run comparison
 # ---------------------------------------------------------------------------
 
+
 def _manifest(shift=0.0, seeds=(42,)):
     stats = lambda mean: {"mean": mean, "std": 0.05, "n": 100}
     return {
-        "eval_set_sha256": "abc", "checkpoint_sha256": {"model.pth": "x"}, "reference_voices": [],
-        "seeds": list(seeds), "subset_size": None, "languages": ["en"], "asr_model": "openai/whisper-large-v3",
+        "eval_set_sha256": "abc",
+        "checkpoint_sha256": {"model.pth": "x"},
+        "reference_voices": [],
+        "seeds": list(seeds),
+        "subset_size": None,
+        "languages": ["en"],
+        "asr_model": "openai/whisper-large-v3",
         "metrics_version": 2,
-        "summary_by_language": {"en": {m: stats(0.5 + shift) for m in ("wer", "cer", "secs", "secs_all", "utmos", "duration_ratio")}},
+        "summary_by_language": {
+            "en": {m: stats(0.5 + shift) for m in ("wer", "cer", "secs", "secs_all", "utmos", "duration_ratio")}
+        },
     }
 
 
@@ -284,12 +313,19 @@ def test_generate_baseline_dry_run(monkeypatch, tmp_path):
     eval_data = load_eval_set()
     src = tmp_path / "src"
     src.mkdir()
-    _make_arctic_tarballs(str(src), [v["corpus_speaker"] for v in eval_data["reference_voices"]],
-                          eval_data["reference_voices"][0]["utterances"])
+    _make_arctic_tarballs(
+        str(src),
+        [v["corpus_speaker"] for v in eval_data["reference_voices"]],
+        eval_data["reference_voices"][0]["utterances"],
+    )
     voices_dir, lock_path = str(tmp_path / "voices"), str(tmp_path / "lock.json")
-    build_reference_voices(out_dir=voices_dir, lock_path=lock_path, cache_dir=str(tmp_path / "cache"),
-                           url_template=f"file://{src}/cmu_us_{{speaker}}_arctic.tar.bz2",
-                           license_url_template=f"file://{src}/COPYING_{{speaker}}")
+    build_reference_voices(
+        out_dir=voices_dir,
+        lock_path=lock_path,
+        cache_dir=str(tmp_path / "cache"),
+        url_template=f"file://{src}/cmu_us_{{speaker}}_arctic.tar.bz2",
+        license_url_template=f"file://{src}/COPYING_{{speaker}}",
+    )
 
     ckpt = tmp_path / "xtts_base"
     ckpt.mkdir()
@@ -326,8 +362,13 @@ def test_generate_baseline_dry_run(monkeypatch, tmp_path):
 
     out = str(tmp_path / "baseline.json")
     manifest = baseline_module.generate_baseline(
-        checkpoint_dir=str(ckpt), reference_audio_dir=voices_dir, lock_path=lock_path,
-        output_path=out, seeds=[1, 2], languages=["en", "hi"], subset_size=2,
+        checkpoint_dir=str(ckpt),
+        reference_audio_dir=voices_dir,
+        lock_path=lock_path,
+        output_path=out,
+        seeds=[1, 2],
+        languages=["en", "hi"],
+        subset_size=2,
     )
     with open(out, "r", encoding="utf-8") as f:
         on_disk = json.load(f)
@@ -360,8 +401,11 @@ def test_old_lock_without_license_is_refused(tmp_path):
     eval_data = load_eval_set()
     src = tmp_path / "src"
     src.mkdir()
-    _make_arctic_tarballs(str(src), [v["corpus_speaker"] for v in eval_data["reference_voices"]],
-                          eval_data["reference_voices"][0]["utterances"])
+    _make_arctic_tarballs(
+        str(src),
+        [v["corpus_speaker"] for v in eval_data["reference_voices"]],
+        eval_data["reference_voices"][0]["utterances"],
+    )
     kwargs = _voice_kwargs(tmp_path, src)
     lock = build_reference_voices(**kwargs)
     for entry in lock["voices"].values():
@@ -404,8 +448,9 @@ def test_git_info_counts_tracked_changes_not_run_outputs(tmp_path):
     from eval.harness import get_git_info
 
     def git(*args):
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=tmp_path, check=True,
-                       capture_output=True)
+        subprocess.run(
+            ["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=tmp_path, check=True, capture_output=True
+        )
 
     git("init", "-q")
     (tmp_path / "code.py").write_text("x = 1\n", encoding="utf-8")
@@ -417,3 +462,81 @@ def test_git_info_counts_tracked_changes_not_run_outputs(tmp_path):
     assert get_git_info(str(tmp_path))["is_dirty"] is False
     (tmp_path / "code.py").write_text("x = 2\n", encoding="utf-8")  # a tracked file edited
     assert get_git_info(str(tmp_path))["is_dirty"] is True
+
+
+def test_fetch_base_artifacts_records_replaced_mismatch(tmp_path, monkeypatch):
+    """Mismatched files are replaced with action=replaced_mismatch and not deleted before download."""
+    import hashlib
+    import json
+    import urllib.error
+    import scripts.fetch_base_artifacts as fetch_module
+
+    dest = tmp_path / "dest"
+    dest.mkdir()
+    lockfile = tmp_path / "artifacts.lock.json"
+    fake_content = b"valid file content"
+    content_hash = hashlib.sha256(fake_content).hexdigest()
+    lock_data = {
+        "test_file.bin": {
+            "url": "http://example.com/test_file.bin",
+            "size_bytes": len(fake_content),
+            "sha256": content_hash,
+        }
+    }
+    lockfile.write_text(json.dumps(lock_data), encoding="utf-8")
+
+    # Put a mismatched file in dest
+    corrupt_content = b"corrupted file content"
+    target_file = dest / "test_file.bin"
+    target_file.write_bytes(corrupt_content)
+
+    # Mock download_file to simulate network failure
+    def mock_download_fail(url, d, entry):
+        raise urllib.error.URLError("network error")
+
+    monkeypatch.setattr(fetch_module, "download_file", mock_download_fail)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["fetch_base_artifacts.py", "--dest", str(dest), "--lockfile", str(lockfile)],
+    )
+
+    with pytest.raises(urllib.error.URLError):
+        fetch_module.main()
+    # Ensure existing file was NOT deleted before download
+    assert target_file.read_bytes() == corrupt_content
+
+    # Now mock download_file to succeed
+    def mock_download_success(url, d, entry):
+        target_file.write_bytes(fake_content)
+        return {
+            "path": str(target_file),
+            "size_bytes": len(fake_content),
+            "sha256": content_hash,
+            "size_ok": True,
+            "sha256_ok": True,
+        }
+
+    monkeypatch.setattr(fetch_module, "download_file", mock_download_success)
+    report_path = tmp_path / "report.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "fetch_base_artifacts.py",
+            "--dest",
+            str(dest),
+            "--lockfile",
+            str(lockfile),
+            "--report",
+            str(report_path),
+        ],
+    )
+    fetch_module.main()
+
+    assert report_path.exists()
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    artifact_report = report["artifacts"]["test_file.bin"]
+    assert artifact_report["action"] == "replaced_mismatch"
+    assert artifact_report["replaced_mismatch"]["sha256"] == hashlib.sha256(corrupt_content).hexdigest()
+    assert artifact_report["replaced_mismatch"]["size_bytes"] == len(corrupt_content)

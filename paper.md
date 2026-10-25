@@ -357,23 +357,20 @@ transcripts and durations. Different seeds changed the audio: 47 of 50 durations
 
 ### 5.3 Stock XTTS-v2 baseline and measurement artefacts
 
-**Table 2.** Stock XTTS-v2, full multilingual baseline across 5 languages (900 utterances: 12 sentences × 5 ARCTIC voices × 3 seeds, measured on locked checkpoint `c7ea2000…`; metrics version 2). Headline SECS counts clips ≥ 2 s.
+**Table 2.** Stock XTTS-v2, full multilingual baseline across 5 languages (900 utterances: 12 sentences × 5 ARCTIC voices × 3 seeds, measured on locked checkpoint `c7ea2000…`; metrics version 2). Values are mean ± 95% confidence interval half-width ($1.96 \cdot \text{std}/\sqrt{n}$). Headline SECS counts clips ≥ 2 s (English $n = 150$, all other languages $n = 180$).
 
 | Language | WER (Whisper large-v3) | CER | SECS (≥ 2 s) | SECS (all) | UTMOS | Duration ratio |
 |---|---|---|---|---|---|---|
-| **English (`en`)** | 0.021 ± 0.007 | 0.013 ± 0.004 | 0.575 ± 0.017 | 0.537 ± 0.019 | 4.04 ± 0.06 | 1.06 ± 0.05 |
-| **Spanish (`es`)** | 0.099 ± 0.075 | 0.082 ± 0.049 | 0.511 ± 0.006 | 0.511 ± 0.006 | 3.29 ± 0.06 | 1.08 ± 0.07 |
-| **French (`fr`)** | 0.042 ± 0.012 | 0.031 ± 0.009 | 0.450 ± 0.007 | 0.450 ± 0.007 | 3.30 ± 0.06 | 0.94 ± 0.05 |
-| **German (`de`)** | 0.052 ± 0.017 | 0.031 ± 0.011 | 0.512 ± 0.009 | 0.512 ± 0.009 | 3.44 ± 0.04 | 1.06 ± 0.03 |
-| **Hindi (`hi`)** | 0.100 ± 0.011 | 0.047 ± 0.007 | 0.542 ± 0.011 | 0.542 ± 0.011 | 3.45 ± 0.04 | 1.29 ± 0.02 |
-| **Multilingual Mean** | **0.063** | **0.041** | **0.518** | **0.510** | **3.50** | **1.09** |
+| **English (`en`)** | 0.060 ± 0.018 | 0.020 ± 0.009 | 0.575 ± 0.017 | 0.537 ± 0.019 | 4.04 ± 0.06 | 1.06 ± 0.05 |
+| **Spanish (`es`)** | 0.099 ± 0.075 | 0.083 ± 0.049 | 0.511 ± 0.006 | 0.511 ± 0.006 | 3.29 ± 0.06 | 1.08 ± 0.07 |
+| **French (`fr`)** | 0.043 ± 0.012 | 0.031 ± 0.009 | 0.450 ± 0.007 | 0.450 ± 0.007 | 3.30 ± 0.06 | 0.94 ± 0.05 |
+| **German (`de`)** | 0.053 ± 0.017 | 0.032 ± 0.011 | 0.512 ± 0.009 | 0.512 ± 0.009 | 3.44 ± 0.04 | 1.06 ± 0.03 |
+| **Hindi (`hi`)** | 0.101 ± 0.011 | 0.047 ± 0.007 | 0.542 ± 0.011 | 0.542 ± 0.011 | 3.45 ± 0.04 | 1.29 ± 0.02 |
+| **Multilingual Mean** | **0.071** | **0.043** | **0.518** | **0.510** | **3.50** | **1.09** |
 
-In this pilot, the stock model makes no recognised errors on four categories. All of the sibilant WER comes from
-a single tongue twister, which is also hard for ASR. An earlier, unstratified pilot that sampled only Harvard
-sentences reported WER 0.005. We regard that number as an artefact of the easy subset, so evaluation subsets are
-now stratified by category.
+The multilingual results in Table 2 establish clear language-dependent baselines: English achieves the highest quality (UTMOS 4.04, WER 0.060), while Spanish and Hindi exhibit higher word error rates (0.099 and 0.101, respectively). Across the 900 utterances, the pipeline had zero silent dropouts (`is_empty`) and zero `NaN` values, with 7 runaway-duration flags (`is_too_long`: 5 Spanish, 2 French).
 
-Three measurement artefacts motivated metrics version 2:
+The evaluation protocol and Metric Version 2 rules were originally established during the initial 60-utterance English category pilot (Colab Run 2; `docs/evidence/colab_run2/README.md`), where the model made no recognised errors on four categories and all sibilant WER stemmed from a single tongue-twister sentence that challenged ASR. That pilot highlighted three measurement artefacts that required methodological corrections:
 
 1. **Duration estimated from written digits.** "4,800,000" is 9 characters but about 2 s of speech. The numbers
    category therefore scored a duration ratio of 1.61. Estimating duration from the cleaned words lowers the
@@ -384,9 +381,7 @@ Three measurement artefacts motivated metrics version 2:
    ECAPA2 does not get enough speech from such clips for a reliable embedding. Short-text quality must therefore
    be judged with WER, CER, absolute duration and UTMOS, not SECS.
 
-Every short clip lasted 0.69–1.15 s, and every other clip at least 2 s, so the 2 s cutoff separates the
-categories cleanly. Per voice, SECS (all clips) ranged from 0.44 to 0.61, so voice must be a pairing factor in
-any comparison.
+In that pilot, every short clip lasted 0.69–1.15 s, and every other clip at least 2 s, establishing the 2 s cutoff to separate categories cleanly. Per voice, SECS (all clips) ranged from 0.44 to 0.61, confirming that voice must be a pairing factor in any comparison.
 
 ### 5.4 Forced-alignment validation detects misplaced cuts
 

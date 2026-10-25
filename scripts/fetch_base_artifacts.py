@@ -178,9 +178,13 @@ def main():
                 result["action"] = "verified_existing"
             elif not args.verify_only:
                 print(f"Existing {name} hash mismatch; re-downloading from {entry['url']} ...")
-                os.remove(dest_path)
+                replaced_info = {
+                    "sha256": result["sha256"],
+                    "size_bytes": result["size_bytes"],
+                }
                 result = download_file(entry["url"], dest_path, entry)
-                result["action"] = "downloaded"
+                result["action"] = "replaced_mismatch"
+                result["replaced_mismatch"] = replaced_info
             else:
                 result["action"] = "verified_existing"
         elif args.verify_only:

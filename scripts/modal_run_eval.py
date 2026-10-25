@@ -71,9 +71,14 @@ image = (
 )
 def run_command_remote(cmd: str):
     """Execute a bash command inside the Modal GPU container and commit outputs."""
-    # Commit local overlay into container's local git so is_dirty is cleanly False
+    # Stage new overlay source files while excluding generated runtime and output directories.
+    # Set fixed author/committer timestamps so the overlay commit SHA is deterministic and
+    # stable across container restarts, preserving resume compatibility across runs.
     subprocess.run(
-        'git config user.email "bot@example.com" && git config user.name "bot" && git add -u && (git commit -m "local overlay" || true)',
+        'git config user.email "bot@example.com" && git config user.name "bot" && '
+        "git add -A && "
+        '(GIT_COMMITTER_DATE="2026-10-25T00:00:00Z" GIT_AUTHOR_DATE="2026-10-25T00:00:00Z" '
+        'git commit -m "modal overlay" || true)',
         shell=True,
         cwd="/root/open-xtts-trainer",
         check=False,

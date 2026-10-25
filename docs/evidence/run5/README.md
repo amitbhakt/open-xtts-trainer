@@ -26,17 +26,17 @@ Run 5 resolved this finding (P1):
 
 ## 2. Phase 1: Multilingual Baseline Results (900 Utterances Total)
 
-Evaluated across 5 CMU ARCTIC reference speakers (`arctic_slt`, `arctic_clb`, `arctic_bdl`, `arctic_awb`, `arctic_ksp`), 12 sentences per language, and 3 random seeds (`42, 123, 999`) under Metrics Version 2:
+Evaluated across 5 CMU ARCTIC reference speakers (`arctic_slt`, `arctic_clb`, `arctic_bdl`, `arctic_awb`, `arctic_ksp`), 12 sentences per language, and 3 random seeds (`42, 123, 999`) under Metrics Version 2 (rerun determinism previously evidenced in English pilot Runs 1–2):
 
-| Language | WER (Whisper large-v3) | CER | SECS (ECAPA2, ≥ 2 s) | UTMOS | Duration Ratio | Utterances / Failures |
+| Language (mean ± 95% CI half-width) | WER (Whisper large-v3) | CER | SECS (ECAPA2, ≥ 2 s; English n = 150) | UTMOS | Duration Ratio | Utterances / Failures |
 |---|---|---|---|---|---|---|
-| **English (`en`)** | **0.021 ± 0.007** | **0.013 ± 0.004** | **0.575 ± 0.017** | **4.036 ± 0.057** | **1.060 ± 0.048** | 180 / 0 |
-| **Spanish (`es`)** | **0.099 ± 0.075** | **0.082 ± 0.049** | **0.511 ± 0.006** | **3.287 ± 0.055** | **1.078 ± 0.065** | 180 / 0 |
-| **French (`fr`)** | **0.042 ± 0.012** | **0.031 ± 0.009** | **0.450 ± 0.007** | **3.302 ± 0.055** | **0.938 ± 0.051** | 180 / 0 |
-| **German (`de`)** | **0.052 ± 0.017** | **0.031 ± 0.011** | **0.512 ± 0.009** | **3.438 ± 0.039** | **1.062 ± 0.026** | 180 / 0 |
-| **Hindi (`hi`)** | **0.100 ± 0.011** | **0.047 ± 0.007** | **0.542 ± 0.011** | **3.454 ± 0.037** | **1.290 ± 0.020** | 180 / 0 |
+| **English (`en`)** | **0.060 ± 0.018** | **0.020 ± 0.009** | **0.575 ± 0.017** | **4.036 ± 0.057** | **1.060 ± 0.048** | 180 / 0 |
+| **Spanish (`es`)** | **0.099 ± 0.075** | **0.083 ± 0.049** | **0.511 ± 0.006** | **3.287 ± 0.055** | **1.078 ± 0.065** | 180 / 5 (too_long) |
+| **French (`fr`)** | **0.043 ± 0.012** | **0.031 ± 0.009** | **0.450 ± 0.007** | **3.302 ± 0.055** | **0.938 ± 0.051** | 180 / 2 (too_long) |
+| **German (`de`)** | **0.053 ± 0.017** | **0.032 ± 0.011** | **0.512 ± 0.009** | **3.439 ± 0.039** | **1.062 ± 0.026** | 180 / 0 |
+| **Hindi (`hi`)** | **0.101 ± 0.011** | **0.047 ± 0.007** | **0.542 ± 0.011** | **3.454 ± 0.037** | **1.291 ± 0.020** | 180 / 0 |
 
-Zero silent dropouts (`is_empty = 0`), zero runaway audio loops (`is_too_long = 0`), and zero `NaN` values across all 900 evaluation clips.
+Zero silent dropouts (`is_empty = 0`), zero `NaN` values, and 7 runaway-duration flags (`is_too_long`: 5 Spanish, 2 French) across the 900 evaluation clips. Headline SECS for English uses $n=150$ clips because 30 clips have duration $< 2\text{ s}$ (all-clip SECS is $0.537 \pm 0.019$); all other languages have $n=180$ clips $\ge 2\text{ s}$.
 
 ---
 
