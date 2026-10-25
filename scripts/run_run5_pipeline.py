@@ -18,11 +18,20 @@ import sys
 import time
 from pathlib import Path
 
+# Ensure repo root is in sys.path
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+os.chdir(REPO_ROOT)
+os.environ["PYTHONPATH"] = f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"
+
 
 def run_cmd(cmd: str, check: bool = True) -> int:
     """Run a shell command with pipefail and live output."""
     print(f"\n▶ [{time.strftime('%H:%M:%S')}] {cmd}")
-    proc = subprocess.run(["bash", "-o", "pipefail", "-c", cmd], check=check)
+    env = dict(os.environ)
+    env["PYTHONPATH"] = f"{REPO_ROOT}:{env.get('PYTHONPATH', '')}"
+    proc = subprocess.run(["bash", "-o", "pipefail", "-c", cmd], check=check, env=env)
     return proc.returncode
 
 
