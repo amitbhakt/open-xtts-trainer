@@ -7,30 +7,30 @@ Usage:
     # 1. Authenticate with Modal (one-time):
     #    uvx modal setup
     #
-    # 2. Run JupyterLab on an A10G GPU (24GB VRAM):
-    #    uvx modal run scripts/modal_jupyter.py --gpu A10G
+    # 2. Run JupyterLab on an A100 (40GB):
+    #    uvx modal run scripts/modal_jupyter.py --gpu A100-40GB
     #
     #    Or on an L4 GPU (24GB VRAM):
     #    uvx modal run scripts/modal_jupyter.py --gpu L4
-    #
-    #    Or on an A100 (40GB/80GB):
-    #    uvx modal run scripts/modal_jupyter.py --gpu A100
 """
 
 import secrets
 import sys
+from pathlib import Path
 import modal
 
 app = modal.App.lookup("open-xtts-jupyter", create_if_missing=True)
 
 # Pinned commit SHA for reproducible container build
-PINNED_COMMIT = "7af91fc1d72cf2ce908994e43e2e5052957b4202"
+PINNED_COMMIT = "c669dd304d89f81282285576c38a66a1b815f781"
 
 # Persistent volumes for base models, training runs, and baseline evidence
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
 volume_runs = modal.Volume.from_name("open-xtts-runs", create_if_missing=True)
 volume_checkpoints = modal.Volume.from_name("open-xtts-checkpoints", create_if_missing=True)
 volume_baselines = modal.Volume.from_name("open-xtts-baselines", create_if_missing=True)
+
+repo_root = Path(__file__).resolve().parent.parent
 
 # Container image with PyTorch, locked dependencies, and JupyterLab
 image = (
@@ -45,13 +45,18 @@ image = (
         "uv pip install --system --break-system-packages -e /root/open-xtts-trainer",
         "pip uninstall -y -q torchvision",
     )
+    .add_local_dir(
+        repo_root,
+        remote_path="/root/open-xtts-trainer",
+        ignore=[".git", ".venv", "__pycache__", "runs", "checkpoints", "eval/baselines", "xtts_base"],
+    )
 )
 
 JUPYTER_PORT = 8888
 
 
 @app.local_entrypoint()
-def main(gpu: str = "A10G", timeout_hours: float = 4.0):
+def main(gpu: str = "A100-40GB", timeout_hours: float = 4.0):
     """Launch JupyterLab inside a Modal Sandbox with the requested GPU."""
     token = secrets.token_urlsafe(16)
     timeout_seconds = int(timeout_hours * 3600)

@@ -1,33 +1,33 @@
 """Run open-xtts-trainer evaluations or smoke runs headlessly on Modal.
 
-Allows executing any command on an A10G / L4 / A100 GPU in Modal without
+Allows executing any command on an A100 / L4 / A10G GPU in Modal without
 keeping a local Jupyter session open. Results and artifacts are synced to
 persistent volumes.
 
 Usage:
-    # Run the test suite:
-    uvx modal run scripts/modal_run_eval.py --cmd "pytest -q"
+    # Run the full Run 5 pipeline on an A100-40GB:
+    uvx modal run scripts/modal_run_eval.py --gpu A100-40GB --cmd "python scripts/run_run5_pipeline.py"
 
-    # Fetch base artifacts:
-    uvx modal run scripts/modal_run_eval.py --cmd "python scripts/fetch_base_artifacts.py --dest xtts_base --check_mel_stats"
-
-    # Run English baseline on A10G (manifests persist in volume):
-    uvx modal run scripts/modal_run_eval.py --gpu A10G --cmd "python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --languages en --label base --seeds 42 123 999 --subset_size 12 --output eval/baselines/base_xtts_s12_en.json"
+    # Quick smoke test or test suite:
+    uvx modal run scripts/modal_run_eval.py --gpu A100-40GB --cmd "pytest -q"
 """
 
 import subprocess
+from pathlib import Path
 import modal
 
 app = modal.App.lookup("open-xtts-runner", create_if_missing=True)
 
-# Pinned commit SHA for reproducible execution
-PINNED_COMMIT = "7af91fc1d72cf2ce908994e43e2e5052957b4202"
+# Pinned commit SHA for reproducible container build
+PINNED_COMMIT = "c669dd304d89f81282285576c38a66a1b815f781"
 
 # Persistent volumes for base models, training runs, checkpoints, and baseline results
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
 volume_runs = modal.Volume.from_name("open-xtts-runs", create_if_missing=True)
 volume_checkpoints = modal.Volume.from_name("open-xtts-checkpoints", create_if_missing=True)
 volume_baselines = modal.Volume.from_name("open-xtts-baselines", create_if_missing=True)
+
+repo_root = Path(__file__).resolve().parent.parent
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -41,12 +41,17 @@ image = (
         "uv pip install --system --break-system-packages -e /root/open-xtts-trainer",
         "pip uninstall -y -q torchvision",
     )
+    .add_local_dir(
+        repo_root,
+        remote_path="/root/open-xtts-trainer",
+        ignore=[".git", ".venv", "__pycache__", "runs", "checkpoints", "eval/baselines", "xtts_base"],
+    )
 )
 
 
 @app.function(
     image=image,
-    gpu="A10G",
+    gpu="A100-40GB",
     volumes={
         "/root/open-xtts-trainer/xtts_base": volume_cache,
         "/root/open-xtts-trainer/runs": volume_runs,
@@ -72,9 +77,8 @@ def run_command_remote(cmd: str):
 
 
 @app.local_entrypoint()
-def main(cmd: str = "pytest -q", gpu: str = "A10G"):
+def main(cmd: str = "python scripts/run_run5_pipeline.py", gpu: str = "A100-40GB"):
     print(f"Submitting job to Modal ({gpu})...")
-    # Dynamically select requested GPU
     fn = run_command_remote.with_options(gpu=gpu)
     fn.remote(cmd)
     print("✅ Completed successfully on Modal!")
