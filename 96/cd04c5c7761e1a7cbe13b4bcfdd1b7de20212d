@@ -1,0 +1,9 @@
+scripts/run_run5_pipeline.py
+  ai_agent 21-27,32-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "96cd04c5c7761e1a7cbe13b4bcfdd1b7de20212d",
+  "prompts": {}
+}
