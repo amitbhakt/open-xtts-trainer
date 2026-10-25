@@ -484,7 +484,65 @@ def test_transcribe_phrases_groups_words_naturally(monkeypatch):
     assert phrases[1][2] == 8.5
 
 
-def test_long_audio_word_grouping_aligns_without_frame_overflow(tmp_path):
+def test_transcribe_phrases_rejects_missing_word_timestamps_on_long_audio(monkeypatch):
+    """If Whisper produces no word chunks for long audio (>50s), raise RuntimeError."""
+    from unittest.mock import MagicMock
+    from xtts_trainer import asr
+
+    mock_pipeline = MagicMock(return_value={"chunks": [], "text": "A very long transcript."})
+    monkeypatch.setattr(asr, "load_asr", lambda model_name, device: mock_pipeline)
+
+    audio = np.zeros(16000 * 60, dtype=np.float32)  # 60s
+    with pytest.raises(RuntimeError, match="cannot safely window long-form transcript"):
+        asr.transcribe_phrases(audio, sample_rate=16000, lang="en", model_name="dummy")
+
+
+def test_transcribe_phrases_unclosed_chunk_preserves_none(monkeypatch):
+    """When a chunk has timestamp (start, None), it preserves None for unclosed phrase."""
+    from unittest.mock import MagicMock
+    from xtts_trainer import asr
+
+    chunks = [
+        {"text": "First", "timestamp": (0.0, 2.0)},
+        {"text": "final", "timestamp": (2.5, None)},
+    ]
+    mock_pipeline = MagicMock(return_value={"chunks": chunks, "text": "First final"})
+    monkeypatch.setattr(asr, "load_asr", lambda model_name, device: mock_pipeline)
+
+    audio = np.zeros(16000 * 10, dtype=np.float32)  # 10s audio
+    phrases = asr.transcribe_phrases(audio, sample_rate=16000, lang="en", model_name="dummy")
+    assert len(phrases) == 1
+    assert phrases[0][0] == "First final"
+    assert phrases[0][1] == 0.0
+    assert phrases[0][2] is None  # preserves None for unclosed chunk
+
+
+def test_transcribe_phrases_bounds_at_20s_before_adding_crossing_word(monkeypatch):
+    """Words that would cross 20s bound trigger phrase split before being added."""
+    from unittest.mock import MagicMock
+    from xtts_trainer import asr
+
+    chunks = [
+        {"text": "word1", "timestamp": (0.0, 10.0)},
+        {"text": "word2", "timestamp": (10.0, 18.0)},
+        {"text": "word3", "timestamp": (18.0, 22.0)},  # would cross 20s if added
+    ]
+    mock_pipeline = MagicMock(return_value={"chunks": chunks, "text": "word1 word2 word3"})
+    monkeypatch.setattr(asr, "load_asr", lambda model_name, device: mock_pipeline)
+
+    audio = np.zeros(16000 * 25, dtype=np.float32)
+    phrases = asr.transcribe_phrases(audio, sample_rate=16000, lang="en", model_name="dummy")
+    assert len(phrases) == 2
+    assert phrases[0][0] == "word1 word2"
+    assert phrases[0][1] == 0.0
+    assert phrases[0][2] == 18.0
+    assert phrases[1][0] == "word3"
+    assert phrases[1][1] == 18.0
+    assert phrases[1][2] == 22.0
+
+
+
+def test_long_audio_word_grouping_aligns_without_frame_overflow(monkeypatch, tmp_path):
     """End-to-end regression test: long audio with continuous words groups into valid CTC windows without overflowing frames."""
     from xtts_trainer.prepare.pipeline import align_recording, phrase_windows
 
@@ -502,13 +560,14 @@ def test_long_audio_word_grouping_aligns_without_frame_overflow(tmp_path):
         def __call__(self, *args, **kwargs):
             return {"chunks": chunks, "text": " ".join(words)}
 
-    import pytest
-    monkeypatch = pytest.MonkeyPatch()
     monkeypatch.setattr(asr, "load_asr", lambda model_name, device: FakePipeline())
 
     audio = np.zeros(int(t * 24000), dtype=np.float32)
     phrases = asr.transcribe_phrases(audio, 24000, "en", "dummy-model")
     windows = phrase_windows(phrases, audio_s=t)
+
+    assert len(phrases) == 10
+    assert len(windows) == 2
 
     # Every window must be strictly <= 50.0s (under MMS_FA 60s limit)
     for start, end, text in windows:
@@ -517,7 +576,27 @@ def test_long_audio_word_grouping_aligns_without_frame_overflow(tmp_path):
         n_frames = int((end - start + 1.0) * 50)  # with padding
         assert len(text) < n_frames, f"Window ({start}, {end}) text length {len(text)} exceeds frames {n_frames}"
 
-    monkeypatch.undo()
+    # Verify align_recording completes without frame overflow or alignment error
+    aligner = CtcAligner(emitter=ToneEmitter())
+    alignments = align_recording(audio, 24000, windows, aligner)
+    assert len(alignments) == len(windows) == 2
+    for w in alignments:
+        assert len(w.words) > 0
+    assert sum(len(w.words) for w in alignments) == 100
+
+
+def test_phrase_windows_clamps_boundary_and_discards_out_of_range():
+    """Phrases starting at or beyond audio_s are discarded, and out-of-range starts are clamped."""
+    from xtts_trainer.prepare.pipeline import phrase_windows
+
+    phrases = [
+        ("Valid phrase", 0.0, 5.0),
+        ("Out of range phrase", 12.0, 15.0),  # starts beyond 10.0s audio
+    ]
+    windows = phrase_windows(phrases, audio_s=10.0)
+    assert len(windows) == 1
+    assert windows[0][2] == "Valid phrase"
+
 
 
 

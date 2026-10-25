@@ -19,10 +19,13 @@ import hashlib
 import json
 import os
 import platform
+import shlex
+import shutil
 import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import List, Union
 
 # Ensure repo root is in sys.path
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -32,12 +35,17 @@ os.chdir(REPO_ROOT)
 os.environ["PYTHONPATH"] = f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"
 
 
-def run_cmd(cmd: str, check: bool = True) -> int:
-    """Run a shell command with pipefail and live output."""
-    print(f"\n▶ [{time.strftime('%H:%M:%S')}] {cmd}")
+def run_cmd(cmd: Union[str, List[str]], check: bool = True) -> int:
+    """Run a command with live output, safely handling argument lists or shell strings."""
     env = dict(os.environ)
     env["PYTHONPATH"] = f"{REPO_ROOT}:{env.get('PYTHONPATH', '')}"
-    proc = subprocess.run(["bash", "-o", "pipefail", "-c", cmd], check=check, env=env)
+    if isinstance(cmd, list):
+        argv = [str(c) for c in cmd]
+    else:
+        argv = shlex.split(cmd)
+    display = " ".join(shlex.quote(str(c)) for c in argv)
+    print(f"\n▶ [{time.strftime('%H:%M:%S')}] {display}")
+    proc = subprocess.run(argv, check=check, env=env)
     return proc.returncode
 
 
@@ -50,14 +58,16 @@ def check_artifacts(after: str):
         artifacts = json.load(f)
     for name, entry in artifacts.items():
         path = os.path.join("xtts_base", name)
-        assert os.path.exists(path), f"{path} missing during/after {after}"
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"{path} missing during/after {after}")
         digest = hashlib.sha256()
         with open(path, "rb") as f:
             for chunk in iter(lambda: f.read(1 << 24), b""):
                 digest.update(chunk)
-        assert digest.hexdigest() == entry["sha256"], (
-            f"{path} changed during {after}: expected {entry['sha256']}, got {digest.hexdigest()}"
-        )
+        if digest.hexdigest() != entry["sha256"]:
+            raise RuntimeError(
+                f"{path} changed during {after}: expected {entry['sha256']}, got {digest.hexdigest()}"
+            )
     print(f"✅ Base artifacts intact after {after}")
 
 
@@ -73,7 +83,14 @@ def main():
     parser.add_argument("--subset-size", type=int, default=12, help="Eval subset size per language (default: 12)")
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 123, 999], help="Eval seeds")
     parser.add_argument("--skip-train", action="store_true", help="Skip fine-tuning if checkpoint already exported")
+    parser.add_argument("--eval-batch-size", type=int, default=16, help="Batch size for Whisper ASR during evaluation")
     args = parser.parse_args()
+
+    if args.speaker != "moira_fogarty":
+        raise ValueError(
+            f"Speaker '{args.speaker}' is not supported with pre-registered gates. "
+            "Only 'moira_fogarty' has pre-registered quality gates in eval/gates_target.json."
+        )
 
     t_start = time.time()
     results_dir = os.path.abspath(args.results_dir)
@@ -121,113 +138,219 @@ def main():
 
     # 2. Fetch and verify base XTTS artifacts
     print("\n📦 Step 1: Fetching and verifying base XTTS artifacts...")
-    run_cmd(
-        "python scripts/fetch_base_artifacts.py --dest xtts_base --check_mel_stats "
-        f"--report {evidence_dir}/artifact_verification.json"
-    )
+    run_cmd([
+        sys.executable, "scripts/fetch_base_artifacts.py",
+        "--dest", "xtts_base", "--check_mel_stats",
+        "--report", os.path.join(evidence_dir, "artifact_verification.json"),
+    ])
     check_artifacts("fetch_base_artifacts")
 
     # 3. Ensure reference voices exist
     print("\n🎙️ Step 2: Ensuring ARCTIC reference voices exist...")
-    run_cmd("python scripts/fetch_reference_voices.py")
+    run_cmd([sys.executable, "scripts/fetch_reference_voices.py"])
 
     # 4. Prepare target speaker speech data
     data_dir = f"data_{args.speaker}"
-    dataset_path = f"{data_dir}/dataset.jsonl"
+    dataset_path = os.path.join(data_dir, "dataset.jsonl")
     print(f"\n🔊 Step 3: Preparing speech data for {args.speaker} from source '{args.source}'...")
-    run_cmd(
-        f"python -m xtts_trainer.speech_data --source {args.source} --output_dir {data_dir} "
-        f"--vocab xtts_base/vocab.json --device {device}"
-    )
+    run_cmd([
+        sys.executable, "-m", "xtts_trainer.speech_data",
+        "--source", args.source,
+        "--output_dir", data_dir,
+        "--vocab", "xtts_base/vocab.json",
+        "--device", device,
+    ])
 
     # 5. Build target voices (hold out reference clips, produce dataset_train.jsonl)
     print(f"\n🎯 Step 4: Holding out reference clips for target speaker '{args.speaker}'...")
-    run_cmd(f"python scripts/build_target_voices.py --dataset {dataset_path} --speakers {args.speaker}")
-    train_dataset_path = f"{data_dir}/dataset_train.jsonl"
+    run_cmd([
+        sys.executable, "scripts/build_target_voices.py",
+        "--dataset", dataset_path,
+        "--speakers", args.speaker,
+    ])
+    train_dataset_path = os.path.join(data_dir, "dataset_train.jsonl")
     assert os.path.exists(train_dataset_path), f"Expected {train_dataset_path} after build_target_voices"
 
+    # Validate dataset_train.jsonl with target holdout lock
+    train_val_report_path = os.path.join(evidence_dir, "validation_report.json")
+    run_cmd([
+        sys.executable, "-m", "xtts_trainer.data.validate",
+        train_dataset_path,
+        "--vocab", "xtts_base/vocab.json",
+        "--report", train_val_report_path,
+    ])
+
     # Copy prep evidence and target voices
-    run_cmd(f"cp {data_dir}/prep_report.json {data_dir}/validation_report.json {evidence_dir}/")
-    run_cmd(f"cp -r eval/target_voices {evidence_dir}/")
+    shutil.copy(os.path.join(data_dir, "prep_report.json"), os.path.join(evidence_dir, "prep_report.json"))
+    shutil.copytree("eval/target_voices", os.path.join(evidence_dir, "target_voices"), dirs_exist_ok=True)
 
     # 6. Stage 2 GPT fine-tuning
     run_dir = f"runs/{args.speaker}_finetune"
-    export_dir = f"{run_dir}/export"
+    export_dir = os.path.join(run_dir, "export")
     if not args.skip_train:
         print(f"\n🧠 Step 5: Fine-tuning Stage 2 GPT on {train_dataset_path}...")
-        run_cmd(
-            f"python -m xtts_trainer.stage2_gpt.train --dataset {train_dataset_path} --base_dir xtts_base "
-            f"--output_dir {run_dir} --epochs {args.epochs} --batch_size {args.batch_size} "
-            f"--grad_accum_steps {args.grad_accum_steps} --lr {args.lr} --eval_fraction 0.1"
-        )
+        run_cmd([
+            sys.executable, "-m", "xtts_trainer.stage2_gpt.train",
+            "--dataset", train_dataset_path,
+            "--base_dir", "xtts_base",
+            "--output_dir", run_dir,
+            "--epochs", str(args.epochs),
+            "--batch_size", str(args.batch_size),
+            "--grad_accum_steps", str(args.grad_accum_steps),
+            "--lr", str(args.lr),
+            "--eval_fraction", "0.1",
+        ])
         check_artifacts("stage2_gpt_train")
     else:
         print(f"\n⏩ Skipping Stage 2 training (--skip-train), using {export_dir}")
 
-    assert os.path.exists(f"{export_dir}/model.pth"), f"Missing exported model in {export_dir}"
-    run_cmd(f"cp {export_dir}/training_summary.json {evidence_dir}/")
+    exported_model_path = os.path.join(export_dir, "model.pth")
+    if not os.path.exists(exported_model_path):
+        raise FileNotFoundError(f"Missing exported model in {export_dir}")
+    shutil.copy(os.path.join(export_dir, "training_summary.json"), os.path.join(evidence_dir, "training_summary.json"))
 
     # 7. Evaluate Base Model on Target Voice (held-out clips)
-    base_target_manifest = f"{results_dir}/base_xtts_s{args.subset_size}_target.json"
-    seeds_arg = " ".join(map(str, args.seeds))
-    subset_arg = f"--subset_size {args.subset_size}" if args.subset_size else ""
+    base_target_manifest = os.path.join(results_dir, f"base_xtts_s{args.subset_size}_target.json")
+    seeds_args = list(map(str, args.seeds))
+    subset_args = ["--subset_size", str(args.subset_size)] if args.subset_size else []
+    batch_args = ["--batch_size", str(args.eval_batch_size)]
 
     print(f"\n📊 Step 6: Evaluating BASE model on target held-out clips...")
-    run_cmd(
-        f"python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --voices target --languages en "
-        f"--label base --seeds {seeds_arg} {subset_arg} --output {base_target_manifest}"
-    )
+    base_eval_cmd = [
+        sys.executable, "scripts/run_eval_baseline.py",
+        "--checkpoint_dir", "xtts_base",
+        "--voices", "target",
+        "--languages", "en",
+        "--label", "base",
+        "--seeds", *seeds_args,
+        *subset_args,
+        *batch_args,
+        "--output", base_target_manifest,
+    ]
+    run_cmd(base_eval_cmd)
 
     # 8. Evaluate Tuned Model on Target Voice (held-out clips)
-    tuned_target_manifest = f"{results_dir}/tuned_xtts_s{args.subset_size}_target.json"
+    tuned_target_manifest = os.path.join(results_dir, f"tuned_xtts_s{args.subset_size}_target.json")
     print(f"\n📊 Step 7: Evaluating TUNED model on target held-out clips...")
-    run_cmd(
-        f"python scripts/run_eval_baseline.py --checkpoint_dir {export_dir} --voices target --languages en "
-        f"--label tuned --seeds {seeds_arg} {subset_arg} --output {tuned_target_manifest}"
-    )
+    tuned_eval_cmd = [
+        sys.executable, "scripts/run_eval_baseline.py",
+        "--checkpoint_dir", export_dir,
+        "--voices", "target",
+        "--languages", "en",
+        "--label", "tuned",
+        "--seeds", *seeds_args,
+        *subset_args,
+        *batch_args,
+        "--output", tuned_target_manifest,
+    ]
+    run_cmd(tuned_eval_cmd)
 
     # 9. Evaluate Tuned Model on ARCTIC voices (preservation check on base voices)
-    tuned_arctic_manifest = f"{results_dir}/tuned_xtts_s{args.subset_size}_arctic_en.json"
+    tuned_arctic_manifest = os.path.join(results_dir, f"tuned_xtts_s{args.subset_size}_arctic_en.json")
     print(f"\n📊 Step 8: Evaluating TUNED model on ARCTIC voices (preservation check)...")
-    run_cmd(
-        f"python scripts/run_eval_baseline.py --checkpoint_dir {export_dir} --voices arctic --languages en "
-        f"--label tuned --seeds {seeds_arg} {subset_arg} --output {tuned_arctic_manifest}"
-    )
+    tuned_arctic_eval_cmd = [
+        sys.executable, "scripts/run_eval_baseline.py",
+        "--checkpoint_dir", export_dir,
+        "--voices", "arctic",
+        "--languages", "en",
+        "--label", "tuned",
+        "--seeds", *seeds_args,
+        *subset_args,
+        *batch_args,
+        "--output", tuned_arctic_manifest,
+    ]
+    run_cmd(tuned_arctic_eval_cmd)
 
     # 10. Run Paired A/B Comparisons against Pre-Registered Gates
     print("\n⚖️ Step 9: Running paired A/B comparisons against pre-registered gates...")
 
-    # Gate 1: Target Adaptation Gate
-    target_gates_path = "eval/gates_target.json"
-    target_ab_report_path = f"{results_dir}/ab_report_target.json"
-    run_cmd(
-        f"python scripts/compare_ab.py {base_target_manifest} {tuned_target_manifest} "
-        f"--gates {target_gates_path} --report {target_ab_report_path}"
-    )
+    # Gate 1: Target Adaptation Gate (dynamically built for args.speaker)
+    target_gates_path = os.path.join(results_dir, "gates_target.json")
+    with open("eval/gates_target.json", "r", encoding="utf-8") as f:
+        target_gates_data = json.load(f)
+    for g in target_gates_data.get("gates", []):
+        if "voices" in g:
+            g["voices"] = [f"target_{args.speaker}"]
+    with open(target_gates_path, "w", encoding="utf-8") as f:
+        json.dump(target_gates_data, f, indent=2)
 
-    # Gate 2: ARCTIC Preservation Gate (compared against locked Run 5 English baseline if available, or generated base)
+    target_ab_report_path = os.path.join(results_dir, "ab_report_target.json")
+    run_cmd([
+        sys.executable, "scripts/compare_ab.py",
+        base_target_manifest, tuned_target_manifest,
+        "--gates", target_gates_path,
+        "--report", target_ab_report_path,
+    ], check=False)
+
+    # Gate 2: ARCTIC Preservation Gate (compared against locked Run 5 English baseline if seeds, subset, and checkpoint hashes match, else generate)
     base_arctic_manifest = f"eval/baselines/base_xtts_s{args.subset_size}_en.json"
-    if not os.path.exists(base_arctic_manifest):
-        print(f"Generating base ARCTIC manifest: {base_arctic_manifest}...")
-        run_cmd(
-            f"python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --voices arctic --languages en "
-            f"--label base --seeds {seeds_arg} {subset_arg} --output {base_arctic_manifest}"
-        )
+    reuse_cached_base = False
+    if os.path.exists(base_arctic_manifest):
+        try:
+            with open(base_arctic_manifest, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+            cached_seeds = cached_data.get("seeds", [])
+            cached_subset = cached_data.get("subset_size")
+            cached_hashes = cached_data.get("checkpoint_sha256", {})
+
+            # Validate checkpoint hashes against current xtts_base
+            hashes_match = True
+            for fname in ("model.pth", "config.json", "vocab.json"):
+                fpath = os.path.join("xtts_base", fname)
+                if not os.path.exists(fpath):
+                    hashes_match = False
+                    break
+                h = hashlib.sha256()
+                with open(fpath, "rb") as bf:
+                    for chunk in iter(lambda: bf.read(1 << 20), b""):
+                        h.update(chunk)
+                if cached_hashes.get(fname) != h.hexdigest():
+                    hashes_match = False
+                    break
+
+            if (
+                hashes_match
+                and sorted(cached_seeds) == sorted(args.seeds)
+                and cached_subset == args.subset_size
+                and cached_data.get("languages") == ["en"]
+                and cached_data.get("asr_model") == "openai/whisper-large-v3"
+            ):
+                reuse_cached_base = True
+        except (json.JSONDecodeError, OSError, KeyError):
+            reuse_cached_base = False
+
+    if not reuse_cached_base:
+        base_arctic_manifest = os.path.join(results_dir, f"base_xtts_s{args.subset_size}_arctic_en.json")
+        print(f"Generating base ARCTIC manifest matching requested seeds {args.seeds}: {base_arctic_manifest}...")
+        run_cmd([
+            sys.executable, "scripts/run_eval_baseline.py",
+            "--checkpoint_dir", "xtts_base",
+            "--voices", "arctic",
+            "--languages", "en",
+            "--label", "base",
+            "--seeds", *seeds_args,
+            *subset_args,
+            *batch_args,
+            "--output", base_arctic_manifest,
+        ])
 
     arctic_gates_path = "eval/gates.json"
-    preservation_ab_report_path = f"{results_dir}/ab_report_preservation.json"
-    run_cmd(
-        f"python scripts/compare_ab.py {base_arctic_manifest} {tuned_arctic_manifest} "
-        f"--gates {arctic_gates_path} --report {preservation_ab_report_path}"
-    )
+    preservation_ab_report_path = os.path.join(results_dir, "ab_report_preservation.json")
+    run_cmd([
+        sys.executable, "scripts/compare_ab.py",
+        base_arctic_manifest, tuned_arctic_manifest,
+        "--gates", arctic_gates_path,
+        "--report", preservation_ab_report_path,
+    ], check=False)
 
     # 11. Run Phase 5 Canary: Identity Canary on Released Weights
     print("\n🐤 Step 10: Running Phase 5 Identity Canary on released weights...")
-    identity_xml_path = f"{evidence_dir}/identity_canary.xml"
-    run_cmd(
-        f"python -m pytest -v -p no:cacheprovider tests/test_invariants.py -k test_identity_canary_released_model "
-        f"--junitxml={identity_xml_path}"
-    )
+    identity_xml_path = os.path.join(evidence_dir, "identity_canary.xml")
+    run_cmd([
+        sys.executable, "-m", "pytest", "-v", "-p", "no:cacheprovider",
+        "tests/test_invariants.py", "-k", "test_identity_canary_released_model",
+        f"--junitxml={identity_xml_path}",
+    ])
 
     # 12. Final Reporting
     t_elapsed = time.time() - t_start
@@ -235,6 +358,8 @@ def main():
         target_rep = json.load(f)
     with open(preservation_ab_report_path, "r", encoding="utf-8") as f:
         pres_rep = json.load(f)
+
+    all_passed = bool(target_rep.get("passed")) and bool(pres_rep.get("passed"))
 
     print("\n" + "=" * 70)
     print(f"🏁 Target Voice Adaptation & A/B Pipeline Finished in {t_elapsed / 60:.1f} minutes")
@@ -246,6 +371,10 @@ def main():
     print(f"  - Preservation A/B: {preservation_ab_report_path}")
     print(f"  - Canary XML:       {identity_xml_path}")
     print("=" * 70)
+
+    if not all_passed:
+        print("\n❌ One or more pre-registered quality gates failed.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

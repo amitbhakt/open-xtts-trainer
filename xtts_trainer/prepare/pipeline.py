@@ -61,7 +61,9 @@ def phrase_windows(phrases: Sequence[Tuple[str, float, Optional[float]]], audio_
         text = text.strip()
         if not text:
             continue
-        start = max(last_end, 0.0 if start is None else float(start))
+        start = min(audio_s, max(last_end, 0.0 if start is None else float(start)))
+        if start >= audio_s:
+            continue
         if end is None or float(end) <= start:
             end = min(audio_s, start + target_s)
         else:
@@ -116,7 +118,7 @@ def prepare_recording(
     Without it, phrase_transcriber (default: Whisper asr_model) transcribes the recording.
     """
     config = config or PrepConfig()
-    aligner = aligner or CtcAligner()
+    aligner = aligner or CtcAligner(device=device)
     out_rate = SPEC.output_sample_rate
     audio = load_mono(input_file, out_rate)
     if max_seconds is not None:

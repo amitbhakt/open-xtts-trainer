@@ -69,14 +69,14 @@ removed because no manifest backed it (docs/recipe_design.md §6, phase 8).
 **Not yet measured: full language adaptation.** The three stages run end to end and are covered by tests. Full language adaptation across non-Latin scripts will be evaluated in subsequent runs.
 
 **Measured: Target Speaker Voice Adaptation (Stage 2 GPT Fine-Tuning)**
-We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of War* (8.4 minutes audio, 83 train clips, 2 strictly held-out reference clips). Paired A/B evaluation against pre-registered quality gates (`eval/gates_target.json`) on held-out reference audio across $N=60$ ($20 \text{ sentences} \times 3 \text{ seeds}$):
-- **Speaker Similarity (SECS):** $0.5545 \to 0.5875$ (**$+0.0329$ gain**, 95% CI $[+0.0191, +0.0480]$, gate: `better`, **PASS**)
+We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of War* (8.4 minutes audio, 83 records in `dataset_train.jsonl` [75 train clips, 8 eval clips], 2 strictly held-out reference clips). Paired A/B evaluation against pre-registered quality gates (`eval/gates_target.json`) on held-out reference audio across $N=60$ ($20 \text{ sentences} \times 3 \text{ seeds}$):
+- **Speaker Similarity (SECS):** $0.5545 \to 0.5875$ (**$+0.0329$ gain**, 95% CI $[+0.0191, +0.0480]$, $n=51$ qualifying pairs $\ge 2\text{ s}$, gate: `better`, **PASS**)
 - **Word Error Rate (WER):** $0.0383 \to 0.0375$ ($-0.0008$, 95% CI $[-0.0096, +0.0079]$, gate: `not_worse 0.02`, **PASS**)
 - **Character Error Rate (CER):** $0.0098 \to 0.0105$ ($+0.0008$, 95% CI $[-0.0045, +0.0060]$, gate: `not_worse 0.01`, **PASS**)
 - **Audio Naturalness (UTMOS):** $4.2589 \to 4.2149$ ($-0.0439$, 95% CI $[-0.0831, -0.0065]$, gate: `not_worse 0.10`, **PASS**)
 - **Failures:** 0 failures across all 60 evaluations (gate: `not_worse 0`, **PASS**)
 
-All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and zero intelligibility regression. Details and run manifests are in `runs/results_target_speaker_s20/`.
+All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and no intelligibility regression beyond the gate tolerance (CER $+0.0008$, within the 0.01 tolerance). Details and run manifests are in `docs/evidence/run6_target_speaker/`.
 
 **Licenses:**
 - XTTS-v2 weights: Coqui Public Model License, non-commercial only.

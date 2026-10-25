@@ -71,6 +71,18 @@ def test_failure_count_gate(base):
     assert gate(report, "failures") == {**gate(report, "failures"), "base": 0, "tuned": 1, "passed": False}
 
 
+def test_failure_count_does_not_double_count_overlapping_flags(base):
+    def multiple_failures_on_single_utterance(r, done=[]):
+        if not done:
+            r["failures"]["is_too_long"] = True
+            r["failures"]["is_empty"] = True
+            r["failures"]["has_nan"] = True
+            done.append(1)
+
+    report = compare_ab(base, tuned_from(base, multiple_failures_on_single_utterance), GATES)
+    assert gate(report, "failures") == {**gate(report, "failures"), "base": 0, "tuned": 1, "passed": False}
+
+
 def test_target_speaker_gate_counts_only_its_voices(base):
     gates = {"gates": [{"metric": "secs", "rule": "better", "margin": 0.0, "voices": ["arctic_slt"]}]}
     tuned = tuned_from(base, lambda r: r.update(secs=r["secs"] + 0.05), voice="arctic_slt")

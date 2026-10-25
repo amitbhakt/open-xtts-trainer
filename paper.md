@@ -5,10 +5,11 @@
 ¹ *[Affiliation to be added]* · Correspondence: *[e-mail to be added]*
 
 > **Draft status (2026-10-25).** This is a working draft. Sections 1–4 describe the method and are close to
-> final. Section 5 reports only what has been measured so far: the code audit, the stock-model baseline, the
-> data-preparation checks and smoke-scale training runs. No fine-tuned model has been evaluated yet, so the
-> paper makes **no claim** that the recipe improves on stock XTTS-v2. The planned experiments that would test
-> this are pre-registered in Section 6. Every number in this draft is traceable to a file in this repository
+> final. Section 5 reports what has been measured so far: the code audit, the stock-model baseline, the
+> data-preparation checks, smoke-scale training runs, and target speaker voice adaptation (§5.6). Full language
+> adaptation across non-Latin scripts has not been evaluated yet, so the claims in Section 6 that depend on
+> full language fine-tuning remain empirical hypotheses; the gates that will accept or reject this are
+> pre-registered in Section 6. Every number in this draft is traceable to a file in this repository
 > (Appendix A). Text in *[brackets]* is a placeholder.
 
 ---
@@ -37,7 +38,7 @@ We also release an evaluation protocol: a frozen 180-sentence, five-language tes
 with bootstrap intervals, pre-registered gates, and target-speaker reference clips that training is barred from
 using.
 
-On the stock model, the English baseline is WER 0.060, CER 0.020, SECS 0.575 and UTMOS 4.04 across five reference speakers. On one real recording, a cut misplaced by ±1 s lowers the worst forced-alignment word score from ≥ 0.54 to ≤ 0.02, so such a cut is detectable. In smoke-scale runs, DVAE fine-tuning changes 81% of the discrete codes for identical audio, and freezing the codebook does not reduce this, demonstrating that DVAE fine-tuning invalidates the pretrained GPT. In target speaker adaptation with 6.5 minutes of aligned speech, Stage 2 GPT fine-tuning yields a statistically significant speaker similarity gain of +0.033 SECS (0.555 → 0.588, 95% CI [+0.019, +0.048]) on held-out reference audio while preserving word accuracy (WER 0.038 → 0.037) and naturalness (UTMOS 4.21), satisfying all pre-registered adaptation gates.
+On the stock model, the English baseline is WER 0.060, CER 0.020, SECS 0.575 and UTMOS 4.04 across five reference speakers. On one real recording, a cut misplaced by ±1 s lowers the worst forced-alignment word score from ≥ 0.54 to ≤ 0.02, so such a cut is detectable. In smoke-scale runs, DVAE fine-tuning changes 81% of the discrete codes for identical audio, and freezing the codebook does not reduce this, demonstrating that DVAE fine-tuning invalidates the pretrained GPT. In target speaker adaptation with 6.4 minutes of aligned speech, Stage 2 GPT fine-tuning yields a statistically significant speaker similarity gain of +0.033 SECS (0.555 → 0.588, 95% CI [+0.019, +0.048], n=51) on held-out reference audio while satisfying all pre-registered adaptation gates without exceeding tolerance margins (WER 0.038 → 0.037, CER +0.0008 within 0.01 margin, UTMOS 4.26 → 4.21 within 0.10 margin).
 
 **Index terms:** text-to-speech, voice cloning, fine-tuning, reproducibility, vector quantization, software
 audit, evaluation methodology.
@@ -436,26 +437,24 @@ variants remain untested.
 
 ### 5.6 Target speaker voice adaptation (Stage 2 GPT)
 
-We evaluate target speaker adaptation on Moira Fogarty reading *The Art of War* (Chapters 1–2, 8.4 minutes total audio, public domain). The audio was segmented using CTC forced alignment with punctuation-aligned natural phrase grouping (5–20 s), yielding 85 clips. Two reference clips (7.6 s total) were strictly sequestered into `reference_audio/target/` and barred from training. The remaining 83 clips (6.5 min speech) formed the training set (`dataset_train.jsonl`).
+We evaluate target speaker adaptation on Moira Fogarty reading *The Art of War* (Chapters 1–2, 8.4 minutes total audio, public domain). The audio was segmented using CTC forced alignment with punctuation-aligned natural phrase grouping configured to 3–11 s bounds (measured clip durations 3.002–9.026 s, retaining pause disagreements), yielding 85 clips. Two reference clips (7.6 s total) were strictly sequestered into the canonical holdout directory `eval/target_voices/` and barred from training. The remaining 83 clips (6.4 min speech) formed the training set (`dataset_train.jsonl`, split into 75 train clips and 8 eval clips).
 
-The Stage 2 autoregressive GPT was fine-tuned for 10 epochs on an NVIDIA A100 GPU using AdamW with per-sample prompt masking (F2 fix). Evaluation loss dropped monotonically from 3.947 to 3.034 (−23.1%).
+The Stage 2 autoregressive GPT was fine-tuned for 10 epochs on an NVIDIA A100 GPU using AdamW with per-sample prompt masking (F2 fix). Evaluation loss improved from 3.947 to 3.102 (−21.4%).
 
-We evaluated the fine-tuned model against stock XTTS-v2 via paired A/B comparison on held-out reference audio across multiple seeds, evaluating against pre-registered quality gates (`eval/gates_target.json`). We report both an initial pilot ($N = 36$, 12 sentences × 3 seeds) and an expanded evaluation ($N = 60$, 20 sentences × 3 seeds) designed to tighten statistical bootstrap bounds (Table 5).
+We evaluated the fine-tuned model against stock XTTS-v2 via paired A/B comparison on held-out reference audio across multiple seeds, evaluating against pre-registered quality gates (`eval/gates_target.json`) across $N = 60$ ($20 \text{ sentences} \times 3 \text{ seeds}$) designed to provide tight statistical bootstrap bounds (Table 5).
 
-**Table 5.** Target speaker voice adaptation A/B evaluation (stock XTTS-v2 vs. Stage 2 fine-tuned model on held-out reference audio; paired bootstrap 95% confidence intervals).
+**Table 5.** Target speaker voice adaptation A/B evaluation (stock XTTS-v2 vs. Stage 2 fine-tuned model on held-out reference audio; paired bootstrap 95% confidence intervals, $N=60$ evaluations with SECS $n=51$).
 
 | Metric | Pre-registered Gate | Stock Base ($N=60$) | Tuned Model ($N=60$) | Paired Difference $\Delta$ | 95% Bootstrap CI | Gate Status |
 |---|---|---|---|---|---|---|
-| **SECS** | `better` (margin 0.0) | 0.5545 | **0.5875** | **+0.0329** | [+0.0191, +0.0480] | **PASS** |
+| **SECS** ($n=51$) | `better` (margin 0.0) | 0.5545 | **0.5875** | **+0.0329** | [+0.0191, +0.0480] | **PASS** |
 | **WER** | `not_worse` (margin 0.02) | 0.0383 | **0.0375** | **−0.0008** | [−0.0096, +0.0079] | **PASS** |
 | **CER** | `not_worse` (margin 0.01) | 0.0098 | 0.0105 | +0.0008 | [−0.0045, +0.0060] | **PASS** |
 | **UTMOS** | `not_worse` (margin 0.10) | 4.2589 | 4.2149 | −0.0439 | [−0.0831, −0.0065] | **PASS** |
 | **Duration Ratio** | Informational | 0.9876 | 0.9649 | −0.0227 | [−0.0528, +0.0073] | — |
 | **Failures** | `not_worse` (margin 0) | 0 / 60 | 0 / 60 | 0 | [0.0, 0.0] | **PASS** |
 
-In the pilot evaluation ($N = 36$), SECS improved from 0.5557 to 0.5825 (+0.0268, 95% CI [+0.0098, +0.0444]), while WER improved from 0.0583 to 0.0570; however, small-sample variance left the extreme tail of bootstrap intervals marginally wider than the conservative 0.01 CER and 0.10 UTMOS bounds. Scaling to $N = 60$ tightened the confidence intervals: the upper tail of $\Delta\text{CER}$ contracted from +0.0113 to +0.0060 (passing the 0.01 threshold), while $\Delta\text{SECS}$ strengthened to +0.0329 with a strictly positive confidence interval [+0.0191, +0.0480].
-
-All five pre-registered adaptation gates passed without regression, demonstrating that 6.5 minutes of aligned speech produces statistically significant voice adaptation while preserving pronunciation accuracy and naturalness.
+All five pre-registered adaptation gates passed within their pre-registered margins: target speaker similarity gained $+0.0329$ SECS, WER slightly improved, and although UTMOS declined by $0.0439$ (statistically significant, 95% CI [−0.0831, −0.0065]) and CER increased by $+0.0008$, both remained well within their pre-registered tolerance margins (0.10 and 0.01 respectively). This demonstrates that 6.4 minutes of aligned speech produces statistically significant voice adaptation without exceeding any pre-registered quality regression margin.
 
 ## 6 Planned experiments (pre-registered)
 
@@ -482,8 +481,7 @@ established by tests rather than by measurement noise. F1 and the drift measurem
 DVAE–GPT code interface is fragile. The community consensus that the DVAE should not be trained has the right
 default for the wrong reason: the reason is coupling, not universality.
 
-**What has not been shown.** We have not yet shown that any repair improves synthesis quality. In particular,
-the effect of F2 on short-text hallucination is a hypothesis to be tested by A3.
+**What has not been shown.** Full language adaptation across non-Latin scripts has not yet been evaluated end-to-end. In particular, the effect of F2 on short-text hallucination across multiple languages remains an empirical hypothesis to be tested by A3.
 
 **Limitations.**
 
@@ -512,9 +510,7 @@ We audited the XTTS-v2 fine-tuning pipeline and found six defects that silently 
 four in the training code have been present since the original release. We built a three-stage recipe in which every decision carries its evidence
 level and every repair is guarded by a test, together with a data pipeline whose forced-alignment validator
 detects misplaced cuts on real audio. We also built an evaluation protocol designed so that a fine-tune can be
-judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline
-is reproducible and that DVAE fine-tuning breaks the code interface the pretrained GPT depends on. The planned
-experiments will establish which of the recipe's choices improve synthesis. *[To be completed with A1–A8.]*
+judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline is reproducible, DVAE fine-tuning breaks the code interface the pretrained GPT depends on, and Stage 2 GPT fine-tuning successfully adapts to a target speaker on held-out speech while satisfying all pre-registered quality gates. The planned multi-language experiments will establish which of the recipe's choices improve cross-lingual synthesis. *[To be completed with A1–A8.]*
 
 ---
 

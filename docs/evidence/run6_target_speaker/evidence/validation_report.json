@@ -36,6 +36,7 @@
     "eval_overlap_checked": true,
     "reference_overlap_checked": true,
     "target_holdout_checked": false,
+    "target_holdout_checked_note": "Target-holdout leakage check was not performed on this archived dataset.jsonl report (target_holdout_checked: false); holdouts were partitioned during scripts/build_target_voices.py.",
     "asr_checked": false,
     "realigned": false,
     "aligned_clips": 85,

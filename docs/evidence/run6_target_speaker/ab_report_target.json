@@ -1,4 +1,5 @@
 {
+  "note": "Pre-batching baseline evidence generated with sequential Whisper evaluation prior to batched evaluation refactoring.",
   "base": {
     "label": "base",
     "checkpoint_sha256": {
