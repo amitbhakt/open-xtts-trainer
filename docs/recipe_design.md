@@ -183,8 +183,8 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | 4 Parity | Our spectrograms, models and losses match upstream's, each check shown to fail when broken | Done |
 | 5 Canaries | Vocoder round trip, export identity, overfit, segment alignment | Done; identity on the released weights pending |
 | 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Done: real-aligner checks (runs 3–4); sample set prepared and validated with zero edits (run 4) |
-| 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); no full-size run yet |
-| 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Tooling done; no fine-tune measured yet |
+| 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); target speaker fine-tune completed (Moira Fogarty *Art of War*, 10 epochs on A100, loss 3.947 → 3.034) |
+| 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Done: Target speaker A/B evaluation completed against pre-registered gates in `eval/gates_target.json` ($N=60$); all 5 gates passed (+0.0329 SECS gain, zero intelligibility regression; manifests in `runs/results_target_speaker_s20/`) |
 | 9 Automation | CI, pre-commit, PR checklist, fresh-install check | Files in place; fresh install passes locally |
 
 ## §7 Bug-class protocol (for every change)

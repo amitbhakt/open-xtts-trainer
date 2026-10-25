@@ -1,0 +1,32 @@
+{
+  "best_checkpoint": "runs/gpt_smoke/stage2_gpt-October-25-2026_10+24AM-1c33371/best_model.pth",
+  "best_step": 9,
+  "eval_loss_before": 3.1998674869537354,
+  "eval_loss_best": 2.9746716022491455,
+  "improved": true,
+  "train_clips": 6,
+  "eval_clips": 2,
+  "language_shares": {
+    "en": 1.0
+  },
+  "languages": [
+    "en",
+    "es",
+    "fr",
+    "de",
+    "it",
+    "pt",
+    "pl",
+    "tr",
+    "ru",
+    "nl",
+    "cs",
+    "ar",
+    "zh-cn",
+    "hu",
+    "ko",
+    "ja",
+    "hi"
+  ],
+  "retrain_for_new_dvae": false
+}

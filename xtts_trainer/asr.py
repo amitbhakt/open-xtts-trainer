@@ -49,15 +49,47 @@ def transcribe_phrases(
     """Long-form transcription as (text, start_s, end_s) phrases.
 
     The phrase times only window the recording for forced alignment; they are never used as cut points
-    (Whisper's timestamps are contiguous and don't locate pauses). end_s may be None for the final phrase.
+    (Whisper's timestamps are contiguous and don't locate pauses). Phrases are bounded to <= 20s.
     """
     asr = load_asr(model_name, device)
     asr_input = {"raw": np.asarray(audio, dtype=np.float32), "sampling_rate": sample_rate}
-    out = asr(asr_input, return_timestamps=True, chunk_length_s=30, generate_kwargs=_generate_kwargs(model_name, lang))
+    out = asr(
+        asr_input,
+        return_timestamps="word",
+        chunk_length_s=30,
+        generate_kwargs=_generate_kwargs(model_name, lang),
+    )
+    chunks = out.get("chunks", [])
+    if not chunks:
+        raw_text = out.get("text", "").strip()
+        if raw_text:
+            return [(raw_text, 0.0, float(len(audio) / sample_rate))]
+        return []
+
     phrases = []
-    for chunk in out.get("chunks", []):
-        text = chunk["text"].strip()
-        start, end = chunk["timestamp"]
-        if text:
-            phrases.append((text, float(start), None if end is None else float(end)))
+    curr_words = []
+    win_start = None
+    last_end = 0.0
+
+    for chunk in chunks:
+        text = chunk.get("text", "").strip()
+        if not text:
+            continue
+        ts = chunk.get("timestamp")
+        start = float(ts[0]) if (ts and ts[0] is not None) else last_end
+        end = float(ts[1]) if (ts and len(ts) > 1 and ts[1] is not None) else start + 0.5
+        last_end = max(last_end, end)
+        if win_start is None:
+            win_start = start
+        curr_words.append(text)
+
+        win_dur = last_end - win_start
+        if win_dur >= 20.0 or (win_dur >= 5.0 and text.endswith((".", "!", "?"))):
+            phrases.append((" ".join(curr_words), win_start, last_end))
+            curr_words = []
+            win_start = None
+
+    if curr_words and win_start is not None:
+        phrases.append((" ".join(curr_words), win_start, last_end))
+
     return phrases

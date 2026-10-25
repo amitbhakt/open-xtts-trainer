@@ -422,6 +422,105 @@ def test_phrase_transcriber_path_records_asr_source(tmp_path, tone_recording):
     assert {r.transcript_source for r in records} == {"asr:openai/test-whisper"}
 
 
+def test_phrase_windows_unclosed_phrase_does_not_exceed_max_window():
+    """An unclosed Whisper phrase in long audio must not produce a window exceeding MAX_WINDOW_S."""
+    from xtts_trainer.prepare.pipeline import phrase_windows
+
+    # Phrase at t=305s with end=None in a 506.77s recording
+    phrases = [
+        ("first part", 0.0, 20.0),
+        ("second part", 20.0, 45.0),
+        ("unclosed last phrase", 305.0, None),
+    ]
+    windows = phrase_windows(phrases, audio_s=506.77)
+    for start, end, text in windows:
+        assert end - start <= 50.0, f"Window ({start}, {end}) span {end - start}s exceeds 50.0s limit"
+
+
+def test_transcribe_phrases_groups_words_naturally(monkeypatch):
+    """Word-level chunks are grouped into bounded phrases broken at punctuation or max duration."""
+    from xtts_trainer import asr
+
+    fake_chunks = [
+        {"text": "Sun", "timestamp": (0.0, 0.4)},
+        {"text": "Tzu", "timestamp": (0.4, 0.8)},
+        {"text": "said:", "timestamp": (0.8, 1.2)},
+        {"text": "The", "timestamp": (1.2, 1.5)},
+        {"text": "art", "timestamp": (1.5, 1.8)},
+        {"text": "of", "timestamp": (1.8, 2.0)},
+        {"text": "war", "timestamp": (2.0, 2.3)},
+        {"text": "is", "timestamp": (2.3, 2.5)},
+        {"text": "of", "timestamp": (2.5, 2.7)},
+        {"text": "vital", "timestamp": (2.7, 3.1)},
+        {"text": "importance", "timestamp": (3.1, 3.8)},
+        {"text": "to", "timestamp": (3.8, 4.0)},
+        {"text": "the", "timestamp": (4.0, 4.2)},
+        {"text": "State.", "timestamp": (4.2, 5.5)},
+        {"text": "It", "timestamp": (6.0, 6.2)},
+        {"text": "is", "timestamp": (6.2, 6.4)},
+        {"text": "a", "timestamp": (6.4, 6.5)},
+        {"text": "matter", "timestamp": (6.5, 7.0)},
+        {"text": "of", "timestamp": (7.0, 7.2)},
+        {"text": "life", "timestamp": (7.2, 7.6)},
+        {"text": "and", "timestamp": (7.6, 7.8)},
+        {"text": "death.", "timestamp": (7.8, 8.5)},
+    ]
+
+    class FakePipeline:
+        def __call__(self, *args, **kwargs):
+            return {"chunks": fake_chunks, "text": "Sun Tzu said: The art of war is of vital importance to the State. It is a matter of life and death."}
+
+    monkeypatch.setattr(asr, "load_asr", lambda model_name, device: FakePipeline())
+
+    audio = np.zeros(24000 * 10, dtype=np.float32)
+    phrases = asr.transcribe_phrases(audio, 24000, "en", "dummy-model")
+
+    assert len(phrases) == 2
+    assert phrases[0][0] == "Sun Tzu said: The art of war is of vital importance to the State."
+    assert phrases[0][1] == 0.0
+    assert phrases[0][2] == 5.5
+    assert phrases[1][0] == "It is a matter of life and death."
+    assert phrases[1][1] == 6.0
+    assert phrases[1][2] == 8.5
+
+
+def test_long_audio_word_grouping_aligns_without_frame_overflow(tmp_path):
+    """End-to-end regression test: long audio with continuous words groups into valid CTC windows without overflowing frames."""
+    from xtts_trainer.prepare.pipeline import align_recording, phrase_windows
+
+    # 100 words over 60 seconds (each word ~0.5s + 0.1s gap)
+    words = [f"word{i}." if i % 10 == 9 else f"word{i}" for i in range(100)]
+    chunks = []
+    t = 0.0
+    for w in words:
+        chunks.append({"text": w, "timestamp": (t, t + 0.4)})
+        t += 0.55
+
+    # Group into phrases using our asr grouping logic
+    from xtts_trainer import asr
+    class FakePipeline:
+        def __call__(self, *args, **kwargs):
+            return {"chunks": chunks, "text": " ".join(words)}
+
+    import pytest
+    monkeypatch = pytest.MonkeyPatch()
+    monkeypatch.setattr(asr, "load_asr", lambda model_name, device: FakePipeline())
+
+    audio = np.zeros(int(t * 24000), dtype=np.float32)
+    phrases = asr.transcribe_phrases(audio, 24000, "en", "dummy-model")
+    windows = phrase_windows(phrases, audio_s=t)
+
+    # Every window must be strictly <= 50.0s (under MMS_FA 60s limit)
+    for start, end, text in windows:
+        assert end - start <= 50.0
+        # Character count must not exceed frames (at 50 frames/sec CTC rate)
+        n_frames = int((end - start + 1.0) * 50)  # with padding
+        assert len(text) < n_frames, f"Window ({start}, {end}) text length {len(text)} exceeds frames {n_frames}"
+
+    monkeypatch.undo()
+
+
+
 # --------------------------------------------------------------------------- sources (speech_data)
 
 def test_ljspeech_text_comes_from_normalized_column():

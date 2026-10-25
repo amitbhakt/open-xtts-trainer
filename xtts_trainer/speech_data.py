@@ -179,9 +179,10 @@ def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[Li
 
 
 def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAligner] = None,
-                    config: Optional[PrepConfig] = None, max_seconds: Optional[float] = None) -> str:
+                    config: Optional[PrepConfig] = None, max_seconds: Optional[float] = None,
+                    device: str = "cpu") -> str:
     records, reports = [], []
-    aligner = aligner or CtcAligner()
+    aligner = aligner or CtcAligner(device=device)
     for name in names:
         source = SOURCES[name]
         print(f"Preparing '{name}': {source.description}")
@@ -195,7 +196,8 @@ def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAlig
                 prefix = name if len(source.urls) == 1 else f"{name}_{k + 1:02d}"
                 recs_k, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
                                                    transcript=source.transcript, aligner=aligner, config=config,
-                                                   clip_prefix=prefix, source=url, max_seconds=max_seconds)
+                                                   clip_prefix=prefix, source=url, max_seconds=max_seconds,
+                                                   device=device)
                 report["license"] = source.license
                 reports.append(report)
                 recs += recs_k
@@ -255,11 +257,11 @@ def main(argv: Optional[List[str]] = None):
                 transcript = " ".join(f.read().split())
         records, report = prepare_recording(args.input_file, args.output_dir, lang=args.lang.lower(),
                                             speaker=args.speaker_name, transcript=transcript, aligner=aligner,
-                                            config=config, max_seconds=max_seconds)
+                                            config=config, max_seconds=max_seconds, device=args.device)
         dataset_path = write_prepared(args.output_dir, records, [report])
     else:
         source = args.source or "sample"
-        dataset_path = prepare_sources(SOURCE_SETS.get(source, [source]), args.output_dir, aligner, config, max_seconds)
+        dataset_path = prepare_sources(SOURCE_SETS.get(source, [source]), args.output_dir, aligner, config, max_seconds, device=args.device)
     validate_prepared(dataset_path, args.vocab, args.languages)
 
 
