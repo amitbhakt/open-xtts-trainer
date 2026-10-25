@@ -185,6 +185,9 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
         with pytest.raises(ValueError, match="plain name"):
             baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="target", target_dir=out, label=bad,
                                               allow_unchecked_location=True)
+    for bad_batch in (0, -1, -16):
+        with pytest.raises(ValueError, match="batch_size must be a positive integer"):
+            baseline_module.generate_baseline(checkpoint_dir=str(ckpt), batch_size=bad_batch)
 
 
 def test_builder_only_writes_where_training_checks(tmp_path):

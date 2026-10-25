@@ -103,6 +103,8 @@ def generate_baseline(
     unseen voices with the target speaker. Target clips are read only from DEFAULT_TARGET_DIR, the one place
     training refuses them (allow_unchecked_location: tests only).
     """
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be a positive integer, got {batch_size}")
     if voices not in ("arctic", "target"):
         raise ValueError(f"voices must be arctic or target, not {voices!r}")
     if (
@@ -199,6 +201,7 @@ def generate_baseline(
         "voices": selected,
         "reference_voices": [{"speaker_id": v["speaker_id"], "sha256": _sha256_of_file(v["path"])} for v in voices],
         "asr_model": asr_model_name,
+        "batch_size": batch_size,
         "seeds": list(seeds),
         "subset_size": subset_size,
         "languages": languages,
