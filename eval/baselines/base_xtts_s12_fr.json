@@ -1,0 +1,5109 @@
+{
+  "label": "base",
+  "description": "XTTS-v2 checkpoint 'base' (xtts_base), measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-25 10:54:18 UTC",
+  "git": {
+    "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+    "is_dirty": false
+  },
+  "code_fingerprint": {
+    "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+    "n_files": 61
+  },
+  "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+  "checkpoint_sha256": {
+    "model.pth": "c7ea20001c6a0a841c77e252d8409f6a74fb423e79b3206a0771ba5989776187",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "voices": "arctic",
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "seeds": [
+    42,
+    123,
+    999
+  ],
+  "subset_size": 12,
+  "languages": [
+    "fr"
+  ],
+  "metrics_version": 2,
+  "summary_by_language": {
+    "fr": {
+      "wer": {
+        "mean": 0.04286790007378243,
+        "std": 0.0812305233188317,
+        "ci95": 0.011866948836600914,
+        "min": 0.0,
+        "max": 0.35714285714285715,
+        "n": 180,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.03144962406403663,
+        "std": 0.05835596379104516,
+        "ci95": 0.008525209592713828,
+        "min": 0.0,
+        "max": 0.1891891891891892,
+        "n": 180,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.4497790760464139,
+        "std": 0.04884010314824115,
+        "ci95": 0.007135039656947821,
+        "min": 0.32354143261909485,
+        "max": 0.5513112545013428,
+        "n": 180,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 3.3023034426901074,
+        "std": 0.37330742262557465,
+        "ci95": 0.05453639720174049,
+        "min": 1.4720176458358765,
+        "max": 3.9282031059265137,
+        "n": 180,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 0.9385742638398704,
+        "std": 0.3491967538661869,
+        "ci95": 0.05101407503891435,
+        "min": 0.5700162601626017,
+        "max": 3.9475942028985505,
+        "n": 180,
+        "n_nan": 0
+      },
+      "secs_all": {
+        "mean": 0.4497790760464139,
+        "std": 0.04884010314824115,
+        "ci95": 0.007135039656947821,
+        "min": 0.32354143261909485,
+        "max": 0.5513112545013428,
+        "n": 180,
+        "n_nan": 0
+      }
+    }
+  },
+  "summary_by_category": {
+    "fr": {
+      "_all": {
+        "wer": {
+          "mean": 0.04286790007378243,
+          "std": 0.0812305233188317,
+          "ci95": 0.011866948836600914,
+          "min": 0.0,
+          "max": 0.35714285714285715,
+          "n": 180,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.03144962406403663,
+          "std": 0.05835596379104516,
+          "ci95": 0.008525209592713828,
+          "min": 0.0,
+          "max": 0.1891891891891892,
+          "n": 180,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4497790760464139,
+          "std": 0.04884010314824115,
+          "ci95": 0.007135039656947821,
+          "min": 0.32354143261909485,
+          "max": 0.5513112545013428,
+          "n": 180,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.3023034426901074,
+          "std": 0.37330742262557465,
+          "ci95": 0.05453639720174049,
+          "min": 1.4720176458358765,
+          "max": 3.9282031059265137,
+          "n": 180,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9385742638398704,
+          "std": 0.3491967538661869,
+          "ci95": 0.05101407503891435,
+          "min": 0.5700162601626017,
+          "max": 3.9475942028985505,
+          "n": 180,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4497790760464139,
+          "std": 0.04884010314824115,
+          "ci95": 0.007135039656947821,
+          "min": 0.32354143261909485,
+          "max": 0.5513112545013428,
+          "n": 180,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 2,
+          "nan": 0
+        }
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 2,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-25 10:46:57 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "fr",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.043592436974789914,
+          "std": 0.09381459392993666,
+          "ci95": 0.030646100683779307,
+          "min": 0.0,
+          "max": 0.35714285714285715,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.029591235070687123,
+          "std": 0.06072880476604729,
+          "ci95": 0.01983807622357545,
+          "min": 0.0,
+          "max": 0.1891891891891892,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.39358880122502643,
+          "std": 0.02946049250209414,
+          "ci95": 0.009623760884017419,
+          "min": 0.32354143261909485,
+          "max": 0.44351598620414734,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.4661681850751243,
+          "std": 0.24446459268993848,
+          "ci95": 0.07985843361204657,
+          "min": 2.7963755130767822,
+          "max": 3.7965950965881348,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.8026330048131692,
+          "std": 0.10583998728407543,
+          "ci95": 0.034574395846131305,
+          "min": 0.5936910569105691,
+          "max": 1.0386962962962962,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.39358880122502643,
+          "std": 0.02946049250209414,
+          "ci95": 0.009623760884017419,
+          "min": 0.32354143261909485,
+          "max": 0.44351598620414734,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.043592436974789914,
+              "std": 0.09381459392993666,
+              "ci95": 0.030646100683779307,
+              "min": 0.0,
+              "max": 0.35714285714285715,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.029591235070687123,
+              "std": 0.06072880476604729,
+              "ci95": 0.01983807622357545,
+              "min": 0.0,
+              "max": 0.1891891891891892,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.39358880122502643,
+              "std": 0.02946049250209414,
+              "ci95": 0.009623760884017419,
+              "min": 0.32354143261909485,
+              "max": 0.44351598620414734,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.4661681850751243,
+              "std": 0.24446459268993848,
+              "ci95": 0.07985843361204657,
+              "min": 2.7963755130767822,
+              "max": 3.7965950965881348,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8026330048131692,
+              "std": 0.10583998728407543,
+              "ci95": 0.034574395846131305,
+              "min": 0.5936910569105691,
+              "max": 1.0386962962962962,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.39358880122502643,
+              "std": 0.02946049250209414,
+              "ci95": 0.009623760884017419,
+              "min": 0.32354143261909485,
+              "max": 0.44351598620414734,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.40716552734375,
+            "utmos": 3.3505375385284424,
+            "duration_s": 4.544,
+            "duration_ratio": 0.9219710144927535,
+            "rms": 0.13805687427520752,
+            "peak": 0.8167543411254883,
+            "hf_ratio": 0.00594140961766243,
+            "synthesis_time_s": 1.7707257270812988,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.38101547956466675,
+            "utmos": 3.7909557819366455,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7027450980392157,
+            "rms": 0.15341344475746155,
+            "peak": 0.8263234496116638,
+            "hf_ratio": 0.003633644198998809,
+            "synthesis_time_s": 1.4509220123291016,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36183881759643555,
+            "utmos": 3.3330276012420654,
+            "duration_s": 3.477333333333333,
+            "duration_ratio": 0.5936910569105691,
+            "rms": 0.1598397195339203,
+            "peak": 0.7568368911743164,
+            "hf_ratio": 0.0035251949448138475,
+            "synthesis_time_s": 1.1735420227050781,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3984869122505188,
+            "utmos": 3.789435625076294,
+            "duration_s": 4.736,
+            "duration_ratio": 0.8185679012345679,
+            "rms": 0.14110049605369568,
+            "peak": 0.8401744365692139,
+            "hf_ratio": 0.005837169475853443,
+            "synthesis_time_s": 1.5919663906097412,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42177993059158325,
+            "utmos": 3.4850687980651855,
+            "duration_s": 4.448,
+            "duration_ratio": 0.7784000000000001,
+            "rms": 0.15116332471370697,
+            "peak": 0.790136456489563,
+            "hf_ratio": 0.01918833516538143,
+            "synthesis_time_s": 1.5070915222167969,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.42652708292007446,
+            "utmos": 3.452915668487549,
+            "duration_s": 5.568,
+            "duration_ratio": 0.8758651685393258,
+            "rms": 0.1442846953868866,
+            "peak": 0.7817623019218445,
+            "hf_ratio": 0.007293986156582832,
+            "synthesis_time_s": 1.8748352527618408,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4225205183029175,
+            "utmos": 3.546779155731201,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.15519580245018005,
+            "peak": 0.8512935042381287,
+            "hf_ratio": 0.0077513474971055984,
+            "synthesis_time_s": 1.7818806171417236,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4416640102863312,
+            "utmos": 3.6572306156158447,
+            "duration_s": 4.448,
+            "duration_ratio": 0.7326117647058824,
+            "rms": 0.15169115364551544,
+            "peak": 0.8023583889007568,
+            "hf_ratio": 0.01269614975899458,
+            "synthesis_time_s": 1.495091438293457,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.32354143261909485,
+            "utmos": 3.7965950965881348,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8080592592592593,
+            "rms": 0.15922345221042633,
+            "peak": 0.853805422782898,
+            "hf_ratio": 0.005552022252231836,
+            "synthesis_time_s": 1.7430801391601562,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.425475150346756,
+            "utmos": 2.985560655593872,
+            "duration_s": 6.4,
+            "duration_ratio": 1.006741573033708,
+            "rms": 0.13361303508281708,
+            "peak": 0.8532600402832031,
+            "hf_ratio": 0.0033779959194362164,
+            "synthesis_time_s": 2.1739861965179443,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4136207103729248,
+            "utmos": 2.7963755130767822,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.8922666666666667,
+            "rms": 0.14038892090320587,
+            "peak": 0.808607816696167,
+            "hf_ratio": 0.0035324115306138992,
+            "synthesis_time_s": 1.7322523593902588,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8h pr\u00e9cise en amphith\u00e9\u00e2tre.",
+            "wer": 0.35714285714285715,
+            "cer": 0.16666666666666666,
+            "secs": 0.33270037174224854,
+            "utmos": 3.49257755279541,
+            "duration_s": 4.64,
+            "duration_ratio": 0.6696907216494845,
+            "rms": 0.15718182921409607,
+            "peak": 0.7825783491134644,
+            "hf_ratio": 0.004476913716644049,
+            "synthesis_time_s": 1.5663509368896484,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3572290539741516,
+            "utmos": 3.7823069095611572,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 0.725024154589372,
+            "rms": 0.14960281550884247,
+            "peak": 0.8042137622833252,
+            "hf_ratio": 0.005005701910704374,
+            "synthesis_time_s": 1.211184024810791,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.40003910660743713,
+            "utmos": 3.1289217472076416,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.757207843137255,
+            "rms": 0.1511649787425995,
+            "peak": 0.7691287398338318,
+            "hf_ratio": 0.004192879423499107,
+            "synthesis_time_s": 1.5492208003997803,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3950076401233673,
+            "utmos": 3.672466993331909,
+            "duration_s": 4.96,
+            "duration_ratio": 0.846829268292683,
+            "rms": 0.13990134000778198,
+            "peak": 0.759211540222168,
+            "hf_ratio": 0.0037632016465067863,
+            "synthesis_time_s": 1.6506025791168213,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.37603315711021423,
+            "utmos": 3.416475534439087,
+            "duration_s": 4.736,
+            "duration_ratio": 0.8185679012345679,
+            "rms": 0.14487324655056,
+            "peak": 0.8065534234046936,
+            "hf_ratio": 0.0050412327982485294,
+            "synthesis_time_s": 1.5768582820892334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44351598620414734,
+            "utmos": 3.3658363819122314,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 0.7298666666666667,
+            "rms": 0.15824738144874573,
+            "peak": 0.84405916929245,
+            "hf_ratio": 0.01904972828924656,
+            "synthesis_time_s": 1.3928380012512207,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.40169841051101685,
+            "utmos": 3.244680166244507,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.8020374531835206,
+            "rms": 0.13425007462501526,
+            "peak": 0.8014940023422241,
+            "hf_ratio": 0.004815703257918358,
+            "synthesis_time_s": 1.6945829391479492,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41456112265586853,
+            "utmos": 3.6929707527160645,
+            "duration_s": 4.64,
+            "duration_ratio": 0.7733333333333333,
+            "rms": 0.15711987018585205,
+            "peak": 0.838043749332428,
+            "hf_ratio": 0.00498684449121356,
+            "synthesis_time_s": 1.5411365032196045,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.405291348695755,
+            "utmos": 3.7158069610595703,
+            "duration_s": 5.152,
+            "duration_ratio": 0.848564705882353,
+            "rms": 0.15107738971710205,
+            "peak": 0.8222707509994507,
+            "hf_ratio": 0.009506667032837868,
+            "synthesis_time_s": 1.7132716178894043,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36368024349212646,
+            "utmos": 3.780179977416992,
+            "duration_s": 6.677333333333333,
+            "duration_ratio": 1.0386962962962962,
+            "rms": 0.1393739879131317,
+            "peak": 0.912651002407074,
+            "hf_ratio": 0.005118502303957939,
+            "synthesis_time_s": 2.214498996734619,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.39313003420829773,
+            "utmos": 3.3932747840881348,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.7735131086142323,
+            "rms": 0.1406082957983017,
+            "peak": 0.7820961475372314,
+            "hf_ratio": 0.003531654132530093,
+            "synthesis_time_s": 1.6504037380218506,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41208386421203613,
+            "utmos": 3.5373172760009766,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7466666666666666,
+            "rms": 0.1491769403219223,
+            "peak": 0.7691813707351685,
+            "hf_ratio": 0.002333319280296564,
+            "synthesis_time_s": 1.4253695011138916,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.3583008944988251,
+            "utmos": 3.443455934524536,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.6758487972508591,
+            "rms": 0.1590580940246582,
+            "peak": 0.7599480152130127,
+            "hf_ratio": 0.004996936302632093,
+            "synthesis_time_s": 1.5655598640441895,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3736262619495392,
+            "utmos": 3.673964738845825,
+            "duration_s": 3.7546666666666666,
+            "duration_ratio": 0.7618164251207729,
+            "rms": 0.1447451114654541,
+            "peak": 0.7892274856567383,
+            "hf_ratio": 0.006163627374917269,
+            "synthesis_time_s": 1.2695517539978027,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4217575788497925,
+            "utmos": 3.356252670288086,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.757207843137255,
+            "rms": 0.14728398621082306,
+            "peak": 0.8330135345458984,
+            "hf_ratio": 0.004684350453317165,
+            "synthesis_time_s": 1.5285024642944336,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.36553463339805603,
+            "utmos": 3.265840530395508,
+            "duration_s": 3.8506666666666667,
+            "duration_ratio": 0.6574308943089431,
+            "rms": 0.1531672477722168,
+            "peak": 0.6969039440155029,
+            "hf_ratio": 0.004021357744932175,
+            "synthesis_time_s": 1.3099384307861328,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.38124099373817444,
+            "utmos": 3.640523672103882,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 0.7208559670781893,
+            "rms": 0.14081168174743652,
+            "peak": 0.7791386842727661,
+            "hf_ratio": 0.007158833090215921,
+            "synthesis_time_s": 1.4158170223236084,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4088748097419739,
+            "utmos": 3.45448637008667,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 1.0154666666666667,
+            "rms": 0.14550399780273438,
+            "peak": 0.8231310844421387,
+            "hf_ratio": 0.01449553295969963,
+            "synthesis_time_s": 1.9254519939422607,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.39591214060783386,
+            "utmos": 3.2604217529296875,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 0.8389513108614233,
+            "rms": 0.1543644219636917,
+            "peak": 0.7950505614280701,
+            "hf_ratio": 0.004136422649025917,
+            "synthesis_time_s": 1.8175392150878906,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4105722904205322,
+            "utmos": 3.5554585456848145,
+            "duration_s": 5.429333333333333,
+            "duration_ratio": 0.9048888888888889,
+            "rms": 0.16160346567630768,
+            "peak": 0.771773636341095,
+            "hf_ratio": 0.00405512610450387,
+            "synthesis_time_s": 1.814241647720337,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4266558885574341,
+            "utmos": 3.5989761352539062,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0014117647058824,
+            "rms": 0.13843049108982086,
+            "peak": 0.890829861164093,
+            "hf_ratio": 0.013461308553814888,
+            "synthesis_time_s": 2.045130968093872,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.378073513507843,
+            "utmos": 3.4610142707824707,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8080592592592593,
+            "rms": 0.14747802913188934,
+            "peak": 0.880327045917511,
+            "hf_ratio": 0.006034093908965588,
+            "synthesis_time_s": 1.7330279350280762,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.392228364944458,
+            "utmos": 3.3330137729644775,
+            "duration_s": 4.362666666666667,
+            "duration_ratio": 0.6862621722846443,
+            "rms": 0.15435636043548584,
+            "peak": 0.7306264638900757,
+            "hf_ratio": 0.004163560923188925,
+            "synthesis_time_s": 1.487114429473877,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.39572280645370483,
+            "utmos": 2.9619569778442383,
+            "duration_s": 4.309333333333333,
+            "duration_ratio": 0.7541333333333332,
+            "rms": 0.15955302119255066,
+            "peak": 0.8329816460609436,
+            "hf_ratio": 0.0022851440589874983,
+            "synthesis_time_s": 1.4652130603790283,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8h pr\u00e9cise dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.21428571428571427,
+            "cer": 0.11904761904761904,
+            "secs": 0.34209075570106506,
+            "utmos": 3.569392204284668,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 0.7697594501718212,
+            "rms": 0.14937575161457062,
+            "peak": 0.8058231472969055,
+            "hf_ratio": 0.0064559075981378555,
+            "synthesis_time_s": 1.7875499725341797,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-25 10:48:36 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "fr",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.041872860255213196,
+          "std": 0.0729339711291104,
+          "ci95": 0.023825097235509397,
+          "min": 0.0,
+          "max": 0.25,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0350720264210437,
+          "std": 0.060127823319017795,
+          "ci95": 0.019641755617545813,
+          "min": 0.0,
+          "max": 0.1891891891891892,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4830404528313213,
+          "std": 0.021719622129038767,
+          "ci95": 0.0070950765621526635,
+          "min": 0.4316674470901489,
+          "max": 0.5257027745246887,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.3387555016411676,
+          "std": 0.2863891694864728,
+          "ci95": 0.09355379536558112,
+          "min": 2.709184408187866,
+          "max": 3.788397789001465,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.8240035602132738,
+          "std": 0.12847069450655998,
+          "ci95": 0.04196709353880959,
+          "min": 0.5773008130081302,
+          "max": 1.2141449275362317,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4830404528313213,
+          "std": 0.021719622129038767,
+          "ci95": 0.0070950765621526635,
+          "min": 0.4316674470901489,
+          "max": 0.5257027745246887,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.041872860255213196,
+              "std": 0.0729339711291104,
+              "ci95": 0.023825097235509397,
+              "min": 0.0,
+              "max": 0.25,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0350720264210437,
+              "std": 0.060127823319017795,
+              "ci95": 0.019641755617545813,
+              "min": 0.0,
+              "max": 0.1891891891891892,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4830404528313213,
+              "std": 0.021719622129038767,
+              "ci95": 0.0070950765621526635,
+              "min": 0.4316674470901489,
+              "max": 0.5257027745246887,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.3387555016411676,
+              "std": 0.2863891694864728,
+              "ci95": 0.09355379536558112,
+              "min": 2.709184408187866,
+              "max": 3.788397789001465,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8240035602132738,
+              "std": 0.12847069450655998,
+              "ci95": 0.04196709353880959,
+              "min": 0.5773008130081302,
+              "max": 1.2141449275362317,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4830404528313213,
+              "std": 0.021719622129038767,
+              "ci95": 0.0070950765621526635,
+              "min": 0.4316674470901489,
+              "max": 0.5257027745246887,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5136620402336121,
+            "utmos": 3.057689905166626,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.8657004830917874,
+            "rms": 0.1599399447441101,
+            "peak": 0.6555465459823608,
+            "hf_ratio": 0.0024744905531406403,
+            "synthesis_time_s": 1.4503273963928223,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.44488725066185,
+            "utmos": 3.4320082664489746,
+            "duration_s": 4.8213333333333335,
+            "duration_ratio": 0.7941019607843138,
+            "rms": 0.15455278754234314,
+            "peak": 0.641251802444458,
+            "hf_ratio": 0.0019550349097698927,
+            "synthesis_time_s": 1.6445651054382324,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44125282764434814,
+            "utmos": 2.9725399017333984,
+            "duration_s": 3.3813333333333335,
+            "duration_ratio": 0.5773008130081302,
+            "rms": 0.1652950793504715,
+            "peak": 0.6003938913345337,
+            "hf_ratio": 0.0008698586607351899,
+            "synthesis_time_s": 1.1596736907958984,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49414461851119995,
+            "utmos": 3.1174514293670654,
+            "duration_s": 5.056,
+            "duration_ratio": 0.8738765432098766,
+            "rms": 0.15132762491703033,
+            "peak": 0.7412607073783875,
+            "hf_ratio": 0.0016554861795157194,
+            "synthesis_time_s": 1.7167067527770996,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale.",
+            "wer": 0.08333333333333333,
+            "cer": 0.13043478260869565,
+            "secs": 0.5132545232772827,
+            "utmos": 3.7813172340393066,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 1.0061333333333333,
+            "rms": 0.15575586259365082,
+            "peak": 0.807456374168396,
+            "hf_ratio": 0.003940240945667028,
+            "synthesis_time_s": 1.979846715927124,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.498176634311676,
+            "utmos": 2.709184408187866,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.8691535580524344,
+            "rms": 0.1574065387248993,
+            "peak": 0.7200839519500732,
+            "hf_ratio": 0.0017073046183213592,
+            "synthesis_time_s": 1.8444526195526123,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc point-point.",
+            "wer": 0.13333333333333333,
+            "cer": 0.14285714285714285,
+            "secs": 0.49842166900634766,
+            "utmos": 3.234318256378174,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 0.7964444444444445,
+            "rms": 0.17168304324150085,
+            "peak": 0.7052987813949585,
+            "hf_ratio": 0.001690816367045045,
+            "synthesis_time_s": 1.5961403846740723,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4515593647956848,
+            "utmos": 3.788397789001465,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9170823529411765,
+            "rms": 0.15097497403621674,
+            "peak": 0.7275559902191162,
+            "hf_ratio": 0.003776047844439745,
+            "synthesis_time_s": 1.8511383533477783,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47605177760124207,
+            "utmos": 3.7308382987976074,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.8943407407407408,
+            "rms": 0.15428371727466583,
+            "peak": 0.7535865902900696,
+            "hf_ratio": 0.0033318994101136923,
+            "synthesis_time_s": 1.960052490234375,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47599560022354126,
+            "utmos": 3.2710490226745605,
+            "duration_s": 3.989333333333333,
+            "duration_ratio": 0.6275355805243445,
+            "rms": 0.16627077758312225,
+            "peak": 0.606961190700531,
+            "hf_ratio": 0.002081924816593528,
+            "synthesis_time_s": 1.334855079650879,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47650280594825745,
+            "utmos": 3.481475591659546,
+            "duration_s": 4.224,
+            "duration_ratio": 0.7392,
+            "rms": 0.1600428968667984,
+            "peak": 0.638530969619751,
+            "hf_ratio": 0.0007229904877021909,
+            "synthesis_time_s": 1.4280858039855957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.4703606069087982,
+            "utmos": 3.6093084812164307,
+            "duration_s": 4.64,
+            "duration_ratio": 0.6696907216494845,
+            "rms": 0.15832869708538055,
+            "peak": 0.7185083627700806,
+            "hf_ratio": 0.0017844350077211857,
+            "synthesis_time_s": 1.5559680461883545,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4858802258968353,
+            "utmos": 3.615501642227173,
+            "duration_s": 4.362666666666667,
+            "duration_ratio": 0.8851787439613527,
+            "rms": 0.15732282400131226,
+            "peak": 0.717514157295227,
+            "hf_ratio": 0.0020884769037365913,
+            "synthesis_time_s": 1.4695441722869873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4929192066192627,
+            "utmos": 3.4848814010620117,
+            "duration_s": 5.664,
+            "duration_ratio": 0.9328941176470588,
+            "rms": 0.1396251916885376,
+            "peak": 0.7269159555435181,
+            "hf_ratio": 0.002007149625569582,
+            "synthesis_time_s": 1.9286298751831055,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47752639651298523,
+            "utmos": 3.3172287940979004,
+            "duration_s": 4.544,
+            "duration_ratio": 0.7758048780487805,
+            "rms": 0.1423948109149933,
+            "peak": 0.7003844976425171,
+            "hf_ratio": 0.0010732911759987473,
+            "synthesis_time_s": 1.5162005424499512,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5025027990341187,
+            "utmos": 3.367140293121338,
+            "duration_s": 5.056,
+            "duration_ratio": 0.8738765432098766,
+            "rms": 0.14669431746006012,
+            "peak": 0.6682146787643433,
+            "hf_ratio": 0.0020299984607845545,
+            "synthesis_time_s": 1.7104573249816895,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5105733871459961,
+            "utmos": 3.1902458667755127,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.8530666666666665,
+            "rms": 0.16235168278217316,
+            "peak": 0.659233808517456,
+            "hf_ratio": 0.003475917037576437,
+            "synthesis_time_s": 1.635343313217163,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.499773234128952,
+            "utmos": 2.919189453125,
+            "duration_s": 5.056,
+            "duration_ratio": 0.7953258426966293,
+            "rms": 0.1565929800271988,
+            "peak": 0.7724568843841553,
+            "hf_ratio": 0.001723279943689704,
+            "synthesis_time_s": 1.6747560501098633,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc pointot.",
+            "wer": 0.06666666666666667,
+            "cer": 0.1,
+            "secs": 0.5025109052658081,
+            "utmos": 3.3071448802948,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 1.0044444444444445,
+            "rms": 0.1665469855070114,
+            "peak": 0.7525614500045776,
+            "hf_ratio": 0.0015510846860706806,
+            "synthesis_time_s": 2.040041208267212,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4802708625793457,
+            "utmos": 3.5277864933013916,
+            "duration_s": 5.888,
+            "duration_ratio": 0.9697882352941176,
+            "rms": 0.14156515896320343,
+            "peak": 0.6970968842506409,
+            "hf_ratio": 0.0035109068267047405,
+            "synthesis_time_s": 1.9523322582244873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4984673857688904,
+            "utmos": 3.0148825645446777,
+            "duration_s": 6.314666666666667,
+            "duration_ratio": 0.9822814814814814,
+            "rms": 0.15862774848937988,
+            "peak": 0.7545397877693176,
+            "hf_ratio": 0.002625933615490794,
+            "synthesis_time_s": 2.0952811241149902,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4597330689430237,
+            "utmos": 3.261981248855591,
+            "duration_s": 3.9466666666666668,
+            "duration_ratio": 0.6208239700374533,
+            "rms": 0.16124151647090912,
+            "peak": 0.7163664102554321,
+            "hf_ratio": 0.0015135263092815876,
+            "synthesis_time_s": 1.3315253257751465,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4807826578617096,
+            "utmos": 3.59503436088562,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 0.7298666666666667,
+            "rms": 0.16907155513763428,
+            "peak": 0.6443727016448975,
+            "hf_ratio": 0.0008084641885943711,
+            "synthesis_time_s": 1.4030952453613281,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises, dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.4316674470901489,
+            "utmos": 3.394603967666626,
+            "duration_s": 5.664,
+            "duration_ratio": 0.8174845360824742,
+            "rms": 0.1555994749069214,
+            "peak": 0.7420437335968018,
+            "hf_ratio": 0.0027103351894766092,
+            "synthesis_time_s": 1.8942394256591797,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5257027745246887,
+            "utmos": 3.0502750873565674,
+            "duration_s": 5.984,
+            "duration_ratio": 1.2141449275362317,
+            "rms": 0.13710351288318634,
+            "peak": 0.8138526678085327,
+            "hf_ratio": 0.002606660593301058,
+            "synthesis_time_s": 2.040210723876953,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.45539990067481995,
+            "utmos": 3.37306547164917,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8257254901960785,
+            "rms": 0.16279202699661255,
+            "peak": 0.7244138121604919,
+            "hf_ratio": 0.0020147543400526047,
+            "synthesis_time_s": 1.690056324005127,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4738946557044983,
+            "utmos": 3.107884407043457,
+            "duration_s": 3.808,
+            "duration_ratio": 0.6501463414634147,
+            "rms": 0.16681452095508575,
+            "peak": 0.6744136810302734,
+            "hf_ratio": 0.0009358084062114358,
+            "synthesis_time_s": 1.2872264385223389,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4801129102706909,
+            "utmos": 3.5869994163513184,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 0.8259423868312759,
+            "rms": 0.15817174315452576,
+            "peak": 0.8195218443870544,
+            "hf_ratio": 0.0017421951051801443,
+            "synthesis_time_s": 1.5899319648742676,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale, neuronal.",
+            "wer": 0.08333333333333333,
+            "cer": 0.014492753623188406,
+            "secs": 0.488272488117218,
+            "utmos": 3.6297874450683594,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 0.8362666666666667,
+            "rms": 0.15970663726329803,
+            "peak": 0.7131750583648682,
+            "hf_ratio": 0.0032347203232347965,
+            "synthesis_time_s": 1.59934663772583,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.4750865399837494,
+            "utmos": 2.725001573562622,
+            "duration_s": 4.736,
+            "duration_ratio": 0.7449887640449439,
+            "rms": 0.1629430651664734,
+            "peak": 0.7095931768417358,
+            "hf_ratio": 0.0018721617525443435,
+            "synthesis_time_s": 1.610548496246338,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5061763525009155,
+            "utmos": 3.518899917602539,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 0.8977777777777778,
+            "rms": 0.16475220024585724,
+            "peak": 0.7680396437644958,
+            "hf_ratio": 0.0014777330216020346,
+            "synthesis_time_s": 1.7924551963806152,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5017654299736023,
+            "utmos": 3.6516823768615723,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.8626196078431372,
+            "rms": 0.15190450847148895,
+            "peak": 0.6934845447540283,
+            "hf_ratio": 0.0036400898825377226,
+            "synthesis_time_s": 1.7716567516326904,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47043102979660034,
+            "utmos": 3.7368335723876953,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8229925925925926,
+            "rms": 0.15742285549640656,
+            "peak": 0.7415372729301453,
+            "hf_ratio": 0.004518128000199795,
+            "synthesis_time_s": 1.7717790603637695,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.46401122212409973,
+            "utmos": 3.0919036865234375,
+            "duration_s": 4.309333333333333,
+            "duration_ratio": 0.6778726591760299,
+            "rms": 0.164581760764122,
+            "peak": 0.6640883684158325,
+            "hf_ratio": 0.0012604377698153257,
+            "synthesis_time_s": 1.474508285522461,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4825875163078308,
+            "utmos": 3.202477216720581,
+            "duration_s": 3.9466666666666668,
+            "duration_ratio": 0.6906666666666667,
+            "rms": 0.16618876159191132,
+            "peak": 0.6567932367324829,
+            "hf_ratio": 0.0005614316905848682,
+            "synthesis_time_s": 1.3574624061584473,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.4891381859779358,
+            "utmos": 3.33918833732605,
+            "duration_s": 5.152,
+            "duration_ratio": 0.7435876288659794,
+            "rms": 0.1546848565340042,
+            "peak": 0.6974682807922363,
+            "hf_ratio": 0.0021360365208238363,
+            "synthesis_time_s": 1.7303712368011475,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-25 10:50:12 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "fr",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.044021637403990344,
+          "std": 0.07696177513709729,
+          "ci95": 0.025140846544785114,
+          "min": 0.0,
+          "max": 0.25,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.035053151113360895,
+          "std": 0.058162891511411526,
+          "ci95": 0.018999877893727764,
+          "min": 0.0,
+          "max": 0.1891891891891892,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.40830865336789024,
+          "std": 0.025521228462808503,
+          "ci95": 0.008336934631184111,
+          "min": 0.3588225245475769,
+          "max": 0.4545776844024658,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.4213248557514615,
+          "std": 0.24318558738999876,
+          "ci95": 0.07944062521406627,
+          "min": 2.8449671268463135,
+          "max": 3.9282031059265137,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.7781010543940439,
+          "std": 0.13672537630157933,
+          "ci95": 0.04466362292518258,
+          "min": 0.5700162601626017,
+          "max": 1.1492173913043477,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.40830865336789024,
+          "std": 0.025521228462808503,
+          "ci95": 0.008336934631184111,
+          "min": 0.3588225245475769,
+          "max": 0.4545776844024658,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.044021637403990344,
+              "std": 0.07696177513709729,
+              "ci95": 0.025140846544785114,
+              "min": 0.0,
+              "max": 0.25,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.035053151113360895,
+              "std": 0.058162891511411526,
+              "ci95": 0.018999877893727764,
+              "min": 0.0,
+              "max": 0.1891891891891892,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.40830865336789024,
+              "std": 0.025521228462808503,
+              "ci95": 0.008336934631184111,
+              "min": 0.3588225245475769,
+              "max": 0.4545776844024658,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.4213248557514615,
+              "std": 0.24318558738999876,
+              "ci95": 0.07944062521406627,
+              "min": 2.8449671268463135,
+              "max": 3.9282031059265137,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.7781010543940439,
+              "std": 0.13672537630157933,
+              "ci95": 0.04466362292518258,
+              "min": 0.5700162601626017,
+              "max": 1.1492173913043477,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.40830865336789024,
+              "std": 0.025521228462808503,
+              "ci95": 0.008336934631184111,
+              "min": 0.3588225245475769,
+              "max": 0.4545776844024658,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41925048828125,
+            "utmos": 3.2944116592407227,
+            "duration_s": 5.664,
+            "duration_ratio": 1.1492173913043477,
+            "rms": 0.1252993643283844,
+            "peak": 0.7543272972106934,
+            "hf_ratio": 0.014306451193988323,
+            "synthesis_time_s": 1.926306962966919,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.3588225245475769,
+            "utmos": 3.5064592361450195,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 0.7255843137254901,
+            "rms": 0.14736951887607574,
+            "peak": 0.8460145592689514,
+            "hf_ratio": 0.007257647346705198,
+            "synthesis_time_s": 1.510181188583374,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3755876123905182,
+            "utmos": 3.327608108520508,
+            "duration_s": 3.616,
+            "duration_ratio": 0.6173658536585367,
+            "rms": 0.14248979091644287,
+            "peak": 0.8119487762451172,
+            "hf_ratio": 0.002680837409570813,
+            "synthesis_time_s": 1.2291078567504883,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42993542551994324,
+            "utmos": 3.555994987487793,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.7946008230452675,
+            "rms": 0.13824474811553955,
+            "peak": 0.9160478711128235,
+            "hf_ratio": 0.005261429585516453,
+            "synthesis_time_s": 1.5927412509918213,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4300452470779419,
+            "utmos": 3.758047103881836,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 0.6253333333333333,
+            "rms": 0.13056613504886627,
+            "peak": 0.8029104471206665,
+            "hf_ratio": 0.012384789064526558,
+            "synthesis_time_s": 1.2459518909454346,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.42486822605133057,
+            "utmos": 2.9638240337371826,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 0.6929737827715355,
+            "rms": 0.13555948436260223,
+            "peak": 0.875014066696167,
+            "hf_ratio": 0.009746415540575981,
+            "synthesis_time_s": 1.4786992073059082,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc-point.",
+            "wer": 0.06666666666666667,
+            "cer": 0.07142857142857142,
+            "secs": 0.4089442491531372,
+            "utmos": 3.5783700942993164,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9279999999999999,
+            "rms": 0.12148473411798477,
+            "peak": 0.7859586477279663,
+            "hf_ratio": 0.013065718114376068,
+            "synthesis_time_s": 1.904846429824829,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.38541117310523987,
+            "utmos": 3.352123737335205,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7027450980392157,
+            "rms": 0.1416793167591095,
+            "peak": 0.867660641670227,
+            "hf_ratio": 0.007328176870942116,
+            "synthesis_time_s": 1.4319989681243896,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier printemps.",
+            "wer": 0.07692307692307693,
+            "cer": 0.11538461538461539,
+            "secs": 0.39083290100097656,
+            "utmos": 3.429154396057129,
+            "duration_s": 5.941333333333334,
+            "duration_ratio": 0.9242074074074074,
+            "rms": 0.13532941043376923,
+            "peak": 0.9350829124450684,
+            "hf_ratio": 0.010132558643817902,
+            "synthesis_time_s": 2.008211851119995,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4545776844024658,
+            "utmos": 3.457820415496826,
+            "duration_s": 4.501333333333333,
+            "duration_ratio": 0.7080749063670412,
+            "rms": 0.13454119861125946,
+            "peak": 0.8160435557365417,
+            "hf_ratio": 0.010465073399245739,
+            "synthesis_time_s": 1.5265731811523438,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4260634779930115,
+            "utmos": 3.31864857673645,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 0.9426666666666667,
+            "rms": 0.12343785911798477,
+            "peak": 0.8592525720596313,
+            "hf_ratio": 0.002726699458435178,
+            "synthesis_time_s": 1.8315441608428955,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8h pr\u00e9cise dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.21428571428571427,
+            "cer": 0.11904761904761904,
+            "secs": 0.4176173508167267,
+            "utmos": 3.3215458393096924,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.7097182130584192,
+            "rms": 0.1283547431230545,
+            "peak": 0.9280551075935364,
+            "hf_ratio": 0.010440783575177193,
+            "synthesis_time_s": 1.6686618328094482,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4358777105808258,
+            "utmos": 3.7324507236480713,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 0.8462222222222221,
+            "rms": 0.1378345638513565,
+            "peak": 0.869452953338623,
+            "hf_ratio": 0.011034386232495308,
+            "synthesis_time_s": 1.4192752838134766,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4275544285774231,
+            "utmos": 3.9282031059265137,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 0.6869333333333333,
+            "rms": 0.14579764008522034,
+            "peak": 0.8429532647132874,
+            "hf_ratio": 0.009563751518726349,
+            "synthesis_time_s": 1.413224220275879,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3957822620868683,
+            "utmos": 3.229525566101074,
+            "duration_s": 3.3386666666666667,
+            "duration_ratio": 0.5700162601626017,
+            "rms": 0.1488570272922516,
+            "peak": 0.7619063258171082,
+            "hf_ratio": 0.0026603760197758675,
+            "synthesis_time_s": 1.1393492221832275,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.39484700560569763,
+            "utmos": 3.1347646713256836,
+            "duration_s": 4.8213333333333335,
+            "duration_ratio": 0.8333168724279836,
+            "rms": 0.12534184753894806,
+            "peak": 0.9161041975021362,
+            "hf_ratio": 0.004339443985372782,
+            "synthesis_time_s": 1.6156005859375,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4306129217147827,
+            "utmos": 3.617697238922119,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.8530666666666665,
+            "rms": 0.12990184128284454,
+            "peak": 0.83424311876297,
+            "hf_ratio": 0.011398963630199432,
+            "synthesis_time_s": 1.6150941848754883,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.4038943350315094,
+            "utmos": 3.1311275959014893,
+            "duration_s": 4.085333333333334,
+            "duration_ratio": 0.6426367041198503,
+            "rms": 0.13130603730678558,
+            "peak": 0.8414058089256287,
+            "hf_ratio": 0.012085364200174809,
+            "synthesis_time_s": 1.3585700988769531,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41343218088150024,
+            "utmos": 3.4298112392425537,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9582222222222222,
+            "rms": 0.12100671231746674,
+            "peak": 0.7903450727462769,
+            "hf_ratio": 0.0087005365639925,
+            "synthesis_time_s": 1.9035053253173828,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.39879581332206726,
+            "utmos": 3.6268868446350098,
+            "duration_s": 5.664,
+            "duration_ratio": 0.9328941176470588,
+            "rms": 0.12759970128536224,
+            "peak": 0.763664722442627,
+            "hf_ratio": 0.011718234047293663,
+            "synthesis_time_s": 1.9173836708068848,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3960270583629608,
+            "utmos": 3.2411532402038574,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 0.8379259259259259,
+            "rms": 0.12091300636529922,
+            "peak": 0.8429590463638306,
+            "hf_ratio": 0.010705188848078251,
+            "synthesis_time_s": 1.817124366760254,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4134328067302704,
+            "utmos": 3.159297466278076,
+            "duration_s": 4.1706666666666665,
+            "duration_ratio": 0.656059925093633,
+            "rms": 0.1392706334590912,
+            "peak": 0.8022686839103699,
+            "hf_ratio": 0.00536411814391613,
+            "synthesis_time_s": 1.4049267768859863,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4438980221748352,
+            "utmos": 2.8449671268463135,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8605333333333334,
+            "rms": 0.12583781778812408,
+            "peak": 0.8110166192054749,
+            "hf_ratio": 0.003368473844602704,
+            "synthesis_time_s": 1.634206771850586,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.415920227766037,
+            "utmos": 3.356252908706665,
+            "duration_s": 4.362666666666667,
+            "duration_ratio": 0.6296632302405498,
+            "rms": 0.1307472586631775,
+            "peak": 0.7835812568664551,
+            "hf_ratio": 0.01115604117512703,
+            "synthesis_time_s": 1.4530715942382812,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale po\u00eale.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0847457627118644,
+            "secs": 0.42763084173202515,
+            "utmos": 3.583016872406006,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 1.1210821256038646,
+            "rms": 0.13305051624774933,
+            "peak": 0.809624433517456,
+            "hf_ratio": 0.012357023544609547,
+            "synthesis_time_s": 1.8506815433502197,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.3671935200691223,
+            "utmos": 3.434887647628784,
+            "duration_s": 4.309333333333333,
+            "duration_ratio": 0.7097725490196078,
+            "rms": 0.13694514334201813,
+            "peak": 0.8602381348609924,
+            "hf_ratio": 0.011584936641156673,
+            "synthesis_time_s": 1.4497551918029785,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Pouvez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.06666666666666667,
+            "cer": 0.04411764705882353,
+            "secs": 0.3594639003276825,
+            "utmos": 3.180964469909668,
+            "duration_s": 3.5733333333333333,
+            "duration_ratio": 0.6100813008130082,
+            "rms": 0.14288008213043213,
+            "peak": 0.7092894911766052,
+            "hf_ratio": 0.0037247533909976482,
+            "synthesis_time_s": 1.1894927024841309,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.43427786231040955,
+            "utmos": 3.6387898921966553,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.7946008230452675,
+            "rms": 0.13193963468074799,
+            "peak": 0.9120357036590576,
+            "hf_ratio": 0.004770034924149513,
+            "synthesis_time_s": 1.5208823680877686,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3811628222465515,
+            "utmos": 3.5245022773742676,
+            "duration_s": 4.448,
+            "duration_ratio": 0.7784000000000001,
+            "rms": 0.13846591114997864,
+            "peak": 0.8233336210250854,
+            "hf_ratio": 0.013189157471060753,
+            "synthesis_time_s": 1.473358392715454,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.4362626075744629,
+            "utmos": 3.205813407897949,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.7886142322097379,
+            "rms": 0.12745608389377594,
+            "peak": 0.7891489863395691,
+            "hf_ratio": 0.01442026812583208,
+            "synthesis_time_s": 1.6609501838684082,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "En hiver la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4178273379802704,
+            "utmos": 3.5665221214294434,
+            "duration_s": 4.085333333333334,
+            "duration_ratio": 0.680888888888889,
+            "rms": 0.13183364272117615,
+            "peak": 0.8044633865356445,
+            "hf_ratio": 0.009321066550910473,
+            "synthesis_time_s": 1.3787407875061035,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3680986166000366,
+            "utmos": 3.672377109527588,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.7712627450980393,
+            "rms": 0.12688997387886047,
+            "peak": 0.8287537097930908,
+            "hf_ratio": 0.010545564815402031,
+            "synthesis_time_s": 1.5993072986602783,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3900430202484131,
+            "utmos": 3.635679244995117,
+            "duration_s": 5.152,
+            "duration_ratio": 0.8014222222222223,
+            "rms": 0.13460037112236023,
+            "peak": 0.9384406208992004,
+            "hf_ratio": 0.013750502839684486,
+            "synthesis_time_s": 1.7342581748962402,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4190967082977295,
+            "utmos": 3.479703903198242,
+            "duration_s": 4.736,
+            "duration_ratio": 0.7449887640449439,
+            "rms": 0.141692116856575,
+            "peak": 0.7868715524673462,
+            "hf_ratio": 0.006894515361636877,
+            "synthesis_time_s": 1.5942957401275635,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4354948401451111,
+            "utmos": 3.126323938369751,
+            "duration_s": 3.616,
+            "duration_ratio": 0.6328,
+            "rms": 0.1396258920431137,
+            "peak": 0.8778606653213501,
+            "hf_ratio": 0.002185911638662219,
+            "synthesis_time_s": 1.25288724899292,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.37052831053733826,
+            "utmos": 3.822968006134033,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.7497457044673539,
+            "rms": 0.1389487087726593,
+            "peak": 0.852885901927948,
+            "hf_ratio": 0.007886252366006374,
+            "synthesis_time_s": 1.738992691040039,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-25 10:52:13 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "fr",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.04898565486800781,
+          "std": 0.08932078119238847,
+          "ci95": 0.029178121856180236,
+          "min": 0.0,
+          "max": 0.2727272727272727,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.033818374219149266,
+          "std": 0.05961210890001962,
+          "ci95": 0.01947328890733974,
+          "min": 0.0,
+          "max": 0.1891891891891892,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4766421417395274,
+          "std": 0.03159729791119574,
+          "ci95": 0.010321783984323941,
+          "min": 0.3994002044200897,
+          "max": 0.5384904146194458,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 2.947528147035175,
+          "std": 0.4701589061016137,
+          "ci95": 0.15358524265986048,
+          "min": 1.4720176458358765,
+          "max": 3.5020687580108643,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1250691177018322,
+          "std": 0.6025716972352873,
+          "ci95": 0.19684008776352716,
+          "min": 0.641979381443299,
+          "max": 3.9475942028985505,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4766421417395274,
+          "std": 0.03159729791119574,
+          "ci95": 0.010321783984323941,
+          "min": 0.3994002044200897,
+          "max": 0.5384904146194458,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 2,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.04898565486800781,
+              "std": 0.08932078119238847,
+              "ci95": 0.029178121856180236,
+              "min": 0.0,
+              "max": 0.2727272727272727,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.033818374219149266,
+              "std": 0.05961210890001962,
+              "ci95": 0.01947328890733974,
+              "min": 0.0,
+              "max": 0.1891891891891892,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4766421417395274,
+              "std": 0.03159729791119574,
+              "ci95": 0.010321783984323941,
+              "min": 0.3994002044200897,
+              "max": 0.5384904146194458,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 2.947528147035175,
+              "std": 0.4701589061016137,
+              "ci95": 0.15358524265986048,
+              "min": 1.4720176458358765,
+              "max": 3.5020687580108643,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.1250691177018322,
+              "std": 0.6025716972352873,
+              "ci95": 0.19684008776352716,
+              "min": 0.641979381443299,
+              "max": 3.9475942028985505,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4766421417395274,
+              "std": 0.03159729791119574,
+              "ci95": 0.010321783984323941,
+              "min": 0.3994002044200897,
+              "max": 0.5384904146194458,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 2,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47958794236183167,
+            "utmos": 3.252350091934204,
+            "duration_s": 6.826666666666667,
+            "duration_ratio": 1.38512077294686,
+            "rms": 0.1384144127368927,
+            "peak": 0.9557162523269653,
+            "hf_ratio": 0.003042003605514765,
+            "synthesis_time_s": 2.259946584701538,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4684576988220215,
+            "utmos": 3.4105148315429688,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9170823529411765,
+            "rms": 0.14073778688907623,
+            "peak": 0.900666356086731,
+            "hf_ratio": 0.008709123358130455,
+            "synthesis_time_s": 1.8835678100585938,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42606058716773987,
+            "utmos": 2.730634927749634,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8868943089430895,
+            "rms": 0.1353515386581421,
+            "peak": 0.8804866075515747,
+            "hf_ratio": 0.0013045738451182842,
+            "synthesis_time_s": 1.7454450130462646,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44658976793289185,
+            "utmos": 1.5382609367370605,
+            "duration_s": 15.04,
+            "duration_ratio": 2.599506172839506,
+            "rms": 0.10715500265359879,
+            "peak": 0.9774068593978882,
+            "hf_ratio": 0.001197303761728108,
+            "synthesis_time_s": 5.054535150527954,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale point.",
+            "wer": 0.08333333333333333,
+            "cer": 0.07246376811594203,
+            "secs": 0.4844699501991272,
+            "utmos": 3.259998321533203,
+            "duration_s": 4.544,
+            "duration_ratio": 0.7951999999999999,
+            "rms": 0.13962630927562714,
+            "peak": 0.9101585149765015,
+            "hf_ratio": 0.00500625791028142,
+            "synthesis_time_s": 1.5360682010650635,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.4783387780189514,
+            "utmos": 2.9230592250823975,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 1.0805692883895133,
+            "rms": 0.13573937118053436,
+            "peak": 0.9533471465110779,
+            "hf_ratio": 0.0133259491994977,
+            "synthesis_time_s": 2.2918648719787598,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5107699036598206,
+            "utmos": 3.134861469268799,
+            "duration_s": 7.242666666666667,
+            "duration_ratio": 1.207111111111111,
+            "rms": 0.12956832349300385,
+            "peak": 0.895823061466217,
+            "hf_ratio": 0.010788453742861748,
+            "synthesis_time_s": 2.4163219928741455,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4463302791118622,
+            "utmos": 2.74422550201416,
+            "duration_s": 9.610666666666667,
+            "duration_ratio": 1.5829333333333335,
+            "rms": 0.12334902584552765,
+            "peak": 0.9424348473548889,
+            "hf_ratio": 0.0076589565724134445,
+            "synthesis_time_s": 3.2383811473846436,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5300024151802063,
+            "utmos": 3.161773204803467,
+            "duration_s": 6.08,
+            "duration_ratio": 0.9457777777777777,
+            "rms": 0.13391247391700745,
+            "peak": 0.9769594073295593,
+            "hf_ratio": 0.00914045050740242,
+            "synthesis_time_s": 2.0433480739593506,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.519065260887146,
+            "utmos": 3.140139579772949,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8322397003745319,
+            "rms": 0.14379508793354034,
+            "peak": 0.9417356848716736,
+            "hf_ratio": 0.005807274952530861,
+            "synthesis_time_s": 1.7731952667236328,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4605960249900818,
+            "utmos": 3.1867401599884033,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.8922666666666667,
+            "rms": 0.1444602906703949,
+            "peak": 0.9331941604614258,
+            "hf_ratio": 0.0006102164043113589,
+            "synthesis_time_s": 1.7056901454925537,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.4528235197067261,
+            "utmos": 2.555307388305664,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 0.9914501718213058,
+            "rms": 0.14762693643569946,
+            "peak": 0.9612116813659668,
+            "hf_ratio": 0.005152733996510506,
+            "synthesis_time_s": 2.2768442630767822,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5140570402145386,
+            "utmos": 3.5020687580108643,
+            "duration_s": 4.309333333333333,
+            "duration_ratio": 0.8743574879227052,
+            "rms": 0.1531447470188141,
+            "peak": 0.935274600982666,
+            "hf_ratio": 0.003656537039205432,
+            "synthesis_time_s": 1.4715664386749268,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4801878333091736,
+            "utmos": 2.7768471240997314,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.8626196078431372,
+            "rms": 0.14487440884113312,
+            "peak": 0.9528056383132935,
+            "hf_ratio": 0.008515596389770508,
+            "synthesis_time_s": 1.7556812763214111,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3994002044200897,
+            "utmos": 3.0202300548553467,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.9032845528455286,
+            "rms": 0.12815387547016144,
+            "peak": 0.9115563631057739,
+            "hf_ratio": 0.0015704379184171557,
+            "synthesis_time_s": 1.7951831817626953,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.46313148736953735,
+            "utmos": 3.1802384853363037,
+            "duration_s": 6.453333333333333,
+            "duration_ratio": 1.1153909465020575,
+            "rms": 0.13396279513835907,
+            "peak": 0.9753963947296143,
+            "hf_ratio": 0.003017338691279292,
+            "synthesis_time_s": 2.2162649631500244,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47642430663108826,
+            "utmos": 2.861809253692627,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8194666666666667,
+            "rms": 0.14414304494857788,
+            "peak": 0.956981360912323,
+            "hf_ratio": 0.005144819617271423,
+            "synthesis_time_s": 1.5914685726165771,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.4533465802669525,
+            "utmos": 2.6857247352600098,
+            "duration_s": 7.104,
+            "duration_ratio": 1.1174831460674157,
+            "rms": 0.12461207062005997,
+            "peak": 0.9724690914154053,
+            "hf_ratio": 0.014570670202374458,
+            "synthesis_time_s": 2.395453691482544,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5071580410003662,
+            "utmos": 3.2401041984558105,
+            "duration_s": 7.285333333333333,
+            "duration_ratio": 1.214222222222222,
+            "rms": 0.12856122851371765,
+            "peak": 0.9336552619934082,
+            "hf_ratio": 0.0065355123952031136,
+            "synthesis_time_s": 2.459245204925537,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5284085869789124,
+            "utmos": 3.068995237350464,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 1.115607843137255,
+            "rms": 0.12797115743160248,
+            "peak": 0.9657901525497437,
+            "hf_ratio": 0.006416679359972477,
+            "synthesis_time_s": 2.2607662677764893,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4450508952140808,
+            "utmos": 3.13592529296875,
+            "duration_s": 7.008,
+            "duration_ratio": 1.0901333333333334,
+            "rms": 0.13808782398700714,
+            "peak": 0.9630822539329529,
+            "hf_ratio": 0.01038504857569933,
+            "synthesis_time_s": 2.4045865535736084,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4897557497024536,
+            "utmos": 3.173362970352173,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8322397003745319,
+            "rms": 0.1475772261619568,
+            "peak": 0.9308668375015259,
+            "hf_ratio": 0.002705424092710018,
+            "synthesis_time_s": 1.7868597507476807,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4893178939819336,
+            "utmos": 3.0071070194244385,
+            "duration_s": 7.8933333333333335,
+            "duration_ratio": 1.3813333333333333,
+            "rms": 0.1416720747947693,
+            "peak": 0.9545455574989319,
+            "hf_ratio": 0.0005254235002212226,
+            "synthesis_time_s": 2.6636722087860107,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.49974942207336426,
+            "utmos": 3.406820297241211,
+            "duration_s": 5.941333333333334,
+            "duration_ratio": 0.857512027491409,
+            "rms": 0.16512764990329742,
+            "peak": 0.9384326934814453,
+            "hf_ratio": 0.004180239047855139,
+            "synthesis_time_s": 1.9798989295959473,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le soleil matinal illumie doucement les toits dor\u00e9s de la capitale. J'aime.",
+            "wer": 0.2727272727272727,
+            "cer": 0.15254237288135594,
+            "secs": 0.4872208535671234,
+            "utmos": 1.4720176458358765,
+            "duration_s": 19.456,
+            "duration_ratio": 3.9475942028985505,
+            "rms": 0.11577103286981583,
+            "peak": 0.9539720416069031,
+            "hf_ratio": 0.0025212839245796204,
+            "synthesis_time_s": 6.523832082748413,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.48475271463394165,
+            "utmos": 3.4037766456604004,
+            "duration_s": 6.261333333333333,
+            "duration_ratio": 1.031278431372549,
+            "rms": 0.12481924891471863,
+            "peak": 0.9284172058105469,
+            "hf_ratio": 0.0051725455559790134,
+            "synthesis_time_s": 2.1005592346191406,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Vous pouvez vous m\u00e9diquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre.",
+            "wer": 0.26666666666666666,
+            "cer": 0.11764705882352941,
+            "secs": 0.42759576439857483,
+            "utmos": 2.68411922454834,
+            "duration_s": 4.032,
+            "duration_ratio": 0.6883902439024391,
+            "rms": 0.14268146455287933,
+            "peak": 0.8990933299064636,
+            "hf_ratio": 0.0008640149026177824,
+            "synthesis_time_s": 1.367081880569458,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48054268956184387,
+            "utmos": 2.9079296588897705,
+            "duration_s": 5.429333333333333,
+            "duration_ratio": 0.93840329218107,
+            "rms": 0.14007486402988434,
+            "peak": 0.9832276701927185,
+            "hf_ratio": 0.002327273366972804,
+            "synthesis_time_s": 1.8451800346374512,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4487670063972473,
+            "utmos": 3.2302803993225098,
+            "duration_s": 3.989333333333333,
+            "duration_ratio": 0.6981333333333333,
+            "rms": 0.14546631276607513,
+            "peak": 0.9441788792610168,
+            "hf_ratio": 0.00569477304816246,
+            "synthesis_time_s": 1.3659348487854004,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec 5 minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.058823529411764705,
+            "cer": 0.0547945205479452,
+            "secs": 0.46732375025749207,
+            "utmos": 2.8570311069488525,
+            "duration_s": 5.152,
+            "duration_ratio": 0.810426966292135,
+            "rms": 0.13630540668964386,
+            "peak": 0.9522820115089417,
+            "hf_ratio": 0.010647892020642757,
+            "synthesis_time_s": 1.7286252975463867,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45677387714385986,
+            "utmos": 1.9178128242492676,
+            "duration_s": 8.96,
+            "duration_ratio": 1.4933333333333334,
+            "rms": 0.11954529583454132,
+            "peak": 0.9242405891418457,
+            "hf_ratio": 0.005595226772129536,
+            "synthesis_time_s": 3.0238757133483887,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5384904146194458,
+            "utmos": 3.1518332958221436,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.024250980392157,
+            "rms": 0.13209620118141174,
+            "peak": 0.9294450879096985,
+            "hf_ratio": 0.005745419301092625,
+            "synthesis_time_s": 2.0866127014160156,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4814424514770508,
+            "utmos": 3.070664644241333,
+            "duration_s": 9.653333333333334,
+            "duration_ratio": 1.5016296296296296,
+            "rms": 0.12676359713077545,
+            "peak": 0.9635142087936401,
+            "hf_ratio": 0.009234189055860043,
+            "synthesis_time_s": 3.2509188652038574,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.468769371509552,
+            "utmos": 3.4984607696533203,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.7365992509363297,
+            "rms": 0.13658341765403748,
+            "peak": 0.9580516815185547,
+            "hf_ratio": 0.003876017639413476,
+            "synthesis_time_s": 1.59844970703125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4500740170478821,
+            "utmos": 2.7021636962890625,
+            "duration_s": 3.9466666666666668,
+            "duration_ratio": 0.6906666666666667,
+            "rms": 0.1565263867378235,
+            "peak": 0.9523911476135254,
+            "hf_ratio": 0.0008170063956640661,
+            "synthesis_time_s": 1.3381187915802002,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.518284022808075,
+            "utmos": 3.1178243160247803,
+            "duration_s": 4.448,
+            "duration_ratio": 0.641979381443299,
+            "rms": 0.15092690289020538,
+            "peak": 0.9077273607254028,
+            "hf_ratio": 0.006479206494987011,
+            "synthesis_time_s": 1.494760274887085,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-25 10:54:18 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "fr",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.035866910866910864,
+          "std": 0.07504928548430367,
+          "ci95": 0.024516099924872536,
+          "min": 0.0,
+          "max": 0.25,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.023713333495942193,
+          "std": 0.055485835997211706,
+          "ci95": 0.01812537309242249,
+          "min": 0.0,
+          "max": 0.1891891891891892,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4873153310683038,
+          "std": 0.029395891727646943,
+          "ci95": 0.009602657964364667,
+          "min": 0.4044174253940582,
+          "max": 0.5513112545013428,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.33774052394761,
+          "std": 0.34123126911796453,
+          "ci95": 0.11146888124520175,
+          "min": 1.8572858572006226,
+          "max": 3.8686983585357666,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.163064582077033,
+          "std": 0.25986075279204257,
+          "ci95": 0.08488784591206723,
+          "min": 0.7298876404494382,
+          "max": 1.9103739837398377,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4873153310683038,
+          "std": 0.029395891727646943,
+          "ci95": 0.009602657964364667,
+          "min": 0.4044174253940582,
+          "max": 0.5513112545013428,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.035866910866910864,
+              "std": 0.07504928548430367,
+              "ci95": 0.024516099924872536,
+              "min": 0.0,
+              "max": 0.25,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.023713333495942193,
+              "std": 0.055485835997211706,
+              "ci95": 0.01812537309242249,
+              "min": 0.0,
+              "max": 0.1891891891891892,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4873153310683038,
+              "std": 0.029395891727646943,
+              "ci95": 0.009602657964364667,
+              "min": 0.4044174253940582,
+              "max": 0.5513112545013428,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.33774052394761,
+              "std": 0.34123126911796453,
+              "ci95": 0.11146888124520175,
+              "min": 1.8572858572006226,
+              "max": 3.8686983585357666,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.163064582077033,
+              "std": 0.25986075279204257,
+              "ci95": 0.08488784591206723,
+              "min": 0.7298876404494382,
+              "max": 1.9103739837398377,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4873153310683038,
+              "std": 0.029395891727646943,
+              "ci95": 0.009602657964364667,
+              "min": 0.4044174253940582,
+              "max": 0.5513112545013428,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4578056335449219,
+            "utmos": 3.496744394302368,
+            "duration_s": 6.730666666666667,
+            "duration_ratio": 1.3656425120772946,
+            "rms": 0.14177829027175903,
+            "peak": 0.7933950424194336,
+            "hf_ratio": 0.014171263203024864,
+            "synthesis_time_s": 2.261991500854492,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.47390317916870117,
+            "utmos": 3.1674742698669434,
+            "duration_s": 6.176,
+            "duration_ratio": 1.0172235294117649,
+            "rms": 0.14403373003005981,
+            "peak": 0.7706842422485352,
+            "hf_ratio": 0.015752997249364853,
+            "synthesis_time_s": 2.068091869354248,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45638948678970337,
+            "utmos": 3.2815704345703125,
+            "duration_s": 7.242666666666667,
+            "duration_ratio": 1.2365528455284553,
+            "rms": 0.15125620365142822,
+            "peak": 0.7379369735717773,
+            "hf_ratio": 0.0019999498035758734,
+            "synthesis_time_s": 2.424628973007202,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5047678351402283,
+            "utmos": 3.4288411140441895,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 1.0416460905349794,
+            "rms": 0.15175698697566986,
+            "peak": 0.819382905960083,
+            "hf_ratio": 0.005088027101010084,
+            "synthesis_time_s": 2.0599091053009033,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49456682801246643,
+            "utmos": 3.5578768253326416,
+            "duration_s": 6.4,
+            "duration_ratio": 1.12,
+            "rms": 0.14384743571281433,
+            "peak": 0.8001769781112671,
+            "hf_ratio": 0.012565011158585548,
+            "synthesis_time_s": 2.1541972160339355,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4991462528705597,
+            "utmos": 3.3112375736236572,
+            "duration_s": 7.7973333333333334,
+            "duration_ratio": 1.226546816479401,
+            "rms": 0.14193058013916016,
+            "peak": 0.7514282464981079,
+            "hf_ratio": 0.0333678238093853,
+            "synthesis_time_s": 2.625011920928955,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47775933146476746,
+            "utmos": 3.606072187423706,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 1.1448888888888888,
+            "rms": 0.13377346098423004,
+            "peak": 0.719529390335083,
+            "hf_ratio": 0.025949491187930107,
+            "synthesis_time_s": 2.316802740097046,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.504835844039917,
+            "utmos": 3.405674934387207,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9469490196078432,
+            "rms": 0.14682051539421082,
+            "peak": 0.7639081478118896,
+            "hf_ratio": 0.011765836738049984,
+            "synthesis_time_s": 1.9498655796051025,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e les r\u00e9alisateurs du monde entier.",
+            "wer": 0.07692307692307693,
+            "cer": 0.01282051282051282,
+            "secs": 0.5513112545013428,
+            "utmos": 3.1608808040618896,
+            "duration_s": 7.104,
+            "duration_ratio": 1.1050666666666666,
+            "rms": 0.1535329669713974,
+            "peak": 0.8824144601821899,
+            "hf_ratio": 0.018440762534737587,
+            "synthesis_time_s": 2.394725799560547,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48422712087631226,
+            "utmos": 3.5844478607177734,
+            "duration_s": 7.466666666666667,
+            "duration_ratio": 1.1745318352059926,
+            "rms": 0.13655412197113037,
+            "peak": 0.738243579864502,
+            "hf_ratio": 0.015046827495098114,
+            "synthesis_time_s": 2.5211544036865234,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4637126624584198,
+            "utmos": 3.3786423206329346,
+            "duration_s": 7.562666666666667,
+            "duration_ratio": 1.3234666666666666,
+            "rms": 0.12513695657253265,
+            "peak": 0.8690735101699829,
+            "hf_ratio": 0.0027770523447543383,
+            "synthesis_time_s": 2.5499653816223145,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 42,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.49525028467178345,
+            "utmos": 3.099759340286255,
+            "duration_s": 6.912,
+            "duration_ratio": 0.9976082474226804,
+            "rms": 0.1509086936712265,
+            "peak": 0.8151228427886963,
+            "hf_ratio": 0.013944698497653008,
+            "synthesis_time_s": 2.3473868370056152,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4735749065876007,
+            "utmos": 3.5981926918029785,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.242280193236715,
+            "rms": 0.14284051954746246,
+            "peak": 0.755077064037323,
+            "hf_ratio": 0.017363976687192917,
+            "synthesis_time_s": 2.04352068901062,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4427975118160248,
+            "utmos": 3.30005145072937,
+            "duration_s": 4.96,
+            "duration_ratio": 0.8169411764705883,
+            "rms": 0.1533791869878769,
+            "peak": 0.7543381452560425,
+            "hf_ratio": 0.01307650562375784,
+            "synthesis_time_s": 1.6816906929016113,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4044174253940582,
+            "utmos": 2.9151062965393066,
+            "duration_s": 4.96,
+            "duration_ratio": 0.846829268292683,
+            "rms": 0.14392636716365814,
+            "peak": 0.6997376084327698,
+            "hf_ratio": 0.00327898096293211,
+            "synthesis_time_s": 1.661405086517334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5149430632591248,
+            "utmos": 3.4644205570220947,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.058238683127572,
+            "rms": 0.14779849350452423,
+            "peak": 0.6937923431396484,
+            "hf_ratio": 0.0060717142187058926,
+            "synthesis_time_s": 2.073514461517334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronal.",
+            "wer": 0.08333333333333333,
+            "cer": 0.014492753623188406,
+            "secs": 0.505266547203064,
+            "utmos": 3.473963975906372,
+            "duration_s": 9.557333333333334,
+            "duration_ratio": 1.6725333333333334,
+            "rms": 0.13357149064540863,
+            "peak": 0.9213258028030396,
+            "hf_ratio": 0.012126543559134007,
+            "synthesis_time_s": 3.392578125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47644972801208496,
+            "utmos": 3.288977861404419,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 1.0654681647940076,
+            "rms": 0.14484554529190063,
+            "peak": 0.7949330806732178,
+            "hf_ratio": 0.022705508396029472,
+            "synthesis_time_s": 2.315704584121704,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5426064729690552,
+            "utmos": 3.3445630073547363,
+            "duration_s": 7.466666666666667,
+            "duration_ratio": 1.2444444444444445,
+            "rms": 0.13838526606559753,
+            "peak": 0.7807347774505615,
+            "hf_ratio": 0.019602611660957336,
+            "synthesis_time_s": 2.5080785751342773,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5030973553657532,
+            "utmos": 3.8686983585357666,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.024250980392157,
+            "rms": 0.15339495241641998,
+            "peak": 0.877560555934906,
+            "hf_ratio": 0.01588641293346882,
+            "synthesis_time_s": 2.0747745037078857,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5341149568557739,
+            "utmos": 3.495239019393921,
+            "duration_s": 6.912,
+            "duration_ratio": 1.0752,
+            "rms": 0.13845498859882355,
+            "peak": 0.9065849184989929,
+            "hf_ratio": 0.038726806640625,
+            "synthesis_time_s": 2.300262928009033,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5196518301963806,
+            "utmos": 3.229976177215576,
+            "duration_s": 4.64,
+            "duration_ratio": 0.7298876404494382,
+            "rms": 0.15695157647132874,
+            "peak": 0.7160496711730957,
+            "hf_ratio": 0.011796820908784866,
+            "synthesis_time_s": 1.5908000469207764,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48464399576187134,
+            "utmos": 3.1548638343811035,
+            "duration_s": 8.213333333333333,
+            "duration_ratio": 1.4373333333333331,
+            "rms": 0.13390719890594482,
+            "peak": 0.9320343136787415,
+            "hf_ratio": 0.001931059523485601,
+            "synthesis_time_s": 2.745474338531494,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 123,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.48570600152015686,
+            "utmos": 3.341071367263794,
+            "duration_s": 9.653333333333334,
+            "duration_ratio": 1.3932646048109967,
+            "rms": 0.1421658843755722,
+            "peak": 0.7362834215164185,
+            "hf_ratio": 0.016466688364744186,
+            "synthesis_time_s": 3.1868057250976562,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le soleil matinal illuminait doucement les toits dor\u00e9s de la capitale.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45917072892189026,
+            "utmos": 3.030425548553467,
+            "duration_s": 4.501333333333333,
+            "duration_ratio": 0.9133140096618356,
+            "rms": 0.1593891680240631,
+            "peak": 0.7273386716842651,
+            "hf_ratio": 0.012753301300108433,
+            "synthesis_time_s": 1.512760877609253,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_01",
+            "category": null
+          },
+          {
+            "text": "La biblioth\u00e8que universitaire propose plus de trois cent mille ouvrages aux \u00e9tudiants.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La biblioth\u00e8que universitaire propose plus de 300 000 ouvrages aux \u00e9tudiants.",
+            "wer": 0.25,
+            "cer": 0.1891891891891892,
+            "secs": 0.4580051004886627,
+            "utmos": 3.6095943450927734,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.757207843137255,
+            "rms": 0.15788528323173523,
+            "peak": 0.859245240688324,
+            "hf_ratio": 0.012999942526221275,
+            "synthesis_time_s": 1.5621020793914795,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_02",
+            "category": null
+          },
+          {
+            "text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Pourriez-vous m'indiquer le chemin le plus court pour rejoindre le mus\u00e9e du Louvre ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4540891647338867,
+            "utmos": 1.8572858572006226,
+            "duration_s": 11.189333333333334,
+            "duration_ratio": 1.9103739837398377,
+            "rms": 0.12619157135486603,
+            "peak": 0.6353313326835632,
+            "hf_ratio": 0.0021542429458349943,
+            "synthesis_time_s": 3.7871322631835938,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_03",
+            "category": null
+          },
+          {
+            "text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le parfum agr\u00e9able du pain chaud sortant du four embaumait toute la petite ruelle.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5193511843681335,
+            "utmos": 3.5832972526550293,
+            "duration_s": 5.472,
+            "duration_ratio": 0.9457777777777778,
+            "rms": 0.15382973849773407,
+            "peak": 0.7789799571037292,
+            "hf_ratio": 0.007004088722169399,
+            "synthesis_time_s": 1.8612892627716064,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_04",
+            "category": null
+          },
+          {
+            "text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Les chercheurs ont publi\u00e9 une \u00e9tude comparative sur la synth\u00e8se vocale neuronale. Point pot.",
+            "wer": 0.16666666666666666,
+            "cer": 0.11594202898550725,
+            "secs": 0.466060996055603,
+            "utmos": 3.383146286010742,
+            "duration_s": 8.117333333333333,
+            "duration_ratio": 1.4205333333333332,
+            "rms": 0.14524635672569275,
+            "peak": 0.7002001404762268,
+            "hf_ratio": 0.013342762365937233,
+            "synthesis_time_s": 2.701596736907959,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_05",
+            "category": null
+          },
+          {
+            "text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le train \u00e0 grande vitesse arrivera en gare avec cinq minutes d'avance sur l'horaire pr\u00e9vu.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4909372329711914,
+            "utmos": 3.370083808898926,
+            "duration_s": 7.754666666666667,
+            "duration_ratio": 1.2198352059925095,
+            "rms": 0.13903601467609406,
+            "peak": 0.772741436958313,
+            "hf_ratio": 0.02269083261489868,
+            "synthesis_time_s": 2.569753885269165,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_06",
+            "category": null
+          },
+          {
+            "text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "En hiver, la neige recouvre les cimes majestueuses des Alpes d'un \u00e9pais manteau blanc.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4731336534023285,
+            "utmos": 3.737881898880005,
+            "duration_s": 6.677333333333333,
+            "duration_ratio": 1.1128888888888888,
+            "rms": 0.1442883014678955,
+            "peak": 0.6943973898887634,
+            "hf_ratio": 0.020108506083488464,
+            "synthesis_time_s": 2.223707437515259,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_07",
+            "category": null
+          },
+          {
+            "text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Veuillez attacher votre ceinture de s\u00e9curit\u00e9 et \u00e9teindre tous vos appareils portables.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5049877762794495,
+            "utmos": 3.6458144187927246,
+            "duration_s": 8.768,
+            "duration_ratio": 1.4441411764705885,
+            "rms": 0.1412980705499649,
+            "peak": 0.8817587494850159,
+            "hf_ratio": 0.021561123430728912,
+            "synthesis_time_s": 2.9311254024505615,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_08",
+            "category": null
+          },
+          {
+            "text": "Le festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "le Festival international de cin\u00e9ma accueille cette ann\u00e9e des r\u00e9alisateurs du monde entier.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48107388615608215,
+            "utmos": 3.5214622020721436,
+            "duration_s": 7.1466666666666665,
+            "duration_ratio": 1.1117037037037036,
+            "rms": 0.13889887928962708,
+            "peak": 0.9064204096794128,
+            "hf_ratio": 0.027771268039941788,
+            "synthesis_time_s": 2.3785135746002197,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_09",
+            "category": null
+          },
+          {
+            "text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Le vent d'automne faisait tournoyer doucement les feuilles rousses le long des boulevards.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4802577495574951,
+            "utmos": 3.37028431892395,
+            "duration_s": 6.314666666666667,
+            "duration_ratio": 0.9933183520599251,
+            "rms": 0.14430060982704163,
+            "peak": 0.739281415939331,
+            "hf_ratio": 0.010449905879795551,
+            "synthesis_time_s": 2.1239662170410156,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_10",
+            "category": null
+          },
+          {
+            "text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "Combien de temps faut-il pour apprendre \u00e0 parler couramment une langue \u00e9trang\u00e8re ?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.518455982208252,
+            "utmos": 2.7197134494781494,
+            "duration_s": 9.696,
+            "duration_ratio": 1.6967999999999999,
+            "rms": 0.1097637265920639,
+            "peak": 0.686455249786377,
+            "hf_ratio": 0.0032970919273793697,
+            "synthesis_time_s": 3.276682138442993,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_11",
+            "category": null
+          },
+          {
+            "text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 huit heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "lang": "fr",
+            "seed": 999,
+            "asr_text": "La r\u00e9union scientifique annuelle d\u00e9butera demain matin \u00e0 8 heures pr\u00e9cises dans l'amphith\u00e9\u00e2tre.",
+            "wer": 0.07142857142857142,
+            "cer": 0.047619047619047616,
+            "secs": 0.4868829548358917,
+            "utmos": 3.3753228187561035,
+            "duration_s": 7.189333333333333,
+            "duration_ratio": 1.037635738831615,
+            "rms": 0.13880087435245514,
+            "peak": 0.7440228462219238,
+            "hf_ratio": 0.01582804135978222,
+            "synthesis_time_s": 2.4169087409973145,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "fr_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

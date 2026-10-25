@@ -177,7 +177,7 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | Phase | Checks | Status |
 |---|---|---|
 | 0 Pin and record | Upstream pinned; every artifact fetched and hash-verified by one script; `mel_stats` identical across three sources | Done (Colab runs 1–3) |
-| 1 Baseline | Stock XTTS-v2 measured on a frozen eval set; reruns identical | English pilot done (run 2); full-language baseline pending |
+| 1 Baseline | Stock XTTS-v2 measured on a frozen eval set; reruns identical | Done (rerun identity evidenced on English pilot in runs 1–2; Run 5 completed 5-language baseline on locked weights, 900 utterances; `eval/baselines/base_xtts_s12_index.json`) |
 | 2 Single source of truth | One spec module, one mel front end, one model factory, strict loading | Done |
 | 3 Data contracts | One dataset format, validated before every stage; latent files carry a schema | Done |
 | 4 Parity | Our spectrograms, models and losses match upstream's, each check shown to fail when broken | Done |

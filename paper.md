@@ -333,8 +333,7 @@ The smoke runs test whether each stage runs correctly. They are not meant to imp
 | Stage 2 | 3 epochs of 3 optimizer steps (9 steps); 6 train and 2 evaluation clips; batch 2, no accumulation; fp32 |
 | Stage 3 | 60 epochs, batch 4; discriminator warm-up 40 steps; mixed precision on CUDA |
 
-**Baseline evaluation.** English pilot: 12 sentences (2 per category) × 5 voices × 2 seeds = 120 utterances,
-scored under metrics version 2.
+**Baseline evaluation.** Full multilingual baseline: 5 languages (`en`, `es`, `fr`, `de`, `hi`), 12 sentences × 5 ARCTIC voices × 3 seeds = 900 utterances, scored under metrics version 2 on locked checkpoint `c7ea2000…` (expanded from the initial 120-utterance English pilot).
 
 ## 5 Results to date
 
@@ -357,24 +356,20 @@ transcripts and durations. Different seeds changed the audio: 47 of 50 durations
 
 ### 5.3 Stock XTTS-v2 baseline and measurement artefacts
 
-**Table 2.** Stock XTTS-v2, English pilot (120 utterances; metrics version 2). Headline SECS counts clips ≥ 2 s.
+**Table 2.** Stock XTTS-v2, full multilingual baseline across 5 languages (900 utterances: 12 sentences × 5 ARCTIC voices × 3 seeds, measured on locked checkpoint `c7ea2000…`; metrics version 2). Values are mean ± 95% confidence interval half-width ($1.96 \cdot \text{std}/\sqrt{n}$). Headline SECS counts clips ≥ 2 s (English $n = 150$, all other languages $n = 180$).
 
-| Category | WER | CER | SECS (≥ 2 s) | SECS (all) | UTMOS | Duration ratio |
+| Language | WER (Whisper large-v3) | CER | SECS (≥ 2 s) | SECS (all) | UTMOS | Duration ratio |
 |---|---|---|---|---|---|---|
-| Harvard | 0.000 | 0.000 | 0.559 | 0.559 | 4.05 | 0.98 |
-| Sibilant | 0.259 | 0.105 | 0.481 | 0.481 | 4.13 | 1.07 |
-| Numbers | 0.083 | 0.010 | 0.614 | 0.614 | 4.26 | 0.82 |
-| Long complex | 0.000 | 0.000 | 0.615 | 0.615 | 4.06 | 0.94 |
-| Prosody / questions | 0.000 | 0.000 | 0.589 | 0.589 | 4.11 | 0.84 |
-| Short (1–3 words) | 0.000 | 0.000 | — (n = 0) | 0.332 | 3.52 | 1.54 |
-| **Overall** | **0.057** | **0.019** | **0.571 ± 0.020** (n = 100) | 0.532 | **4.02** | 1.03 |
+| **English (`en`)** | 0.060 ± 0.018 | 0.020 ± 0.009 | 0.575 ± 0.017 | 0.537 ± 0.019 | 4.04 ± 0.06 | 1.06 ± 0.05 |
+| **Spanish (`es`)** | 0.099 ± 0.075 | 0.083 ± 0.049 | 0.511 ± 0.006 | 0.511 ± 0.006 | 3.29 ± 0.06 | 1.08 ± 0.07 |
+| **French (`fr`)** | 0.043 ± 0.012 | 0.031 ± 0.009 | 0.450 ± 0.007 | 0.450 ± 0.007 | 3.30 ± 0.06 | 0.94 ± 0.05 |
+| **German (`de`)** | 0.053 ± 0.017 | 0.032 ± 0.011 | 0.512 ± 0.009 | 0.512 ± 0.009 | 3.44 ± 0.04 | 1.06 ± 0.03 |
+| **Hindi (`hi`)** | 0.101 ± 0.011 | 0.047 ± 0.007 | 0.542 ± 0.011 | 0.542 ± 0.011 | 3.45 ± 0.04 | 1.29 ± 0.02 |
+| **Multilingual Mean** | **0.071** | **0.043** | **0.518** | **0.510** | **3.50** | **1.09** |
 
-In this pilot, the stock model makes no recognised errors on four categories. All of the sibilant WER comes from
-a single tongue twister, which is also hard for ASR. An earlier, unstratified pilot that sampled only Harvard
-sentences reported WER 0.005. We regard that number as an artefact of the easy subset, so evaluation subsets are
-now stratified by category.
+The multilingual results in Table 2 establish clear language-dependent baselines: English achieves the highest quality (UTMOS 4.04, WER 0.060), while Spanish and Hindi exhibit higher word error rates (0.099 and 0.101, respectively). Across the 900 utterances, the pipeline had zero silent dropouts (`is_empty`) and zero `NaN` values, with 7 runaway-duration flags (`is_too_long`: 5 Spanish, 2 French).
 
-Three measurement artefacts motivated metrics version 2:
+The evaluation protocol and Metric Version 2 rules were originally established during the initial 120-utterance English category pilot (Colab Run 2; 60 sentence/voice pairs × 2 seeds; `docs/evidence/colab_run2/README.md`), where the model made no recognised errors on four categories and all sibilant WER stemmed from a single tongue-twister sentence that challenged ASR. That pilot highlighted three measurement artefacts that required methodological corrections:
 
 1. **Duration estimated from written digits.** "4,800,000" is 9 characters but about 2 s of speech. The numbers
    category therefore scored a duration ratio of 1.61. Estimating duration from the cleaned words lowers the
@@ -385,9 +380,7 @@ Three measurement artefacts motivated metrics version 2:
    ECAPA2 does not get enough speech from such clips for a reliable embedding. Short-text quality must therefore
    be judged with WER, CER, absolute duration and UTMOS, not SECS.
 
-Every short clip lasted 0.69–1.15 s, and every other clip at least 2 s, so the 2 s cutoff separates the
-categories cleanly. Per voice, SECS (all clips) ranged from 0.44 to 0.61, so voice must be a pairing factor in
-any comparison.
+In that pilot, every short clip lasted 0.69–1.15 s, and every other clip at least 2 s, establishing the 2 s cutoff to separate categories cleanly. Per voice, SECS (all clips) ranged from 0.44 to 0.61, confirming that voice must be a pairing factor in any comparison.
 
 ### 5.4 Forced-alignment validation detects misplaced cuts
 
@@ -478,8 +471,7 @@ the effect of F2 on short-text hallucination is a hypothesis to be tested by A3.
 1. **Smoke-scale training.** All training results come from eight clips. They establish that the stages work,
    not how well.
 2. **Alignment thresholds.** The validation thresholds rest on one English recording.
-3. **English-only baseline.** The baseline so far is an English pilot of 120 utterances. The four other
-   languages in the test set are not yet measured.
+3. **Baseline language coverage.** The baseline now covers 900 utterances across five languages (`en`, `es`, `fr`, `de`, `hi`), expanded from the earlier 120-utterance English pilot; the remaining 12 languages supported by XTTS-v2 have not yet been evaluated.
 4. **Automatic metrics only.** Whisper-based WER/CER inherits the ASR model's biases. UTMOS was trained on
    English listening tests and is used only relative to the baseline. SECS is unreliable below about 2 s. No
    human listening test has been run; *[a MUSHRA or MOS study is planned]*.
@@ -617,7 +609,7 @@ encoders in zero-shot TTS, arXiv:2506.20190) to be added once their author lists
 | Findings present in coqui-ai/TTS v0.22.0 (5.1) | `docs/evidence/upstream/coqui_tts_v0.22.0_check.md` |
 | Artifact hashes, mel-stats identity (5.2) | `artifacts.lock.json`; `docs/evidence/artifact_verification.json`; `docs/evidence/colab_run1/`, `colab_run2/` |
 | Bit-identical reruns; seed variance (5.2) | `docs/evidence/colab_run1/pilot_en_reproducibility.json`; `docs/evidence/colab_run2/determinism_check.json` |
-| Baseline, Table 2 (5.3) | `docs/evidence/colab_run2/pilot_en_metrics_v2.json` and its README |
+| Baseline, Table 2 (5.3) | `eval/baselines/base_xtts_s12_index.json`, `docs/evidence/run5/README.md` |
 | Planner regression (5.4) | `docs/evidence/colab_run3/README.md`; `tests/test_prepare.py` (`test_cuts_prefer_the_longest_pause_jfk`, `test_pause_never_outweighs_speech`, `test_equal_speech_plans_cut_at_the_longer_pause`) |
 | Shifted-cut word scores, Table 3 (5.4) | `docs/evidence/colab_run4/jfk_realign_shift_*.json`; `test_mms_jfk_alignment_and_shifted_cut` |
 | Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/` (`stage1_smoke.json`, `training_summary.json`, `runs_gpt_smoke_log.txt`, `stage3_metrics.jsonl`); drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
