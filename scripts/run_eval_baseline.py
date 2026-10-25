@@ -24,7 +24,12 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from eval.dataset import DEFAULT_EVAL_SET_PATH, load_eval_set
 from eval.harness import (
-    METRICS_VERSION, EvaluationHarness, get_code_fingerprint, get_git_info, summarize_by_category, summarize_results,
+    METRICS_VERSION,
+    EvaluationHarness,
+    get_code_fingerprint,
+    get_git_info,
+    summarize_by_category,
+    summarize_results,
 )
 from eval.reference_voices import DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR, verify_reference_voices
 from eval.target_voices import DEFAULT_TARGET_DIR, verify_target_voices
@@ -64,7 +69,9 @@ def resolve_reference_voices(eval_data: Dict[str, Any], reference_audio_dir: str
 def summaries_from_results(results_by_language: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
     """summary_by_language, summary_by_category (per language) and total failure counts."""
     by_language = {lang: summarize_results(rs) for lang, rs in results_by_language.items()}
-    failure_counts = {k: sum(s["failure_counts"][k] for s in by_language.values()) for k in ("empty", "too_long", "nan")}
+    failure_counts = {
+        k: sum(s["failure_counts"][k] for s in by_language.values()) for k in ("empty", "too_long", "nan")
+    }
     for s in by_language.values():
         del s["failure_counts"]
     by_category = {lang: summarize_by_category(rs) for lang, rs in results_by_language.items()}
@@ -97,12 +104,19 @@ def generate_baseline(
     """
     if voices not in ("arctic", "target"):
         raise ValueError(f"voices must be arctic or target, not {voices!r}")
-    if (voices == "target" and os.path.abspath(target_dir) != os.path.abspath(DEFAULT_TARGET_DIR)
-            and not allow_unchecked_location):
-        raise ValueError(f"target voices are read only from {DEFAULT_TARGET_DIR}: training refuses held-out clips "
-                         f"listed there, and nowhere else")
+    if (
+        voices == "target"
+        and os.path.abspath(target_dir) != os.path.abspath(DEFAULT_TARGET_DIR)
+        and not allow_unchecked_location
+    ):
+        raise ValueError(
+            f"target voices are read only from {DEFAULT_TARGET_DIR}: training refuses held-out clips "
+            f"listed there, and nowhere else"
+        )
     if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*", label):
-        raise ValueError(f"label {label!r} must be a plain name (letters, digits, '_', '-', '.'); it becomes a file name")
+        raise ValueError(
+            f"label {label!r} must be a plain name (letters, digits, '_', '-', '.'); it becomes a file name"
+        )
     missing_ckpt = [f for f in REQUIRED_CHECKPOINT_FILES if not os.path.exists(os.path.join(checkpoint_dir, f))]
     if missing_ckpt:
         raise FileNotFoundError(
@@ -124,13 +138,18 @@ def generate_baseline(
         if unlocked:
             raise RuntimeError(f"Reference voices {unlocked} are not in the lock {lock_path}; rebuild the lock.")
     if selected == "target":
-        voices += [{"speaker_id": vid, "language": None, "path": path}
-                   for vid, path in sorted(verify_target_voices(target_dir).items())]
+        voices += [
+            {"speaker_id": vid, "language": None, "path": path}
+            for vid, path in sorted(verify_target_voices(target_dir).items())
+        ]
     if languages is None:
         languages = ["en"] + sorted(eval_data["target_languages"].keys())
 
     from TTS.tts.configs.xtts_config import XttsConfig
     from TTS.tts.models.xtts import Xtts
+    from xtts_trainer import patch_xtts_prevent_checkpoint_mutation
+
+    patch_xtts_prevent_checkpoint_mutation()
 
     config = XttsConfig()
     config.load_json(os.path.join(checkpoint_dir, "config.json"))
@@ -174,13 +193,9 @@ def generate_baseline(
         "git": get_git_info(),
         "code_fingerprint": get_code_fingerprint(),
         "eval_set_sha256": eval_data.get("sha256", ""),
-        "checkpoint_sha256": {
-            f: _sha256_of_file(os.path.join(checkpoint_dir, f)) for f in REQUIRED_CHECKPOINT_FILES
-        },
+        "checkpoint_sha256": {f: _sha256_of_file(os.path.join(checkpoint_dir, f)) for f in REQUIRED_CHECKPOINT_FILES},
         "voices": selected,
-        "reference_voices": [
-            {"speaker_id": v["speaker_id"], "sha256": _sha256_of_file(v["path"])} for v in voices
-        ],
+        "reference_voices": [{"speaker_id": v["speaker_id"], "sha256": _sha256_of_file(v["path"])} for v in voices],
         "asr_model": asr_model_name,
         "seeds": list(seeds),
         "subset_size": subset_size,
@@ -199,18 +214,33 @@ def generate_baseline(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Measure the stock base XTTS-v2 baseline on the frozen eval set.")
-    parser.add_argument("--checkpoint_dir", type=str, required=True, help="Directory with model.pth, config.json, vocab.json")
-    parser.add_argument("--reference_audio_dir", type=str, default=DEFAULT_OUT_DIR, help="Directory with <speaker_id>.wav for every eval-set reference voice")
+    parser.add_argument(
+        "--checkpoint_dir", type=str, required=True, help="Directory with model.pth, config.json, vocab.json"
+    )
+    parser.add_argument(
+        "--reference_audio_dir",
+        type=str,
+        default=DEFAULT_OUT_DIR,
+        help="Directory with <speaker_id>.wav for every eval-set reference voice",
+    )
     parser.add_argument("--reference_lock", type=str, default=DEFAULT_LOCK_PATH)
     parser.add_argument("--seeds", type=int, nargs="+", default=[42, 123, 999])
     parser.add_argument("--subset_size", type=int, default=None, help="First N sentences per language (pilot runs)")
     parser.add_argument("--eval_set", type=str, default=DEFAULT_EVAL_SET_PATH)
     parser.add_argument("--output", type=str, default=None)
-    parser.add_argument("--languages", type=str, nargs="+", default=None, help="Languages to evaluate (default: all in eval set)")
+    parser.add_argument(
+        "--languages", type=str, nargs="+", default=None, help="Languages to evaluate (default: all in eval set)"
+    )
     parser.add_argument("--asr_model", type=str, default="openai/whisper-large-v3")
-    parser.add_argument("--label", type=str, default="base", help="Name of this model in the manifest (base, tuned, ...)")
-    parser.add_argument("--voices", choices=["arctic", "target"], default="arctic",
-                        help="arctic: eval-set CMU voices; target: held-out target-speaker clips (build_target_voices.py)")
+    parser.add_argument(
+        "--label", type=str, default="base", help="Name of this model in the manifest (base, tuned, ...)"
+    )
+    parser.add_argument(
+        "--voices",
+        choices=["arctic", "target"],
+        default="arctic",
+        help="arctic: eval-set CMU voices; target: held-out target-speaker clips (build_target_voices.py)",
+    )
     args = parser.parse_args()
 
     res = generate_baseline(

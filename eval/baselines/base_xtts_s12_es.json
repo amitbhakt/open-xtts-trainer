@@ -1,0 +1,5109 @@
+{
+  "label": "base",
+  "description": "XTTS-v2 checkpoint 'base' (xtts_base), measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-25 10:44:48 UTC",
+  "git": {
+    "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+    "is_dirty": false
+  },
+  "code_fingerprint": {
+    "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+    "n_files": 61
+  },
+  "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+  "checkpoint_sha256": {
+    "model.pth": "c7ea20001c6a0a841c77e252d8409f6a74fb423e79b3206a0771ba5989776187",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "voices": "arctic",
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "seeds": [
+    42,
+    123,
+    999
+  ],
+  "subset_size": 12,
+  "languages": [
+    "es"
+  ],
+  "metrics_version": 2,
+  "summary_by_language": {
+    "es": {
+      "wer": {
+        "mean": 0.09901709401709403,
+        "std": 0.5099887893415317,
+        "ci95": 0.07450414724772503,
+        "min": 0.0,
+        "max": 6.461538461538462,
+        "n": 180,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.08280051837580404,
+        "std": 0.33486461157700864,
+        "ci95": 0.04892029560335661,
+        "min": 0.0,
+        "max": 4.048192771084337,
+        "n": 180,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.5111955331431495,
+        "std": 0.037928914680705146,
+        "ci95": 0.0055410265938713,
+        "min": 0.3968347907066345,
+        "max": 0.592022180557251,
+        "n": 180,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 3.28721252017551,
+        "std": 0.37853896586408925,
+        "ci95": 0.05530067217389896,
+        "min": 1.5210989713668823,
+        "max": 4.1042585372924805,
+        "n": 180,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 1.0781717305217282,
+        "std": 0.4478355259766209,
+        "ci95": 0.06542419101644234,
+        "min": 0.7634666666666666,
+        "max": 4.968533333333333,
+        "n": 180,
+        "n_nan": 0
+      },
+      "secs_all": {
+        "mean": 0.5111955331431495,
+        "std": 0.037928914680705146,
+        "ci95": 0.0055410265938713,
+        "min": 0.3968347907066345,
+        "max": 0.592022180557251,
+        "n": 180,
+        "n_nan": 0
+      }
+    }
+  },
+  "summary_by_category": {
+    "es": {
+      "_all": {
+        "wer": {
+          "mean": 0.09901709401709403,
+          "std": 0.5099887893415317,
+          "ci95": 0.07450414724772503,
+          "min": 0.0,
+          "max": 6.461538461538462,
+          "n": 180,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.08280051837580404,
+          "std": 0.33486461157700864,
+          "ci95": 0.04892029560335661,
+          "min": 0.0,
+          "max": 4.048192771084337,
+          "n": 180,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5111955331431495,
+          "std": 0.037928914680705146,
+          "ci95": 0.0055410265938713,
+          "min": 0.3968347907066345,
+          "max": 0.592022180557251,
+          "n": 180,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.28721252017551,
+          "std": 0.37853896586408925,
+          "ci95": 0.05530067217389896,
+          "min": 1.5210989713668823,
+          "max": 4.1042585372924805,
+          "n": 180,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0781717305217282,
+          "std": 0.4478355259766209,
+          "ci95": 0.06542419101644234,
+          "min": 0.7634666666666666,
+          "max": 4.968533333333333,
+          "n": 180,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5111955331431495,
+          "std": 0.037928914680705146,
+          "ci95": 0.0055410265938713,
+          "min": 0.3968347907066345,
+          "max": 0.592022180557251,
+          "n": 180,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 5,
+          "nan": 0
+        }
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 5,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-25 10:36:54 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "es",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.12900641025641024,
+          "std": 0.31506262133584345,
+          "ci95": 0.1029204563030422,
+          "min": 0.0,
+          "max": 1.3076923076923077,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.11247002129663208,
+          "std": 0.2552810724542774,
+          "ci95": 0.08339181700173061,
+          "min": 0.0,
+          "max": 1.1384615384615384,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.4571994153989686,
+          "std": 0.02581283690510262,
+          "ci95": 0.008432193389000189,
+          "min": 0.3968347907066345,
+          "max": 0.5029639005661011,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.517447014649709,
+          "std": 0.29625727061585116,
+          "ci95": 0.09677737506784471,
+          "min": 3.0307624340057373,
+          "max": 4.1042585372924805,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1512121388395915,
+          "std": 0.43504558252952213,
+          "ci95": 0.14211489029297722,
+          "min": 0.8355555555555556,
+          "max": 2.7423030303030305,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.4571994153989686,
+          "std": 0.02581283690510262,
+          "ci95": 0.008432193389000189,
+          "min": 0.3968347907066345,
+          "max": 0.5029639005661011,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 2,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.12900641025641024,
+              "std": 0.31506262133584345,
+              "ci95": 0.1029204563030422,
+              "min": 0.0,
+              "max": 1.3076923076923077,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.11247002129663208,
+              "std": 0.2552810724542774,
+              "ci95": 0.08339181700173061,
+              "min": 0.0,
+              "max": 1.1384615384615384,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.4571994153989686,
+              "std": 0.02581283690510262,
+              "ci95": 0.008432193389000189,
+              "min": 0.3968347907066345,
+              "max": 0.5029639005661011,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.517447014649709,
+              "std": 0.29625727061585116,
+              "ci95": 0.09677737506784471,
+              "min": 3.0307624340057373,
+              "max": 4.1042585372924805,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.1512121388395915,
+              "std": 0.43504558252952213,
+              "ci95": 0.14211489029297722,
+              "min": 0.8355555555555556,
+              "max": 2.7423030303030305,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.4571994153989686,
+              "std": 0.02581283690510262,
+              "ci95": 0.008432193389000189,
+              "min": 0.3968347907066345,
+              "max": 0.5029639005661011,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 2,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47700968384742737,
+            "utmos": 3.589954137802124,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 1.0581333333333334,
+            "rms": 0.13212023675441742,
+            "peak": 0.7838863134384155,
+            "hf_ratio": 0.006078379228711128,
+            "synthesis_time_s": 1.91874361038208,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana. Punto uno obvi\u00f3 s\u00ed y se observa si el que une es a las 2 de la ma\u00f1ana.",
+            "wer": 1.1875,
+            "cer": 0.6956521739130435,
+            "secs": 0.47631871700286865,
+            "utmos": 3.284426212310791,
+            "duration_s": 13.365333333333334,
+            "duration_ratio": 2.2275555555555555,
+            "rms": 0.14832144975662231,
+            "peak": 0.7737951278686523,
+            "hf_ratio": 0.004846458788961172,
+            "synthesis_time_s": 4.44359016418457,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47753074765205383,
+            "utmos": 3.236703872680664,
+            "duration_s": 8.032,
+            "duration_ratio": 1.3386666666666667,
+            "rms": 0.1356201320886612,
+            "peak": 0.8488485217094421,
+            "hf_ratio": 0.006634788122028112,
+            "synthesis_time_s": 2.709156036376953,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.464598149061203,
+            "utmos": 3.0518691539764404,
+            "duration_s": 5.152,
+            "duration_ratio": 0.9016,
+            "rms": 0.14758937060832977,
+            "peak": 0.7668973207473755,
+            "hf_ratio": 0.0035107992589473724,
+            "synthesis_time_s": 1.7492663860321045,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda. Con el sexto, se dio su centro peor obra silbera. Llenaba el rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 1.3076923076923077,
+            "cer": 1.1384615384615384,
+            "secs": 0.46343469619750977,
+            "utmos": 3.109896659851074,
+            "duration_s": 15.082666666666666,
+            "duration_ratio": 2.7423030303030305,
+            "rms": 0.14701713621616364,
+            "peak": 0.9784095883369446,
+            "hf_ratio": 0.004495033994317055,
+            "synthesis_time_s": 4.991820573806763,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "En el a\u00f1o 1992, se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona. Punto pares, que en quito se conde chuele de hermosa ciudad de Barcelona.",
+            "wer": 0.8666666666666667,
+            "cer": 0.855072463768116,
+            "secs": 0.5029639005661011,
+            "utmos": 3.1138994693756104,
+            "duration_s": 10.954666666666666,
+            "duration_ratio": 1.4200493827160494,
+            "rms": 0.14493323862552643,
+            "peak": 0.8315727710723877,
+            "hf_ratio": 0.007950522005558014,
+            "synthesis_time_s": 3.6295855045318604,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.44745245575904846,
+            "utmos": 3.870466709136963,
+            "duration_s": 6.826666666666667,
+            "duration_ratio": 1.0060350877192983,
+            "rms": 0.15044160187244415,
+            "peak": 0.8338578343391418,
+            "hf_ratio": 0.004141129087656736,
+            "synthesis_time_s": 2.260552167892456,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4719781279563904,
+            "utmos": 3.6602015495300293,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9742222222222222,
+            "rms": 0.14748451113700867,
+            "peak": 0.8058207035064697,
+            "hf_ratio": 0.007275466341525316,
+            "synthesis_time_s": 1.9469470977783203,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42310765385627747,
+            "utmos": 3.386387348175049,
+            "duration_s": 6.730666666666667,
+            "duration_ratio": 1.0587565543071162,
+            "rms": 0.15027563273906708,
+            "peak": 0.7644973993301392,
+            "hf_ratio": 0.003948420751839876,
+            "synthesis_time_s": 2.231849431991577,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4695114493370056,
+            "utmos": 3.5304551124572754,
+            "duration_s": 5.664,
+            "duration_ratio": 0.9789629629629629,
+            "rms": 0.151586651802063,
+            "peak": 0.7222670316696167,
+            "hf_ratio": 0.004398560617119074,
+            "synthesis_time_s": 1.8937506675720215,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.4109891951084137,
+            "utmos": 4.048268795013428,
+            "duration_s": 6.592,
+            "duration_ratio": 1.0857411764705882,
+            "rms": 0.1477728933095932,
+            "peak": 0.8071025013923645,
+            "hf_ratio": 0.008473237976431847,
+            "synthesis_time_s": 2.182405471801758,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4577600955963135,
+            "utmos": 3.5007877349853516,
+            "duration_s": 7.1466666666666665,
+            "duration_ratio": 1.0994871794871794,
+            "rms": 0.15126030147075653,
+            "peak": 0.7871172428131104,
+            "hf_ratio": 0.004769723396748304,
+            "synthesis_time_s": 2.3630685806274414,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.46241694688796997,
+            "utmos": 3.862156629562378,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.9834666666666667,
+            "rms": 0.13783182203769684,
+            "peak": 0.7481090426445007,
+            "hf_ratio": 0.006627139635384083,
+            "synthesis_time_s": 1.6361424922943115,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.45940595865249634,
+            "utmos": 3.037113666534424,
+            "duration_s": 12.576,
+            "duration_ratio": 2.096,
+            "rms": 0.14967413246631622,
+            "peak": 0.85990971326828,
+            "hf_ratio": 0.002707331208512187,
+            "synthesis_time_s": 4.137129545211792,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4959455132484436,
+            "utmos": 3.8281707763671875,
+            "duration_s": 6.261333333333333,
+            "duration_ratio": 1.0435555555555556,
+            "rms": 0.12613846361637115,
+            "peak": 0.6992558240890503,
+            "hf_ratio": 0.008854500949382782,
+            "synthesis_time_s": 2.0733885765075684,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44316187500953674,
+            "utmos": 3.507796287536621,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.9258666666666666,
+            "rms": 0.15814554691314697,
+            "peak": 0.7353688478469849,
+            "hf_ratio": 0.003634350374341011,
+            "synthesis_time_s": 1.7481775283813477,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4638998508453369,
+            "utmos": 3.0307624340057373,
+            "duration_s": 11.424,
+            "duration_ratio": 2.077090909090909,
+            "rms": 0.15571780502796173,
+            "peak": 0.8238757848739624,
+            "hf_ratio": 0.004885015077888966,
+            "synthesis_time_s": 3.7793729305267334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "En el a\u00f1o 1992, se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona, Ponto Tanto,",
+            "wer": 0.13333333333333333,
+            "cer": 0.14492753623188406,
+            "secs": 0.455973744392395,
+            "utmos": 3.720686912536621,
+            "duration_s": 7.8933333333333335,
+            "duration_ratio": 1.0232098765432098,
+            "rms": 0.1540215164422989,
+            "peak": 0.7483396530151367,
+            "hf_ratio": 0.004127186723053455,
+            "synthesis_time_s": 2.6552035808563232,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.46426767110824585,
+            "utmos": 3.7890870571136475,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 0.9368701754385965,
+            "rms": 0.14371486008167267,
+            "peak": 0.8246641755104065,
+            "hf_ratio": 0.006705670151859522,
+            "synthesis_time_s": 2.118457317352295,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4532565176486969,
+            "utmos": 3.8431429862976074,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9742222222222222,
+            "rms": 0.14541049301624298,
+            "peak": 0.8073592782020569,
+            "hf_ratio": 0.006382837891578674,
+            "synthesis_time_s": 1.9398627281188965,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.41096335649490356,
+            "utmos": 3.4047136306762695,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.0000299625468165,
+            "rms": 0.1507466435432434,
+            "peak": 0.7382223606109619,
+            "hf_ratio": 0.0035362837370485067,
+            "synthesis_time_s": 2.1263554096221924,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47245439887046814,
+            "utmos": 3.6255033016204834,
+            "duration_s": 6.634666666666667,
+            "duration_ratio": 1.1467325102880659,
+            "rms": 0.14050550758838654,
+            "peak": 0.7382811307907104,
+            "hf_ratio": 0.005099971778690815,
+            "synthesis_time_s": 2.2229790687561035,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.4163868725299835,
+            "utmos": 3.869734764099121,
+            "duration_s": 5.429333333333333,
+            "duration_ratio": 0.894243137254902,
+            "rms": 0.15130075812339783,
+            "peak": 0.7687859535217285,
+            "hf_ratio": 0.005129790864884853,
+            "synthesis_time_s": 1.8096420764923096,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Ma\u00f1ana por la tarde, visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4930409789085388,
+            "utmos": 3.645566940307617,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 0.9271794871794872,
+            "rms": 0.1445952206850052,
+            "peak": 0.7328635454177856,
+            "hf_ratio": 0.004723949823528528,
+            "synthesis_time_s": 2.0043153762817383,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4825528562068939,
+            "utmos": 3.5515944957733154,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.9749333333333332,
+            "rms": 0.14211909472942352,
+            "peak": 0.7771636843681335,
+            "hf_ratio": 0.005863085389137268,
+            "synthesis_time_s": 1.6117339134216309,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.4657646417617798,
+            "utmos": 3.7398955821990967,
+            "duration_s": 5.610666666666667,
+            "duration_ratio": 0.9351111111111111,
+            "rms": 0.15343108773231506,
+            "peak": 0.813750684261322,
+            "hf_ratio": 0.00396856851875782,
+            "synthesis_time_s": 1.8798606395721436,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4932619333267212,
+            "utmos": 4.1042585372924805,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.0204444444444445,
+            "rms": 0.15413592755794525,
+            "peak": 0.8128940463066101,
+            "hf_ratio": 0.003914316650480032,
+            "synthesis_time_s": 2.0361521244049072,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.467570424079895,
+            "utmos": 3.594820737838745,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 0.9333333333333332,
+            "rms": 0.15150637924671173,
+            "peak": 0.7813384532928467,
+            "hf_ratio": 0.0036121101584285498,
+            "synthesis_time_s": 1.7668612003326416,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.46436062455177307,
+            "utmos": 3.2932682037353516,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 0.9793939393939394,
+            "rms": 0.14944152534008026,
+            "peak": 0.7773587703704834,
+            "hf_ratio": 0.0034704357385635376,
+            "synthesis_time_s": 1.789444923400879,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "En el a\u00f1o 1992, se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47001656889915466,
+            "utmos": 3.4443607330322266,
+            "duration_s": 7.285333333333333,
+            "duration_ratio": 0.944395061728395,
+            "rms": 0.14951078593730927,
+            "peak": 0.7068448066711426,
+            "hf_ratio": 0.00551551952958107,
+            "synthesis_time_s": 2.43752384185791,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.4542616307735443,
+            "utmos": 3.6992897987365723,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 0.9981754385964913,
+            "rms": 0.15282373130321503,
+            "peak": 0.8078551888465881,
+            "hf_ratio": 0.0035154276993125677,
+            "synthesis_time_s": 2.260026454925537,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45255064964294434,
+            "utmos": 3.3521552085876465,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8355555555555556,
+            "rms": 0.14126667380332947,
+            "peak": 0.7622823715209961,
+            "hf_ratio": 0.006449191365391016,
+            "synthesis_time_s": 1.6807622909545898,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4238971173763275,
+            "utmos": 3.074875593185425,
+            "duration_s": 8.117333333333333,
+            "duration_ratio": 1.2768838951310861,
+            "rms": 0.14872398972511292,
+            "peak": 0.8554171323776245,
+            "hf_ratio": 0.003018005285412073,
+            "synthesis_time_s": 2.6945605278015137,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.43438711762428284,
+            "utmos": 3.4563140869140625,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8665020576131688,
+            "rms": 0.14698286354541779,
+            "peak": 0.7531126737594604,
+            "hf_ratio": 0.006488080136477947,
+            "synthesis_time_s": 1.6621294021606445,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.3968347907066345,
+            "utmos": 3.6322340965270996,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9170823529411765,
+            "rms": 0.14382028579711914,
+            "peak": 0.8184645175933838,
+            "hf_ratio": 0.008179077878594398,
+            "synthesis_time_s": 1.8458378314971924,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4198920428752899,
+            "utmos": 3.1372733116149902,
+            "duration_s": 5.472,
+            "duration_ratio": 0.8418461538461539,
+            "rms": 0.1512925773859024,
+            "peak": 0.7422078847885132,
+            "hf_ratio": 0.006694722454994917,
+            "synthesis_time_s": 1.8094050884246826,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-25 10:38:41 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "es",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.03365384615384616,
+          "std": 0.06490003041286553,
+          "ci95": 0.021200676601536073,
+          "min": 0.0,
+          "max": 0.1875,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.0357575228450032,
+          "std": 0.06831000018743097,
+          "ci95": 0.022314600061227447,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5445438904894723,
+          "std": 0.02103397428714349,
+          "ci95": 0.00687109826713354,
+          "min": 0.511404275894165,
+          "max": 0.592022180557251,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.197944720586141,
+          "std": 0.3404181676689956,
+          "ci95": 0.11120326810520521,
+          "min": 2.434088706970215,
+          "max": 3.8257575035095215,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9821818250043441,
+          "std": 0.09943554606427288,
+          "ci95": 0.03248227838099581,
+          "min": 0.8064,
+          "max": 1.2488205128205128,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5445438904894723,
+          "std": 0.02103397428714349,
+          "ci95": 0.00687109826713354,
+          "min": 0.511404275894165,
+          "max": 0.592022180557251,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.03365384615384616,
+              "std": 0.06490003041286553,
+              "ci95": 0.021200676601536073,
+              "min": 0.0,
+              "max": 0.1875,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.0357575228450032,
+              "std": 0.06831000018743097,
+              "ci95": 0.022314600061227447,
+              "min": 0.0,
+              "max": 0.2,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5445438904894723,
+              "std": 0.02103397428714349,
+              "ci95": 0.00687109826713354,
+              "min": 0.511404275894165,
+              "max": 0.592022180557251,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.197944720586141,
+              "std": 0.3404181676689956,
+              "ci95": 0.11120326810520521,
+              "min": 2.434088706970215,
+              "max": 3.8257575035095215,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9821818250043441,
+              "std": 0.09943554606427288,
+              "ci95": 0.03248227838099581,
+              "min": 0.8064,
+              "max": 1.2488205128205128,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5445438904894723,
+              "std": 0.02103397428714349,
+              "ci95": 0.00687109826713354,
+              "min": 0.511404275894165,
+              "max": 0.592022180557251,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5669360160827637,
+            "utmos": 3.252291202545166,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.9749333333333332,
+            "rms": 0.1445053219795227,
+            "peak": 0.7297555208206177,
+            "hf_ratio": 0.0042061638087034225,
+            "synthesis_time_s": 1.6406469345092773,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.5186852812767029,
+            "utmos": 2.637615919113159,
+            "duration_s": 6.453333333333333,
+            "duration_ratio": 1.0755555555555556,
+            "rms": 0.17296510934829712,
+            "peak": 0.7325906753540039,
+            "hf_ratio": 0.0019516070606186986,
+            "synthesis_time_s": 2.16495680809021,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5330967903137207,
+            "utmos": 3.491245985031128,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0133333333333334,
+            "rms": 0.15852272510528564,
+            "peak": 0.7499920129776001,
+            "hf_ratio": 0.005112263839691877,
+            "synthesis_time_s": 2.016859292984009,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5631099343299866,
+            "utmos": 3.2128448486328125,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9669333333333333,
+            "rms": 0.15299342572689056,
+            "peak": 0.6661721467971802,
+            "hf_ratio": 0.002627804409712553,
+            "synthesis_time_s": 1.833153486251831,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5209985375404358,
+            "utmos": 2.5342421531677246,
+            "duration_s": 5.610666666666667,
+            "duration_ratio": 1.0201212121212122,
+            "rms": 0.1568947583436966,
+            "peak": 0.7135772705078125,
+            "hf_ratio": 0.001031885971315205,
+            "synthesis_time_s": 1.8612065315246582,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5720357894897461,
+            "utmos": 3.1051688194274902,
+            "duration_s": 7.008,
+            "duration_ratio": 0.9084444444444444,
+            "rms": 0.15567722916603088,
+            "peak": 0.628797173500061,
+            "hf_ratio": 0.0035044641699641943,
+            "synthesis_time_s": 2.3134963512420654,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5187119841575623,
+            "utmos": 3.7481327056884766,
+            "duration_s": 7.008,
+            "duration_ratio": 1.032757894736842,
+            "rms": 0.1526620090007782,
+            "peak": 0.7797819375991821,
+            "hf_ratio": 0.0021397946402430534,
+            "synthesis_time_s": 2.3066189289093018,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Todos los pasajeros deben permanecer sentados, con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5533897876739502,
+            "utmos": 3.8257575035095215,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9208888888888889,
+            "rms": 0.15676677227020264,
+            "peak": 0.7216149568557739,
+            "hf_ratio": 0.0031656434293836355,
+            "synthesis_time_s": 1.8338143825531006,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5671677589416504,
+            "utmos": 2.6954240798950195,
+            "duration_s": 5.610666666666667,
+            "duration_ratio": 0.8825767790262173,
+            "rms": 0.15038196742534637,
+            "peak": 0.6760559678077698,
+            "hf_ratio": 0.0035142195411026478,
+            "synthesis_time_s": 1.8807151317596436,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.557582676410675,
+            "utmos": 3.351375102996826,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.9052181069958847,
+            "rms": 0.14893409609794617,
+            "peak": 0.6065446138381958,
+            "hf_ratio": 0.002862323308363557,
+            "synthesis_time_s": 1.7513070106506348,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5401120781898499,
+            "utmos": 3.20721173286438,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.024250980392157,
+            "rms": 0.15687260031700134,
+            "peak": 0.5999342203140259,
+            "hf_ratio": 0.004895786289125681,
+            "synthesis_time_s": 2.055936098098755,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5459833145141602,
+            "utmos": 3.5031068325042725,
+            "duration_s": 6.4,
+            "duration_ratio": 0.9846153846153847,
+            "rms": 0.14626021683216095,
+            "peak": 0.6871388554573059,
+            "hf_ratio": 0.004009326454252005,
+            "synthesis_time_s": 2.1447367668151855,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5175946950912476,
+            "utmos": 3.0848517417907715,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 1.0581333333333334,
+            "rms": 0.13958336412906647,
+            "peak": 0.7189351320266724,
+            "hf_ratio": 0.005510629620403051,
+            "synthesis_time_s": 1.7508504390716553,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.569495439529419,
+            "utmos": 3.35479474067688,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.15947510302066803,
+            "peak": 0.671296238899231,
+            "hf_ratio": 0.0013861848274245858,
+            "synthesis_time_s": 1.7558338642120361,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5172930955886841,
+            "utmos": 2.7732126712799072,
+            "duration_s": 6.261333333333333,
+            "duration_ratio": 1.0435555555555556,
+            "rms": 0.15185411274433136,
+            "peak": 0.7277348041534424,
+            "hf_ratio": 0.005061745643615723,
+            "synthesis_time_s": 2.0856375694274902,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5471451282501221,
+            "utmos": 3.0792806148529053,
+            "duration_s": 4.96,
+            "duration_ratio": 0.868,
+            "rms": 0.15314212441444397,
+            "peak": 0.6896065473556519,
+            "hf_ratio": 0.0035504091065376997,
+            "synthesis_time_s": 1.6910278797149658,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5369789600372314,
+            "utmos": 3.237353801727295,
+            "duration_s": 5.056,
+            "duration_ratio": 0.9192727272727272,
+            "rms": 0.16073960065841675,
+            "peak": 0.6616084575653076,
+            "hf_ratio": 0.0012725443812087178,
+            "synthesis_time_s": 1.681086778640747,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "En el a\u00f1o 1992, se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5261332988739014,
+            "utmos": 3.0966293811798096,
+            "duration_s": 7.936,
+            "duration_ratio": 1.0287407407407407,
+            "rms": 0.1543012410402298,
+            "peak": 0.7963507175445557,
+            "hf_ratio": 0.00268286163918674,
+            "synthesis_time_s": 2.6346933841705322,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "la orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.511404275894165,
+            "utmos": 3.8063859939575195,
+            "duration_s": 6.496,
+            "duration_ratio": 0.9573052631578948,
+            "rms": 0.15545283257961273,
+            "peak": 0.7487582564353943,
+            "hf_ratio": 0.002746060024946928,
+            "synthesis_time_s": 2.1504414081573486,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5212110280990601,
+            "utmos": 3.0171959400177,
+            "duration_s": 5.152,
+            "duration_ratio": 0.8586666666666667,
+            "rms": 0.15661153197288513,
+            "peak": 0.7657590508460999,
+            "hf_ratio": 0.002772499341517687,
+            "synthesis_time_s": 1.727107048034668,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5439577698707581,
+            "utmos": 3.172785520553589,
+            "duration_s": 6.4,
+            "duration_ratio": 1.006741573033708,
+            "rms": 0.16155749559402466,
+            "peak": 0.6456590890884399,
+            "hf_ratio": 0.001604424207471311,
+            "synthesis_time_s": 2.121922492980957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado, al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5764394402503967,
+            "utmos": 2.8656868934631348,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 1.0029300411522635,
+            "rms": 0.1500536948442459,
+            "peak": 0.814686119556427,
+            "hf_ratio": 0.003698123386129737,
+            "synthesis_time_s": 1.9395859241485596,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.532576858997345,
+            "utmos": 3.3937411308288574,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8257254901960785,
+            "rms": 0.15760740637779236,
+            "peak": 0.6506451368331909,
+            "hf_ratio": 0.004669880028814077,
+            "synthesis_time_s": 1.6733403205871582,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Ma\u00f1ana por la tarde, visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5427658557891846,
+            "utmos": 3.5792176723480225,
+            "duration_s": 6.634666666666667,
+            "duration_ratio": 1.0207179487179487,
+            "rms": 0.14601574838161469,
+            "peak": 0.6966438293457031,
+            "hf_ratio": 0.003607872873544693,
+            "synthesis_time_s": 2.204686403274536,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5572502017021179,
+            "utmos": 3.3696956634521484,
+            "duration_s": 4.032,
+            "duration_ratio": 0.8064,
+            "rms": 0.15259620547294617,
+            "peak": 0.691104531288147,
+            "hf_ratio": 0.002517457352951169,
+            "synthesis_time_s": 1.4257352352142334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.5220558047294617,
+            "utmos": 3.349971294403076,
+            "duration_s": 7.381333333333333,
+            "duration_ratio": 1.230222222222222,
+            "rms": 0.15192152559757233,
+            "peak": 0.696713924407959,
+            "hf_ratio": 0.002120283665135503,
+            "synthesis_time_s": 2.5811843872070312,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5358666777610779,
+            "utmos": 2.7551395893096924,
+            "duration_s": 6.634666666666667,
+            "duration_ratio": 1.1057777777777777,
+            "rms": 0.1496889740228653,
+            "peak": 0.7171348333358765,
+            "hf_ratio": 0.0036566657945513725,
+            "synthesis_time_s": 2.2213869094848633,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.592022180557251,
+            "utmos": 3.2956490516662598,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.9258666666666666,
+            "rms": 0.14771653711795807,
+            "peak": 0.6405309438705444,
+            "hf_ratio": 0.0025206541176885366,
+            "synthesis_time_s": 1.7775585651397705,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5325177907943726,
+            "utmos": 2.434088706970215,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.927030303030303,
+            "rms": 0.1561439037322998,
+            "peak": 0.7339178919792175,
+            "hf_ratio": 0.001451988355256617,
+            "synthesis_time_s": 1.7163243293762207,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5450952649116516,
+            "utmos": 3.032824993133545,
+            "duration_s": 8.213333333333333,
+            "duration_ratio": 1.0646913580246913,
+            "rms": 0.15462420880794525,
+            "peak": 0.7441143989562988,
+            "hf_ratio": 0.0027176961302757263,
+            "synthesis_time_s": 2.7552428245544434,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.537559449672699,
+            "utmos": 3.518542766571045,
+            "duration_s": 6.538666666666667,
+            "duration_ratio": 0.9635929824561404,
+            "rms": 0.15955470502376556,
+            "peak": 0.7795838117599487,
+            "hf_ratio": 0.001710599521175027,
+            "synthesis_time_s": 2.2022743225097656,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5608496069908142,
+            "utmos": 3.4956841468811035,
+            "duration_s": 5.984,
+            "duration_ratio": 0.9973333333333333,
+            "rms": 0.14522379636764526,
+            "peak": 0.8095396757125854,
+            "hf_ratio": 0.003704973729327321,
+            "synthesis_time_s": 2.024824619293213,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5729182958602905,
+            "utmos": 3.017460823059082,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.0000299625468165,
+            "rms": 0.14916357398033142,
+            "peak": 0.6412315368652344,
+            "hf_ratio": 0.002106267726048827,
+            "synthesis_time_s": 2.117443561553955,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.577911376953125,
+            "utmos": 3.0998799800872803,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0748312757201646,
+            "rms": 0.13486886024475098,
+            "peak": 0.7562183141708374,
+            "hf_ratio": 0.003613001899793744,
+            "synthesis_time_s": 2.0682013034820557,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5442834496498108,
+            "utmos": 3.502387046813965,
+            "duration_s": 5.056,
+            "duration_ratio": 0.8327529411764706,
+            "rms": 0.15492920577526093,
+            "peak": 0.5658913850784302,
+            "hf_ratio": 0.0024324217811226845,
+            "synthesis_time_s": 1.7232742309570312,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5244441628456116,
+            "utmos": 3.229132890701294,
+            "duration_s": 8.117333333333333,
+            "duration_ratio": 1.2488205128205128,
+            "rms": 0.15297795832157135,
+            "peak": 0.7221322059631348,
+            "hf_ratio": 0.003606230951845646,
+            "synthesis_time_s": 2.7255747318267822,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-25 10:40:24 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "es",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.0443019943019943,
+          "std": 0.06970087435215915,
+          "ci95": 0.022768952288371988,
+          "min": 0.0,
+          "max": 0.1875,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.043883584397741246,
+          "std": 0.07063382020192978,
+          "ci95": 0.023073714599297062,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5097134684522947,
+          "std": 0.02377412463617469,
+          "ci95": 0.007766214047817066,
+          "min": 0.4669930636882782,
+          "max": 0.563270628452301,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.5060472422175937,
+          "std": 0.21137760580859585,
+          "ci95": 0.06905001789747464,
+          "min": 3.040405035018921,
+          "max": 3.831007480621338,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.8870797140716523,
+          "std": 0.09593386747867841,
+          "ci95": 0.031338396709701614,
+          "min": 0.7634666666666666,
+          "max": 1.2568888888888887,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5097134684522947,
+          "std": 0.02377412463617469,
+          "ci95": 0.007766214047817066,
+          "min": 0.4669930636882782,
+          "max": 0.563270628452301,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.0443019943019943,
+              "std": 0.06970087435215915,
+              "ci95": 0.022768952288371988,
+              "min": 0.0,
+              "max": 0.1875,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.043883584397741246,
+              "std": 0.07063382020192978,
+              "ci95": 0.023073714599297062,
+              "min": 0.0,
+              "max": 0.2,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5097134684522947,
+              "std": 0.02377412463617469,
+              "ci95": 0.007766214047817066,
+              "min": 0.4669930636882782,
+              "max": 0.563270628452301,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.5060472422175937,
+              "std": 0.21137760580859585,
+              "ci95": 0.06905001789747464,
+              "min": 3.040405035018921,
+              "max": 3.831007480621338,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.8870797140716523,
+              "std": 0.09593386747867841,
+              "ci95": 0.031338396709701614,
+              "min": 0.7634666666666666,
+              "max": 1.2568888888888887,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5097134684522947,
+              "std": 0.02377412463617469,
+              "ci95": 0.007766214047817066,
+              "min": 0.4669930636882782,
+              "max": 0.563270628452301,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera. 20.",
+            "wer": 0.08333333333333333,
+            "cer": 0.03389830508474576,
+            "secs": 0.541189432144165,
+            "utmos": 3.831007480621338,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 1.1050666666666666,
+            "rms": 0.11544854193925858,
+            "peak": 0.7935240864753723,
+            "hf_ratio": 0.016913797706365585,
+            "synthesis_time_s": 1.8588502407073975,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes, a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.49444687366485596,
+            "utmos": 3.234950065612793,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8195555555555556,
+            "rms": 0.12946708500385284,
+            "peak": 0.8815883994102478,
+            "hf_ratio": 0.007640120107680559,
+            "synthesis_time_s": 1.664820671081543,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5034615397453308,
+            "utmos": 3.7532503604888916,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.8497777777777777,
+            "rms": 0.12979073822498322,
+            "peak": 0.84608393907547,
+            "hf_ratio": 0.019654182717204094,
+            "synthesis_time_s": 1.7268950939178467,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4762814939022064,
+            "utmos": 3.315746784210205,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8194666666666667,
+            "rms": 0.1311870515346527,
+            "peak": 0.870484471321106,
+            "hf_ratio": 0.017954347655177116,
+            "synthesis_time_s": 1.6253869533538818,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4898325800895691,
+            "utmos": 3.411187171936035,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.8358787878787879,
+            "rms": 0.12431450933218002,
+            "peak": 0.7459697127342224,
+            "hf_ratio": 0.009544293396174908,
+            "synthesis_time_s": 1.5625648498535156,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona. Punto Puno.",
+            "wer": 0.13333333333333333,
+            "cer": 0.13043478260869565,
+            "secs": 0.5062417984008789,
+            "utmos": 3.668872833251953,
+            "duration_s": 9.696,
+            "duration_ratio": 1.2568888888888887,
+            "rms": 0.11668818444013596,
+            "peak": 0.9524989724159241,
+            "hf_ratio": 0.020834648981690407,
+            "synthesis_time_s": 3.259920835494995,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.47978079319000244,
+            "utmos": 3.523963689804077,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 0.9368701754385965,
+            "rms": 0.12125257402658463,
+            "peak": 0.8955945372581482,
+            "hf_ratio": 0.015961486846208572,
+            "synthesis_time_s": 2.158182144165039,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5440280437469482,
+            "utmos": 3.7857799530029297,
+            "duration_s": 5.056,
+            "duration_ratio": 0.8426666666666667,
+            "rms": 0.1266707479953766,
+            "peak": 0.7399275302886963,
+            "hf_ratio": 0.019029052928090096,
+            "synthesis_time_s": 1.707305669784546,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5196612477302551,
+            "utmos": 3.5105717182159424,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 0.9480149812734082,
+            "rms": 0.12439010292291641,
+            "peak": 0.7530690431594849,
+            "hf_ratio": 0.010115639306604862,
+            "synthesis_time_s": 2.035489559173584,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5028639435768127,
+            "utmos": 3.040405035018921,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.8812510288065843,
+            "rms": 0.13262540102005005,
+            "peak": 0.8639072775840759,
+            "hf_ratio": 0.012547196820378304,
+            "synthesis_time_s": 1.7160727977752686,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5157247185707092,
+            "utmos": 3.768493413925171,
+            "duration_s": 4.96,
+            "duration_ratio": 0.8169411764705883,
+            "rms": 0.12979133427143097,
+            "peak": 0.8787033557891846,
+            "hf_ratio": 0.02835072949528694,
+            "synthesis_time_s": 1.6655189990997314,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5217406153678894,
+            "utmos": 3.5858774185180664,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 0.8287179487179487,
+            "rms": 0.11985396593809128,
+            "peak": 0.7847892045974731,
+            "hf_ratio": 0.016448136419057846,
+            "synthesis_time_s": 1.8087828159332275,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5121972560882568,
+            "utmos": 3.507744550704956,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.9194666666666667,
+            "rms": 0.125024676322937,
+            "peak": 0.866852343082428,
+            "hf_ratio": 0.016029538586735725,
+            "synthesis_time_s": 1.5476369857788086,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.5145295858383179,
+            "utmos": 3.8169758319854736,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9582222222222222,
+            "rms": 0.13328704237937927,
+            "peak": 0.9137983322143555,
+            "hf_ratio": 0.011214193888008595,
+            "synthesis_time_s": 2.0089032649993896,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5177944898605347,
+            "utmos": 3.534421682357788,
+            "duration_s": 5.664,
+            "duration_ratio": 0.944,
+            "rms": 0.1303483247756958,
+            "peak": 0.7705724239349365,
+            "hf_ratio": 0.01862044632434845,
+            "synthesis_time_s": 1.9222972393035889,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5215033292770386,
+            "utmos": 3.731208324432373,
+            "duration_s": 4.362666666666667,
+            "duration_ratio": 0.7634666666666666,
+            "rms": 0.13416345417499542,
+            "peak": 0.8636847734451294,
+            "hf_ratio": 0.01505184080451727,
+            "synthesis_time_s": 1.4766933917999268,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4669930636882782,
+            "utmos": 3.4290361404418945,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.9444848484848485,
+            "rms": 0.12136564403772354,
+            "peak": 0.8370692133903503,
+            "hf_ratio": 0.005766973830759525,
+            "synthesis_time_s": 1.742382526397705,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4907253384590149,
+            "utmos": 3.434366226196289,
+            "duration_s": 5.941333333333334,
+            "duration_ratio": 0.7701728395061729,
+            "rms": 0.12621448934078217,
+            "peak": 0.752068817615509,
+            "hf_ratio": 0.02223975956439972,
+            "synthesis_time_s": 1.985741376876831,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5108333230018616,
+            "utmos": 3.6453914642333984,
+            "duration_s": 6.08,
+            "duration_ratio": 0.896,
+            "rms": 0.12583515048027039,
+            "peak": 0.8892605900764465,
+            "hf_ratio": 0.021427247673273087,
+            "synthesis_time_s": 2.0389695167541504,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5557988286018372,
+            "utmos": 3.501852035522461,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8195555555555556,
+            "rms": 0.12573865056037903,
+            "peak": 0.7089771628379822,
+            "hf_ratio": 0.02211344987154007,
+            "synthesis_time_s": 1.6546595096588135,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5227692127227783,
+            "utmos": 3.658970594406128,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.8691535580524344,
+            "rms": 0.1301247775554657,
+            "peak": 0.7759730815887451,
+            "hf_ratio": 0.011701878160238266,
+            "synthesis_time_s": 1.8364107608795166,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4881350100040436,
+            "utmos": 3.2465062141418457,
+            "duration_s": 4.64,
+            "duration_ratio": 0.8019753086419753,
+            "rms": 0.13014639914035797,
+            "peak": 0.8368948698043823,
+            "hf_ratio": 0.007559713441878557,
+            "synthesis_time_s": 1.5513787269592285,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5294193029403687,
+            "utmos": 3.7158517837524414,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8555921568627451,
+            "rms": 0.13532954454421997,
+            "peak": 0.8822141885757446,
+            "hf_ratio": 0.019857145845890045,
+            "synthesis_time_s": 1.7254457473754883,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5277074575424194,
+            "utmos": 3.7101593017578125,
+            "duration_s": 6.08,
+            "duration_ratio": 0.9353846153846154,
+            "rms": 0.11922958493232727,
+            "peak": 0.7888218760490417,
+            "hf_ratio": 0.01808330975472927,
+            "synthesis_time_s": 2.0474281311035156,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5278353691101074,
+            "utmos": 3.687209367752075,
+            "duration_s": 4.501333333333333,
+            "duration_ratio": 0.9002666666666667,
+            "rms": 0.12908422946929932,
+            "peak": 0.8389064073562622,
+            "hf_ratio": 0.009129221551120281,
+            "synthesis_time_s": 1.5916364192962646,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.5297941565513611,
+            "utmos": 3.4469974040985107,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 0.8888888888888888,
+            "rms": 0.13229340314865112,
+            "peak": 0.8791118860244751,
+            "hf_ratio": 0.00943083968013525,
+            "synthesis_time_s": 1.7626314163208008,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4912412762641907,
+            "utmos": 3.266794204711914,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.0204444444444445,
+            "rms": 0.14199277758598328,
+            "peak": 0.845103919506073,
+            "hf_ratio": 0.015024666674435139,
+            "synthesis_time_s": 2.028489112854004,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5184577107429504,
+            "utmos": 3.3447511196136475,
+            "duration_s": 4.501333333333333,
+            "duration_ratio": 0.7877333333333333,
+            "rms": 0.12947814166545868,
+            "peak": 0.9365355372428894,
+            "hf_ratio": 0.023944607004523277,
+            "synthesis_time_s": 1.5023612976074219,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4777223467826843,
+            "utmos": 3.25876522064209,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.8358787878787879,
+            "rms": 0.136726513504982,
+            "peak": 0.8160585761070251,
+            "hf_ratio": 0.003958632703870535,
+            "synthesis_time_s": 1.5447897911071777,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "En el a\u00f1o 1992, se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5060441493988037,
+            "utmos": 3.2117950916290283,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 0.9029135802469136,
+            "rms": 0.1282290369272232,
+            "peak": 0.8901811838150024,
+            "hf_ratio": 0.013147243298590183,
+            "synthesis_time_s": 2.460479736328125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.47202515602111816,
+            "utmos": 3.5892398357391357,
+            "duration_s": 5.706666666666667,
+            "duration_ratio": 0.8409824561403509,
+            "rms": 0.12484060227870941,
+            "peak": 0.8695313930511475,
+            "hf_ratio": 0.017251906916499138,
+            "synthesis_time_s": 1.9641568660736084,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5368626117706299,
+            "utmos": 3.5863516330718994,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8817777777777778,
+            "rms": 0.12723113596439362,
+            "peak": 0.8399210572242737,
+            "hf_ratio": 0.02233792096376419,
+            "synthesis_time_s": 1.7826237678527832,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda punto-cunto.",
+            "wer": 0.16666666666666666,
+            "cer": 0.1282051282051282,
+            "secs": 0.563270628452301,
+            "utmos": 3.166424512863159,
+            "duration_s": 6.176,
+            "duration_ratio": 0.9715056179775282,
+            "rms": 0.11507628858089447,
+            "peak": 0.7702195644378662,
+            "hf_ratio": 0.013786165043711662,
+            "synthesis_time_s": 2.058027982711792,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4973528981208801,
+            "utmos": 3.2013542652130127,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 0.8259423868312759,
+            "rms": 0.12853161990642548,
+            "peak": 0.8888896703720093,
+            "hf_ratio": 0.011061030440032482,
+            "synthesis_time_s": 1.6088321208953857,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.47413456439971924,
+            "utmos": 3.6776974201202393,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8099137254901961,
+            "rms": 0.13927005231380463,
+            "peak": 0.7647430300712585,
+            "hf_ratio": 0.01684383489191532,
+            "synthesis_time_s": 1.6309614181518555,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5012847185134888,
+            "utmos": 3.4177305698394775,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.850051282051282,
+            "rms": 0.12162074446678162,
+            "peak": 0.8198504447937012,
+            "hf_ratio": 0.01379729900509119,
+            "synthesis_time_s": 1.8228521347045898,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-25 10:42:53 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "es",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.2542378917378918,
+          "std": 1.0863065305940296,
+          "ci95": 0.35486013332738303,
+          "min": 0.0,
+          "max": 6.461538461538462,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.18130302262024436,
+          "std": 0.6903793943486587,
+          "ci95": 0.2255239354872285,
+          "min": 0.0,
+          "max": 4.048192771084337,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5236843128999075,
+          "std": 0.021973584163116375,
+          "ci95": 0.007178037493284682,
+          "min": 0.4819124639034271,
+          "max": 0.5833625793457031,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 2.9309761193063526,
+          "std": 0.4476680894217635,
+          "ci95": 0.14623824254444276,
+          "min": 1.5210989713668823,
+          "max": 3.476043462753296,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.3119937014729348,
+          "std": 0.8267930066632396,
+          "ci95": 0.2700857155099916,
+          "min": 0.7893333333333333,
+          "max": 4.968533333333333,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5236843128999075,
+          "std": 0.021973584163116375,
+          "ci95": 0.007178037493284682,
+          "min": 0.4819124639034271,
+          "max": 0.5833625793457031,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 3,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.2542378917378918,
+              "std": 1.0863065305940296,
+              "ci95": 0.35486013332738303,
+              "min": 0.0,
+              "max": 6.461538461538462,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.18130302262024436,
+              "std": 0.6903793943486587,
+              "ci95": 0.2255239354872285,
+              "min": 0.0,
+              "max": 4.048192771084337,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5236843128999075,
+              "std": 0.021973584163116375,
+              "ci95": 0.007178037493284682,
+              "min": 0.4819124639034271,
+              "max": 0.5833625793457031,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 2.9309761193063526,
+              "std": 0.4476680894217635,
+              "ci95": 0.14623824254444276,
+              "min": 1.5210989713668823,
+              "max": 3.476043462753296,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.3119937014729348,
+              "std": 0.8267930066632396,
+              "ci95": 0.2700857155099916,
+              "min": 0.7893333333333333,
+              "max": 4.968533333333333,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5236843128999075,
+              "std": 0.021973584163116375,
+              "ci95": 0.007178037493284682,
+              "min": 0.4819124639034271,
+              "max": 0.5833625793457031,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 3,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5402106046676636,
+            "utmos": 3.476043462753296,
+            "duration_s": 5.152,
+            "duration_ratio": 1.0304,
+            "rms": 0.12550565600395203,
+            "peak": 0.9506563544273376,
+            "hf_ratio": 0.007608037907630205,
+            "synthesis_time_s": 1.7166080474853516,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5140121579170227,
+            "utmos": 2.879542112350464,
+            "duration_s": 7.189333333333333,
+            "duration_ratio": 1.198222222222222,
+            "rms": 0.13771627843379974,
+            "peak": 0.9843228459358215,
+            "hf_ratio": 0.006399399600923061,
+            "synthesis_time_s": 2.4029853343963623,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5232179164886475,
+            "utmos": 2.8450350761413574,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9742222222222222,
+            "rms": 0.140880286693573,
+            "peak": 0.9279403686523438,
+            "hf_ratio": 0.015008961781859398,
+            "synthesis_time_s": 1.9653830528259277,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.517708420753479,
+            "utmos": 3.013648509979248,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.9258666666666666,
+            "rms": 0.14431160688400269,
+            "peak": 0.9290334582328796,
+            "hf_ratio": 0.008568697609007359,
+            "synthesis_time_s": 1.7714219093322754,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5136896371841431,
+            "utmos": 2.9637651443481445,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.927030303030303,
+            "rms": 0.14369510114192963,
+            "peak": 0.9106199741363525,
+            "hf_ratio": 0.0030224628280848265,
+            "synthesis_time_s": 1.7135734558105469,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4949919581413269,
+            "utmos": 2.731001138687134,
+            "duration_s": 8.032,
+            "duration_ratio": 1.0411851851851852,
+            "rms": 0.13327841460704803,
+            "peak": 0.8890449404716492,
+            "hf_ratio": 0.005153333768248558,
+            "synthesis_time_s": 2.7690258026123047,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "la orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5219471454620361,
+            "utmos": 3.0678861141204834,
+            "duration_s": 8.906666666666666,
+            "duration_ratio": 1.3125614035087718,
+            "rms": 0.13132870197296143,
+            "peak": 0.8799277544021606,
+            "hf_ratio": 0.01563538797199726,
+            "synthesis_time_s": 2.980555295944214,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5152755379676819,
+            "utmos": 3.2232251167297363,
+            "duration_s": 6.592,
+            "duration_ratio": 1.0986666666666667,
+            "rms": 0.13430923223495483,
+            "peak": 0.9702829122543335,
+            "hf_ratio": 0.0072690811939537525,
+            "synthesis_time_s": 2.196528434753418,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.526618480682373,
+            "utmos": 2.5111308097839355,
+            "duration_s": 8.906666666666666,
+            "duration_ratio": 1.4010486891385767,
+            "rms": 0.13338850438594818,
+            "peak": 0.91990065574646,
+            "hf_ratio": 0.0028144128154963255,
+            "synthesis_time_s": 2.9679744243621826,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5516304969787598,
+            "utmos": 3.314375638961792,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9937119341563786,
+            "rms": 0.1408744752407074,
+            "peak": 0.9180068969726562,
+            "hf_ratio": 0.00597954448312521,
+            "synthesis_time_s": 1.9377868175506592,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5212966799736023,
+            "utmos": 3.401630401611328,
+            "duration_s": 5.290666666666667,
+            "duration_ratio": 0.8714039215686274,
+            "rms": 0.14613007009029388,
+            "peak": 0.9605268239974976,
+            "hf_ratio": 0.0036019482649862766,
+            "synthesis_time_s": 1.7894363403320312,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.541023313999176,
+            "utmos": 3.339329481124878,
+            "duration_s": 6.730666666666667,
+            "duration_ratio": 1.0354871794871796,
+            "rms": 0.12541143596172333,
+            "peak": 0.942108154296875,
+            "hf_ratio": 0.006243021693080664,
+            "synthesis_time_s": 2.291220188140869,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "el sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera. Y el sol brillaba con fuerza sobre las monta\u00f1as nevadas de las de la cordillera.",
+            "wer": 1.25,
+            "cer": 1.1016949152542372,
+            "secs": 0.5833625793457031,
+            "utmos": 1.9905232191085815,
+            "duration_s": 24.842666666666666,
+            "duration_ratio": 4.968533333333333,
+            "rms": 0.13183990120887756,
+            "peak": 0.9834296107292175,
+            "hf_ratio": 0.0028410283848643303,
+            "synthesis_time_s": 8.383779764175415,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.5347900986671448,
+            "utmos": 3.23612117767334,
+            "duration_s": 6.634666666666667,
+            "duration_ratio": 1.1057777777777777,
+            "rms": 0.15047651529312134,
+            "peak": 0.9857428669929504,
+            "hf_ratio": 0.002531345235183835,
+            "synthesis_time_s": 2.216134786605835,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5186465978622437,
+            "utmos": 3.1149632930755615,
+            "duration_s": 4.96,
+            "duration_ratio": 0.8266666666666667,
+            "rms": 0.14512036740779877,
+            "peak": 0.9448675513267517,
+            "hf_ratio": 0.0072075435891747475,
+            "synthesis_time_s": 1.6576640605926514,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5352151989936829,
+            "utmos": 2.936818838119507,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 1.0154666666666667,
+            "rms": 0.13949799537658691,
+            "peak": 0.9077922105789185,
+            "hf_ratio": 0.006040440872311592,
+            "synthesis_time_s": 1.9357051849365234,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5080623030662537,
+            "utmos": 3.0591771602630615,
+            "duration_s": 9.696,
+            "duration_ratio": 1.7629090909090908,
+            "rms": 0.10455141961574554,
+            "peak": 0.9179939031600952,
+            "hf_ratio": 0.004347451962530613,
+            "synthesis_time_s": 3.2138187885284424,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona. \u00a1Pon tonto!",
+            "wer": 0.13333333333333333,
+            "cer": 0.11594202898550725,
+            "secs": 0.4897773861885071,
+            "utmos": 2.082632541656494,
+            "duration_s": 10.677333333333333,
+            "duration_ratio": 1.3840987654320986,
+            "rms": 0.1296837478876114,
+            "peak": 0.9434342384338379,
+            "hf_ratio": 0.002886266680434346,
+            "synthesis_time_s": 3.595163106918335,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "la orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5346893072128296,
+            "utmos": 2.101956605911255,
+            "duration_s": 9.418666666666667,
+            "duration_ratio": 1.3880140350877193,
+            "rms": 0.11907955259084702,
+            "peak": 0.9415537118911743,
+            "hf_ratio": 0.0104664983227849,
+            "synthesis_time_s": 3.1123716831207275,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5317442417144775,
+            "utmos": 3.11354660987854,
+            "duration_s": 4.736,
+            "duration_ratio": 0.7893333333333333,
+            "rms": 0.14831553399562836,
+            "peak": 0.9604950547218323,
+            "hf_ratio": 0.004320858977735043,
+            "synthesis_time_s": 1.5826759338378906,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5043037533760071,
+            "utmos": 1.5210989713668823,
+            "duration_s": 19.04,
+            "duration_ratio": 2.995056179775281,
+            "rms": 0.11630363017320633,
+            "peak": 0.9452531337738037,
+            "hf_ratio": 0.0028246964793652296,
+            "synthesis_time_s": 6.290152311325073,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49108633399009705,
+            "utmos": 3.0831432342529297,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0508641975308641,
+            "rms": 0.13297584652900696,
+            "peak": 0.9331157803535461,
+            "hf_ratio": 0.0034325916785746813,
+            "synthesis_time_s": 2.0439088344573975,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5559930801391602,
+            "utmos": 3.3077354431152344,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 0.9557333333333334,
+            "rms": 0.13835561275482178,
+            "peak": 0.9831504821777344,
+            "hf_ratio": 0.007993225008249283,
+            "synthesis_time_s": 1.9464304447174072,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5233527421951294,
+            "utmos": 3.3612635135650635,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 0.9271794871794872,
+            "rms": 0.13519077003002167,
+            "peak": 0.9652392268180847,
+            "hf_ratio": 0.007902623154222965,
+            "synthesis_time_s": 1.9870264530181885,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4885590672492981,
+            "utmos": 2.8998923301696777,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 1.0773333333333333,
+            "rms": 0.1354958564043045,
+            "peak": 0.909056544303894,
+            "hf_ratio": 0.0025297587271779776,
+            "synthesis_time_s": 1.8083570003509521,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes.",
+            "wer": 0.375,
+            "cer": 0.2753623188405797,
+            "secs": 0.5200201869010925,
+            "utmos": 3.2608261108398438,
+            "duration_s": 8.256,
+            "duration_ratio": 1.3760000000000001,
+            "rms": 0.13853006064891815,
+            "peak": 0.9514707326889038,
+            "hf_ratio": 0.006132327951490879,
+            "synthesis_time_s": 2.815054178237915,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5028655529022217,
+            "utmos": 3.260817289352417,
+            "duration_s": 6.314666666666667,
+            "duration_ratio": 1.0524444444444445,
+            "rms": 0.14164656400680542,
+            "peak": 0.9118228554725647,
+            "hf_ratio": 0.012210588902235031,
+            "synthesis_time_s": 2.081885814666748,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5202529430389404,
+            "utmos": 2.952345848083496,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8194666666666667,
+            "rms": 0.1433613896369934,
+            "peak": 0.9508306980133057,
+            "hf_ratio": 0.006232858635485172,
+            "synthesis_time_s": 1.5442664623260498,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5193723440170288,
+            "utmos": 3.1402132511138916,
+            "duration_s": 6.538666666666667,
+            "duration_ratio": 1.1888484848484848,
+            "rms": 0.13430961966514587,
+            "peak": 0.9050370454788208,
+            "hf_ratio": 0.0026833966840058565,
+            "synthesis_time_s": 2.1583664417266846,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5322039127349854,
+            "utmos": 2.8932061195373535,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 0.8904691358024691,
+            "rms": 0.1400139182806015,
+            "peak": 0.9133614301681519,
+            "hf_ratio": 0.006115746684372425,
+            "synthesis_time_s": 2.3051397800445557,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores. \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3! \u00a1Pas\u00f3",
+            "wer": 6.461538461538462,
+            "cer": 4.048192771084337,
+            "secs": 0.5581385493278503,
+            "utmos": 2.4162073135375977,
+            "duration_s": 23.349333333333334,
+            "duration_ratio": 3.4409543859649125,
+            "rms": 0.12071739882230759,
+            "peak": 0.9857112765312195,
+            "hf_ratio": 0.007039690390229225,
+            "synthesis_time_s": 7.893772840499878,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": true,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5602964758872986,
+            "utmos": 3.27660870552063,
+            "duration_s": 7.466666666666667,
+            "duration_ratio": 1.2444444444444445,
+            "rms": 0.14051085710525513,
+            "peak": 0.9653348326683044,
+            "hf_ratio": 0.011980580165982246,
+            "synthesis_time_s": 2.4745352268218994,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5345376133918762,
+            "utmos": 2.604039192199707,
+            "duration_s": 7.616,
+            "duration_ratio": 1.1980224719101125,
+            "rms": 0.12886717915534973,
+            "peak": 0.9805240631103516,
+            "hf_ratio": 0.0029637236148118973,
+            "synthesis_time_s": 2.5352725982666016,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5084728598594666,
+            "utmos": 2.6489107608795166,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8665020576131688,
+            "rms": 0.13273398578166962,
+            "peak": 0.9203269481658936,
+            "hf_ratio": 0.004231815692037344,
+            "synthesis_time_s": 1.6770637035369873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.4819124639034271,
+            "utmos": 3.1832544803619385,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8555921568627451,
+            "rms": 0.1449790894985199,
+            "peak": 0.9138740301132202,
+            "hf_ratio": 0.0042398851364851,
+            "synthesis_time_s": 1.7357237339019775,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5333573222160339,
+            "utmos": 3.30322527885437,
+            "duration_s": 8.074666666666667,
+            "duration_ratio": 1.2422564102564104,
+            "rms": 0.1226392313838005,
+            "peak": 0.9624136090278625,
+            "hf_ratio": 0.009453646838665009,
+            "synthesis_time_s": 2.723062515258789,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-25 10:44:48 UTC",
+      "git": {
+        "commit_sha": "1c33371be271e37ae6bb5cdd8a59a9feecd943c5",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "414d97be8a45c2a945848a7f0acd62ef71fafaab3fd10356343cfc17d042c91c",
+        "n_files": 61
+      },
+      "metrics_version": 2,
+      "language": "es",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.03388532763532764,
+          "std": 0.06501297685986045,
+          "ci95": 0.021237572440887743,
+          "min": 0.0,
+          "max": 0.1875,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.040588440719399335,
+          "std": 0.07407513309991633,
+          "ci95": 0.024197876812639334,
+          "min": 0.0,
+          "max": 0.2,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5208365784751045,
+          "std": 0.02827693898464022,
+          "ci95": 0.009237133401649139,
+          "min": 0.465259313583374,
+          "max": 0.566260039806366,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.283647504117754,
+          "std": 0.2039014793653945,
+          "ci95": 0.06660781659269553,
+          "min": 2.8701765537261963,
+          "max": 3.6372017860412598,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0583912732201193,
+          "std": 0.15684584937558185,
+          "ci95": 0.0512363107960234,
+          "min": 0.7784000000000001,
+          "max": 1.5235555555555556,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5208365784751045,
+          "std": 0.02827693898464022,
+          "ci95": 0.009237133401649139,
+          "min": 0.465259313583374,
+          "max": 0.566260039806366,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.03388532763532764,
+              "std": 0.06501297685986045,
+              "ci95": 0.021237572440887743,
+              "min": 0.0,
+              "max": 0.1875,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.040588440719399335,
+              "std": 0.07407513309991633,
+              "ci95": 0.024197876812639334,
+              "min": 0.0,
+              "max": 0.2,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5208365784751045,
+              "std": 0.02827693898464022,
+              "ci95": 0.009237133401649139,
+              "min": 0.465259313583374,
+              "max": 0.566260039806366,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.283647504117754,
+              "std": 0.2039014793653945,
+              "ci95": 0.06660781659269553,
+              "min": 2.8701765537261963,
+              "max": 3.6372017860412598,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.0583912732201193,
+              "std": 0.15684584937558185,
+              "ci95": 0.0512363107960234,
+              "min": 0.7784000000000001,
+              "max": 1.5235555555555556,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5208365784751045,
+              "std": 0.02827693898464022,
+              "ci95": 0.009237133401649139,
+              "min": 0.465259313583374,
+              "max": 0.566260039806366,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49900877475738525,
+            "utmos": 3.613415479660034,
+            "duration_s": 4.597333333333333,
+            "duration_ratio": 0.9194666666666667,
+            "rms": 0.1414102017879486,
+            "peak": 0.782281756401062,
+            "hf_ratio": 0.023829588666558266,
+            "synthesis_time_s": 1.5122637748718262,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "La biblioteca municipal abre sus puertas de lunes a viernes, a las nueve de la ma\u00f1ana.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47729548811912537,
+            "utmos": 3.549497365951538,
+            "duration_s": 6.912,
+            "duration_ratio": 1.152,
+            "rms": 0.14812424778938293,
+            "peak": 0.8396337628364563,
+            "hf_ratio": 0.008197424933314323,
+            "synthesis_time_s": 2.2990262508392334,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5288261771202087,
+            "utmos": 3.257453680038452,
+            "duration_s": 6.826666666666667,
+            "duration_ratio": 1.1377777777777778,
+            "rms": 0.14882822334766388,
+            "peak": 0.8244763016700745,
+            "hf_ratio": 0.02649856172502041,
+            "synthesis_time_s": 2.248394727706909,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4984513521194458,
+            "utmos": 3.3370230197906494,
+            "duration_s": 4.544,
+            "duration_ratio": 0.7951999999999999,
+            "rms": 0.14071781933307648,
+            "peak": 0.7933805584907532,
+            "hf_ratio": 0.020343013107776642,
+            "synthesis_time_s": 1.5123987197875977,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5098705291748047,
+            "utmos": 3.2336628437042236,
+            "duration_s": 5.888,
+            "duration_ratio": 1.0705454545454545,
+            "rms": 0.15176533162593842,
+            "peak": 0.6797446012496948,
+            "hf_ratio": 0.003021325683221221,
+            "synthesis_time_s": 1.956390380859375,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4981556832790375,
+            "utmos": 3.0888030529022217,
+            "duration_s": 9.28,
+            "duration_ratio": 1.2029629629629628,
+            "rms": 0.14290830492973328,
+            "peak": 0.8390477895736694,
+            "hf_ratio": 0.014192337170243263,
+            "synthesis_time_s": 3.0867249965667725,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "la orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5285513401031494,
+            "utmos": 3.3338677883148193,
+            "duration_s": 8.256,
+            "duration_ratio": 1.2166736842105264,
+            "rms": 0.14135488867759705,
+            "peak": 0.8891024589538574,
+            "hf_ratio": 0.024285783991217613,
+            "synthesis_time_s": 2.744467258453369,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5273743271827698,
+            "utmos": 3.255385637283325,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9582222222222222,
+            "rms": 0.14602863788604736,
+            "peak": 0.8278698325157166,
+            "hf_ratio": 0.024801507592201233,
+            "synthesis_time_s": 1.971320629119873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4742682874202728,
+            "utmos": 2.986884832382202,
+            "duration_s": 6.4,
+            "duration_ratio": 1.006741573033708,
+            "rms": 0.14609691500663757,
+            "peak": 0.6982506513595581,
+            "hf_ratio": 0.010111871175467968,
+            "synthesis_time_s": 2.132408857345581,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5135378241539001,
+            "utmos": 3.170199394226074,
+            "duration_s": 6.496,
+            "duration_ratio": 1.1227654320987654,
+            "rms": 0.14917424321174622,
+            "peak": 0.7316150069236755,
+            "hf_ratio": 0.012006042525172234,
+            "synthesis_time_s": 2.193279504776001,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5146234631538391,
+            "utmos": 3.248007297515869,
+            "duration_s": 7.1466666666666665,
+            "duration_ratio": 1.1770980392156862,
+            "rms": 0.1455111801624298,
+            "peak": 0.8703449964523315,
+            "hf_ratio": 0.015983304008841515,
+            "synthesis_time_s": 2.360649824142456,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 42,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5434451103210449,
+            "utmos": 3.228614568710327,
+            "duration_s": 7.936,
+            "duration_ratio": 1.220923076923077,
+            "rms": 0.14491863548755646,
+            "peak": 0.7529829740524292,
+            "hf_ratio": 0.014534953981637955,
+            "synthesis_time_s": 2.643077850341797,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "123": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5565566420555115,
+            "utmos": 3.6372017860412598,
+            "duration_s": 4.8213333333333335,
+            "duration_ratio": 0.9642666666666667,
+            "rms": 0.14749065041542053,
+            "peak": 0.8173539638519287,
+            "hf_ratio": 0.016155211254954338,
+            "synthesis_time_s": 1.7136054039001465,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4942045211791992,
+            "utmos": 3.1215221881866455,
+            "duration_s": 9.141333333333334,
+            "duration_ratio": 1.5235555555555556,
+            "rms": 0.14319086074829102,
+            "peak": 0.8357976078987122,
+            "hf_ratio": 0.01389175746589899,
+            "synthesis_time_s": 3.034579277038574,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5616391897201538,
+            "utmos": 3.597635269165039,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9742222222222222,
+            "rms": 0.1549765020608902,
+            "peak": 0.7967298626899719,
+            "hf_ratio": 0.026116646826267242,
+            "synthesis_time_s": 1.9247422218322754,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5174705982208252,
+            "utmos": 3.3908932209014893,
+            "duration_s": 4.448,
+            "duration_ratio": 0.7784000000000001,
+            "rms": 0.15100374817848206,
+            "peak": 0.7747712135314941,
+            "hf_ratio": 0.01887694001197815,
+            "synthesis_time_s": 1.4765455722808838,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5146703720092773,
+            "utmos": 3.2059199810028076,
+            "duration_s": 4.96,
+            "duration_ratio": 0.9018181818181819,
+            "rms": 0.1494407057762146,
+            "peak": 0.7864372730255127,
+            "hf_ratio": 0.00393326161429286,
+            "synthesis_time_s": 1.6394364833831787,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona, Pantoponitzio.",
+            "wer": 0.06666666666666667,
+            "cer": 0.18840579710144928,
+            "secs": 0.5655100345611572,
+            "utmos": 2.9740920066833496,
+            "duration_s": 9.002666666666666,
+            "duration_ratio": 1.1670123456790122,
+            "rms": 0.15399055182933807,
+            "peak": 0.8290208578109741,
+            "hf_ratio": 0.006735702510923147,
+            "synthesis_time_s": 2.9733636379241943,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "la orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5469039082527161,
+            "utmos": 3.5567197799682617,
+            "duration_s": 7.1466666666666665,
+            "duration_ratio": 1.0531929824561403,
+            "rms": 0.1431378573179245,
+            "peak": 0.920681357383728,
+            "hf_ratio": 0.026261404156684875,
+            "synthesis_time_s": 2.385634422302246,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.546733021736145,
+            "utmos": 3.2968647480010986,
+            "duration_s": 6.592,
+            "duration_ratio": 1.0986666666666667,
+            "rms": 0.1423453539609909,
+            "peak": 0.8309348821640015,
+            "hf_ratio": 0.024257928133010864,
+            "synthesis_time_s": 2.196512460708618,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "el desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.566260039806366,
+            "utmos": 3.3229916095733643,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 0.9480149812734082,
+            "rms": 0.14179085195064545,
+            "peak": 0.7830545902252197,
+            "hf_ratio": 0.007793017663061619,
+            "synthesis_time_s": 2.0050790309906006,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5046063661575317,
+            "utmos": 3.1008315086364746,
+            "duration_s": 5.664,
+            "duration_ratio": 0.9789629629629629,
+            "rms": 0.14430247247219086,
+            "peak": 0.7923789024353027,
+            "hf_ratio": 0.011980895884335041,
+            "synthesis_time_s": 1.8833987712860107,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "el precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.55294269323349,
+            "utmos": 2.8701765537261963,
+            "duration_s": 7.242666666666667,
+            "duration_ratio": 1.1929098039215686,
+            "rms": 0.14293767511844635,
+            "peak": 0.7897200584411621,
+            "hf_ratio": 0.01959601417183876,
+            "synthesis_time_s": 2.4339263439178467,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 123,
+            "asr_text": "Ma\u00f1ana por la tarde visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.507980227470398,
+            "utmos": 3.247056245803833,
+            "duration_s": 5.941333333333334,
+            "duration_ratio": 0.914051282051282,
+            "rms": 0.14486795663833618,
+            "peak": 0.75754714012146,
+            "hf_ratio": 0.01090405322611332,
+            "synthesis_time_s": 2.007749557495117,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ],
+        "999": [
+          {
+            "text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El sol brillaba con fuerza sobre las monta\u00f1as nevadas de la cordillera.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4901657998561859,
+            "utmos": 3.478181838989258,
+            "duration_s": 4.96,
+            "duration_ratio": 0.992,
+            "rms": 0.14478079974651337,
+            "peak": 0.7739688158035278,
+            "hf_ratio": 0.013241030275821686,
+            "synthesis_time_s": 1.684800624847412,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_01",
+            "category": null
+          },
+          {
+            "text": "La biblioteca municipal abre sus puertas de lunes a viernes a las nueve de la ma\u00f1ana.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "La Biblioteca Municipal abre sus puertas de lunes a viernes a las 9 de la ma\u00f1ana.",
+            "wer": 0.0625,
+            "cer": 0.07246376811594203,
+            "secs": 0.486990749835968,
+            "utmos": 3.4214963912963867,
+            "duration_s": 6.261333333333333,
+            "duration_ratio": 1.0435555555555556,
+            "rms": 0.15677958726882935,
+            "peak": 0.8538908958435059,
+            "hf_ratio": 0.009124714881181717,
+            "synthesis_time_s": 2.1003506183624268,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_02",
+            "category": null
+          },
+          {
+            "text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Los investigadores encontraron nuevas evidencias arqueol\u00f3gicas en la cueva submarina.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5367076992988586,
+            "utmos": 3.3375847339630127,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.0595555555555556,
+            "rms": 0.15216228365898132,
+            "peak": 0.857845664024353,
+            "hf_ratio": 0.014155849814414978,
+            "synthesis_time_s": 2.0857863426208496,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_03",
+            "category": null
+          },
+          {
+            "text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "\u00bfPodr\u00edas indicarme cu\u00e1l es el camino m\u00e1s r\u00e1pido para llegar a la estaci\u00f3n central?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5193802714347839,
+            "utmos": 3.078524589538574,
+            "duration_s": 5.056,
+            "duration_ratio": 0.8848,
+            "rms": 0.15260496735572815,
+            "peak": 0.7949770092964172,
+            "hf_ratio": 0.016001202166080475,
+            "synthesis_time_s": 1.695495367050171,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_04",
+            "category": null
+          },
+          {
+            "text": "El aroma del caf\u00e9 reci\u00e9n tostado llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El aroma del caf\u00e9, reci\u00e9n tostado, llenaba cada rinc\u00f3n de la peque\u00f1a pasteler\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.465259313583374,
+            "utmos": 3.387350082397461,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.1558787878787877,
+            "rms": 0.1462608128786087,
+            "peak": 0.7722638845443726,
+            "hf_ratio": 0.003880504285916686,
+            "synthesis_time_s": 2.125662326812744,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_05",
+            "category": null
+          },
+          {
+            "text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "En el a\u00f1o 1992 se celebraron los Juegos Ol\u00edmpicos en la hermosa ciudad de Barcelona, Tentomt\u00edo.",
+            "wer": 0.06666666666666667,
+            "cer": 0.13043478260869565,
+            "secs": 0.5470595955848694,
+            "utmos": 3.1554441452026367,
+            "duration_s": 7.424,
+            "duration_ratio": 0.9623703703703704,
+            "rms": 0.15029194951057434,
+            "peak": 0.7613916397094727,
+            "hf_ratio": 0.004418712574988604,
+            "synthesis_time_s": 2.5071187019348145,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_06",
+            "category": null
+          },
+          {
+            "text": "La orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de mil quinientos espectadores.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "la orquesta filarm\u00f3nica interpret\u00f3 una sinfon\u00eda cl\u00e1sica ante m\u00e1s de 1.500 espectadores.",
+            "wer": 0.15384615384615385,
+            "cer": 0.1566265060240964,
+            "secs": 0.5028880834579468,
+            "utmos": 3.3812220096588135,
+            "duration_s": 7.189333333333333,
+            "duration_ratio": 1.059480701754386,
+            "rms": 0.1439024657011032,
+            "peak": 0.8826398849487305,
+            "hf_ratio": 0.022173013538122177,
+            "synthesis_time_s": 2.3912062644958496,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_07",
+            "category": null
+          },
+          {
+            "text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Todos los pasajeros deben permanecer sentados con el cintur\u00f3n de seguridad abrochado.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5233203768730164,
+            "utmos": 3.613539695739746,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9742222222222222,
+            "rms": 0.14471615850925446,
+            "peak": 0.8545626401901245,
+            "hf_ratio": 0.021122589707374573,
+            "synthesis_time_s": 1.9354057312011719,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_08",
+            "category": null
+          },
+          {
+            "text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El desarrollo de modelos neuronales abiertos promueve la democratizaci\u00f3n de la tecnolog\u00eda.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5660380125045776,
+            "utmos": 3.076908826828003,
+            "duration_s": 8.96,
+            "duration_ratio": 1.4094382022471912,
+            "rms": 0.13949236273765564,
+            "peak": 0.8628782629966736,
+            "hf_ratio": 0.008671203628182411,
+            "synthesis_time_s": 3.097038745880127,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_09",
+            "category": null
+          },
+          {
+            "text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Las olas del mar chocaban suavemente contra las rocas del acantilado al atardecer.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4933720827102661,
+            "utmos": 3.0662636756896973,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8499094650205762,
+            "rms": 0.15126292407512665,
+            "peak": 0.8490912914276123,
+            "hf_ratio": 0.008131375536322594,
+            "synthesis_time_s": 1.6377623081207275,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_10",
+            "category": null
+          },
+          {
+            "text": "El precio del billete de autob\u00fas aument\u00f3 un cinco por ciento a principios de este mes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "El precio del billete de autob\u00fas aument\u00f3 un 5% a principios de este mes.",
+            "wer": 0.1875,
+            "cer": 0.2,
+            "secs": 0.5607786774635315,
+            "utmos": 3.559892177581787,
+            "duration_s": 7.285333333333333,
+            "duration_ratio": 1.1999372549019607,
+            "rms": 0.14650943875312805,
+            "peak": 0.9012147784233093,
+            "hf_ratio": 0.014358226209878922,
+            "synthesis_time_s": 2.474785089492798,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_11",
+            "category": null
+          },
+          {
+            "text": "Ma\u00f1ana por la tarde visitaremos el museo nacional de arte contempor\u00e1neo con los estudiantes.",
+            "lang": "es",
+            "seed": 999,
+            "asr_text": "Ma\u00f1ana, por la tarde, visitaremos el Museo Nacional de Arte Contempor\u00e1neo con los estudiantes.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.509270191192627,
+            "utmos": 3.030182123184204,
+            "duration_s": 6.730666666666667,
+            "duration_ratio": 1.0354871794871796,
+            "rms": 0.1472422331571579,
+            "peak": 0.7910996675491333,
+            "hf_ratio": 0.016771525144577026,
+            "synthesis_time_s": 2.238516330718994,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            },
+            "id": "es_12",
+            "category": null
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}

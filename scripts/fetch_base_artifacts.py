@@ -120,7 +120,7 @@ def check_mel_stats(dest_dir: str) -> Dict[str, Any]:
     names = list(available)
     pairwise = {}
     for i, a in enumerate(names):
-        for b in names[i + 1:]:
+        for b in names[i + 1 :]:
             ta, tb = available[a], available[b]
             equal = ta.shape == tb.shape and torch.equal(ta, tb)
             max_abs_diff = float((ta - tb).abs().max()) if ta.shape == tb.shape else None
@@ -139,12 +139,20 @@ def check_mel_stats(dest_dir: str) -> Dict[str, Any]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Fetch and verify upstream XTTS-v2 artifacts from artifacts.lock.json.")
+    parser = argparse.ArgumentParser(
+        description="Fetch and verify upstream XTTS-v2 artifacts from artifacts.lock.json."
+    )
     parser.add_argument("--dest", type=str, default="xtts_base", help="Directory to download artifacts into")
     parser.add_argument("--lockfile", type=str, default=DEFAULT_LOCKFILE, help="Path to artifacts.lock.json")
-    parser.add_argument("--only", type=str, nargs="+", default=None, help="Only these artifact names (e.g. mel_stats.pth config.json)")
-    parser.add_argument("--verify_only", action="store_true", help="Do not download; only verify files already in --dest")
-    parser.add_argument("--check_mel_stats", action="store_true", help="Run the packaged/downloaded/model.pth mel_stats comparison")
+    parser.add_argument(
+        "--only", type=str, nargs="+", default=None, help="Only these artifact names (e.g. mel_stats.pth config.json)"
+    )
+    parser.add_argument(
+        "--verify_only", action="store_true", help="Do not download; only verify files already in --dest"
+    )
+    parser.add_argument(
+        "--check_mel_stats", action="store_true", help="Run the packaged/downloaded/model.pth mel_stats comparison"
+    )
     parser.add_argument("--report", type=str, default=None, help="Write a JSON evidence report to this path")
     args = parser.parse_args()
 
@@ -166,7 +174,15 @@ def main():
         dest_path = os.path.join(args.dest, name)
         if os.path.exists(dest_path):
             result = verify_file(dest_path, entry)
-            result["action"] = "verified_existing"
+            if result["size_ok"] and result["sha256_ok"]:
+                result["action"] = "verified_existing"
+            elif not args.verify_only:
+                print(f"Existing {name} hash mismatch; re-downloading from {entry['url']} ...")
+                os.remove(dest_path)
+                result = download_file(entry["url"], dest_path, entry)
+                result["action"] = "downloaded"
+            else:
+                result["action"] = "verified_existing"
         elif args.verify_only:
             result = {"path": dest_path, "action": "missing", "size_ok": False, "sha256_ok": False}
         else:
@@ -176,7 +192,9 @@ def main():
 
         ok = result["size_ok"] and result["sha256_ok"]
         status = "OK" if ok else "FAIL"
-        print(f"  [{status}] {name}: action={result['action']} size_ok={result['size_ok']} sha256_ok={result['sha256_ok']}")
+        print(
+            f"  [{status}] {name}: action={result['action']} size_ok={result['size_ok']} sha256_ok={result['sha256_ok']}"
+        )
         if not ok:
             failures.append(name)
         result["path"] = os.path.relpath(result["path"], REPO_ROOT) if os.path.isabs(result["path"]) else result["path"]
@@ -185,7 +203,9 @@ def main():
     if args.check_mel_stats:
         mel_report = check_mel_stats(args.dest)
         report["mel_stats_check"] = mel_report
-        print(f"  mel_stats sources: {mel_report['sources_found']} | all_equal={mel_report['all_equal']} | complete={mel_report['complete']}")
+        print(
+            f"  mel_stats sources: {mel_report['sources_found']} | all_equal={mel_report['all_equal']} | complete={mel_report['complete']}"
+        )
         for pair, res in mel_report["pairwise"].items():
             print(f"    {pair}: equal={res['equal']} max_abs_diff={res['max_abs_diff']}")
         for note in mel_report["notes"]:

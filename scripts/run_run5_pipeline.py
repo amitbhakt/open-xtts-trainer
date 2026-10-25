@@ -40,7 +40,8 @@ def check_artifacts(after: str):
     if not os.path.exists("artifacts.lock.json"):
         print("artifacts.lock.json not found, skipping check_artifacts")
         return
-    artifacts = json.load(open("artifacts.lock.json"))
+    with open("artifacts.lock.json", "r", encoding="utf-8") as f:
+        artifacts = json.load(f)
     for name, entry in artifacts.items():
         path = os.path.join("xtts_base", name)
         assert os.path.exists(path), f"{path} missing during/after {after}"
@@ -100,7 +101,8 @@ def main():
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "code_fingerprint": get_code_fingerprint(),
     }
-    json.dump(env, open("docs/evidence/environment.json", "w"), indent=2)
+    with open("docs/evidence/environment.json", "w", encoding="utf-8") as f:
+        json.dump(env, f, indent=2)
     print(f"Environment: GPU={env['gpu']}, CUDA={env['cuda']}, Torch={env['torch']}")
 
     # Phase 0 / Step 4: Fetch and verify base XTTS artifacts
@@ -129,7 +131,7 @@ def main():
         print("\n🧪 Step 6b: Running model gated invariant tests...")
         os.makedirs("docs/evidence/phase5", exist_ok=True)
         run_cmd(
-            'python -m pytest -v -rs -p no:cacheprovider tests/test_invariants.py tests/test_spec_parity.py '
+            "python -m pytest -v -rs -p no:cacheprovider tests/test_invariants.py tests/test_spec_parity.py "
             'tests/test_data_contract.py -k "round_trip or upstream_or_local"'
         )
         check_artifacts("step 6b")
@@ -138,15 +140,19 @@ def main():
     print("\n🔊 Step 7a & 7b: Preparing and validating sample dataset...")
     run_cmd('python -c "import torchaudio; torchaudio.pipelines.MMS_FA.get_model()"')
     run_cmd("python -m pytest -v -p no:cacheprovider tests/test_prepare.py -k mms")
-    run_cmd("rm -rf sample_audio && python -m xtts_trainer.speech_data --source sample --output_dir sample_audio --vocab xtts_base/vocab.json")
+    run_cmd(
+        "rm -rf sample_audio && python -m xtts_trainer.speech_data --source sample --output_dir sample_audio --vocab xtts_base/vocab.json"
+    )
     run_cmd(
         "python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_base/vocab.json "
         "--realign --report sample_audio/realign_report.json"
     )
     os.makedirs("docs/evidence/phase6", exist_ok=True)
     from xtts_trainer.speech_data import SOURCE_SETS, SOURCES
+
     pins = {name: SOURCES[name].sha256 for name in SOURCE_SETS["sample"]}
-    json.dump(pins, open("docs/evidence/phase6/source_pins_used.json", "w"), indent=2)
+    with open("docs/evidence/phase6/source_pins_used.json", "w", encoding="utf-8") as f:
+        json.dump(pins, f, indent=2)
     run_cmd(
         "cp sample_audio/prep_report.json sample_audio/validation_report.json sample_audio/realign_report.json "
         "sample_audio/dataset.jsonl docs/evidence/phase6/"
@@ -159,9 +165,10 @@ def main():
         "python -m xtts_trainer.stage2_gpt.train --dataset sample_audio/dataset.jsonl --base_dir xtts_base "
         "--output_dir runs/gpt_smoke --epochs 3 --batch_size 2 --grad_accum_steps 1 --eval_fraction 0.25"
     )
-    from xtts_trainer.stage2_gpt.export import load_for_inference
     from xtts_trainer.spec import SPEC
+    from xtts_trainer.stage2_gpt.export import load_for_inference
     import soundfile as sf
+
     xtts = load_for_inference("runs/gpt_smoke/export", "cuda" if torch.cuda.is_available() else "cpu")
     lat, spk = xtts.get_conditioning_latents(audio_path=["eval/reference_voices/arctic_slt.wav"])
     torch.manual_seed(42)
@@ -173,6 +180,7 @@ def main():
     # Step 7d: Stage 3 HiFiGAN smoke train
     print("\n🎵 Step 7d: Stage 3 HiFiGAN smoke training...")
     import gc
+
     del xtts, lat, spk, wav
     gc.collect()
     if torch.cuda.is_available():
@@ -185,22 +193,36 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     extract_latents("sample_audio/dataset.jsonl", "runs/latents", checkpoint_dir="runs/gpt_smoke/export", device=device)
     cfg3 = HiFiGANConfig(batch_size=4, epochs=15, disc_warmup_steps=10, val_every_steps=2, sample_every_steps=10)
-    best3 = train_hifigan(
-        "sample_audio/dataset.jsonl", "runs/latents", "runs/hifigan_smoke", cfg3,
-        checkpoint_dir="runs/gpt_smoke/export", device=device
+    train_hifigan(
+        "sample_audio/dataset.jsonl",
+        "runs/latents",
+        "runs/hifigan_smoke",
+        cfg3,
+        checkpoint_dir="runs/gpt_smoke/export",
+        device=device,
     )
     os.makedirs("docs/evidence/phase7/stage3", exist_ok=True)
-    run_cmd("cp runs/hifigan_smoke/metrics.jsonl docs/evidence/phase7/stage3/ && cp -r runs/hifigan_smoke/samples docs/evidence/phase7/stage3/")
+    run_cmd(
+        "cp runs/hifigan_smoke/metrics.jsonl docs/evidence/phase7/stage3/ && cp -r runs/hifigan_smoke/samples docs/evidence/phase7/stage3/"
+    )
     check_artifacts("step 7d")
 
     # Step 8: Multilingual baseline evaluation
     print(f"\n📊 Step 8: Multilingual baseline evaluation across {args.languages}...")
-    from eval.provenance import expected_baseline_inputs, index_manifest_mismatches, manifest_mismatches, write_baseline_index
+    from eval.provenance import (
+        expected_baseline_inputs,
+        index_manifest_mismatches,
+        manifest_mismatches,
+        write_baseline_index,
+    )
 
     tag = f"s{args.subset_size}" if args.subset_size else "full"
     index_path = f"eval/baselines/base_xtts_{tag}_index.json"
     saved_index_path = f"{results_dir}/base_xtts_{tag}_index.json"
-    existing_index = json.load(open(saved_index_path)) if os.path.exists(saved_index_path) else None
+    existing_index = None
+    if os.path.exists(saved_index_path):
+        with open(saved_index_path, "r", encoding="utf-8") as f:
+            existing_index = json.load(f)
 
     expected = expected_baseline_inputs(commit, seeds=args.seeds, subset_size=args.subset_size)
     paths = {}
@@ -210,7 +232,9 @@ def main():
         saved_path = f"{results_dir}/{name}"
 
         if os.path.exists(saved_path) and existing_index:
-            problems = manifest_mismatches(json.load(open(saved_path)), expected, lang)
+            with open(saved_path, "r", encoding="utf-8") as f:
+                saved_manifest = json.load(f)
+            problems = manifest_mismatches(saved_manifest, expected, lang)
             index_problems = index_manifest_mismatches(saved_path, existing_index, lang)
             if not problems and not index_problems:
                 run_cmd(f"cp {saved_path} {local_path}")
@@ -225,7 +249,9 @@ def main():
             f"python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --languages {lang} "
             f"--label base --seeds {seeds_arg} {subset_arg} --output {local_path}"
         )
-        problems = manifest_mismatches(json.load(open(local_path)), expected, lang)
+        with open(local_path, "r", encoding="utf-8") as f:
+            local_manifest = json.load(f)
+        problems = manifest_mismatches(local_manifest, expected, lang)
         assert not problems, f"{local_path} does not match expected inputs:\n" + "\n".join(problems)
         run_cmd(f"cp {local_path} {saved_path}")
         paths[lang] = local_path
