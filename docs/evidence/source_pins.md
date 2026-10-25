@@ -69,6 +69,7 @@ are the pins in `speech_data.py`. A separate earlier download of all 15 gave the
 
 ```
 $ LJ=https://raw.githubusercontent.com/coqui-ai/TTS/dbf1a08a0d4e47fdad6172e433eeb34bc6b13b4e/tests/data/ljspeech
+$ mkdir -p ljspeech jfk art_of_war
 $ (cd ljspeech && for f in metadata.csv wavs/LJ001-000{1..6}.wav; do curl -sfL -o "$(basename $f)" "$LJ/$f"; done)
 $ (cd jfk && curl -sfL -o jfk.flac https://raw.githubusercontent.com/openai/whisper/86098128c0b4f24f0e2aa2994de830614b474227/tests/jfk.flac)
 $ (cd art_of_war && for n in 01-02 03-04 05-06 07-08 09-10 11 12-13; do

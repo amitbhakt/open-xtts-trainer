@@ -21,6 +21,8 @@ import json
 import os
 import random
 import re
+import shutil
+import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -112,29 +114,61 @@ def build_target_voices(dataset_path: str, out_dir: str = DEFAULT_TARGET_DIR, sp
                              f"needs at least {min_train_clips} besides the held-out reference")
         chosen.append((speaker, order, clip, used))
 
-    os.makedirs(out_dir, exist_ok=True)
+    # Build every output in sibling staging locations.  In particular, never overwrite a clip while the old
+    # lock still names it: a failed rebuild must leave the previous verified target set usable.
+    out_dir = os.path.abspath(out_dir)
+    out_parent = os.path.dirname(out_dir)
+    os.makedirs(out_parent, exist_ok=True)
+    staged_dir = tempfile.mkdtemp(prefix=".target-voices-", dir=out_parent)
+    train_path = os.path.join(dataset_dir, TRAIN_DATASET_FILENAME)
+    train_fd, staged_train = tempfile.mkstemp(prefix=f".{TRAIN_DATASET_FILENAME}.", dir=dataset_dir)
+    os.close(train_fd)
     voices, held_out = {}, set()
-    for speaker, order, clip, used in chosen:
-        vid = voice_id(speaker)
-        path = os.path.join(out_dir, f"{vid}.wav")
-        sf.write(path, clip, SPEC.output_sample_rate, subtype="PCM_16")
-        sources = [order[i] for i in used]
-        held_out.update(r.audio for r in sources)
-        voices[vid] = {
-            "speaker": speaker,
-            "clip_sha256": sha256_file(path),
-            "duration_s": round(len(clip) / SPEC.output_sample_rate, 2),
-            "source_clips": [{"audio": r.audio, "sha256": sha256_file(r.audio_path(dataset_dir))} for r in sources],
-            "transcript": " ".join(r.text for r in sources),
-        }
+    try:
+        for speaker, order, clip, used in chosen:
+            vid = voice_id(speaker)
+            path = os.path.join(staged_dir, f"{vid}.wav")
+            sf.write(path, clip, SPEC.output_sample_rate, subtype="PCM_16")
+            sources = [order[i] for i in used]
+            held_out.update(r.audio for r in sources)
+            voices[vid] = {
+                "speaker": speaker,
+                "clip_sha256": sha256_file(path),
+                "duration_s": round(len(clip) / SPEC.output_sample_rate, 2),
+                "source_clips": [{"audio": r.audio, "sha256": sha256_file(r.audio_path(dataset_dir))} for r in sources],
+                "transcript": " ".join(r.text for r in sources),
+            }
 
-    train = [r for r in records if r.audio not in held_out]
-    train_path = write_dataset(os.path.join(dataset_dir, TRAIN_DATASET_FILENAME), train)
-    lock = {**LOCK_FORMAT, "dataset": os.path.abspath(dataset_path), "seed": seed,
-            "train_dataset": os.path.abspath(train_path), "voices": voices}
-    with open(os.path.join(out_dir, LOCK_FILENAME), "w", encoding="utf-8") as f:
-        json.dump(lock, f, indent=2, ensure_ascii=False)
-    return lock
+        train = [r for r in records if r.audio not in held_out]
+        lock = {**LOCK_FORMAT, "dataset": os.path.abspath(dataset_path), "seed": seed,
+                "train_dataset": os.path.abspath(train_path), "voices": voices}
+        with open(os.path.join(staged_dir, LOCK_FILENAME), "w", encoding="utf-8") as f:
+            json.dump(lock, f, indent=2, ensure_ascii=False)
+        write_dataset(staged_train, train)
+
+        # Each replacement is atomic.  The directory swap also removes stale voices from a previous larger build.
+        # Publish the split only after all of its contents and the complete voice set have been written.
+        os.replace(staged_train, train_path)
+        backup_dir = tempfile.mkdtemp(prefix=".target-voices-previous-", dir=out_parent)
+        os.rmdir(backup_dir)
+        if os.path.exists(out_dir):
+            os.replace(out_dir, backup_dir)
+        try:
+            os.replace(staged_dir, out_dir)
+        except Exception:
+            if os.path.exists(backup_dir):
+                os.replace(backup_dir, out_dir)
+            raise
+        if os.path.exists(backup_dir):
+            shutil.rmtree(backup_dir)
+        return lock
+    finally:
+        if os.path.exists(staged_train):
+            os.unlink(staged_train)
+        if os.path.exists(staged_train + ".tmp"):
+            os.unlink(staged_train + ".tmp")
+        if os.path.isdir(staged_dir):
+            shutil.rmtree(staged_dir)
 
 
 def load_lock(out_dir: str = DEFAULT_TARGET_DIR) -> Dict[str, Any]:

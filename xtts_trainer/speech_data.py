@@ -126,8 +126,9 @@ SOURCE_SETS = {"sample": ["ljspeech_sample", "jfk"]}
 
 def _download(url: str, dest_dir: str, sha256: str) -> str:
     """Download once into dest_dir; the file, fresh or cached, must match its SHA-256 pin."""
-    if not re.fullmatch(r"[0-9a-f]{64}", sha256 or ""):
+    if not re.fullmatch(r"[0-9a-fA-F]{64}", sha256 or ""):
         raise ValueError(f"{url}: a SHA-256 pin (64 hex digits) is required, got {sha256!r}")
+    sha256 = sha256.lower()
     os.makedirs(dest_dir, exist_ok=True)
     path = os.path.join(dest_dir, os.path.basename(url))
     if not os.path.exists(path):

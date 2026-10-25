@@ -58,7 +58,7 @@ def test_build_holds_out_whole_clips_and_writes_the_train_split(tmp_path):
     assert [e["source_clips"] for e in again["voices"].values()] == [e["source_clips"] for e in lock["voices"].values()]
 
 
-def test_training_on_held_out_clips_is_refused(tmp_path):
+def test_training_on_held_out_clips_is_refused(tmp_path, monkeypatch):
     dataset = _dataset(str(tmp_path))
     out = str(tmp_path / "targets")
     lock = build_target_voices(dataset, out)
@@ -71,11 +71,17 @@ def test_training_on_held_out_clips_is_refused(tmp_path):
     assert validate_dataset(lock["train_dataset"], vocab, **kw).ok
     assert len(holdout_hashes(target_lock)) == n_held + 2  # each source clip plus each assembled clip
     assert not any("lock is missing" in w for w in leaked.warnings)
-    # The lock gone but its clips still there: the guard is off for a holdout that exists, which must be said
+    # The lock gone but its clips still there: fail closed rather than train with the guard disabled.
     os.remove(target_lock)
     unguarded = validate_dataset(dataset, vocab, **kw)
-    assert unguarded.ok and not unguarded.stats["target_holdout_checked"]
-    assert any("lock is missing" in w for w in unguarded.warnings)
+    assert not unguarded.ok and not unguarded.stats["target_holdout_checked"]
+    assert [e.code for e in unguarded.errors] == ["target_holdout_lock_missing"]
+    # A bare relative lock name must check its current directory too.
+    monkeypatch.chdir(tmp_path)
+    sf.write("target_bare.wav", np.zeros(SR, dtype="float32"), SR)
+    bare = validate_dataset(dataset, vocab, eval_set_path=None, reference_lock_path=None,
+                            target_lock_path=LOCK_FILENAME)
+    assert [e.code for e in bare.errors] == ["target_holdout_lock_missing"]
     # No holdout ever built: nothing to warn about
     clean = validate_dataset(dataset, vocab, **{**kw, "target_lock_path": str(tmp_path / "none" / LOCK_FILENAME)})
     assert not any("lock is missing" in w for w in clean.warnings)
@@ -272,6 +278,33 @@ def test_failed_build_leaves_the_previous_holdout_untouched(tmp_path):
     with pytest.raises(ValueError, match="speaker 'you'"):
         build_target_voices(dataset, out, seed=2, min_train_clips=kept["target_you"] + 1)
     assert {name: (tmp_path / "targets" / name).read_bytes() for name in sorted(os.listdir(out))} == before
+    verify_target_voices(out)
+
+
+def test_write_failure_does_not_publish_a_partial_target_set(tmp_path, monkeypatch):
+    """Audio and lock writes happen in staging, so a later write failure preserves the prior complete build."""
+    import eval.target_voices as target_module
+
+    dataset = _dataset(str(tmp_path))
+    out = str(tmp_path / "targets")
+    first = build_target_voices(dataset, out, seed=1)
+    before = {name: (tmp_path / "targets" / name).read_bytes() for name in os.listdir(out)}
+    train_before = Path(first["train_dataset"]).read_bytes()
+    real_write = target_module.sf.write
+    calls = 0
+
+    def fail_second_write(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("disk full")
+        return real_write(*args, **kwargs)
+
+    monkeypatch.setattr(target_module.sf, "write", fail_second_write)
+    with pytest.raises(OSError, match="disk full"):
+        build_target_voices(dataset, out, seed=2)
+    assert {name: (tmp_path / "targets" / name).read_bytes() for name in os.listdir(out)} == before
+    assert Path(first["train_dataset"]).read_bytes() == train_before
     verify_target_voices(out)
 
 

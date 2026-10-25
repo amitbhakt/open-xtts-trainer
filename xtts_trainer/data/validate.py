@@ -225,8 +225,9 @@ def validate_dataset(
         target_lock_path = DEFAULT_TARGET_LOCK
     target_hashes = target_holdout_hashes(target_lock_path) if target_lock_path and os.path.exists(target_lock_path) else {}
     # No lock is normal when no holdout was built. Target clips without their lock mean the guard is off for a
-    # holdout that exists, so training on it would go unnoticed: say so
-    target_dir = os.path.dirname(target_lock_path) if target_lock_path else ""
+    # holdout that exists, so training on it would go unnoticed.  ``dirname("lock.json")`` is empty, so
+    # normalize first to also inspect a caller's current directory for a relative bare lock path.
+    target_dir = os.path.dirname(os.path.abspath(target_lock_path)) if target_lock_path else ""
     orphaned_targets = bool(target_dir) and not target_hashes and os.path.isdir(target_dir) and any(
         n.startswith("target_") and n.endswith(".wav") for n in os.listdir(target_dir))
 
@@ -370,8 +371,9 @@ def validate_dataset(
     if not eval_texts or not reference_hashes:
         report.warnings.append("eval-set leakage checks did not run fully (eval set or reference lock not found)")
     if orphaned_targets:
-        report.warnings.append(f"target-speaker clips exist in {target_dir} but their lock is missing, so held-out "
-                               f"clips are not being refused; rebuild with scripts/build_target_voices.py")
+        report.add(None, "target_holdout_lock_missing",
+                   f"target-speaker clips exist in {target_dir} but their lock is missing; rebuild with "
+                   "scripts/build_target_voices.py before training")
     if require_text and any(r.transcript_source.startswith(ASR_SOURCE_PREFIX) for r in records) and config.asr_cer_max is None:
         report.warnings.append("dataset has ASR transcripts but no ASR cross-check was run (set asr_cer_max)")
     return report

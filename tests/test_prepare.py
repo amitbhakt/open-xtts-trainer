@@ -467,6 +467,7 @@ def test_download_checks_the_sha256_pin(tmp_path):
     src.write_bytes(b"recording")
     good = hashlib.sha256(b"recording").hexdigest()
     assert Path(_download(src.as_uri(), str(tmp_path / "dl"), good)).read_bytes() == b"recording"
+    assert Path(_download(src.as_uri(), str(tmp_path / "dl-uppercase"), good.upper())).read_bytes() == b"recording"
     with pytest.raises(RuntimeError, match="SHA-256"):
         _download(src.as_uri(), str(tmp_path / "dl"), "0" * 64)  # the cached copy is checked too
     # No pin, or a SHA-1-length pin, is refused before anything is downloaded
