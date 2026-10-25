@@ -21,7 +21,7 @@ import modal
 app = modal.App.lookup("open-xtts-runner", create_if_missing=True)
 
 # Pinned commit SHA for reproducible execution
-PINNED_COMMIT = "a9dbbd87fae511eeb8053787754f762391ce4dd7"
+PINNED_COMMIT = "7af91fc1d72cf2ce908994e43e2e5052957b4202"
 
 # Persistent volumes for base models, training runs, checkpoints, and baseline results
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
