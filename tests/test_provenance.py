@@ -127,3 +127,30 @@ def test_index_manifest_mismatches_detects_missing_language_and_wrong_file(expec
     renamed.write_text((tmp_path / "base_xtts_s12_es.json").read_text(encoding="utf-8"), encoding="utf-8")
     assert any("file:" in p for p in index_manifest_mismatches(str(renamed), index, "es"))
 
+
+def test_write_baseline_index_preserves_unprocessed_entries(expected, tmp_path):
+    paths = {
+        "en": str(tmp_path / "base_xtts_s12_en.json"),
+        "es": str(tmp_path / "base_xtts_s12_es.json"),
+    }
+    for lang, p in paths.items():
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(_manifest(expected, lang), f)
+    index_path = str(tmp_path / "index.json")
+    full_index = write_baseline_index(paths, index_path)
+    assert sorted(full_index["files"]) == ["en", "es"]
+
+    # Partial run that only processes "en", passing the existing full index
+    partial_paths = {"en": paths["en"]}
+    updated_index = write_baseline_index(partial_paths, index_path, existing_index=full_index)
+    assert sorted(updated_index["files"]) == ["en", "es"]
+    assert updated_index["files"]["es"] == full_index["files"]["es"]
+    assert updated_index["summary_by_language"]["es"] == full_index["summary_by_language"]["es"]
+
+    # Reject existing_index with mismatched inputs
+    bad_index = copy.deepcopy(full_index)
+    bad_index["inputs"]["seeds"] = [1]
+    with pytest.raises(ValueError, match="seeds"):
+        write_baseline_index(partial_paths, index_path, existing_index=bad_index)
+
+

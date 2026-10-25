@@ -89,8 +89,13 @@ def manifest_mismatches(manifest: Dict[str, Any], expected: Dict[str, Any], lang
     return problems
 
 
-def write_baseline_index(manifest_paths: Dict[str, str], out_path: str) -> Dict[str, Any]:
-    """One index over per-language manifests that share every input; raises if any shared input differs."""
+def write_baseline_index(manifest_paths: Dict[str, str], out_path: str,
+                         existing_index: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """One index over per-language manifests that share every input; raises if any shared input differs.
+
+    If existing_index is provided, entries for languages not in manifest_paths are preserved,
+    provided existing_index shares the same inputs.
+    """
     shared, files, summaries = None, {}, {}
     for language, path in sorted(manifest_paths.items()):
         with open(path, "r", encoding="utf-8") as f:
@@ -101,8 +106,24 @@ def write_baseline_index(manifest_paths: Dict[str, str], out_path: str) -> Dict[
         elif inputs != shared:
             diff = sorted(k for k in SHARED_KEYS if inputs[k] != shared[k])
             raise ValueError(f"{path} was measured on different inputs from the other pieces: {diff}")
-        files[language] = {"file": os.path.basename(path), "sha256": _sha256_file(path)}
+        files[language] = {"file": os.path.basename(path), "sha256": sha256_file(path)}
         summaries[language] = manifest["summary_by_language"][language]
+
+    if existing_index:
+        existing_inputs = existing_index.get("inputs")
+        if shared is None:
+            shared = existing_inputs
+        elif existing_inputs and existing_inputs != shared:
+            diff = sorted(k for k in SHARED_KEYS if existing_inputs.get(k) != shared.get(k))
+            raise ValueError(f"existing index was measured on different inputs: {diff}")
+        for language, entry in (existing_index.get("files") or {}).items():
+            if language not in files:
+                files[language] = entry
+                if language in (existing_index.get("summary_by_language") or {}):
+                    summaries[language] = existing_index["summary_by_language"][language]
+
+    files = dict(sorted(files.items()))
+    summaries = dict(sorted(summaries.items()))
     index = {"format": "open-xtts-baseline-index", "version": 1, "inputs": shared, "files": files,
              "summary_by_language": summaries}
     with open(out_path, "w", encoding="utf-8") as f:
