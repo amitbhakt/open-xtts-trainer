@@ -111,9 +111,11 @@ def write_baseline_index(manifest_paths: Dict[str, str], out_path: str,
 
     if existing_index:
         existing_inputs = existing_index.get("inputs")
+        if not existing_inputs:
+            raise ValueError("existing index has missing or empty inputs")
         if shared is None:
             shared = existing_inputs
-        elif existing_inputs and existing_inputs != shared:
+        elif existing_inputs != shared:
             diff = sorted(k for k in SHARED_KEYS if existing_inputs.get(k) != shared.get(k))
             raise ValueError(f"existing index was measured on different inputs: {diff}")
         for language, entry in (existing_index.get("files") or {}).items():

@@ -153,4 +153,15 @@ def test_write_baseline_index_preserves_unprocessed_entries(expected, tmp_path):
     with pytest.raises(ValueError, match="seeds"):
         write_baseline_index(partial_paths, index_path, existing_index=bad_index)
 
+    # Reject existing_index with missing or empty inputs
+    bad_index_no_inputs = copy.deepcopy(full_index)
+    bad_index_no_inputs.pop("inputs", None)
+    with pytest.raises(ValueError, match="missing or empty inputs"):
+        write_baseline_index(partial_paths, index_path, existing_index=bad_index_no_inputs)
+
+    bad_index_empty_inputs = copy.deepcopy(full_index)
+    bad_index_empty_inputs["inputs"] = {}
+    with pytest.raises(ValueError, match="missing or empty inputs"):
+        write_baseline_index(partial_paths, index_path, existing_index=bad_index_empty_inputs)
+
 
