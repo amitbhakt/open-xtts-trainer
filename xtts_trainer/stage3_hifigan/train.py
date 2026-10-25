@@ -84,13 +84,17 @@ def load_base_decoder(generator, model_path: str) -> None:
     load_state_strict(generator, state, f"HiFi-GAN decoder ({model_path})")
 
 
-def scaler_step(scaler, optimizer) -> bool:
-    """scaler.step + scaler.update; False when the step was skipped. With fp16 the scaler skips any step whose
-    gradients overflowed and halves its scale, so a lower scale after update() means a skipped step."""
-    before = scaler.get_scale()
+def scaler_step(scaler, optimizer, skipped_steps: Optional[torch.Tensor] = None) -> None:
+    """Step and update a gradient scaler, optionally accumulating fp16 overflows on the device.
+
+    ``GradScaler.get_scale()`` converts a CUDA scalar to Python, synchronizing the device.  The scale tensor is
+    updated in place, so compare it on-device and convert the accumulated total only when validation writes metrics.
+    """
+    scale_before = scaler._scale.clone() if scaler.is_enabled() and skipped_steps is not None else None
     scaler.step(optimizer)
     scaler.update()
-    return not scaler.is_enabled() or scaler.get_scale() >= before
+    if scale_before is not None:
+        skipped_steps.add_(scaler._scale < scale_before)
 
 
 @torch.no_grad()
@@ -185,12 +189,14 @@ def train_hifigan(
     metrics_path = os.path.join(output_dir, "metrics.jsonl")
 
     step, start_epoch, best = 0, 1, None
-    skipped_g = 0  # generator steps the fp16 scaler skipped, counted from the start of this process
+    skipped_g = torch.zeros((), device=device, dtype=torch.int64) if precision.enabled else None
     if resume:
         restored = load_training_state(state_path, **run)
         step, start_epoch, best = restored["step"], restored["epoch"] + 1, restored["best"]
         loader_gen.set_state(restored["extra"]["loader_generator"])
         reference = restored["extra"]["reference"]
+        if skipped_g is not None:
+            skipped_g.fill_(restored["extra"].get("skipped_steps_g", 0))
     else:
         reference = evaluate_decoder(generator, val_clips, val_mel, device, os.path.join(output_dir, "samples", "step_0"))
         logger.info("Validation error of the starting decoder: %.4f (to beat)", reference)
@@ -202,7 +208,7 @@ def train_hifigan(
         record = {"step": step, "epoch": epoch, "val_mel_l1": error, "reference": reference,
                   "lr_g": sched_g.get_last_lr()[0],
                   "grad_scale_g": scaler_g.get_scale() if precision.enabled else None,
-                  "skipped_steps_g": skipped_g if precision.enabled else None}
+                  "skipped_steps_g": int(skipped_g.item()) if skipped_g is not None else None}
         with open(metrics_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record) + "\n")
         logger.info("Validation step %d: mel L1 %.4f (start %.4f)", step, error, reference)
@@ -254,7 +260,7 @@ def train_hifigan(
             scaler_g.scale(loss_g).backward()
             scaler_g.unscale_(optim_g)
             torch.nn.utils.clip_grad_norm_(generator.waveform_decoder.parameters(), config.grad_clip)
-            skipped_g += not scaler_step(scaler_g, optim_g)
+            scaler_step(scaler_g, optim_g, skipped_g)
             sched_g.step()
             if not config.mel_only:  # the discriminators only train (and their optimizer only steps) when used
                 sched_d.step()
@@ -264,7 +270,8 @@ def train_hifigan(
         if step % config.val_every_steps:
             validate(epoch)
         save_training_state(state_path, **run, step=step, epoch=epoch, best=best,
-                            extra={"loader_generator": loader_gen.get_state(), "reference": reference})
+                            extra={"loader_generator": loader_gen.get_state(), "reference": reference,
+                                   "skipped_steps_g": int(skipped_g.item()) if skipped_g is not None else 0})
 
     logger.info("Stage 3 finished; best validation mel L1 %.4f (starting decoder %.4f): %s", best, reference, best_path)
     return best_path

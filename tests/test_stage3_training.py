@@ -105,31 +105,35 @@ def test_training_validates_keeps_best_and_writes_samples(tmp_path):
     assert all(m["grad_scale_g"] is None and m["skipped_steps_g"] is None for m in metrics)
 
 
-def test_scaler_step_reports_skipped_steps():
-    """With fp16 the scaler skips a step on overflowed gradients and halves its scale: that's what gets counted."""
+def test_scaler_step_counts_skipped_steps_without_reading_the_scale():
+    """Overflowed fp16 steps are counted on-device without synchronizing through get_scale()."""
     from xtts_trainer.stage3_hifigan.train import scaler_step
 
     class FakeScaler:
         def __init__(self, enabled, overflow):
-            self.enabled, self.overflow, self.scale, self.stepped = enabled, overflow, 65536.0, False
+            self.enabled, self.overflow, self._scale, self.stepped = enabled, overflow, torch.tensor(65536.0), False
 
         def is_enabled(self):
             return self.enabled
 
         def get_scale(self):
-            return self.scale if self.enabled else 1.0
+            raise AssertionError("scaler_step must not synchronize through get_scale")
 
         def step(self, optimizer):
             self.stepped = not self.overflow
 
         def update(self):
             if self.enabled and self.overflow:
-                self.scale /= 2
+                self._scale /= 2
 
-    assert scaler_step(FakeScaler(True, overflow=False), None) is True
+    skipped_steps = torch.zeros((), dtype=torch.int64)
+    scaler_step(FakeScaler(True, overflow=False), None, skipped_steps)
+    assert skipped_steps.item() == 0
     skipped = FakeScaler(True, overflow=True)
-    assert scaler_step(skipped, None) is False and not skipped.stepped
-    assert scaler_step(FakeScaler(False, overflow=False), None) is True
+    scaler_step(skipped, None, skipped_steps)
+    assert skipped_steps.item() == 1 and not skipped.stepped
+    scaler_step(FakeScaler(False, overflow=False), None, skipped_steps)
+    assert skipped_steps.item() == 1
 
 
 def test_resume_replays_the_same_data_stream(tmp_path, monkeypatch):
