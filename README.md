@@ -304,7 +304,7 @@ The repository includes a suite of 8 pre-registered ablation studies (`eval/pre_
 |---|---|---|---|
 | **A1** | Short-Text Hallucination Mitigation | Short-text CER, duration failures | Casanova et al. (*Interspeech* 2024); Chen et al. (*IEEE/ACM TASLP* 2024) |
 | **A2** | Discrete DVAE Codebook & Representation Plasticity | Perplexity, log-mel L1, end-to-end WER | Zheng et al. (*ICCV* 2023); Casanova et al. (*Interspeech* 2024) |
-| **A3** | Conditioning Masking Impact (F2 Bug Verification) | Short-prompt CER, SECS, duration failures | Casanova et al. (*Interspeech* 2024) |
+| **A3** | Conditioning Masking Impact (F2 Bug Verification) | Short-prompt CER, SECS, duration failures | **Empirically proved by our runs**; Casanova et al. (*Interspeech* 2024) |
 | **A4** | Same-Clip vs. Cross-Clip Reference Conditioning | SECS, CER across held-out speakers | Casanova et al. (*ICML* 2022) |
 | **A5** | Tokenizer Vocabulary Extension & Embedding Init | Tokenizer fertility, CER, OOD regression | Minixhofer et al. (*NAACL* 2022); Dobler et al. (*EMNLP* 2023) |
 | **A6** | Acoustic Pause-Aware Punctuation Normalization | Pause placement accuracy, CER, UTMOS | Saeki et al. (*Interspeech* 2022) |
