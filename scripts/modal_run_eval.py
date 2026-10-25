@@ -16,10 +16,10 @@ import subprocess
 from pathlib import Path
 import modal
 
-app = modal.App.lookup("open-xtts-runner", create_if_missing=True)
+app = modal.App("open-xtts-runner")
 
 # Pinned commit SHA for reproducible container build
-PINNED_COMMIT = "1963878564fcf85a85285e68340d04c10a4ff0a3"
+PINNED_COMMIT = "2f1f67ee5261aabd37579d704e62fab4ac177bc4"
 
 # Persistent volumes for base models, training runs, checkpoints, and baseline results
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
@@ -32,13 +32,22 @@ repo_root = Path(__file__).resolve().parent.parent
 image = (
     modal.Image.debian_slim(python_version="3.11")
     .apt_install("git", "ffmpeg", "libsndfile1")
-    .pip_install("uv==0.12.13")
+    .pip_install("uv==0.12.13", "packaging")
     .run_commands(
-        "git clone https://github.com/amitbhakt/open-xtts-trainer.git /root/open-xtts-trainer",
-        f"cd /root/open-xtts-trainer && git checkout {PINNED_COMMIT}",
+        f"git clone https://github.com/amitbhakt/open-xtts-trainer.git /root/open-xtts-trainer && cd /root/open-xtts-trainer && git checkout {PINNED_COMMIT}",
         "cd /root/open-xtts-trainer && uv export --frozen --no-hashes --no-emit-project --extra dev --extra eval -o /root/reqs.txt",
-        "uv pip install --system --break-system-packages -r /root/reqs.txt",
-        "uv pip install --system --break-system-packages -e /root/open-xtts-trainer",
+        (
+            'python3 -c "'
+            'from packaging.requirements import Requirement; '
+            'lines = [l.strip() for l in open(\'/root/reqs.txt\') if l.strip() and not l.lstrip().startswith(\'#\')]; '
+            'codec = [l for l in lines if Requirement(l).name == \'torchcodec\' and Requirement(l).marker.evaluate()]; '
+            'open(\'/root/reqs.main.txt\', \'w\').write(\'\\n\'.join(l for l in lines if Requirement(l).name != \'torchcodec\') + \'\\n\'); '
+            'open(\'/root/reqs.torchcodec.txt\', \'w\').write(codec[0].split(\';\')[0].strip() + \'\\n\'); '
+            '"'
+        ),
+        "uv pip install --system --break-system-packages --no-deps -r /root/reqs.main.txt",
+        "uv pip install --system --break-system-packages --no-deps --index-url https://download.pytorch.org/whl/cpu -r /root/reqs.torchcodec.txt",
+        "uv pip install --system --break-system-packages --no-deps -e /root/open-xtts-trainer",
         "pip uninstall -y -q torchvision",
     )
     .add_local_dir(
