@@ -24,12 +24,15 @@ SHARED_KEYS = ("commit_sha", "code_fingerprint", "eval_set_sha256", "checkpoint_
                "voices", "label", "asr_model", "seeds", "subset_size", "metrics_version")
 
 
-def _sha256_file(path: str) -> str:
+def sha256_file(path: str) -> str:
     digest = hashlib.sha256()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+_sha256_file = sha256_file
 
 
 def expected_baseline_inputs(commit_sha: str, seeds: Sequence[int], subset_size: Optional[int], label: str = "base",
@@ -105,3 +108,24 @@ def write_baseline_index(manifest_paths: Dict[str, str], out_path: str) -> Dict[
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(index, f, indent=2)
     return index
+
+
+def index_manifest_mismatches(manifest_path: str, index: Dict[str, Any], language: str) -> List[str]:
+    """Check that a manifest file matches the file name, SHA-256 and summary recorded in an existing index."""
+    entry = (index.get("files") or {}).get(language)
+    if not entry:
+        return [f"index does not record language {language!r}"]
+    expected_file = os.path.basename(manifest_path)
+    problems = []
+    if entry.get("file") != expected_file:
+        problems.append(f"file: index records {entry.get('file')!r}, got {expected_file!r}")
+    actual_sha = sha256_file(manifest_path)
+    if actual_sha != entry.get("sha256"):
+        problems.append(f"sha256: file has {actual_sha}, index records {entry.get('sha256')}")
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+    actual_summary = (manifest.get("summary_by_language") or {}).get(language)
+    index_summary = (index.get("summary_by_language") or {}).get(language)
+    if actual_summary != index_summary:
+        problems.append("summary_by_language: manifest summary does not match index summary")
+    return problems

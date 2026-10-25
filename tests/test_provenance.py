@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import pytest
 
-from eval.provenance import expected_baseline_inputs, manifest_mismatches, write_baseline_index
+from eval.provenance import expected_baseline_inputs, index_manifest_mismatches, manifest_mismatches, write_baseline_index
 
 COMMIT = "a" * 40
 
@@ -88,3 +88,42 @@ def test_index_records_each_piece_and_refuses_mixed_inputs(expected, tmp_path):
         json.dump(other, f)
     with pytest.raises(ValueError, match="seeds"):
         write_baseline_index(paths, str(tmp_path / "index.json"))
+
+
+def test_index_manifest_mismatches_accepts_matching_file(expected, tmp_path):
+    paths = {"es": str(tmp_path / "base_xtts_s12_es.json")}
+    with open(paths["es"], "w", encoding="utf-8") as f:
+        json.dump(_manifest(expected, "es"), f)
+    index = write_baseline_index(paths, str(tmp_path / "index.json"))
+    assert index_manifest_mismatches(paths["es"], index, "es") == []
+
+
+def test_index_manifest_mismatches_detects_edited_manifest(expected, tmp_path):
+    paths = {"es": str(tmp_path / "base_xtts_s12_es.json")}
+    manifest = _manifest(expected, "es")
+    with open(paths["es"], "w", encoding="utf-8") as f:
+        json.dump(manifest, f)
+    index = write_baseline_index(paths, str(tmp_path / "index.json"))
+
+    # Modify summary
+    manifest["summary_by_language"]["es"]["wer"]["mean"] = 0.99
+    with open(paths["es"], "w", encoding="utf-8") as f:
+        json.dump(manifest, f)
+
+    problems = index_manifest_mismatches(paths["es"], index, "es")
+    assert any("sha256:" in p for p in problems)
+    assert any("summary_by_language:" in p for p in problems)
+
+
+def test_index_manifest_mismatches_detects_missing_language_and_wrong_file(expected, tmp_path):
+    paths = {"es": str(tmp_path / "base_xtts_s12_es.json")}
+    with open(paths["es"], "w", encoding="utf-8") as f:
+        json.dump(_manifest(expected, "es"), f)
+    index = write_baseline_index(paths, str(tmp_path / "index.json"))
+
+    assert "does not record" in index_manifest_mismatches(paths["es"], index, "fr")[0]
+
+    renamed = tmp_path / "wrong_name.json"
+    renamed.write_text((tmp_path / "base_xtts_s12_es.json").read_text(encoding="utf-8"), encoding="utf-8")
+    assert any("file:" in p for p in index_manifest_mismatches(str(renamed), index, "es"))
+
