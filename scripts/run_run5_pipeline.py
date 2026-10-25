@@ -160,12 +160,13 @@ def main():
         "--output_dir runs/gpt_smoke --epochs 3 --batch_size 2 --grad_accum_steps 1 --eval_fraction 0.25"
     )
     from xtts_trainer.stage2_gpt.export import load_for_inference
+    from xtts_trainer.spec import SPEC
     import soundfile as sf
     xtts = load_for_inference("runs/gpt_smoke/export", "cuda" if torch.cuda.is_available() else "cpu")
     lat, spk = xtts.get_conditioning_latents(audio_path=["eval/reference_voices/arctic_slt.wav"])
     torch.manual_seed(42)
     wav = xtts.inference("The quick brown fox jumps over the lazy dog.", "en", lat, spk, temperature=0.7)["wav"]
-    sf.write("docs/evidence/phase7/stage2_smoke_sample.wav", wav, 24000)
+    sf.write("docs/evidence/phase7/stage2_smoke_sample.wav", wav, SPEC.output_sample_rate)
     run_cmd("cp runs/gpt_smoke/export/training_summary.json docs/evidence/phase7/")
     check_artifacts("step 7c")
 
