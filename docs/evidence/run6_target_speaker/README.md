@@ -33,7 +33,7 @@ Evaluated on held-out reference audio of Moira Fogarty reading *The Art of War* 
 | **Duration Ratio** | Informational | 0.9876 | 0.9649 | −0.0227 | [−0.0528, +0.0073] | — |
 | **Failures** | `not_worse` (margin 0) | 0 / 60 | 0 / 60 | 0 | [0.0, 0.0] | **PASS** |
 
-*(Note: SECCS is evaluated on $n=51$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=60$.)*
+*(Note: SECS is evaluated on $n=51$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=60$.)*
 
 **Conclusion:** All 5 pre-registered adaptation gates passed within tolerance (SECS gain of $+0.0329$ passing the `better` rule; WER improved; CER $+0.0008$ and UTMOS $-0.0439$ stayed well within their respective 0.01 and 0.10 tolerance margins). Target speaker similarity improved with high statistical confidence (95% bootstrap CI strictly positive $[+0.0191, +0.0480]$ across $n=51$ pairs). While audio naturalness (UTMOS) decreased slightly by 0.0439 (95% CI $[-0.0831, -0.0065]$), this regression remained within the allowable 0.10 tolerance margin.
 

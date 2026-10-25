@@ -121,3 +121,20 @@ def test_gates_file_is_pre_registered_and_well_formed():
     assert GATES["version"] == 1 and GATES["gates"]
     for g in GATES["gates"]:
         assert g["rule"] in ("not_worse", "better") and "margin" in g and g["why"]
+
+
+def test_failures_gate_requires_metadata_and_counts_utterance_once():
+    from scripts.compare_ab import failures
+
+    # Clean utterance
+    clean = [{"failures": {"nan_audio": False, "empty_audio": False}}]
+    assert failures(clean) == 0
+
+    # Utterance with multiple failure flags is only counted once
+    multiple_flags = [{"failures": {"nan_audio": True, "empty_audio": True}}]
+    assert failures(multiple_flags) == 1
+
+    # Missing failure metadata must raise KeyError rather than silently counting as clean
+    missing_failures = [{}]
+    with pytest.raises(KeyError):
+        failures(missing_failures)

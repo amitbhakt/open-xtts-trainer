@@ -586,16 +586,24 @@ def test_long_audio_word_grouping_aligns_without_frame_overflow(monkeypatch, tmp
 
 
 def test_phrase_windows_clamps_boundary_and_discards_out_of_range():
-    """Phrases starting at or beyond audio_s are discarded, and out-of-range starts are clamped."""
+    """Phrases starting at or beyond audio_s are discarded, and negative starts or over-extended ends are clamped."""
     from xtts_trainer.prepare.pipeline import phrase_windows
 
     phrases = [
-        ("Valid phrase", 0.0, 5.0),
+        ("Negative start phrase", -2.5, 4.0),
+        ("Over-extended phrase", 6.0, 15.0),
         ("Out of range phrase", 12.0, 15.0),  # starts beyond 10.0s audio
     ]
-    windows = phrase_windows(phrases, audio_s=10.0)
-    assert len(windows) == 1
-    assert windows[0][2] == "Valid phrase"
+    windows = phrase_windows(phrases, audio_s=10.0, target_s=5.0)
+    assert len(windows) == 2
+    # Verify negative start was clamped to 0.0
+    assert windows[0][0] == 0.0
+    assert windows[0][1] == 4.0
+    assert windows[0][2] == "Negative start phrase"
+    # Verify over-extended end was clamped to audio_s (10.0)
+    assert windows[1][0] == 6.0
+    assert windows[1][1] == 10.0
+    assert windows[1][2] == "Over-extended phrase"
 
 
 

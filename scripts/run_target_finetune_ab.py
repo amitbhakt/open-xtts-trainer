@@ -83,7 +83,6 @@ def main():
     parser.add_argument("--subset-size", type=int, default=12, help="Eval subset size per language (default: 12)")
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 123, 999], help="Eval seeds")
     parser.add_argument("--skip-train", action="store_true", help="Skip fine-tuning if checkpoint already exported")
-    parser.add_argument("--eval-batch-size", type=int, default=16, help="Batch size for Whisper ASR during evaluation")
     args = parser.parse_args()
 
     if args.speaker != "moira_fogarty":
@@ -213,7 +212,6 @@ def main():
     base_target_manifest = os.path.join(results_dir, f"base_xtts_s{args.subset_size}_target.json")
     seeds_args = list(map(str, args.seeds))
     subset_args = ["--subset_size", str(args.subset_size)] if args.subset_size else []
-    batch_args = ["--batch_size", str(args.eval_batch_size)]
 
     print(f"\n📊 Step 6: Evaluating BASE model on target held-out clips...")
     base_eval_cmd = [
@@ -224,7 +222,6 @@ def main():
         "--label", "base",
         "--seeds", *seeds_args,
         *subset_args,
-        *batch_args,
         "--output", base_target_manifest,
     ]
     run_cmd(base_eval_cmd)
@@ -240,7 +237,6 @@ def main():
         "--label", "tuned",
         "--seeds", *seeds_args,
         *subset_args,
-        *batch_args,
         "--output", tuned_target_manifest,
     ]
     run_cmd(tuned_eval_cmd)
@@ -256,7 +252,6 @@ def main():
         "--label", "tuned",
         "--seeds", *seeds_args,
         *subset_args,
-        *batch_args,
         "--output", tuned_arctic_manifest,
     ]
     run_cmd(tuned_arctic_eval_cmd)
@@ -275,12 +270,25 @@ def main():
         json.dump(target_gates_data, f, indent=2)
 
     target_ab_report_path = os.path.join(results_dir, "ab_report_target.json")
-    run_cmd([
+    if os.path.exists(target_ab_report_path):
+        os.remove(target_ab_report_path)
+    ret_target = run_cmd([
         sys.executable, "scripts/compare_ab.py",
         base_target_manifest, tuned_target_manifest,
         "--gates", target_gates_path,
         "--report", target_ab_report_path,
     ], check=False)
+    if not os.path.exists(target_ab_report_path):
+        raise RuntimeError(
+            f"compare_ab failed to produce fresh target report at {target_ab_report_path} (exit code: {ret_target})"
+        )
+    try:
+        with open(target_ab_report_path, "r", encoding="utf-8") as f:
+            target_rep = json.load(f)
+        if "passed" not in target_rep:
+            raise KeyError("missing 'passed' in target report")
+    except (json.JSONDecodeError, OSError, KeyError) as e:
+        raise RuntimeError(f"Invalid target report produced at {target_ab_report_path}: {e}") from e
 
     # Gate 2: ARCTIC Preservation Gate (compared against locked Run 5 English baseline if seeds, subset, and checkpoint hashes match, else generate)
     base_arctic_manifest = f"eval/baselines/base_xtts_s{args.subset_size}_en.json"
@@ -330,18 +338,30 @@ def main():
             "--label", "base",
             "--seeds", *seeds_args,
             *subset_args,
-            *batch_args,
             "--output", base_arctic_manifest,
         ])
 
     arctic_gates_path = "eval/gates.json"
     preservation_ab_report_path = os.path.join(results_dir, "ab_report_preservation.json")
-    run_cmd([
+    if os.path.exists(preservation_ab_report_path):
+        os.remove(preservation_ab_report_path)
+    ret_pres = run_cmd([
         sys.executable, "scripts/compare_ab.py",
         base_arctic_manifest, tuned_arctic_manifest,
         "--gates", arctic_gates_path,
         "--report", preservation_ab_report_path,
     ], check=False)
+    if not os.path.exists(preservation_ab_report_path):
+        raise RuntimeError(
+            f"compare_ab failed to produce fresh preservation report at {preservation_ab_report_path} (exit code: {ret_pres})"
+        )
+    try:
+        with open(preservation_ab_report_path, "r", encoding="utf-8") as f:
+            pres_rep = json.load(f)
+        if "passed" not in pres_rep:
+            raise KeyError("missing 'passed' in preservation report")
+    except (json.JSONDecodeError, OSError, KeyError) as e:
+        raise RuntimeError(f"Invalid preservation report produced at {preservation_ab_report_path}: {e}") from e
 
     # 11. Run Phase 5 Canary: Identity Canary on Released Weights
     print("\n🐤 Step 10: Running Phase 5 Identity Canary on released weights...")

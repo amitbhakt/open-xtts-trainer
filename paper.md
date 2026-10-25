@@ -630,4 +630,5 @@ encoders in zero-shot TTS, arXiv:2506.20190) to be added once their author lists
 | Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/` (`stage1_smoke.json`, `training_summary.json`, `runs_gpt_smoke_log.txt`, `stage3_metrics.jsonl`); drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
 | Paired A/B and gates (3.5) | `scripts/compare_ab.py`; `eval/gates.json`; `tests/test_compare_ab.py` |
 | Target-speaker hold-out guard (3.5) | `eval/target_voices.py`; `xtts_trainer/data/validate.py`; `tests/test_target_voices.py` |
+| Target speaker adaptation, Table 5 (§5.6, Run 6) | `eval/gates_target.json`; `docs/evidence/run6_target_speaker/ab_report_target.json`; `docs/evidence/run6_target_speaker/evidence/prep_report.json`; `docs/evidence/run6_target_speaker/evidence/validation_report.json`; `docs/evidence/run6_target_speaker/evidence/training_summary.json` |
 | Source pinning (3.6) | `xtts_trainer/speech_data.py`; `docs/evidence/source_pins.md` (SHA-256 pins, with the SHA-1 cross-check) |
