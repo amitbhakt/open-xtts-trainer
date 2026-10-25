@@ -377,8 +377,8 @@ now stratified by category.
 Three measurement artefacts motivated metrics version 2:
 
 1. **Duration estimated from written digits.** "4,800,000" is 9 characters but about 2 s of speech. The numbers
-   category therefore scored a duration ratio of 1.61, while the ASR transcripts were exact. Estimating duration
-   from the cleaned words lowers the ratio to 0.82.
+   category therefore scored a duration ratio of 1.61. Estimating duration from the cleaned words lowers the
+   ratio to 0.82.
 2. **One-word utterances flagged too long.** A 0.5 s floor on the duration estimate flagged the normal one-word
    answer "Yes." (1.15 s) as too long. Requiring 1 s of absolute excess removes the false flag.
 3. **SECS on very short clips.** SECS on 0.7–1.15 s clips is 0.33, against 0.48–0.62 for every other category.
@@ -431,8 +431,8 @@ of them.
 All three stages load the released weights strictly, train, validate and save a best-by-validation checkpoint.
 In Stage 3, validation loss reached its minimum and then rose within 120 steps on this small set, so selecting
 the best checkpoint rather than the last one is necessary. The first four Stage 3 measurements (steps 2–8) were
-identical to full floating-point precision, so the generator did not change for about eight steps. We suspect,
-but have not verified, that the fp16 loss scaler skipped these steps on overflow.
+identical to full floating-point precision. We suspect, but have not verified, that the fp16 loss scaler skipped
+these steps on overflow.
 
 **DVAE fine-tuning changes most codes.** Neither DVAE mode collapsed the codebook, and both improved
 reconstruction. In both modes, however, code drift reached $\delta = 0.815$: 81.5% of validation code positions
