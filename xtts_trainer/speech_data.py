@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 import soundfile as sf
+import torch
 
 from xtts_trainer.data import DatasetRecord, validate_dataset
 from xtts_trainer.prepare.align import CtcAligner
@@ -180,9 +181,10 @@ def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[Li
 
 def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAligner] = None,
                     config: Optional[PrepConfig] = None, max_seconds: Optional[float] = None,
-                    device: str = "cpu") -> str:
+                    device: Optional[str] = None) -> str:
+    dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
     records, reports = [], []
-    aligner = aligner or CtcAligner(device=device)
+    aligner = aligner or CtcAligner(device=dev)
     for name in names:
         source = SOURCES[name]
         print(f"Preparing '{name}': {source.description}")
@@ -197,7 +199,7 @@ def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAlig
                 recs_k, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
                                                    transcript=source.transcript, aligner=aligner, config=config,
                                                    clip_prefix=prefix, source=url, max_seconds=max_seconds,
-                                                   device=device)
+                                                   device=dev)
                 report["license"] = source.license
                 reports.append(report)
                 recs += recs_k
@@ -234,7 +236,8 @@ def main(argv: Optional[List[str]] = None):
     parser.add_argument("--fix_pauses", action="store_true", help="Add commas at long unpunctuated pauses (ablation A6)")
     parser.add_argument("--vocab", default=DEFAULT_VOCAB, help="Tokenizer vocab used to validate the result")
     parser.add_argument("--languages", nargs="+", default=[], help="Registered extra language codes (validation)")
-    parser.add_argument("--device", default="cpu")
+    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu",
+                        help="Computation device (default: cuda if available, else cpu)")
     args = parser.parse_args(argv)
 
     if args.input_file and args.source:

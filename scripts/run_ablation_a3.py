@@ -24,6 +24,8 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import torch
+
 # Ensure repo root is on sys.path
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
@@ -115,12 +117,14 @@ def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, so
     dataset_path = os.path.join(data_dir, "dataset.jsonl")
 
     if not os.path.exists(dataset_path):
-        logger.info("Preparing target speech data from source %s...", source)
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info("Preparing target speech data from source %s on device %s...", source, device)
         run_cmd([
             sys.executable, "-m", "xtts_trainer.speech_data",
             "--source", source,
             "--output_dir", data_dir,
             "--vocab", "xtts_base/vocab.json",
+            "--device", device,
         ])
 
     run_cmd([

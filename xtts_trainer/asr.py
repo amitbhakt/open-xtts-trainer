@@ -4,11 +4,16 @@ from functools import lru_cache
 from typing import Any, List, Optional, Tuple
 
 import numpy as np
+import torch
 
 from xtts_trainer.spec.languages import whisper_language
 
 ENGLISH_ASR_MODEL = "openai/whisper-base.en"
 MULTILINGUAL_ASR_MODEL = "openai/whisper-large-v3-turbo"
+
+
+def default_asr_device() -> str:
+    return "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def default_asr_model(lang: str) -> str:
@@ -18,11 +23,12 @@ def default_asr_model(lang: str) -> str:
 
 
 @lru_cache(maxsize=4)
-def load_asr(model_name: str, device: str = "cpu") -> Any:
+def load_asr(model_name: str, device: Optional[str] = None) -> Any:
     """Load (and cache) a Hugging Face Whisper ASR pipeline. Failures propagate; there is no fallback model."""
     from transformers import pipeline
 
-    return pipeline("automatic-speech-recognition", model=model_name, device=device)
+    dev = device or default_asr_device()
+    return pipeline("automatic-speech-recognition", model=model_name, device=dev)
 
 
 def _generate_kwargs(model_name: str, lang: str) -> dict:
@@ -34,7 +40,7 @@ def _generate_kwargs(model_name: str, lang: str) -> dict:
     return {"language": whisper_language(lang), "task": "transcribe"}
 
 
-def transcribe(audio: np.ndarray, sample_rate: int, lang: str, model_name: str, device: str = "cpu") -> str:
+def transcribe(audio: np.ndarray, sample_rate: int, lang: str, model_name: str, device: Optional[str] = None) -> str:
     """Transcribe mono audio, passing its true sample rate so the pipeline resamples correctly."""
     asr = load_asr(model_name, device)
     asr_input = {"raw": np.asarray(audio, dtype=np.float32), "sampling_rate": sample_rate}
@@ -48,7 +54,7 @@ def transcribe_batch(
     sample_rate: int,
     lang: str,
     model_name: str,
-    device: str = "cpu",
+    device: Optional[str] = None,
     batch_size: int = 16,
 ) -> List[str]:
     """Transcribe a batch of mono audio waveforms using Whisper in batched pipeline mode.
@@ -74,7 +80,7 @@ def transcribe_batch(
 
 
 def transcribe_phrases(
-    audio: np.ndarray, sample_rate: int, lang: str, model_name: str, device: str = "cpu"
+    audio: np.ndarray, sample_rate: int, lang: str, model_name: str, device: Optional[str] = None
 ) -> List[Tuple[str, float, Optional[float]]]:
     """Long-form transcription as (text, start_s, end_s) phrases.
 
