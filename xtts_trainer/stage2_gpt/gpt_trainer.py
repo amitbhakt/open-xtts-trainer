@@ -228,6 +228,9 @@ class ProjectGPTTrainer(GPTTrainer):
             raise ValueError("pass base weights as base_model_path; upstream's checkpoint arguments load non-strictly")
         if config.audio.sample_rate != config.audio.dvae_sample_rate:
             raise ValueError("prompt masking assumes cond_idxs and DVAE codes share one sample rate")
+        from xtts_trainer import patch_xtts_prevent_checkpoint_mutation
+
+        patch_xtts_prevent_checkpoint_mutation()
         super().__init__(config)
         self.xtts.tokenizer = ProjectTokenizer(args.tokenizer_file, extra_languages)
         # Upstream loaded the DVAE non-strictly; reload with the exact allowlist (F3)

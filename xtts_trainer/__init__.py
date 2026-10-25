@@ -43,6 +43,3 @@ def patch_xtts_prevent_checkpoint_mutation() -> None:
     Xtts._load_checkpoint = safe_load_checkpoint
     Xtts._open_xtts_no_mutation_patched = True
 
-
-# Auto-apply the patch on import
-patch_xtts_prevent_checkpoint_mutation()
