@@ -15,7 +15,7 @@ import sys
 from typing import Any, Dict, List
 
 SAME_INPUT_KEYS = ("metrics_version", "code_fingerprint", "eval_set_sha256", "checkpoint_sha256", "reference_voices", "seeds",
-                   "subset_size", "languages", "asr_model")
+                   "subset_size", "languages", "asr_model", "batch_size")
 METRICS = ("wer", "cer", "secs", "secs_all", "utmos", "duration_ratio")
 
 

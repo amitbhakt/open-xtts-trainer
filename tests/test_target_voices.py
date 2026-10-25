@@ -185,6 +185,9 @@ def test_eval_with_target_voices(monkeypatch, tmp_path):
         with pytest.raises(ValueError, match="plain name"):
             baseline_module.generate_baseline(checkpoint_dir=str(ckpt), voices="target", target_dir=out, label=bad,
                                               allow_unchecked_location=True)
+    for bad_batch in (0, -1, -16):
+        with pytest.raises(ValueError, match="batch_size must be a positive integer"):
+            baseline_module.generate_baseline(checkpoint_dir=str(ckpt), batch_size=bad_batch)
 
 
 def test_builder_only_writes_where_training_checks(tmp_path):
@@ -313,3 +316,57 @@ def test_building_from_the_training_split_is_refused(tmp_path):
     lock = build_target_voices(_dataset(str(tmp_path)), str(tmp_path / "targets"))
     with pytest.raises(ValueError, match="training split"):
         build_target_voices(lock["train_dataset"], str(tmp_path / "targets"))
+
+
+def test_should_reuse_cached_base_requires_explicit_batch_size(tmp_path):
+    """Cached baseline reuse requires matching explicit batch_size and rejects legacy sequential manifests."""
+    import hashlib
+    from scripts.run_target_finetune_ab import should_reuse_cached_base, EVAL_BATCH_SIZE
+
+    # Create dummy checkpoint files
+    base_dir = tmp_path / "xtts_base"
+    base_dir.mkdir()
+    hashes = {}
+    for fname in ("model.pth", "config.json", "vocab.json"):
+        content = f"dummy {fname}".encode()
+        (base_dir / fname).write_bytes(content)
+        hashes[fname] = hashlib.sha256(content).hexdigest()
+
+    valid_manifest = {
+        "seeds": [42, 123, 999],
+        "subset_size": 12,
+        "languages": ["en"],
+        "asr_model": "openai/whisper-large-v3",
+        "checkpoint_sha256": hashes,
+        "batch_size": EVAL_BATCH_SIZE,
+    }
+
+    # 1. Valid manifest with explicit batch_size matching EVAL_BATCH_SIZE is accepted
+    assert should_reuse_cached_base(
+        valid_manifest,
+        expected_seeds=[42, 123, 999],
+        expected_subset=12,
+        xtts_base_dir=str(base_dir),
+        eval_batch_size=EVAL_BATCH_SIZE,
+    ) is True
+
+    # 2. Legacy manifest without explicit batch_size is rejected
+    legacy_manifest = dict(valid_manifest)
+    del legacy_manifest["batch_size"]
+    assert should_reuse_cached_base(
+        legacy_manifest,
+        expected_seeds=[42, 123, 999],
+        expected_subset=12,
+        xtts_base_dir=str(base_dir),
+        eval_batch_size=EVAL_BATCH_SIZE,
+    ) is False
+
+    # 3. Manifest with mismatched batch_size is rejected
+    mismatched_batch = dict(valid_manifest, batch_size=8)
+    assert should_reuse_cached_base(
+        mismatched_batch,
+        expected_seeds=[42, 123, 999],
+        expected_subset=12,
+        xtts_base_dir=str(base_dir),
+        eval_batch_size=EVAL_BATCH_SIZE,
+    ) is False

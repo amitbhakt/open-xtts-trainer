@@ -34,6 +34,45 @@ if REPO_ROOT not in sys.path:
 os.chdir(REPO_ROOT)
 os.environ["PYTHONPATH"] = f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"
 
+EVAL_BATCH_SIZE = 16
+
+
+def should_reuse_cached_base(
+    cached_data: dict,
+    expected_seeds: List[int],
+    expected_subset: int,
+    xtts_base_dir: str = "xtts_base",
+    eval_batch_size: int = EVAL_BATCH_SIZE,
+) -> bool:
+    """Validate whether an existing baseline manifest can be reused for A/B comparison."""
+    try:
+        cached_seeds = cached_data.get("seeds", [])
+        cached_subset = cached_data.get("subset_size")
+        cached_hashes = cached_data.get("checkpoint_sha256", {})
+
+        # Validate checkpoint hashes against current xtts_base
+        for fname in ("model.pth", "config.json", "vocab.json"):
+            fpath = os.path.join(xtts_base_dir, fname)
+            if not os.path.exists(fpath):
+                return False
+            h = hashlib.sha256()
+            with open(fpath, "rb") as bf:
+                for chunk in iter(lambda: bf.read(1 << 20), b""):
+                    h.update(chunk)
+            if cached_hashes.get(fname) != h.hexdigest():
+                return False
+
+        cached_batch = cached_data.get("batch_size")
+        return bool(
+            sorted(cached_seeds) == sorted(expected_seeds)
+            and cached_subset == expected_subset
+            and cached_data.get("languages") == ["en"]
+            and cached_data.get("asr_model") == "openai/whisper-large-v3"
+            and cached_batch == eval_batch_size
+        )
+    except (KeyError, OSError, TypeError):
+        return False
+
 
 def run_cmd(cmd: Union[str, List[str]], check: bool = True) -> int:
     """Run a command with live output, safely handling argument lists or shell strings."""
@@ -222,6 +261,7 @@ def main():
         "--label", "base",
         "--seeds", *seeds_args,
         *subset_args,
+        "--batch_size", str(EVAL_BATCH_SIZE),
         "--output", base_target_manifest,
     ]
     run_cmd(base_eval_cmd)
@@ -237,6 +277,7 @@ def main():
         "--label", "tuned",
         "--seeds", *seeds_args,
         *subset_args,
+        "--batch_size", str(EVAL_BATCH_SIZE),
         "--output", tuned_target_manifest,
     ]
     run_cmd(tuned_eval_cmd)
@@ -252,6 +293,7 @@ def main():
         "--label", "tuned",
         "--seeds", *seeds_args,
         *subset_args,
+        "--batch_size", str(EVAL_BATCH_SIZE),
         "--output", tuned_arctic_manifest,
     ]
     run_cmd(tuned_arctic_eval_cmd)
@@ -297,34 +339,13 @@ def main():
         try:
             with open(base_arctic_manifest, "r", encoding="utf-8") as f:
                 cached_data = json.load(f)
-            cached_seeds = cached_data.get("seeds", [])
-            cached_subset = cached_data.get("subset_size")
-            cached_hashes = cached_data.get("checkpoint_sha256", {})
-
-            # Validate checkpoint hashes against current xtts_base
-            hashes_match = True
-            for fname in ("model.pth", "config.json", "vocab.json"):
-                fpath = os.path.join("xtts_base", fname)
-                if not os.path.exists(fpath):
-                    hashes_match = False
-                    break
-                h = hashlib.sha256()
-                with open(fpath, "rb") as bf:
-                    for chunk in iter(lambda: bf.read(1 << 20), b""):
-                        h.update(chunk)
-                if cached_hashes.get(fname) != h.hexdigest():
-                    hashes_match = False
-                    break
-
-            if (
-                hashes_match
-                and sorted(cached_seeds) == sorted(args.seeds)
-                and cached_subset == args.subset_size
-                and cached_data.get("languages") == ["en"]
-                and cached_data.get("asr_model") == "openai/whisper-large-v3"
-            ):
-                reuse_cached_base = True
-        except (json.JSONDecodeError, OSError, KeyError):
+            reuse_cached_base = should_reuse_cached_base(
+                cached_data=cached_data,
+                expected_seeds=args.seeds,
+                expected_subset=args.subset_size,
+                eval_batch_size=EVAL_BATCH_SIZE,
+            )
+        except (json.JSONDecodeError, OSError):
             reuse_cached_base = False
 
     if not reuse_cached_base:
@@ -338,6 +359,7 @@ def main():
             "--label", "base",
             "--seeds", *seeds_args,
             *subset_args,
+            "--batch_size", str(EVAL_BATCH_SIZE),
             "--output", base_arctic_manifest,
         ])
 

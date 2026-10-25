@@ -92,6 +92,7 @@ def generate_baseline(
     voices: str = "arctic",
     target_dir: str = DEFAULT_TARGET_DIR,
     allow_unchecked_location: bool = False,
+    batch_size: int = 16,
 ) -> Dict[str, Any]:
     """Measure a checkpoint (stock XTTS-v2 by default) on the frozen eval set. Raises if any input is missing.
 
@@ -102,6 +103,8 @@ def generate_baseline(
     unseen voices with the target speaker. Target clips are read only from DEFAULT_TARGET_DIR, the one place
     training refuses them (allow_unchecked_location: tests only).
     """
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be a positive integer, got {batch_size}")
     if voices not in ("arctic", "target"):
         raise ValueError(f"voices must be arctic or target, not {voices!r}")
     if (
@@ -179,6 +182,7 @@ def generate_baseline(
                 seeds=seeds,
                 language=lang,
                 subset_size=subset_size,
+                batch_size=batch_size,
             )
             run["speaker_id"] = voice["speaker_id"]
             runs.append(run)
@@ -197,6 +201,7 @@ def generate_baseline(
         "voices": selected,
         "reference_voices": [{"speaker_id": v["speaker_id"], "sha256": _sha256_of_file(v["path"])} for v in voices],
         "asr_model": asr_model_name,
+        "batch_size": batch_size,
         "seeds": list(seeds),
         "subset_size": subset_size,
         "languages": languages,
@@ -241,6 +246,12 @@ if __name__ == "__main__":
         default="arctic",
         help="arctic: eval-set CMU voices; target: held-out target-speaker clips (build_target_voices.py)",
     )
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=16,
+        help="Batch size for Whisper ASR inference during evaluation",
+    )
     args = parser.parse_args()
 
     res = generate_baseline(
@@ -255,6 +266,7 @@ if __name__ == "__main__":
         lock_path=args.reference_lock,
         label=args.label,
         voices=args.voices,
+        batch_size=args.batch_size,
     )
     print("Baseline measured successfully.")
     print(json.dumps(res["summary_by_language"], indent=2))

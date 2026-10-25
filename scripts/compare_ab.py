@@ -31,7 +31,7 @@ import numpy as np
 
 from eval.harness import HEADLINE_SECS_MIN_S
 
-SAME_INPUT_KEYS = ("metrics_version", "eval_set_sha256", "voices", "reference_voices", "seeds", "subset_size", "languages", "asr_model")
+SAME_INPUT_KEYS = ("metrics_version", "eval_set_sha256", "voices", "reference_voices", "seeds", "subset_size", "languages", "asr_model", "batch_size")
 METRICS = ("wer", "cer", "secs", "utmos", "duration_ratio")
 HIGHER_IS_BETTER = {"secs", "utmos"}
 BOOTSTRAP_SAMPLES = 10_000
@@ -106,6 +106,8 @@ def _input(manifest: Dict[str, Any], key: str) -> Any:
     # Manifests from before the "voices" field could only measure the eval set's ARCTIC voices
     if key == "voices":
         return manifest.get("voices", "arctic")
+    if key == "batch_size":
+        return manifest.get("batch_size", 1)
     return manifest.get(key)
 
 
