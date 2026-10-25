@@ -1,0 +1,11 @@
+scripts/modal_jupyter.py
+  ai_agent 27
+scripts/modal_run_eval.py
+  ai_agent 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "3022a1200ac13285ed5ad17fb6ddbe03d860b45a",
+  "prompts": {}
+}
