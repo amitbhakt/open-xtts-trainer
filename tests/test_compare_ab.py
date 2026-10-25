@@ -131,8 +131,11 @@ def test_pre_registered_ablations_file_is_well_formed():
     path = Path(REPO_ROOT, "eval", "pre_registered_ablations.json")
     assert path.is_file(), "eval/pre_registered_ablations.json must exist"
     data = json.loads(path.read_text(encoding="utf-8"))
-    assert data["version"] == 1
+    assert data["version"] == 2
     assert "date" in data and data["description"]
+    assert "history" in data and len(data["history"]) >= 2
+    for h in data["history"]:
+        assert "version" in h and "date" in h and "summary" in h
     assert "calibration" in data and "global_guardrails" in data
     guardrails_list = data["global_guardrails"]
     assert len(guardrails_list) == len({g["metric"] for g in guardrails_list})
@@ -194,7 +197,7 @@ def test_compare_ab_with_ablation_gates(base):
     gates = load_ablation_gates("A3")
     report = compare_ab(base, tuned, gates)
     assert report["passed"]
-    assert report["gates_version"] == 1
+    assert report["gates_version"] == 2
 
 
 def test_compare_ab_cli_rejects_gates_and_ablation_together(base, tmp_path):
@@ -251,6 +254,12 @@ def test_gate_languages_filtering(base):
     res = check_gate(en_gate, pairs)
     assert res["passed"]
     assert res["n"] == 120
+
+    # Scalar string language selector is normalized and passes
+    scalar_en_gate = {"metric": "cer", "rule": "not_worse", "margin": 0.01, "languages": "en"}
+    scalar_res = check_gate(scalar_en_gate, pairs)
+    assert scalar_res["passed"]
+    assert scalar_res["n"] == 120
 
     # Non-matching language raises ValueError
     de_gate = {"metric": "cer", "rule": "not_worse", "margin": 0.01, "languages": ["de"]}
@@ -353,3 +362,44 @@ def test_failures_gate_requires_metadata_and_counts_utterance_once():
     missing_failures = [{}]
     with pytest.raises(KeyError):
         failures(missing_failures)
+
+
+def test_failures_gate_rejects_empty_selection():
+    from scripts.compare_ab import check_gate
+
+    f_gate = {"metric": "failures", "rule": "not_worse", "margin": 0}
+    with pytest.raises(ValueError, match="matched 0 utterances; cannot evaluate failures on an empty selection"):
+        check_gate(f_gate, [])
+
+
+def test_run_ablation_scalar_selectors(base, tmp_path):
+    from scripts.run_ablation import run_ablation
+
+    tuned = tuned_from(base)
+    base_file = tmp_path / "base.json"
+    tuned_file = tmp_path / "tuned.json"
+    base_file.write_text(json.dumps(base), encoding="utf-8")
+    tuned_file.write_text(json.dumps(tuned), encoding="utf-8")
+
+    speaker_id = base["runs"][0]["speaker_id"]
+    custom_prereg = tmp_path / "prereg.json"
+    custom_prereg.write_text(json.dumps({
+        "version": 2,
+        "date": "2026-10-25",
+        "description": "test",
+        "calibration": {},
+        "global_guardrails": [],
+        "ablations": {
+            "CUSTOM": {
+                "id": "CUSTOM",
+                "title": "Custom Scalar",
+                "decision_rule": "test",
+                "gates": [
+                    {"metric": "cer", "rule": "not_worse", "margin": 0.01, "languages": "en", "voices": speaker_id}
+                ]
+            }
+        }
+    }), encoding="utf-8")
+
+    res = run_ablation("CUSTOM", str(tuned_file), str(base_file), output_dir=str(tmp_path), dry_run=True, prereg_path=str(custom_prereg))
+    assert res["dry_run"] is True and res["passed"] is True

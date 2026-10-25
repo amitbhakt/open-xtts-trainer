@@ -38,10 +38,11 @@ from scripts.compare_ab import compare_ab, load_ablation_gates, utterances, vali
 PREREG_PATH = os.path.join(REPO_ROOT, "eval", "pre_registered_ablations.json")
 
 
-def load_preregistered_ablations(path: str = PREREG_PATH) -> Dict[str, Any]:
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Pre-registration file not found at {path}")
-    with open(path, "r", encoding="utf-8") as f:
+def load_preregistered_ablations(path: Optional[str] = None) -> Dict[str, Any]:
+    target_path = path or PREREG_PATH
+    if not os.path.exists(target_path):
+        raise FileNotFoundError(f"Pre-registration file not found at {target_path}")
+    with open(target_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -90,8 +91,10 @@ def run_ablation(
     output_dir: Optional[str] = None,
     report_path: Optional[str] = None,
     dry_run: bool = False,
+    prereg_path: Optional[str] = None,
 ) -> Dict[str, Any]:
-    prereg = load_preregistered_ablations()
+    target_prereg = prereg_path or PREREG_PATH
+    prereg = load_preregistered_ablations(target_prereg)
     ablations = prereg.get("ablations", {})
     if ablation_id not in ablations:
         valid = ", ".join(sorted(ablations.keys()))
@@ -130,7 +133,7 @@ def run_ablation(
     with open(base_manifest_path, "r", encoding="utf-8") as f:
         base_data = json.load(f)
 
-    gates = load_ablation_gates(ablation_id, PREREG_PATH)
+    gates = load_ablation_gates(ablation_id, target_prereg)
 
     print(f"Ablation: {ablation_id} - {ablation_info.get('title')}")
     print(f"Base manifest:      {base_manifest_path}")
@@ -147,9 +150,15 @@ def run_ablation(
     has_category_metadata = any(u.get("category") is not None for u in b_utts.values())
     available_categories = {u.get("category") for u in b_utts.values() if u.get("category")}
     for g in gates.get("gates", []):
-        if g.get("voices") and not all(v in available_voices for v in g["voices"]):
+        voices = g.get("voices")
+        if isinstance(voices, str):
+            voices = [voices]
+        if voices and not all(v in available_voices for v in voices):
             raise ValueError(f"Gate names voices {g['voices']} not all present in manifests")
-        if g.get("languages") and not all(l in available_languages for l in g["languages"]):
+        langs = g.get("languages")
+        if isinstance(langs, str):
+            langs = [langs]
+        if langs and not all(l in available_languages for l in langs):
             raise ValueError(f"Gate names languages {g['languages']} not all present in manifests")
         if g.get("category") and has_category_metadata and g["category"] not in available_categories:
             raise ValueError(f"Gate names category {g['category']!r} not found in manifests")

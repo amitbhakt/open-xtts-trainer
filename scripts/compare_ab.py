@@ -94,6 +94,8 @@ def validate_gate(gate: Dict[str, Any]) -> None:
 def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:
     validate_gate(gate)
     voices = gate.get("voices")
+    if isinstance(voices, str):
+        voices = [voices]
     category = gate.get("category")
     languages = gate.get("languages")
     if isinstance(languages, str):
@@ -116,6 +118,8 @@ def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:
 
     margin = gate.get("margin", 0.0)
     if gate["metric"] == "failures":
+        if not selected:
+            raise ValueError(f"gate {gate} matched 0 utterances; cannot evaluate failures on an empty selection")
         base, tuned = failures(b for b, _ in selected), failures(t for _, t in selected)
         if gate["rule"] == "not_worse":
             passed = tuned <= base + margin

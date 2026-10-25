@@ -1,14 +1,30 @@
 {
-  "version": 1,
+  "version": 2,
   "date": "2026-10-25",
   "description": "Pre-registered A1-A8 ablation study designs and decision rules for Open-XTTS-Trainer (REMEDIATION_PLAN.md §11.5, §12.3.C Item 7). Fixed in advance before experimental execution to enforce research integrity and eliminate p-hacking.",
+  "history": [
+    {
+      "version": 1,
+      "date": "2026-10-25",
+      "summary": "Initial pre-registration of A1-A8 ablation designs, noise floors, and global guardrails."
+    },
+    {
+      "version": 2,
+      "date": "2026-10-25",
+      "summary": "Formalized executable hypothesis gates for A1-A8; calibrated slice-specific short-prompt CER noise margin to 0.022 from baseline category CI in base_xtts_s12_en.json; scoped A1 failures gate to category 'short'; aligned A2 adoption gate to 'better 0.0' for downstream WER without SECS regression; clarified A3 retention conditional on passing non-regression gates; scoped A5/A7 base-language gates to 'languages': ['en']."
+    }
+  ],
   "calibration": {
     "empirical_basis": "Run 5 Modal A100 baseline across 5 eval languages (en, es, fr, de, hi), 900 utterances, 3 random seeds",
     "ci95_half_widths": {
       "wer": 0.02,
       "cer": 0.01,
+      "cer_short_prompts": 0.022,
       "secs": 0.02,
       "utmos": 0.10
+    },
+    "slice_calibration_notes": {
+      "cer_short_prompts": "0.022 is the empirical 95% bootstrap CI half-width on the 10-sentence 'short' prompt slice from eval/baselines/base_xtts_s12_en.json (summary_by_category.en.short.cer.ci95 = 0.0218), accounting for higher small-sample variance compared to the pooled 900-utterance CER margin (0.01)."
     },
     "zero_leakage_policy": "Speaker similarity evaluated using independent ECAPA2 (arXiv:2401.08395), never XTTS's internal H/ASP conditioning encoder (avoiding encoder leakage; arXiv:2506.20190)."
   },
@@ -61,19 +77,20 @@
         "cer_short_prompts",
         "duration_ratio_failures"
       ],
-      "decision_rule": "Compare all 12 grid configurations against baseline. A cell is eligible if short-prompt CER does not regress beyond the noise floor (category 'short', CER margin <= 0.01), audio failures do not increase (failures margin <= 0), and held-out speaker similarity does not regress (SECS worst CI improvement >= -0.02). Among eligible cells, adopt the most computationally efficient configuration, defined as the minimum short_clip_mix_ratio (primary) and fewest total training steps to reach the validation loss plateau (secondary; GPU-hours tiebreaker).",
+      "decision_rule": "Compare all 12 grid configurations against baseline. A cell is eligible if short-prompt CER does not regress beyond the empirical slice-specific noise floor (category 'short', CER margin <= 0.022), audio failures do not increase on short prompts (failures margin <= 0, category 'short'), and held-out speaker similarity does not regress (SECS worst CI improvement >= -0.02). Among eligible cells, adopt the most computationally efficient configuration, defined as the minimum short_clip_mix_ratio (primary) and fewest total training steps to reach the validation loss plateau (secondary; GPU-hours tiebreaker).",
       "gates": [
         {
           "metric": "cer",
           "rule": "not_worse",
-          "margin": 0.01,
+          "margin": 0.022,
           "category": "short",
-          "why": "Short-prompt CER must remain within the pre-registered 95% CI noise floor (margin 0.01) without hallucination regressions."
+          "why": "Short-prompt CER must remain within the empirical slice-specific noise floor (margin 0.022, calibrated from baseline short-category 95% CI half-width in base_xtts_s12_en.json) without hallucination regressions."
         },
         {
           "metric": "failures",
           "rule": "not_worse",
           "margin": 0,
+          "category": "short",
           "why": "Candidate must produce zero additional duration or audio failures on short prompts."
         },
         {
@@ -147,14 +164,14 @@
         "duration_ratio_failures",
         "secs"
       ],
-      "decision_rule": "The pre-registered gates verify that the mandatory per-sample conditioning masking bugfix introduces no unexpected regressions (short-prompt CER CI degradation <= 0.01, SECS degradation <= 0.02). Retention of the bugfix is confirmed when these gates pass; measured effect sizes on duration ratio stability and CER are reported in the paper table.",
+      "decision_rule": "The pre-registered gates verify that the mandatory per-sample conditioning masking bugfix introduces no unexpected regressions (short-prompt CER CI degradation <= 0.022, SECS degradation <= 0.02). Retention of the bugfix is confirmed when these gates pass; measured effect sizes on duration ratio stability and CER are reported in the paper table.",
       "gates": [
         {
           "metric": "cer",
           "rule": "not_worse",
-          "margin": 0.01,
+          "margin": 0.022,
           "category": "short",
-          "why": "Per-sample conditioning masking must not regress short-prompt character error rate beyond the noise floor."
+          "why": "Per-sample conditioning masking must not regress short-prompt character error rate beyond the empirical slice-specific noise floor (margin 0.022, calibrated from baseline short-category 95% CI half-width in base_xtts_s12_en.json)."
         },
         {
           "metric": "secs",
