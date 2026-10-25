@@ -429,3 +429,14 @@ def test_train_export_and_new_language_inference(tmp_path, sw_vocab):
     torch.manual_seed(0)
     wav = model.inference("habari ya asubuhi", "sw", lat, spk, temperature=0.7)["wav"]
     assert len(wav) > 0 and np.isfinite(np.asarray(wav)).all()
+
+    # Phase 2 audit requirement: intermediate Stage 2 checkpoints carry spec_hash
+    from xtts_trainer.models.checkpoint_io import SPEC_HASH_KEY, spec_hash, check_spec_hash, safe_torch_load
+    run_dir = tmp_path / "run"
+    checkpoints = list(run_dir.glob("*.pth")) + list(run_dir.glob("*/*.pth"))
+    assert any(ckpt.name.startswith("checkpoint_") or ckpt.name.startswith("best_model") for ckpt in checkpoints)
+    for ckpt in checkpoints:
+        data = safe_torch_load(str(ckpt))
+        if isinstance(data, dict) and "model" in data:
+            assert data.get(SPEC_HASH_KEY) == spec_hash()
+            check_spec_hash(data, str(ckpt))

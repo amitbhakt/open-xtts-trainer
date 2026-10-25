@@ -54,9 +54,9 @@ When Coqui AI shut down, the community was left without official training recipe
 
 Every number in this README comes from the evaluation harness (`eval/`, `scripts/run_eval_baseline.py`) and
 links to the manifest that produced it. Training losses are not results: the earlier convergence table was
-removed because no manifest backed it (docs/recipe_design.md §6, phase 8).
+removed because no manifest backed it ([docs/recipe_design.md](https://github.com/amitbhakt/open-xtts-trainer/blob/main/docs/recipe_design.md) §6, phase 8).
 
-**Measured: stock XTTS-v2 baseline**, full multilingual baseline across 5 languages, 12 sentences × 5 CMU ARCTIC voices × 3 seeds (900 utterances total; values: mean ± 95% CI half-width; speaker similarity uses ECAPA2 on clips ≥ 2 s, English n = 150; [index](eval/baselines/base_xtts_s12_index.json), [run notes](docs/evidence/run5/README.md)):
+**Measured: stock XTTS-v2 baseline**, full multilingual baseline across 5 languages, 12 sentences × 5 CMU ARCTIC voices × 3 seeds (900 utterances total; values: mean ± 95% CI half-width; speaker similarity uses ECAPA2 on clips ≥ 2 s, English n = 150; [index](https://github.com/amitbhakt/open-xtts-trainer/blob/main/eval/baselines/base_xtts_s12_index.json), [run notes](https://github.com/amitbhakt/open-xtts-trainer/blob/main/docs/evidence/run5/README.md)):
 
 | Language | WER (Whisper large-v3) | CER | Speaker similarity, ECAPA2 (clips ≥ 2 s) | UTMOS | Duration ratio |
 |---|---|---|---|---|---|
@@ -69,19 +69,19 @@ removed because no manifest backed it (docs/recipe_design.md §6, phase 8).
 **Not yet measured: full language adaptation.** The three stages run end to end and are covered by tests. Full language adaptation across non-Latin scripts will be evaluated in subsequent runs.
 
 **Measured: Target Speaker Voice Adaptation (Stage 2 GPT Fine-Tuning)**
-We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of War* (8.4 minutes audio, 83 records in `dataset_train.jsonl` [75 train clips, 8 eval clips], 2 strictly held-out reference clips). Paired A/B evaluation against pre-registered quality gates (`eval/gates_target.json`) on held-out reference audio across $N=60$ ($20 \text{ sentences} \times 3 \text{ seeds}$):
+We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of War* (8.4 minutes audio, 83 records in `dataset_train.jsonl` [75 train clips, 8 eval clips], 2 strictly held-out reference clips). Paired A/B evaluation against pre-registered quality gates ([eval/gates_target.json](https://github.com/amitbhakt/open-xtts-trainer/blob/main/eval/gates_target.json)) on held-out reference audio across $N=60$ ($20 \text{ sentences} \times 3 \text{ seeds}$):
 - **Speaker Similarity (SECS):** $0.5545 \to 0.5875$ (**$+0.0329$ gain**, 95% CI $[+0.0191, +0.0480]$, $n=51$ qualifying pairs $\ge 2\text{ s}$, gate: `better`, **PASS**)
 - **Word Error Rate (WER):** $0.0383 \to 0.0375$ ($-0.0008$, 95% CI $[-0.0096, +0.0079]$, gate: `not_worse 0.02`, **PASS**)
 - **Character Error Rate (CER):** $0.0098 \to 0.0105$ ($+0.0008$, 95% CI $[-0.0045, +0.0060]$, gate: `not_worse 0.01`, **PASS**)
 - **Audio Naturalness (UTMOS):** $4.2589 \to 4.2149$ ($-0.0439$, 95% CI $[-0.0831, -0.0065]$, gate: `not_worse 0.10`, **PASS**)
 - **Failures:** 0 failures across all 60 evaluations (gate: `not_worse 0`, **PASS**)
 
-All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and no intelligibility regression beyond the gate tolerance (CER $+0.0008$, within the 0.01 tolerance). Details and run manifests are in `docs/evidence/run6_target_speaker/`.
+All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and no intelligibility regression beyond the gate tolerance (CER $+0.0008$, within the 0.01 tolerance). Details and run manifests are in [docs/evidence/run6_target_speaker/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/run6_target_speaker/).
 
 **Licenses:**
 - XTTS-v2 weights: Coqui Public Model License, non-commercial only.
 - MMS_FA aligner and ECAPA2: CC BY-NC 4.0.
-- CMU ARCTIC reference voices: their own license, kept in `eval/reference_voices/licenses/`.
+- CMU ARCTIC reference voices: their own license (downloaded and verified by [scripts/fetch_reference_voices.py](https://github.com/amitbhakt/open-xtts-trainer/blob/main/scripts/fetch_reference_voices.py); upstream source at [festvox.org/cmu_arctic](http://festvox.org/cmu_arctic/)).
 
 > [!WARNING]
 > **DVAE Codebook Retraining Invariant:**  
@@ -152,7 +152,7 @@ python -m xtts_trainer.speech_data --input_file my_voice.wav --lang en --speaker
 
 Each run writes `prep_report.json` (segments, duration histogram, characters per second, alignment scores,
 everything dropped and why) and `validation_report.json`, and fails unless the result passes validation.
-Both write `sample_audio/dataset.jsonl`, the one dataset format every stage reads (schema: `xtts_trainer/data/schema.py`).
+Both write `sample_audio/dataset.jsonl`, the one dataset format every stage reads (schema: [xtts_trainer/data/schema.py](https://github.com/amitbhakt/open-xtts-trainer/blob/main/xtts_trainer/data/schema.py)).
 To convert an existing pipe-separated metadata file, declare its columns explicitly:
 
 ```bash
@@ -239,7 +239,7 @@ python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_bas
 
 ### 4. Stage 1: Discrete VAE (DVAE) Training
 
-Off by default: every training step moves the codebook (docs/recipe_design.md F1), so a trained DVAE no longer
+Off by default: every training step moves the codebook ([docs/recipe_design.md](https://github.com/amitbhakt/open-xtts-trainer/blob/main/docs/recipe_design.md) F1), so a trained DVAE no longer
 matches the pretrained GPT.
 
 ```bash
@@ -283,12 +283,12 @@ python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --voices target -
 python scripts/run_eval_baseline.py --checkpoint_dir checkpoints/gpt/export --voices target --label tuned --output eval/baselines/tuned_target.json
 ```
 
-Then copy the `gate` object inside `target_speaker_gate_template` in `eval/gates.json` into the `gates` list, with
+Then copy the `gate` object inside `target_speaker_gate_template` in [eval/gates.json](https://github.com/amitbhakt/open-xtts-trainer/blob/main/eval/gates.json) into the `gates` list, with
 `voices` set to the `target_<speaker>` ids the first command printed, and run `compare_ab.py` on the two target
 manifests.
 
 The gates are relative to the stock model: for example, word error rate may not get worse beyond a set margin,
-and speaker similarity on the target speaker must improve. Fix them in `eval/gates.json` before you look at
+and speaker similarity on the target speaker must improve. Fix them in [eval/gates.json](https://github.com/amitbhakt/open-xtts-trainer/blob/main/eval/gates.json) before you look at
 results.
 
 Earlier proof samples on Hugging Face (`proof_outputs/`) were produced by a retired script that checked absolute
