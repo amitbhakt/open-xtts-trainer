@@ -1,0 +1,233 @@
+{
+  "version": 1,
+  "date": "2026-10-25",
+  "description": "Pre-registered A1-A8 ablation study designs and decision rules for Open-XTTS-Trainer (REMEDIATION_PLAN.md §11.5, §12.3.C Item 7). Fixed in advance before experimental execution to enforce research integrity and eliminate p-hacking.",
+  "calibration": {
+    "empirical_basis": "Run 5 Modal A100 baseline across 5 eval languages (en, es, fr, de, hi), 900 utterances, 3 random seeds",
+    "ci95_half_widths": {
+      "wer": 0.02,
+      "cer": 0.01,
+      "secs": 0.02,
+      "utmos": 0.10
+    },
+    "zero_leakage_policy": "Speaker similarity evaluated using independent ECAPA2 (arXiv:2401.08395), never XTTS's internal H/ASP conditioning encoder (avoiding encoder leakage; arXiv:2506.20190)."
+  },
+  "global_guardrails": [
+    {
+      "metric": "wer",
+      "rule": "not_worse",
+      "margin": 0.02,
+      "why": "General intelligibility on held-out evaluation voices must not regress beyond the 95% CI noise floor."
+    },
+    {
+      "metric": "cer",
+      "rule": "not_worse",
+      "margin": 0.01,
+      "why": "Character-level error rate must not regress."
+    },
+    {
+      "metric": "secs",
+      "rule": "not_worse",
+      "margin": 0.02,
+      "why": "Speaker similarity across unseen held-out voices must not regress (catastrophic forgetting check)."
+    },
+    {
+      "metric": "utmos",
+      "rule": "not_worse",
+      "margin": 0.10,
+      "why": "Predicted naturalness relative to paired baseline must not regress beyond the subjective noise floor."
+    },
+    {
+      "metric": "failures",
+      "rule": "not_worse",
+      "margin": 0,
+      "why": "Candidate must produce zero additional empty audio, babbling loops (>2.2x duration & >=1.0s excess), or NaNs."
+    }
+  ],
+  "ablations": {
+    "A1": {
+      "id": "A1",
+      "title": "Short-Text Hallucination Mitigation",
+      "question": "What training recipe change eliminates short-text hallucinations in autoregressive speech modeling?",
+      "setup": {
+        "grid": {
+          "short_clip_mix_ratio": [0.0, 0.05, 0.15],
+          "min_clip_length_s": [0.3, 0.5],
+          "min_conditioning_length_s": [1.0, 3.0]
+        },
+        "test_slice": "short_prompts (1-3 words, <= 15 chars)"
+      },
+      "primary_metrics": [
+        "cer_short_prompts",
+        "duration_ratio_failures"
+      ],
+      "decision_rule": "Adopt the most computationally efficient configuration where the 95% CI upper bound of short-prompt CER falls within the long-prompt CER confidence interval without causing SECS regression on held-out speakers (SECS worst CI improvement >= -0.02).",
+      "citations": [
+        "Casanova et al. (Interspeech 2024, arXiv:2406.04904)",
+        "Chen et al. (VALL-E 2, 2024, arXiv:2406.05370)"
+      ],
+      "status": "pre_registered"
+    },
+    "A2": {
+      "id": "A2",
+      "title": "DVAE Fine-Tuning Utility Across Domains",
+      "question": "Does fine-tuning Stage 1 DVAE yield downstream synthesis gains compared to the stock DVAE or an encoder-frozen variant?",
+      "setup": {
+        "variants": [
+          "stock_dvae",
+          "finetuned_dvae",
+          "encoder_frozen_decoder_tuned_dvae"
+        ],
+        "test_domains": [
+          "latin_script_in_domain",
+          "acoustic_shifted_domain"
+        ]
+      },
+      "primary_metrics": [
+        "codebook_perplexity",
+        "reconstruction_mel_l1",
+        "end_to_end_wer",
+        "end_to_end_secs"
+      ],
+      "decision_rule": "Recommend Stage 1 DVAE fine-tuning only if downstream Stage 2 end-to-end intelligibility (WER) or SECS shows a statistically significant gain (lower bound of 95% CI improvement > 0.0) over stock DVAE on the target domain.",
+      "citations": [
+        "Zheng et al. (Online Clustered Codebook, ICCV 2023)",
+        "Casanova et al. (Interspeech 2024, arXiv:2406.04904)"
+      ],
+      "status": "pre_registered"
+    },
+    "A3": {
+      "id": "A3",
+      "title": "Conditioning Masking Impact (F2 Bug Verification)",
+      "question": "What is the empirical effect of upstream batch conditioning masking vs. per-sample conditioning masking on speech stability?",
+      "setup": {
+        "variants": [
+          "upstream_batch_masking",
+          "per_sample_length_masking"
+        ],
+        "evaluation": "Paired N=300 per seed, across 3 seeds on base eval voices."
+      },
+      "primary_metrics": [
+        "cer_short_prompts",
+        "duration_ratio_failures",
+        "secs"
+      ],
+      "decision_rule": "Retain per-sample masking fix (mandatory correctness); report measured effect sizes on duration ratio stability and short-prompt CER in paper table.",
+      "citations": [
+        "Casanova et al. (Interspeech 2024, arXiv:2406.04904)"
+      ],
+      "status": "pre_registered"
+    },
+    "A4": {
+      "id": "A4",
+      "title": "Prompt Conditioning: Same-Clip vs. Cross-Clip Reference",
+      "question": "Does training with same-clip masked prompts leak acoustic shortcuts compared to pairing with different clips from the same speaker?",
+      "setup": {
+        "variants": [
+          "masked_same_clip_prompt",
+          "different_clip_same_speaker_prompt"
+        ]
+      },
+      "primary_metrics": [
+        "secs_held_out_clips",
+        "cer"
+      ],
+      "decision_rule": "Adopt cross-clip prompting as default if SECS on held-out evaluation clips improves beyond the noise floor (worst CI improvement > +0.02) without regressing intelligibility (CER CI <= +0.01).",
+      "citations": [
+        "Casanova et al. (YourTTS, ICML 2022, arXiv:2112.02418)"
+      ],
+      "status": "pre_registered"
+    },
+    "A5": {
+      "id": "A5",
+      "title": "Text Representation for Unseen Scripts",
+      "question": "What text representation strategy best transfers XTTS to a new script: BPE vocabulary expansion, per-character tokens, or phonetic romanization?",
+      "setup": {
+        "variants": [
+          "bpe_vocab_merge_with_base_preservation",
+          "per_character_tokens",
+          "phonetic_romanization"
+        ]
+      },
+      "primary_metrics": [
+        "target_script_cer",
+        "tokens_per_sentence",
+        "base_language_cer_preservation"
+      ],
+      "decision_rule": "Select the representation with the lowest target CER that preserves base language tokenization identity (test_extended_tokenizer_preserves_base passes and base CER CI degradation <= +0.01).",
+      "citations": [
+        "Minixhofer et al. (WECHSEL, NAACL 2022, arXiv:2112.06598)",
+        "Dobler et al. (FOCUS, EMNLP 2023, arXiv:2305.14481)",
+        "arXiv:2601.05776 (Romanization in LM Pretraining)"
+      ],
+      "status": "pre_registered"
+    },
+    "A6": {
+      "id": "A6",
+      "title": "Punctuation and Alignment Pause Consistency",
+      "question": "Does enforcing punctuation-to-acoustic pause consistency via forced alignment reduce pacing and prosodic errors?",
+      "setup": {
+        "variants": [
+          "raw_heuristic_punctuation",
+          "alignment_corrected_punctuation"
+        ]
+      },
+      "primary_metrics": [
+        "pause_placement_accuracy",
+        "utmos",
+        "cer"
+      ],
+      "decision_rule": "Make alignment pause-consistency validator blocking if candidate achieves statistically significant gain in UTMOS (worst CI improvement > +0.10) or reduces duration anomalies.",
+      "citations": [
+        "Saeki et al. (UTMOS, Interspeech 2022)"
+      ],
+      "status": "pre_registered"
+    },
+    "A7": {
+      "id": "A7",
+      "title": "Multilingual Replay Ratio for New Language Adaptation",
+      "question": "What proportion of base-language replay data prevents catastrophic forgetting when adapting to a new language?",
+      "setup": {
+        "replay_ratios": [0.0, 0.10, 0.25],
+        "eval_sets": [
+          "target_new_language",
+          "base_languages_aggregate"
+        ]
+      },
+      "primary_metrics": [
+        "target_language_cer",
+        "base_language_wer_retention",
+        "base_language_secs_retention"
+      ],
+      "decision_rule": "Select the minimum replay ratio where base-language WER and SECS degradation remains within noise margins (WER degradation <= 0.02, SECS degradation <= 0.02) while minimizing training step overhead on target CER.",
+      "citations": [
+        "Yang et al. (Lifelong Multilingual TTS, 2021, arXiv:2110.04482)"
+      ],
+      "status": "pre_registered"
+    },
+    "A8": {
+      "id": "A8",
+      "title": "Stage 3 HiFi-GAN Fine-Tuning Utility",
+      "question": "Does fine-tuning the HiFi-GAN vocoder on teacher-forced GPT latents provide perceptible quality improvements over the stock vocoder?",
+      "setup": {
+        "variants": [
+          "stock_hifigan_decoder",
+          "tuned_decoder_mel_only",
+          "tuned_decoder_with_scl",
+          "tuned_decoder_full_band_mel"
+        ]
+      },
+      "primary_metrics": [
+        "utmos",
+        "secs",
+        "validation_mel_l1"
+      ],
+      "decision_rule": "Retain Stage 3 vocoder fine-tuning only if the tuned decoder achieves a statistically significant improvement in predicted naturalness (UTMOS lower 95% CI > 0.0) without regressing speaker similarity (SECS CI >= -0.02).",
+      "citations": [
+        "Kong et al. (HiFi-GAN, NeurIPS 2020, arXiv:2010.05646)",
+        "Casanova et al. (Interspeech 2024, arXiv:2406.04904)"
+      ],
+      "status": "pre_registered"
+    }
+  }
+}

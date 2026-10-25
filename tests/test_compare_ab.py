@@ -127,6 +127,29 @@ def test_gates_file_is_pre_registered_and_well_formed():
         assert g["rule"] in ("not_worse", "better") and "margin" in g and g["why"]
 
 
+def test_pre_registered_ablations_file_is_well_formed():
+    path = Path(REPO_ROOT, "eval", "pre_registered_ablations.json")
+    assert path.is_file(), "eval/pre_registered_ablations.json must exist"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["version"] == 1
+    assert "date" in data and data["description"]
+    assert "calibration" in data and "global_guardrails" in data
+    guardrails = {g["metric"]: g for g in data["global_guardrails"]}
+    assert set(guardrails.keys()) == {"wer", "cer", "secs", "utmos", "failures"}
+    for g in guardrails.values():
+        assert g["rule"] == "not_worse" and "margin" in g and g["why"]
+
+    expected_ids = {f"A{i}" for i in range(1, 9)}
+    assert set(data["ablations"].keys()) == expected_ids
+    for aid, item in data["ablations"].items():
+        assert item["id"] == aid
+        assert item["title"] and item["question"]
+        assert "setup" in item and item["primary_metrics"]
+        assert item["decision_rule"]
+        assert isinstance(item["citations"], list) and len(item["citations"]) > 0
+        assert item["status"] == "pre_registered"
+
+
 def test_failures_gate_requires_metadata_and_counts_utterance_once():
     from scripts.compare_ab import failures
 
