@@ -138,12 +138,14 @@ def train_gpt(
     dvae_path: Optional[str] = None,
     retrain_for_new_dvae: bool = False,
     num_workers: int = 0,
+    masking_mode: str = "per_sample",
 ) -> str:
     """Train, then export the best checkpoint (by eval loss) to output_dir/export. Returns the export dir.
 
     base_dir holds the released model.pth, dvae.pth and vocab.json. load_base_weights=False starts the GPT
     from random weights (tests with a reduced architecture only). dvae_path overrides base_dir/dvae.pth; a
     Stage-1-trained DVAE needs retrain_for_new_dvae (see ProjectGPTTrainer).
+    masking_mode: 'per_sample' (default project fix) or 'upstream' (ablation A3).
     """
     vocab_path = vocab_path or os.path.join(base_dir, "vocab.json")
     languages = [l.lower() for l in languages]
@@ -164,7 +166,7 @@ def train_gpt(
     )
     base_model = os.path.join(base_dir, "model.pth") if load_base_weights else None
     model = ProjectGPTTrainer(config, extra_languages=languages, base_model_path=base_model,
-                              retrain_for_new_dvae=retrain_for_new_dvae)
+                              retrain_for_new_dvae=retrain_for_new_dvae, masking_mode=masking_mode)
     if torch.cuda.is_available():
         model.cuda()  # the Trainer would move it anyway; evaluating the base model on CPU is needlessly slow
     loss_before = eval_loss(model, config, eval_samples)
@@ -189,7 +191,8 @@ def train_gpt(
         json.dump({"best_checkpoint": best, "best_step": best_ckpt.get("step"),
                    "eval_loss_before": loss_before, "eval_loss_best": loss_after, "improved": loss_after < loss_before,
                    "train_clips": len(train_samples), "eval_clips": len(eval_samples),
-                   "language_shares": language_shares(train_samples), "languages": list(config.languages), "retrain_for_new_dvae": retrain_for_new_dvae}, f, indent=2)
+                   "language_shares": language_shares(train_samples), "languages": list(config.languages),
+                   "retrain_for_new_dvae": retrain_for_new_dvae, "masking_mode": masking_mode}, f, indent=2)
     logger.info("Exported best checkpoint to %s", export_dir)
     return export_dir
 
@@ -213,13 +216,15 @@ def main(argv: Optional[List[str]] = None):
     parser.add_argument("--num_workers", type=int, default=2, help="Data loader worker processes")
     parser.add_argument("--retrain_for_new_dvae", action="store_true",
                         help="Required with a Stage-1-trained DVAE: retrain the GPT on its codes")
+    parser.add_argument("--masking_mode", choices=["per_sample", "upstream"], default="per_sample",
+                        help="Conditioning masking mode: per_sample (project fix) or upstream (buggy Coqui masking for ablation A3)")
     args = parser.parse_args(argv)
     if args.batch_size * args.grad_accum_steps < 32:
         logger.warning("effective batch %d < 32 (docs/recipe_design.md §3 starting point)", args.batch_size * args.grad_accum_steps)
     train_gpt(args.dataset, args.output_dir, args.base_dir, args.vocab_path, args.languages, args.replay,
               args.epochs, args.batch_size, args.grad_accum_steps, args.lr, args.eval_fraction, args.seed,
               dvae_path=args.dvae_checkpoint, retrain_for_new_dvae=args.retrain_for_new_dvae,
-              num_workers=args.num_workers)
+              num_workers=args.num_workers, masking_mode=args.masking_mode)
 
 
 if __name__ == "__main__":
