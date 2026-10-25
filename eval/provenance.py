@@ -96,6 +96,9 @@ def write_baseline_index(manifest_paths: Dict[str, str], out_path: str,
     If existing_index is provided, entries for languages not in manifest_paths are preserved,
     provided existing_index shares the same inputs.
     """
+    if not manifest_paths and existing_index is None:
+        raise ValueError("manifest_paths cannot be empty without an existing index")
+
     shared, files, summaries = None, {}, {}
     for language, path in sorted(manifest_paths.items()):
         with open(path, "r", encoding="utf-8") as f:
@@ -109,7 +112,7 @@ def write_baseline_index(manifest_paths: Dict[str, str], out_path: str,
         files[language] = {"file": os.path.basename(path), "sha256": sha256_file(path)}
         summaries[language] = manifest["summary_by_language"][language]
 
-    if existing_index:
+    if existing_index is not None:
         existing_inputs = existing_index.get("inputs")
         if not existing_inputs:
             raise ValueError("existing index has missing or empty inputs")

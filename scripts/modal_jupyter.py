@@ -23,8 +23,13 @@ import modal
 
 app = modal.App.lookup("open-xtts-jupyter", create_if_missing=True)
 
-# Persistent volume for base models, cache, and baseline evidence
-volume = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
+# Pinned commit SHA for reproducible container build
+PINNED_COMMIT = "ebb7b12d2755a32e5377adbaa9d0d58f6dfba031"
+
+# Persistent volumes for base models, training runs, and baseline evidence
+volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
+volume_runs = modal.Volume.from_name("open-xtts-runs", create_if_missing=True)
+volume_baselines = modal.Volume.from_name("open-xtts-baselines", create_if_missing=True)
 
 # Container image with PyTorch, locked dependencies, and JupyterLab
 image = (
@@ -33,7 +38,7 @@ image = (
     .pip_install("uv==0.12.13", "jupyterlab~=4.2")
     .run_commands(
         "git clone https://github.com/amitbhakt/open-xtts-trainer.git /root/open-xtts-trainer",
-        "cd /root/open-xtts-trainer && git checkout colab-run5",
+        f"cd /root/open-xtts-trainer && git checkout {PINNED_COMMIT}",
         "cd /root/open-xtts-trainer && uv export --frozen --no-hashes --no-emit-project --extra dev --extra eval -o /root/reqs.txt",
         "uv pip install --system --break-system-packages -r /root/reqs.txt",
         "uv pip install --system --break-system-packages -e /root/open-xtts-trainer",
@@ -63,13 +68,14 @@ def main(gpu: str = "A10G", timeout_hours: float = 4.0):
             f"--ServerApp.token={token}",
             "--ServerApp.allow_origin='*'",
             "--ServerApp.allow_remote_access=1",
-            "--ServerApp.disable_check_xsrf=True",
             encrypted_ports=[JUPYTER_PORT],
             image=image,
             app=app,
             gpu=gpu,
             volumes={
-                "/root/open-xtts-trainer/xtts_base": volume,
+                "/root/open-xtts-trainer/xtts_base": volume_cache,
+                "/root/open-xtts-trainer/runs": volume_runs,
+                "/root/open-xtts-trainer/eval/baselines": volume_baselines,
             },
             timeout=timeout_seconds,
             workdir="/root/open-xtts-trainer",
@@ -88,8 +94,11 @@ def main(gpu: str = "A10G", timeout_hours: float = 4.0):
         print(f"✅ JupyterLab is live on Modal ({gpu})!")
         print(f"🔗 Open in your browser:\n   {url}")
         print("=" * 68)
-        print("\nPersistent storage mounted at /root/open-xtts-trainer/xtts_base")
-        print("Press Ctrl+C in this terminal to shut down the GPU sandbox.\n")
+        print("\nPersistent storage mounted at:")
+        print(" - /root/open-xtts-trainer/xtts_base (base models)")
+        print(" - /root/open-xtts-trainer/runs (training checkpoints)")
+        print(" - /root/open-xtts-trainer/eval/baselines (baseline manifests)")
+        print("\nPress Ctrl+C in this terminal to shut down the GPU sandbox.\n")
 
         try:
             sandbox.wait()

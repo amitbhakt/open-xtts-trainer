@@ -1,7 +1,8 @@
 """Run open-xtts-trainer evaluations or smoke runs headlessly on Modal.
 
 Allows executing any command on an A10G / L4 / A100 GPU in Modal without
-keeping a local Jupyter session open. Results are synced to a persistent volume.
+keeping a local Jupyter session open. Results and artifacts are synced to
+persistent volumes.
 
 Usage:
     # Run the test suite:
@@ -10,7 +11,7 @@ Usage:
     # Fetch base artifacts:
     uvx modal run scripts/modal_run_eval.py --cmd "python scripts/fetch_base_artifacts.py --dest xtts_base --check_mel_stats"
 
-    # Run English baseline on A10G:
+    # Run English baseline on A10G (manifests persist in volume):
     uvx modal run scripts/modal_run_eval.py --gpu A10G --cmd "python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --languages en --label base --seeds 42 123 999 --subset_size 12 --output eval/baselines/base_xtts_s12_en.json"
 """
 
@@ -19,7 +20,13 @@ import modal
 
 app = modal.App.lookup("open-xtts-runner", create_if_missing=True)
 
-volume = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
+# Pinned commit SHA for reproducible execution
+PINNED_COMMIT = "ebb7b12d2755a32e5377adbaa9d0d58f6dfba031"
+
+# Persistent volumes for base models, training runs, and baseline results
+volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
+volume_runs = modal.Volume.from_name("open-xtts-runs", create_if_missing=True)
+volume_baselines = modal.Volume.from_name("open-xtts-baselines", create_if_missing=True)
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -27,7 +34,7 @@ image = (
     .pip_install("uv==0.12.13")
     .run_commands(
         "git clone https://github.com/amitbhakt/open-xtts-trainer.git /root/open-xtts-trainer",
-        "cd /root/open-xtts-trainer && git checkout colab-run5",
+        f"cd /root/open-xtts-trainer && git checkout {PINNED_COMMIT}",
         "cd /root/open-xtts-trainer && uv export --frozen --no-hashes --no-emit-project --extra dev --extra eval -o /root/reqs.txt",
         "uv pip install --system --break-system-packages -r /root/reqs.txt",
         "uv pip install --system --break-system-packages -e /root/open-xtts-trainer",
@@ -39,11 +46,15 @@ image = (
 @app.function(
     image=image,
     gpu="A10G",
-    volumes={"/root/open-xtts-trainer/xtts_base": volume},
+    volumes={
+        "/root/open-xtts-trainer/xtts_base": volume_cache,
+        "/root/open-xtts-trainer/runs": volume_runs,
+        "/root/open-xtts-trainer/eval/baselines": volume_baselines,
+    },
     timeout=7200,
 )
 def run_command_remote(cmd: str):
-    """Execute a bash command inside the Modal GPU container."""
+    """Execute a bash command inside the Modal GPU container and commit outputs."""
     print(f"🔧 Running in Modal container: {cmd}")
     proc = subprocess.run(
         cmd,
@@ -51,7 +62,9 @@ def run_command_remote(cmd: str):
         cwd="/root/open-xtts-trainer",
         check=True,
     )
-    volume.commit()
+    volume_cache.commit()
+    volume_runs.commit()
+    volume_baselines.commit()
     return proc.returncode
 
 
