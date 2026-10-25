@@ -101,6 +101,35 @@ def test_training_validates_keeps_best_and_writes_samples(tmp_path):
     assert ckpt["reference_val_mel_l1"] == metrics[0]["reference"] and "beats_start" in ckpt
     assert sorted(os.listdir(tmp_path / "out" / "samples")) == ["step_0", "step_2", "step_4"]
     build_hifigan().load_state_dict(ckpt["hifigan_decoder"], strict=True)
+    # Loss-scale fields are recorded; without fp16 (CPU) there is no scaler to report
+    assert all(m["grad_scale_g"] is None and m["skipped_steps_g"] is None for m in metrics)
+
+
+def test_scaler_step_reports_skipped_steps():
+    """With fp16 the scaler skips a step on overflowed gradients and halves its scale: that's what gets counted."""
+    from xtts_trainer.stage3_hifigan.train import scaler_step
+
+    class FakeScaler:
+        def __init__(self, enabled, overflow):
+            self.enabled, self.overflow, self.scale, self.stepped = enabled, overflow, 65536.0, False
+
+        def is_enabled(self):
+            return self.enabled
+
+        def get_scale(self):
+            return self.scale if self.enabled else 1.0
+
+        def step(self, optimizer):
+            self.stepped = not self.overflow
+
+        def update(self):
+            if self.enabled and self.overflow:
+                self.scale /= 2
+
+    assert scaler_step(FakeScaler(True, overflow=False), None) is True
+    skipped = FakeScaler(True, overflow=True)
+    assert scaler_step(skipped, None) is False and not skipped.stepped
+    assert scaler_step(FakeScaler(False, overflow=False), None) is True
 
 
 def test_resume_replays_the_same_data_stream(tmp_path, monkeypatch):

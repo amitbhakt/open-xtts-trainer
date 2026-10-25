@@ -65,7 +65,11 @@ def get_code_fingerprint(repo_root: str = REPO_ROOT) -> Dict[str, Any]:
 
 
 def get_git_info(repo_dir: str = ".") -> Dict[str, Any]:
-    """Retrieve current git commit SHA and dirty status."""
+    """Current commit SHA, and whether tracked files differ from it.
+
+    Untracked files don't count: a run writes outputs (datasets, checkpoints, manifests) into the checkout, and
+    those don't change the code. get_code_fingerprint covers the source files either way.
+    """
     try:
         sha = subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=repo_dir, text=True
@@ -75,7 +79,7 @@ def get_git_info(repo_dir: str = ".") -> Dict[str, Any]:
 
     try:
         status = subprocess.check_output(
-            ["git", "status", "--porcelain"], cwd=repo_dir, text=True
+            ["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo_dir, text=True
         ).strip()
         is_dirty = bool(status)
     except (subprocess.CalledProcessError, FileNotFoundError):

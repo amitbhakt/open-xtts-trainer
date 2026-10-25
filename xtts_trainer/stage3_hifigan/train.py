@@ -84,6 +84,15 @@ def load_base_decoder(generator, model_path: str) -> None:
     load_state_strict(generator, state, f"HiFi-GAN decoder ({model_path})")
 
 
+def scaler_step(scaler, optimizer) -> bool:
+    """scaler.step + scaler.update; False when the step was skipped. With fp16 the scaler skips any step whose
+    gradients overflowed and halves its scale, so a lower scale after update() means a skipped step."""
+    before = scaler.get_scale()
+    scaler.step(optimizer)
+    scaler.update()
+    return not scaler.is_enabled() or scaler.get_scale() >= before
+
+
 @torch.no_grad()
 def evaluate_decoder(generator, val_clips: List, mel, device: str, sample_dir: Optional[str] = None) -> float:
     """Mean log-mel L1 between whole-clip resynthesis and the original, over the validation clips."""
@@ -176,6 +185,7 @@ def train_hifigan(
     metrics_path = os.path.join(output_dir, "metrics.jsonl")
 
     step, start_epoch, best = 0, 1, None
+    skipped_g = 0  # generator steps the fp16 scaler skipped, counted from the start of this process
     if resume:
         restored = load_training_state(state_path, **run)
         step, start_epoch, best = restored["step"], restored["epoch"] + 1, restored["best"]
@@ -190,7 +200,9 @@ def train_hifigan(
         samples = os.path.join(output_dir, "samples", f"step_{step}") if step % config.sample_every_steps == 0 else None
         error = evaluate_decoder(generator, val_clips, val_mel, device, samples)
         record = {"step": step, "epoch": epoch, "val_mel_l1": error, "reference": reference,
-                  "lr_g": sched_g.get_last_lr()[0]}
+                  "lr_g": sched_g.get_last_lr()[0],
+                  "grad_scale_g": scaler_g.get_scale() if precision.enabled else None,
+                  "skipped_steps_g": skipped_g if precision.enabled else None}
         with open(metrics_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(record) + "\n")
         logger.info("Validation step %d: mel L1 %.4f (start %.4f)", step, error, reference)
@@ -242,8 +254,7 @@ def train_hifigan(
             scaler_g.scale(loss_g).backward()
             scaler_g.unscale_(optim_g)
             torch.nn.utils.clip_grad_norm_(generator.waveform_decoder.parameters(), config.grad_clip)
-            scaler_g.step(optim_g)
-            scaler_g.update()
+            skipped_g += not scaler_step(scaler_g, optim_g)
             sched_g.step()
             if not config.mel_only:  # the discriminators only train (and their optimizer only steps) when used
                 sched_d.step()
