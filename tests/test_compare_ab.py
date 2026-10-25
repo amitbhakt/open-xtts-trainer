@@ -7,6 +7,7 @@ import copy
 import json
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -15,12 +16,12 @@ import pytest
 from scripts.compare_ab import compare_ab
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES = json.load(open(os.path.join(REPO_ROOT, "eval", "gates.json")))
+GATES = json.loads(Path(REPO_ROOT, "eval", "gates.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture
 def base():
-    with open(os.path.join(REPO_ROOT, "docs", "evidence", "colab_run2", "pilot_en_metrics_v2.json")) as f:
+    with open(os.path.join(REPO_ROOT, "docs", "evidence", "colab_run2", "pilot_en_metrics_v2.json"), encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -85,6 +86,17 @@ def test_comparisons_need_identical_inputs(base):
     tuned["seeds"] = [1, 2]
     with pytest.raises(ValueError, match="seeds"):
         compare_ab(base, tuned)
+    base["voices"] = "arctic"  # as run_eval_baseline records it (the run-2 manifest predates the field)
+    tuned = tuned_from(base)
+    tuned["voices"] = "target"  # measured on the target speaker, base on the eval voices
+    with pytest.raises(ValueError, match="voices"):
+        compare_ab(base, tuned)
+    # A manifest from before the field was always measured on the ARCTIC voices, so it pairs with "arctic"
+    legacy = copy.deepcopy(base)
+    del legacy["voices"]
+    assert compare_ab(legacy, tuned_from(base))["pairs"] > 0
+    with pytest.raises(ValueError, match="voices"):
+        compare_ab(legacy, tuned)  # ...and still not with a target-speaker run
     with pytest.raises(ValueError, match="same checkpoint"):
         compare_ab(base, copy.deepcopy(base))
     tuned = tuned_from(base)

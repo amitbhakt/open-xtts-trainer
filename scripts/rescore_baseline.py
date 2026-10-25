@@ -15,6 +15,7 @@ from typing import Any, Dict, List
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from eval.dataset import DEFAULT_EVAL_SET_PATH
 from eval.harness import METRICS_VERSION, summarize_by_category, summarize_results
 from eval.metrics import compute_duration_ratio, is_too_long
 from scripts.run_eval_baseline import summaries_from_results
@@ -48,7 +49,7 @@ def rescore(manifest: Dict[str, Any], eval_set: Dict[str, Any]) -> Dict[str, Any
 def main():
     parser = argparse.ArgumentParser(description="Re-score a baseline manifest under the current metric definitions.")
     parser.add_argument("manifest")
-    parser.add_argument("--eval_set", default="eval/dataset/eval_set.json")
+    parser.add_argument("--eval_set", default=DEFAULT_EVAL_SET_PATH)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     with open(args.manifest, "r", encoding="utf-8") as f:

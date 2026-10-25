@@ -1,0 +1,211 @@
+{
+  "recordings": [
+    {
+      "input": "ljspeech_sample",
+      "transcript_source": "dataset",
+      "clips": 6,
+      "metadata": "https://raw.githubusercontent.com/coqui-ai/TTS/dev/tests/data/ljspeech/metadata.csv"
+    },
+    {
+      "input": "jfk.flac",
+      "input_s": 11.0,
+      "transcript_source": "human",
+      "aligner": "torchaudio-mms_fa",
+      "segments": 2,
+      "kept_s": 9.776,
+      "kept_fraction": 0.8888,
+      "duration_histogram": {
+        "4-5s": 1,
+        "5-6s": 1
+      },
+      "chars_per_second": {
+        "min": 6.9,
+        "max": 10.5,
+        "mean": 8.7
+      },
+      "alignment_score": {
+        "min": 0.122,
+        "mean": 0.79
+      },
+      "pause_issues_before_fix": {},
+      "fix_pauses": false,
+      "dropped": [],
+      "config": {
+        "segment": {
+          "min_s": 3.0,
+          "max_s": 11.0,
+          "min_gap_s": 0.15,
+          "edge_pad_s": 0.2,
+          "pause_cap_s": 1.0
+        },
+        "quality": {
+          "min_word_score": 0.05,
+          "weak_word_score": 0.2,
+          "max_weak_words": 1,
+          "max_unexplained_speech_s": 0.1,
+          "max_word_s": 1.5,
+          "max_s_per_char": 0.35
+        },
+        "pauses": {
+          "min_gap_s": 0.15,
+          "unpunctuated_gap_s": 0.3
+        },
+        "fix_pauses": false
+      },
+      "candidates": [
+        {
+          "text": "And so, my fellow Americans: ask not",
+          "start_s": 0.181,
+          "end_s": 4.528,
+          "kept": true,
+          "problems": [],
+          "unexplained_speech_s": 0.0,
+          "words": [
+            [
+              "And",
+              0.381,
+              0.541,
+              0.987
+            ],
+            [
+              "so,",
+              0.641,
+              0.741,
+              0.997
+            ],
+            [
+              "my",
+              1.002,
+              1.202,
+              0.999
+            ],
+            [
+              "fellow",
+              1.322,
+              1.583,
+              0.99
+            ],
+            [
+              "Americans:",
+              1.663,
+              2.284,
+              0.995
+            ],
+            [
+              "ask",
+              3.366,
+              3.767,
+              0.905
+            ],
+            [
+              "not",
+              4.027,
+              4.328,
+              0.888
+            ]
+          ]
+        },
+        {
+          "text": "what your country can do for you, ask what you can do for your country.",
+          "start_s": 5.19,
+          "end_s": 10.619,
+          "kept": true,
+          "problems": [],
+          "unexplained_speech_s": 0.0,
+          "words": [
+            [
+              "what",
+              5.39,
+              5.59,
+              0.838
+            ],
+            [
+              "your",
+              5.67,
+              5.831,
+              0.941
+            ],
+            [
+              "country",
+              5.911,
+              6.311,
+              0.939
+            ],
+            [
+              "can",
+              6.472,
+              6.632,
+              0.536
+            ],
+            [
+              "do",
+              6.692,
+              6.792,
+              0.329
+            ],
+            [
+              "for",
+              6.973,
+              7.113,
+              0.122
+            ],
+            [
+              "you,",
+              7.153,
+              7.313,
+              0.559
+            ],
+            [
+              "ask",
+              8.275,
+              8.576,
+              0.503
+            ],
+            [
+              "what",
+              8.636,
+              8.816,
+              0.553
+            ],
+            [
+              "you",
+              8.916,
+              9.056,
+              0.91
+            ],
+            [
+              "can",
+              9.217,
+              9.377,
+              0.755
+            ],
+            [
+              "do",
+              9.437,
+              9.537,
+              0.772
+            ],
+            [
+              "for",
+              9.678,
+              9.798,
+              0.965
+            ],
+            [
+              "your",
+              9.838,
+              9.998,
+              0.931
+            ],
+            [
+              "country.",
+              10.058,
+              10.419,
+              0.967
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

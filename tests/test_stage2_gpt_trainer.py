@@ -6,6 +6,7 @@ Evidence tests run upstream's own code to show each defect; guard tests show the
 import json
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -242,7 +243,7 @@ def test_new_text_rows_mean_init_and_upstream_f6(tmp_path, sw_vocab):
     cfg = build_gpt_trainer_config(sw_vocab, dvae, str(tmp_path), arch_overrides=TINY)
     cfg.model_args.gpt_checkpoint = gpt_ckpt
     upstream = GPTTrainer(cfg).xtts.gpt.text_embedding.weight.detach()
-    hi = json.load(open(REAL_VOCAB))["model"]["vocab"].get("[hi]")
+    hi = json.loads(Path(REAL_VOCAB).read_text(encoding="utf-8"))["model"]["vocab"].get("[hi]")
     hi = hi if hi is not None else n_base - 1
     assert hi == n_base - 1
     assert torch.equal(upstream[n_base], base_rows[hi])  # the new [sw] row is a copy of [hi]
@@ -417,7 +418,7 @@ def test_train_export_and_new_language_inference(tmp_path, sw_vocab):
     export = train_gpt(ds, str(tmp_path / "run"), str(base), vocab_path=sw_vocab, languages=["sw"], epochs=1,
                        batch_size=2, grad_accum_steps=1, lr=1e-3, eval_fraction=0.25, arch_overrides=TINY,
                        load_base_weights=False)
-    summary = json.load(open(os.path.join(export, "training_summary.json")))
+    summary = json.loads(Path(export, "training_summary.json").read_text(encoding="utf-8"))
     assert summary["train_clips"] == 3 and summary["eval_clips"] == 1 and "sw" in summary["languages"]
     assert summary["eval_loss_best"] < summary["eval_loss_before"] and summary["improved"]  # lr 1e-3 from random init
 

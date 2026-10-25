@@ -30,6 +30,9 @@ ENV/
 checkpoints/
 xtts_base/
 eval/reference_voices/
+# Deliberately private: the target speaker's held-out clips, and a lock with their transcripts and local paths.
+# Target-speaker results are reproducible only by whoever holds that speaker's recordings.
+eval/target_voices/
 *.pt
 *.pth
 !xtts_trainer/mel_stats.pth
@@ -62,6 +65,7 @@ REMEDIATION_PLAN.md
 # Raw Colab evidence download (curated copy lives in docs/evidence/colab_run1/)
 phase01_evidence/
 phase01_run2_evidence/
+run4_evidence/
 colab_upload/
 
 # Retired proof outputs and old loss charts: kept locally and on Hugging Face, not in git

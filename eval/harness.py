@@ -18,7 +18,7 @@ import numpy as np
 import torch
 import soundfile as sf
 
-from eval.dataset import load_eval_set
+from eval.dataset import DEFAULT_EVAL_SET_PATH, load_eval_set
 from xtts_trainer.asr import transcribe as asr_transcribe
 from xtts_trainer.spec import SPEC
 from eval.metrics import (
@@ -155,7 +155,7 @@ class EvaluationHarness:
 
     def __init__(
         self,
-        eval_set_path: str = "eval/dataset/eval_set.json",
+        eval_set_path: str = DEFAULT_EVAL_SET_PATH,
         device: str = "cuda" if torch.cuda.is_available() else "cpu",
         asr_model_name: str = "openai/whisper-large-v3",
         asr_device: Optional[str] = None,

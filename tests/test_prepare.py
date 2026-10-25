@@ -8,7 +8,9 @@ MMS_FA model. Tests marked mms run the real aligner when its weights are already
 
 import json
 import os
+import re
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -329,7 +331,7 @@ def test_prepared_dataset_passes_validation_with_traceable_text(tmp_path, tone_r
     result = _validate(dataset, vocab, realigner=realignment_checker(tone_aligner()))
     assert result.ok, result.errors
     assert result.stats["aligned_clips"] == 3 and result.stats["pause_issues"] == {}
-    assert json.load(open(os.path.join(os.path.dirname(dataset), "prep_report.json")))["recordings"][0]["segments"] == 3
+    assert json.loads(Path(os.path.dirname(dataset), "prep_report.json").read_text(encoding="utf-8"))["recordings"][0]["segments"] == 3
 
 
 @pytest.mark.parametrize("shift_s", [1.0, -1.0])
@@ -438,9 +440,75 @@ def test_sources_declare_language_and_carry_no_hardcoded_cuts():
     assert not {"time_slice", "text"} & fields
     for name, source in SOURCES.items():
         assert source.lang and source.speaker, name
+        assert source.license, f"{name} must say why we may train on it"
+        downloads = set(source.urls) | ({source.metadata_url} if source.metadata_url else set())
+        assert set(source.sha256) == downloads, f"{name}: every downloaded file pinned"
+        assert all(re.fullmatch(r"[0-9a-f]{64}", h) for h in source.sha256.values()), f"{name}: pins are SHA-256 hex digests"
+        assert all(re.search(r"/(dev|main|master)/", u) is None for u in downloads), f"{name}: no moving branch URLs"
         assert source.kind in ("corpus_clips", "recording")
         assert source.kind != "corpus_clips" or source.metadata_url
     assert all(n in SOURCES for names in SOURCE_SETS.values() for n in names)
+
+
+def test_unpinned_download_is_refused_with_a_clear_error():
+    from xtts_trainer.speech_data import Source
+
+    source = Source(lang="en", speaker="x", description="unpinned", urls=["https://example.org/a.wav"], license="test")
+    with pytest.raises(KeyError, match="no SHA-256 pin"):
+        source.pinned(source.urls[0])
+
+
+def test_download_checks_the_sha256_pin(tmp_path):
+    import hashlib
+
+    from xtts_trainer.speech_data import _download
+
+    src = tmp_path / "file.bin"
+    src.write_bytes(b"recording")
+    good = hashlib.sha256(b"recording").hexdigest()
+    assert Path(_download(src.as_uri(), str(tmp_path / "dl"), good)).read_bytes() == b"recording"
+    assert Path(_download(src.as_uri(), str(tmp_path / "dl-uppercase"), good.upper())).read_bytes() == b"recording"
+    with pytest.raises(RuntimeError, match="SHA-256"):
+        _download(src.as_uri(), str(tmp_path / "dl"), "0" * 64)  # the cached copy is checked too
+    # No pin, or a SHA-1-length pin, is refused before anything is downloaded
+    for bad in (None, "", hashlib.sha1(b"recording").hexdigest()):
+        with pytest.raises(ValueError, match="SHA-256 pin"):
+            _download(src.as_uri(), str(tmp_path / "unpinned"), bad)
+    assert not (tmp_path / "unpinned").exists()
+
+
+def test_multi_file_source_keeps_every_files_clips(tmp_path, monkeypatch):
+    """Clip numbering restarts per recording, so each file needs its own prefix (art_of_war has 7 files)."""
+    import xtts_trainer.speech_data as speech_data
+
+    import hashlib
+
+    urls, pins = [], {}
+    for k, phrases in enumerate([PHRASES, [p.upper() for p in PHRASES[::-1]]]):
+        audio, _ = tone_speech(phrase_words(phrases))
+        path = tmp_path / f"part{k}.wav"
+        sf.write(str(path), audio, SPEC.output_sample_rate)
+        urls.append(path.as_uri())
+        pins[path.as_uri()] = hashlib.sha256(path.read_bytes()).hexdigest()  # hash the file, not its URI
+    monkeypatch.setitem(speech_data.SOURCES, "two_parts", speech_data.Source(
+        lang="en", speaker="tone", description="two files", urls=urls, license="test", transcript=None, sha256=pins))
+    monkeypatch.setattr(speech_data, "prepare_recording", _with_transcripts(speech_data.prepare_recording, urls))
+    dataset = speech_data.prepare_sources(["two_parts"], str(tmp_path / "out"), aligner=tone_aligner(),
+                                          config=PrepConfig(segment=SegmentConfig(min_s=1.5, max_s=6.0)))
+    records = load_dataset(dataset)
+    assert len(records) == 6 and len({r.audio for r in records}) == 6
+    report = json.loads(Path(tmp_path / "out" / "prep_report.json").read_text(encoding="utf-8"))["recordings"]
+    assert [r["license"] for r in report] == ["test", "test"]
+
+
+def _with_transcripts(prepare, urls):
+    """prepare_recording with the human transcript of each tone file (the test source has none)."""
+    texts = [" ".join(PHRASES), " ".join(p.upper() for p in PHRASES[::-1])]
+
+    def wrapped(path, *args, **kwargs):
+        kwargs["transcript"] = texts[[os.path.basename(u) for u in urls].index(os.path.basename(path))]
+        return prepare(path, *args, **kwargs)
+    return wrapped
 
 
 @pytest.mark.parametrize("argv, message", [
@@ -463,7 +531,6 @@ def _mms_cached():
     return os.path.exists(path) and os.path.getsize(path) > 1_000_000_000
 
 
-JFK_URL = "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"
 
 
 @pytest.mark.skipif(not _mms_cached() or not os.path.exists(os.path.join(REPO_ROOT, "xtts_base", "vocab.json")),
@@ -471,9 +538,9 @@ JFK_URL = "https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"
 @pytest.mark.parametrize("shift_s", [0.0, 1.0, -1.0])
 def test_mms_jfk_alignment_and_shifted_cut(tmp_path, shift_s):
     """Real aligner on JFK: prepared clips realign cleanly; a cut moved by 1 s is rejected."""
-    from xtts_trainer.speech_data import SOURCES, _download
+    from xtts_trainer.speech_data import JFK_SHA256, JFK_URL, SOURCES, _download
 
-    jfk = _download(JFK_URL, str(tmp_path / "dl"))
+    jfk = _download(JFK_URL, str(tmp_path / "dl"), JFK_SHA256)
     out = str(tmp_path / "jfk")
     aligner = CtcAligner()
     records, report = prepare_recording(jfk, out, "en", "jfk", transcript=SOURCES["jfk"].transcript, aligner=aligner,
@@ -506,7 +573,7 @@ def test_mms_jfk_alignment_and_shifted_cut(tmp_path, shift_s):
                           "words": [[w.text, round(w.start_s, 3), round(w.end_s, 3), round(w.score, 3)] for w in window.words]})
     evidence_dir = os.path.join(REPO_ROOT, "docs", "evidence", "phase6")
     os.makedirs(evidence_dir, exist_ok=True)
-    with open(os.path.join(evidence_dir, f"jfk_realign_shift_{shift_s:+.0f}s.json"), "w") as f:
+    with open(os.path.join(evidence_dir, f"jfk_realign_shift_{shift_s:+.0f}s.json"), "w", encoding="utf-8") as f:
         json.dump({"shift_s": shift_s, "report": report, "realigned": realigned, "validation": result.to_json()}, f, indent=2)
     if shift_s:
         assert "alignment_mismatch" in {e.code for e in result.errors}

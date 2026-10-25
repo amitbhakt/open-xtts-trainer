@@ -1,4 +1,4 @@
-"""Run stock base XTTS baseline measurement and save eval/baselines/base_xtts_<pinned-sha>.json.
+"""Measure a checkpoint on the frozen eval set; saves eval/baselines/<label>_xtts_<pinned-sha12>_<voices>.json.
 
 Phase 1 deliverable:
 - Loads frozen eval_set.json.
@@ -12,6 +12,7 @@ If the checkpoint or any reference voice audio is missing, the script fails.
 """
 
 import os
+import re
 import sys
 import json
 import time
@@ -21,11 +22,12 @@ from typing import Optional, Dict, List, Any
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from eval.dataset import load_eval_set
+from eval.dataset import DEFAULT_EVAL_SET_PATH, load_eval_set
 from eval.harness import (
     METRICS_VERSION, EvaluationHarness, get_code_fingerprint, get_git_info, summarize_by_category, summarize_results,
 )
 from eval.reference_voices import DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR, verify_reference_voices
+from eval.target_voices import DEFAULT_TARGET_DIR, verify_target_voices
 from xtts_trainer.spec import XTTS_BASE_LANGUAGES
 
 
@@ -72,7 +74,7 @@ def summaries_from_results(results_by_language: Dict[str, List[Dict[str, Any]]])
 def generate_baseline(
     checkpoint_dir: str,
     reference_audio_dir: str = DEFAULT_OUT_DIR,
-    eval_set_path: str = "eval/dataset/eval_set.json",
+    eval_set_path: str = DEFAULT_EVAL_SET_PATH,
     output_path: Optional[str] = None,
     seeds: List[int] = (42, 123, 999),
     languages: Optional[List[str]] = None,
@@ -80,11 +82,27 @@ def generate_baseline(
     subset_size: Optional[int] = None,
     lock_path: str = DEFAULT_LOCK_PATH,
     label: str = "base",
+    voices: str = "arctic",
+    target_dir: str = DEFAULT_TARGET_DIR,
+    allow_unchecked_location: bool = False,
 ) -> Dict[str, Any]:
     """Measure a checkpoint (stock XTTS-v2 by default) on the frozen eval set. Raises if any input is missing.
 
     label names the model in the manifest ("base", "tuned", ...); scripts/compare_ab.py pairs two manifests.
+    voices: "arctic" (the eval set's CMU ARCTIC voices: forgetting check on unseen speakers), "target" (the
+    target speaker's held-out clips from scripts/build_target_voices.py: did the fine-tune learn the voice?).
+    The two are separate runs: pooled, every ungated gate in eval/gates.json would mix the forgetting check on
+    unseen voices with the target speaker. Target clips are read only from DEFAULT_TARGET_DIR, the one place
+    training refuses them (allow_unchecked_location: tests only).
     """
+    if voices not in ("arctic", "target"):
+        raise ValueError(f"voices must be arctic or target, not {voices!r}")
+    if (voices == "target" and os.path.abspath(target_dir) != os.path.abspath(DEFAULT_TARGET_DIR)
+            and not allow_unchecked_location):
+        raise ValueError(f"target voices are read only from {DEFAULT_TARGET_DIR}: training refuses held-out clips "
+                         f"listed there, and nowhere else")
+    if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]*", label):
+        raise ValueError(f"label {label!r} must be a plain name (letters, digits, '_', '-', '.'); it becomes a file name")
     missing_ckpt = [f for f in REQUIRED_CHECKPOINT_FILES if not os.path.exists(os.path.join(checkpoint_dir, f))]
     if missing_ckpt:
         raise FileNotFoundError(
@@ -93,14 +111,21 @@ def generate_baseline(
         )
 
     if output_path is None:
-        output_path = f"eval/baselines/base_xtts_{PINNED_UPSTREAM_COMMIT[:12]}.json"
+        # One file per label and voice set, so a target run never overwrites the eval-voice run (or vice versa)
+        output_path = f"eval/baselines/{label}_xtts_{PINNED_UPSTREAM_COMMIT[:12]}_{voices}.json"
 
     eval_data = load_eval_set(eval_set_path)
-    voices = resolve_reference_voices(eval_data, reference_audio_dir)
-    locked = verify_reference_voices(reference_audio_dir, lock_path)
-    unlocked = sorted({v["speaker_id"] for v in voices} - set(locked))
-    if unlocked:
-        raise RuntimeError(f"Reference voices {unlocked} are not in the lock {lock_path}; rebuild the lock.")
+    selected = voices
+    voices = []
+    if selected == "arctic":
+        voices = resolve_reference_voices(eval_data, reference_audio_dir)
+        locked = verify_reference_voices(reference_audio_dir, lock_path)
+        unlocked = sorted({v["speaker_id"] for v in voices} - set(locked))
+        if unlocked:
+            raise RuntimeError(f"Reference voices {unlocked} are not in the lock {lock_path}; rebuild the lock.")
+    if selected == "target":
+        voices += [{"speaker_id": vid, "language": None, "path": path}
+                   for vid, path in sorted(verify_target_voices(target_dir).items())]
     if languages is None:
         languages = ["en"] + sorted(eval_data["target_languages"].keys())
 
@@ -152,6 +177,7 @@ def generate_baseline(
         "checkpoint_sha256": {
             f: _sha256_of_file(os.path.join(checkpoint_dir, f)) for f in REQUIRED_CHECKPOINT_FILES
         },
+        "voices": selected,
         "reference_voices": [
             {"speaker_id": v["speaker_id"], "sha256": _sha256_of_file(v["path"])} for v in voices
         ],
@@ -178,11 +204,13 @@ if __name__ == "__main__":
     parser.add_argument("--reference_lock", type=str, default=DEFAULT_LOCK_PATH)
     parser.add_argument("--seeds", type=int, nargs="+", default=[42, 123, 999])
     parser.add_argument("--subset_size", type=int, default=None, help="First N sentences per language (pilot runs)")
-    parser.add_argument("--eval_set", type=str, default="eval/dataset/eval_set.json")
+    parser.add_argument("--eval_set", type=str, default=DEFAULT_EVAL_SET_PATH)
     parser.add_argument("--output", type=str, default=None)
     parser.add_argument("--languages", type=str, nargs="+", default=None, help="Languages to evaluate (default: all in eval set)")
     parser.add_argument("--asr_model", type=str, default="openai/whisper-large-v3")
     parser.add_argument("--label", type=str, default="base", help="Name of this model in the manifest (base, tuned, ...)")
+    parser.add_argument("--voices", choices=["arctic", "target"], default="arctic",
+                        help="arctic: eval-set CMU voices; target: held-out target-speaker clips (build_target_voices.py)")
     args = parser.parse_args()
 
     res = generate_baseline(
@@ -196,6 +224,7 @@ if __name__ == "__main__":
         subset_size=args.subset_size,
         lock_path=args.reference_lock,
         label=args.label,
+        voices=args.voices,
     )
     print("Baseline measured successfully.")
     print(json.dumps(res["summary_by_language"], indent=2))

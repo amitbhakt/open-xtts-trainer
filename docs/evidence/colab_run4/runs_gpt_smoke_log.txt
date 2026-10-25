@@ -1,0 +1,90 @@
+2026-10-24 17:50:51,306 [WARNING] effective batch 2 < 32 (docs/recipe_design.md §3 starting point)
+2026-10-24 17:50:51,358 [WARNING] Dataset warning: only 0/8 clips are under 1.5s; short-utterance coverage helps avoid short-text hallucination (docs/recipe_design.md §3, ablation A1)
+2026-10-24 17:50:51,359 [INFO] Stage 2: 6 train / 2 eval clips; language share of training draws: {'en': 1.0}
+[transformers] Model config: bos_token_id must be `None` or an integer within the vocabulary (between 0 and 255), got 50256. This may result in unexpected behavior.
+[transformers] Model config: eos_token_id must be `None` or an integer within the vocabulary (between 0 and 255), got 50256. This may result in unexpected behavior.
+2026-10-24 17:51:07,044 [INFO] DVAE weights restored from: xtts_base/dvae.pth
+2026-10-24 17:51:14,839 [INFO] GPT weights loaded strictly from xtts_base/model.pth
+2026-10-24 17:51:20,301 [INFO] Eval loss before training: 3.1999
+fatal: not a git repository (or any of the parent directories): .git
+ > Training Environment:
+ | > Backend: Torch
+ | > Mixed precision: False
+ | > Precision: float32
+ | > Current device: 0
+ | > Num. of GPUs: 1
+ | > Num. of CPUs: 2
+ | > Num. of Torch Threads: 1
+ | > Torch seed: 1
+ | > Torch CUDNN: True
+ | > Torch CUDNN deterministic: False
+ | > Torch CUDNN benchmark: False
+ | > Torch TF32 MatMul: False
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792864283.012808    9147 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792864288.336331    9147 cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+ > Start Tensorboard: tensorboard --logdir=runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000
+
+ > Model has 518442047 parameters
+
+[4m[1m > EPOCH: 0/2[0m
+ --> runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000
+2026-10-24 17:51:29,776 [INFO] Sampling by language: dict_keys(['en'])
+
+[1m > TRAINING (2026-10-24 17:51:29) [0m
+
+[1m   --> TIME: 2026-10-24 17:51:31 -- STEP: 0/2 -- GLOBAL_STEP: 0[0m
+     | > current_lr: 5e-06  (5e-06)
+     | > loss_text_ce: 0.020692169666290283  (0.020692169666290283)
+     | > loss_mel_ce: 4.299439430236816  (4.299439430236816)
+     | > loss: 4.320131778717041  (4.320131778717041)
+     | > grad_norm: tensor(29.8693, device='cuda:0')  (tensor(29.8693, device='cuda:0'))
+     | > step_time: 0.9994  (0.9993932247161865)
+     | > loader_time: 0.2973  (0.2973301410675049)
+
+
+[1m > EVALUATION [0m
+
+
+  [1m--> EVAL PERFORMANCE[0m
+     | > avg_loader_time: 0.20650696754455566 [0m(+0.0)
+     | > avg_loss_text_ce: 0.022319674491882324 [0m(+0.0)
+     | > avg_loss_mel_ce: 3.0428993701934814 [0m(+0.0)
+     | > avg_loss: 3.065218925476074 [0m(+0.0)
+
+ > BEST MODEL : runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000/best_model_3.pth
+
+[4m[1m > EPOCH: 1/2[0m
+ --> runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000
+
+[1m > TRAINING (2026-10-24 17:54:34) [0m
+
+[1m > EVALUATION [0m
+
+
+  [1m--> EVAL PERFORMANCE[0m
+     | > avg_loader_time:[92m 0.19884872436523438 [0m(-0.007658243179321289)
+     | > avg_loss_text_ce:[92m 0.022231774404644966 [0m(-8.79000872373581e-05)
+     | > avg_loss_mel_ce:[92m 2.9790635108947754 [0m(-0.06383585929870605)
+     | > avg_loss:[92m 3.001295328140259 [0m(-0.06392359733581543)
+
+ > BEST MODEL : runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000/best_model_6.pth
+
+[4m[1m > EPOCH: 2/2[0m
+ --> runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000
+
+[1m > TRAINING (2026-10-24 17:57:25) [0m
+
+[1m > EVALUATION [0m
+
+
+  [1m--> EVAL PERFORMANCE[0m
+     | > avg_loader_time:[91m 0.20959973335266113 [0m(+0.010751008987426758)
+     | > avg_loss_text_ce:[92m 0.022190285846590996 [0m(-4.148855805397034e-05)
+     | > avg_loss_mel_ce:[92m 2.949720859527588 [0m(-0.0293426513671875)
+     | > avg_loss:[92m 2.9719111919403076 [0m(-0.029384136199951172)
+
+ > BEST MODEL : runs/gpt_smoke/stage2_gpt-October-24-2026_05+51PM-0000000/best_model_9.pth
+2026-10-24 18:08:22,787 [INFO] Exported best checkpoint to runs/gpt_smoke/export

@@ -1,7 +1,9 @@
 """Unit tests for evaluation metrics and evaluation dataset loading."""
 
+import json
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -179,3 +181,31 @@ def test_baseline_requires_all_reference_voice_audio(tmp_path):
     data = load_eval_set()
     with pytest.raises(FileNotFoundError, match="Missing reference voice audio"):
         resolve_reference_voices(data, str(tmp_path))
+
+
+def test_eval_set_is_never_regenerated_silently(tmp_path, monkeypatch):
+    """A missing eval set is an error, not a fresh file: a wrong path must not silently change what is measured."""
+    from eval.dataset import DEFAULT_EVAL_SET_PATH
+    from eval.reference_voices import DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR
+
+    missing = tmp_path / "nope" / "eval_set.json"
+    with pytest.raises(FileNotFoundError, match="frozen eval set"):
+        load_eval_set(str(missing))
+    assert not missing.exists()
+    assert all(os.path.isabs(p) for p in (DEFAULT_EVAL_SET_PATH, DEFAULT_LOCK_PATH, DEFAULT_OUT_DIR))
+    monkeypatch.chdir(tmp_path)  # defaults don't depend on the working directory
+    assert load_eval_set()["sha256"] == json.loads(Path(DEFAULT_EVAL_SET_PATH).read_text(encoding="utf-8"))["sha256"]
+    with pytest.raises(TypeError):
+        save_frozen_eval_set()  # no default: replacing the frozen set must name its path
+
+
+def test_edited_eval_set_is_refused(tmp_path):
+    """Manifests record the stored sha256, so the loader recomputes it: an edit can't keep the old hash."""
+    from eval.dataset import DEFAULT_EVAL_SET_PATH
+
+    data = json.loads(Path(DEFAULT_EVAL_SET_PATH).read_text(encoding="utf-8"))
+    data["english_sentences"][0]["text"] = "An edited sentence."
+    edited = tmp_path / "eval_set.json"
+    edited.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(ValueError, match="doesn't match its content"):
+        load_eval_set(str(edited))

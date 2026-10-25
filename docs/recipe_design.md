@@ -7,9 +7,11 @@ that guards it. Code comments refer here with short IDs:
 - **A1–A8:** experiments still to run (§5);
 - **Phase 0–9:** verification stages (§6).
 
-**Upstream** means [`idiap/coqui-ai-TTS`](https://github.com/idiap/coqui-ai-TTS), the maintained fork of the
-archived `coqui-ai/TTS`, pinned at commit `03339e5b790b5e16ea8867a142e8bb26ec646d94` (`pyproject.toml`). Every
-file:line reference is to that commit. The findings were verified there only, not against the archived original.
+**Upstream** means [`idiap/coqui-ai-TTS`](https://github.com/idiap/coqui-ai-TTS), the maintained fork of
+[`coqui-ai/TTS`](https://github.com/coqui-ai/TTS) (unmaintained since Coqui shut down; last push 2024-08-16, not
+formally archived). It is pinned at commit `03339e5b790b5e16ea8867a142e8bb26ec646d94` (`pyproject.toml`), and every
+file:line reference below is to that commit unless marked "original". The code findings were also checked against
+the original's last release, v0.22.0, where each one is present too (table below).
 
 ## §1 Evidence levels
 
@@ -37,6 +39,25 @@ Each finding has a test that demonstrates the upstream behaviour, and a guard th
 | **F5** | Hugging Face Whisper word timestamps are contiguous: each word ends exactly where the next begins, so they can't locate pauses. Also: when a transcript is missing words, CTC forced alignment doesn't leave the extra speech unaligned; it stretches a neighbouring word over it. | `tests/fixtures/jfk_whisper_alignment.json` | Word times come from CTC forced alignment (MMS_FA). Missing text is detected as frames where the model hears a character but the alignment path says blank. | `test_whisper_word_timestamps_have_no_gaps`, `test_missing_text_is_detected_as_unexplained_speech` |
 | **F6** | When `GPTTrainer` extends the vocabulary, new text rows get unit-variance random values, and the old *last* row is copied onto the new last row on the assumption that it is `[START]`. In XTTS-v2 `[START]` is 261 and the last row is `[hi]` (6680), so the newest token, typically the new language tag, starts as a copy of `[hi]`. | `tts/layers/xtts/trainer/gpt_trainer.py:113-142` | New rows start at the mean of the existing rows plus small noise (A5). Base weights load strictly through our own path. | `test_new_text_rows_mean_init_and_upstream_f6` |
 
+**Also in the original `coqui-ai/TTS` v0.22.0** (tag commit `fa28f99f`, checked 2026-10-24; commands, file hashes
+and the exact lines are in [`docs/evidence/upstream/coqui_tts_v0.22.0_check.md`](evidence/upstream/coqui_tts_v0.22.0_check.md)):
+these problems date from Coqui's own release, not from the fork. F3 is a property of the released `dvae.pth`
+itself and F5 of Hugging Face Whisper, so neither depends on the code base. Paths in both columns are relative to
+the repository root of each project.
+
+| Finding | Original v0.22.0 | Fork, pinned commit |
+|---|---|---|
+| F1 | `TTS/tts/layers/xtts/dvae.py:103-116` | `TTS/tts/layers/xtts/dvae.py:103-116` |
+| F2 | `TTS/tts/layers/xtts/gpt.py:541-546` (mask after the loop), `:414` (perceiver divides by 256) | `TTS/tts/layers/xtts/gpt.py:461-465` |
+| F4 | `TTS/tts/layers/xtts/tokenizer.py:643` | `TTS/tts/layers/xtts/tokenizer.py:651-652` |
+| F6 | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:118-137` | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:113-142` |
+| Silent sample substitution | `TTS/tts/layers/xtts/trainer/dataset.py:156-180` | same pattern |
+| Non-strict checkpoint and DVAE loads | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:84, 186` | same |
+| Half-clip prompt for short clips | `TTS/tts/layers/xtts/trainer/dataset.py:35` | `TTS/tts/layers/xtts/trainer/dataset.py:36-37` |
+
+One difference: the original cleans Hindi with `basic_cleaners` (a "will implement" placeholder); the fork uses
+`multilingual_cleaners`, like the other listed languages.
+
 Other upstream behaviours the Stage 2 wrapper changes:
 - **Silent sample substitution:** `XTTSDataset.__getitem__` catches every exception and silently trains on sample 1 instead (and can recurse forever). Ours raises; `test_dataset_failures_raise_instead_of_substituting`, `test_strict_dataset_items_match_upstream`.
 - **Unsafe defaults:** `GPTArgs` defaults to an 8194-token codebook and no perceiver, which don't match the released model. The architecture comes from the released config instead; `test_config_architecture_comes_from_the_released_model`.
@@ -59,6 +80,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Decision | Evidence | Status |
 |---|---|---|
 | Transcripts come from the corpus's own metadata or from forced alignment, never from fixed-length cuts. Each clip's text is exactly its aligned words. | `[E1]` | Built (`xtts_trainer/prepare/`); real-audio check passed (`test_mms_jfk_alignment_and_shifted_cut`) |
+| Reject a clip when re-alignment finds a word below 0.05, or more than one word below 0.2. | `[E1]` one recording: on JFK, clean clips' lowest word scores 0.54; a cut moved ±1 s drops to 0.01–0.02 with five words below 0.2 ([`colab_run4`](evidence/colab_run4/README.md)) | Built; needs more speakers and languages before the values count as general |
 | Cut only at pauses of at least 150 ms, preferring the longest pauses. | `[E4]` practitioners; `[E1]` for the long-pause preference (a cut at a tight boundary lost a clip on real JFK audio) | Built; `test_cuts_prefer_the_longest_pause_jfk` |
 | Mix short utterances and single words in with long ones from the start, not in a later round. | `[E4]`; `[E2]`-adjacent: forgetting under sequential fine-tuning ([Yang et al. 2021](https://www.arxiv.org/pdf/2110.04482v1)) | The validator warns when under 5% of clips are short; thresholds are A1 |
 | Punctuation should match pauses (a comma with no pause, or a long pause with no punctuation, is flagged). | `[E4]` | Built as a warning; `--strict_pauses` makes it blocking; A6 decides the default |
@@ -71,7 +93,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Off by default: fine-tune the GPT (and optionally the decoder) with the stock DVAE. | `[E1]` F1; `[E4]` community practice | Built (pairing rules, F1) |
 | Train it only when a diagnostic shows the stock DVAE fits your audio clearly worse than reference speech (code usage, reconstruction), and then retrain Stage 2. | `[E1]` F1; `[E5]` thresholds | Diagnostic built (`scripts/diagnose_dvae.py`); thresholds are A2 |
 | Never swap in a DVAE whose codes differ (e.g. Tortoise's) under a pretrained GPT. | `[E1]` + `[E2]` (codebook pruned 8192→1024) | Enforced by the pairing rules |
-| Frozen-codebook mode (quantizer fixed, encoder trainable). | `[E5]` | Built. On synthetic data, codes still drift 47% because the encoder adapts; A2 |
+| Frozen-codebook mode (quantizer fixed, encoder trainable). | `[E1]` that it doesn't protect the GPT | Built, but it doesn't keep codes stable: on real speech 81% of codes changed, the same as normal mode (synthetic data: 47%), because the encoder adapts ([`colab_run4`](evidence/colab_run4/README.md)). Any Stage 1 run needs a Stage 2 retrain; A2 |
 | Fail the run if the codebook collapses on validation data. | `[E1]` + `[E2]` ([Zheng & Vedaldi, ICCV 2023](https://openaccess.thecvf.com/content/ICCV2023/html/Zheng_Online_Clustered_Codebook_ICCV_2023_paper.html)) | Built; floor values are `[E5]` |
 
 **Stage 2: GPT and text**
@@ -98,6 +120,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | Speaker Consistency Loss as an option. | `[E2]` used for the XTTS decoder, but the YourTTS erratum says its gradient never flowed there ([arXiv 2112.02418](https://arxiv.org/pdf/2112.02418)) | Built, off by default; A8 |
 | Full-band (to 12 kHz) mel loss as an option; the default stops at 8 kHz. | `[E4]` | Built, off by default; A8 |
 | Discriminators start fresh, so warm them up while the generator learns from mel loss only; refuse runs that never leave warm-up. | `[E1]` (no upstream discriminator weights exist); `[E4]` noisy early epochs | Built |
+| Keep the best checkpoint by validation mel loss, not the last one. | `[E1]` smoke run: mel L1 1.553 → 1.350 at step 106, then back up to 1.367 by step 120 ([`colab_run4`](evidence/colab_run4/README.md)) | Built |
 
 **Evaluation**
 
@@ -106,6 +129,8 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 | CER/WER from Whisper large-v3 with the standard normalizer; speaker similarity from ECAPA2 (not the model's own encoder); UTMOS only relative to the baseline. | `[E2]` XTTS paper protocol; `[E3]` ([arXiv 2506.20190](https://arxiv.org/pdf/2506.20190)) | Built (`eval/`) |
 | Duration is estimated from the words XTTS actually says (upstream's text cleaner); "too long" needs both a 2.2× ratio and ≥ 1 s excess; headline speaker similarity counts clips ≥ 2 s. | `[E1]` measured: the written-digit and sub-second-clip artifacts in the stock baseline | Built (metrics version 2) |
 | Fine-tunes are judged by a paired A/B against stock XTTS-v2, with gates fixed in advance. | `[E1]` | Built (`scripts/compare_ab.py`, `eval/gates.json`) |
+| Voice fine-tunes are also judged on the target speaker, with reference clips held out of training (the validator refuses them), not only on unseen eval voices. | `[E1]` (a fine-tune can't be credited for cloning a voice it trained on) | Built (`scripts/build_target_voices.py`, `--voices target`) |
+| Training data has a stated license, and every downloaded file is checked against a SHA-256 before use (no pin, no download). | `[E1]` | Built. LJSpeech and JFK: commit-pinned URLs. Art of War: archive.org URLs aren't revision-specific, so the hash is the guarantee (changed content fails the check). Each SHA-256 was taken from a file whose SHA-1 matched the original pin (archive.org's published value, or the value computed at pinning), so provenance carries over without relying on SHA-1. Commands and values in [`docs/evidence/source_pins.md`](evidence/source_pins.md). |
 
 ## §4 Community claims, assessed
 
@@ -147,7 +172,7 @@ decision rule fixed before running. Results update the evidence tags above.
 ## §6 Verification phases
 
 The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipynb`. Evidence is in
-`docs/evidence/`. Status as of 2026-10-24.
+`docs/evidence/`. Status as of 2026-10-25.
 
 | Phase | Checks | Status |
 |---|---|---|
@@ -157,8 +182,8 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | 3 Data contracts | One dataset format, validated before every stage; latent files carry a schema | Done |
 | 4 Parity | Our spectrograms, models and losses match upstream's, each check shown to fail when broken | Done |
 | 5 Canaries | Vocoder round trip, export identity, overfit, segment alignment | Done; identity on the released weights pending |
-| 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Real-aligner checks passed (run 3); sample-set preparation pending a rerun |
-| 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Built and tested; real-weights runs pending |
+| 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Done: real-aligner checks (runs 3–4); sample set prepared and validated with zero edits (run 4) |
+| 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); no full-size run yet |
 | 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Tooling done; no fine-tune measured yet |
 | 9 Automation | CI, pre-commit, PR checklist, fresh-install check | Files in place; fresh install passes locally |
 

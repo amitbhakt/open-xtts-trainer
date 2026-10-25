@@ -13,9 +13,11 @@ The output is validated (xtts_trainer.data.validate) before this command reports
 
 import argparse
 import csv
+import hashlib
 import io
 import json
 import os
+import re
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
@@ -28,7 +30,19 @@ from xtts_trainer.prepare.pipeline import PrepConfig, load_mono, prepare_recordi
 from xtts_trainer.spec import SPEC
 
 DEFAULT_VOCAB = "xtts_base/vocab.json"
-LJSPEECH_BASE = "https://raw.githubusercontent.com/coqui-ai/TTS/dev/tests/data/ljspeech"
+# Pinned to commits (the branches move) and checked by SHA-256; values and commands in docs/evidence/source_pins.md
+LJSPEECH_BASE = "https://raw.githubusercontent.com/coqui-ai/TTS/dbf1a08a0d4e47fdad6172e433eeb34bc6b13b4e/tests/data/ljspeech"
+LJSPEECH_SHA256 = {
+    f"{LJSPEECH_BASE}/metadata.csv": "2727a6428189a0213d480b2de5eceb159877c2b99b0027b22115d076c868938d",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0001.wav": "4d2bd83ff0f7fe33491b03193abdf623f1b4cc2d8103972b33638d3607d86dc5",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0002.wav": "6563390fa42121eeeab15f49fa91fd26afe000022bfdaaa882f06224ad549599",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0003.wav": "ad97822fa512b4897a01557423ffff7cc1fc763c9b9d5d502a5a1bc566f7440b",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0004.wav": "3c9cce186f26b6690b1d96a6a640c3f1bdb10e1f206738344190fa264955a7af",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0005.wav": "0d95df8cd780f0ed4f71d74559d42b33cc98ae9e7b398e0eceb17428dfacb9ca",
+    f"{LJSPEECH_BASE}/wavs/LJ001-0006.wav": "4b866eebe1e7cb6ded4bcb27caa0638b8ade67a6a8a2f7132952b716dc7006db",
+}
+JFK_URL = "https://raw.githubusercontent.com/openai/whisper/86098128c0b4f24f0e2aa2994de830614b474227/tests/jfk.flac"
+JFK_SHA256 = "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715"
 
 
 @dataclass
@@ -44,38 +58,77 @@ class Source:
     metadata_url: Optional[str] = None
     # A human transcript of the whole recording; None = Whisper
     transcript: Optional[str] = None
+    # Why we may train on it, with where that is stated
+    license: str = ""
+    # url -> SHA-256 for every file the source downloads (audio and metadata_url), checked after every download.
+    # Required: an unpinned URL is an error, not a skipped check.
+    sha256: Dict[str, str] = field(default_factory=dict)
 
+    def pinned(self, url: str) -> str:
+        if url not in self.sha256:
+            raise KeyError(f"{url} has no SHA-256 pin; every downloaded file must be pinned "
+                           f"(docs/evidence/source_pins.md)")
+        return self.sha256[url]
+
+
+# One solo reader, public domain. Pinned by SHA-256 of files whose SHA-1 first matched the value archive.org
+# publishes (https://archive.org/metadata/art_of_war_librivox); archive.org publishes no SHA-256.
+# Replaced reach-vb/random-audios, which has no license, no dataset card and an unknown speaker.
+ARCHIVE_ART_OF_WAR = "https://archive.org/download/art_of_war_librivox"
+ART_OF_WAR = [(f"{ARCHIVE_ART_OF_WAR}/{name}", sha256) for name, sha256 in [
+    ("art_of_war_01-02_sun_tzu_64kb.mp3", "6cb289fa9a13cfc94b18e8a89159da687c60db88c2b6377311f9bc5664d5492f"),
+    ("art_of_war_03-04_sun_tzu_64kb.mp3", "57e879fe7822578fd22010f1280185799a119a3482e025d9a71f49878ff45ba7"),
+    ("art_of_war_05-06_sun_tzu_64kb.mp3", "ace85bbe5e784c9dc622b9ddb346b513afa7cdb4f9176c45d2fd9df16794bb58"),
+    ("art_of_war_07-08_sun_tzu_64kb.mp3", "23bf3869fc869942cd68812417927fc350dee33e114bbe445f41d5157d559aad"),
+    ("art_of_war_09-10_sun_tzu_64kb.mp3", "49dcdde816c1e1152c1ff1721171ebe5817d0db5ffd2c8970c2c20511b4043ad"),
+    ("art_of_war_11_sun_tzu_64kb.mp3", "031b2426f8a67f7cda7e3a38ed13b061876f7610e078fb8395962669803c27d8"),
+    ("art_of_war_12-13_sun_tzu_64kb.mp3", "61acc0e274eef3f740ec4ad4c5c4a18907e35832d0581d1bf9dfdc3b031afafa"),
+]]
+ART_OF_WAR_LICENSE = ("Public domain: LibriVox recordings are public-domain dedications; archive.org item "
+                      "art_of_war_librivox, licenseurl http://creativecommons.org/licenses/publicdomain/")
 
 SOURCES: Dict[str, Source] = {
     "ljspeech_sample": Source(
         lang="en", speaker="ljspeech", kind="corpus_clips",
         description="LJSpeech LJ001-0001..0006 (public domain); text from metadata.csv, normalized column",
+        license="Public domain (LJ Speech Dataset, https://keithito.com/LJ-Speech-Dataset/)",
         urls=[f"{LJSPEECH_BASE}/wavs/LJ001-000{i}.wav" for i in range(1, 7)],
         metadata_url=f"{LJSPEECH_BASE}/metadata.csv",
+        sha256=LJSPEECH_SHA256,
     ),
     "jfk": Source(
         lang="en", speaker="jfk",
         description="JFK inaugural address excerpt (public domain, Whisper test clip), human transcript, aligned",
-        urls=["https://raw.githubusercontent.com/openai/whisper/main/tests/jfk.flac"],
+        urls=[JFK_URL], sha256={JFK_URL: JFK_SHA256},
         transcript="And so, my fellow Americans: ask not what your country can do for you, "
                    "ask what you can do for your country.",
+        license="Public domain: 1961 inaugural address, a work of the US government; clip from the openai/whisper "
+                "test data",
     ),
-    "long_10m": Source(
-        lang="en", speaker="speaker_1",
-        description="10-minute continuous English speech (reach-vb/random-audios), Whisper transcript, aligned",
-        urls=["https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669-10.mp3"],
+    "art_of_war_short": Source(
+        lang="en", speaker="moira_fogarty",
+        description="LibriVox: The Art of War (tr. Lionel Giles), read by Moira Fogarty, chapters 1-2 (8.4 min); "
+                    "Whisper transcript, aligned",
+        urls=[ART_OF_WAR[0][0]], sha256=dict(ART_OF_WAR[:1]),
+        license=ART_OF_WAR_LICENSE,
     ),
-    "long_2h": Source(
-        lang="en", speaker="speaker_1",
-        description="2-hour continuous English speech (reach-vb/random-audios), Whisper transcript, aligned",
-        urls=["https://huggingface.co/datasets/reach-vb/random-audios/resolve/main/4469669.mp3"],
+    "art_of_war": Source(
+        lang="en", speaker="moira_fogarty",
+        description="LibriVox: The Art of War (tr. Lionel Giles), read by Moira Fogarty, all 13 chapters (72 min); "
+                    "Whisper transcript, aligned",
+        urls=[u for u, _ in ART_OF_WAR], sha256=dict(ART_OF_WAR),
+        license=ART_OF_WAR_LICENSE,
     ),
 }
 # Named bundles of sources
 SOURCE_SETS = {"sample": ["ljspeech_sample", "jfk"]}
 
 
-def _download(url: str, dest_dir: str) -> str:
+def _download(url: str, dest_dir: str, sha256: str) -> str:
+    """Download once into dest_dir; the file, fresh or cached, must match its SHA-256 pin."""
+    if not re.fullmatch(r"[0-9a-fA-F]{64}", sha256 or ""):
+        raise ValueError(f"{url}: a SHA-256 pin (64 hex digits) is required, got {sha256!r}")
+    sha256 = sha256.lower()
     os.makedirs(dest_dir, exist_ok=True)
     path = os.path.join(dest_dir, os.path.basename(url))
     if not os.path.exists(path):
@@ -85,6 +138,12 @@ def _download(url: str, dest_dir: str) -> str:
         with open(path + ".tmp", "wb") as f:
             f.write(data)
         os.replace(path + ".tmp", path)
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            digest.update(chunk)
+    if digest.hexdigest() != sha256:
+        raise RuntimeError(f"{path} has SHA-256 {digest.hexdigest()}, expected {sha256} for {url}; delete it and retry")
     return path
 
 
@@ -100,7 +159,7 @@ def ljspeech_texts(metadata_csv: str) -> Dict[str, str]:
 
 def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[List[DatasetRecord], dict]:
     cache = os.path.join(output_dir, "_downloads")
-    with open(_download(source.metadata_url, cache), "r", encoding="utf-8") as f:
+    with open(_download(source.metadata_url, cache, source.pinned(source.metadata_url)), "r", encoding="utf-8") as f:
         texts = ljspeech_texts(f.read())
     clips_dir = os.path.join(output_dir, "clips")
     os.makedirs(clips_dir, exist_ok=True)
@@ -109,7 +168,7 @@ def prepare_corpus_clips(name: str, source: Source, output_dir: str) -> Tuple[Li
         clip_id = os.path.splitext(os.path.basename(url))[0]
         if clip_id not in texts:
             raise KeyError(f"{clip_id} is not in {source.metadata_url}")
-        audio = load_mono(_download(url, cache), SPEC.output_sample_rate)
+        audio = load_mono(_download(url, cache, source.pinned(url)), SPEC.output_sample_rate)
         rel = f"clips/{name}_{clip_id}.wav"
         sf.write(os.path.join(output_dir, rel), audio, SPEC.output_sample_rate, subtype="PCM_16")
         records.append(DatasetRecord(audio=rel, text=texts[clip_id], lang=source.lang, speaker=source.speaker,
@@ -129,13 +188,20 @@ def prepare_sources(names: List[str], output_dir: str, aligner: Optional[CtcAlig
         if source.kind == "corpus_clips":
             recs, report = prepare_corpus_clips(name, source, output_dir)
         else:
-            recs, report = [], None
-            for url in source.urls:
-                path = _download(url, os.path.join(output_dir, "_downloads"))
-                recs_i, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
+            recs = []
+            for k, url in enumerate(source.urls):
+                path = _download(url, os.path.join(output_dir, "_downloads"), source.pinned(url))
+                # One prefix per file: clip numbering restarts for every recording
+                prefix = name if len(source.urls) == 1 else f"{name}_{k + 1:02d}"
+                recs_k, report = prepare_recording(path, output_dir, lang=source.lang, speaker=source.speaker,
                                                    transcript=source.transcript, aligner=aligner, config=config,
-                                                   clip_prefix=name, source=url, max_seconds=max_seconds)
-                recs += recs_i
+                                                   clip_prefix=prefix, source=url, max_seconds=max_seconds)
+                report["license"] = source.license
+                reports.append(report)
+                recs += recs_k
+            records += recs
+            continue
+        report["license"] = source.license
         records += recs
         reports.append(report)
     return write_prepared(output_dir, records, reports)

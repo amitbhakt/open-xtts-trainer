@@ -11,10 +11,9 @@ tags:
 - voice-cloning
 - pytorch
 - speech-synthesis
-datasets:
-- reach-vb/random-audios
 metrics:
-- loss
+- wer
+- cer
 pipeline_tag: text-to-speech
 library_name: coqui-tts
 ---
@@ -137,8 +136,9 @@ The aligner weights (1.26 GB, CC BY-NC 4.0) download on first use.
 # Sample set: 6 LJSpeech clips (text from metadata.csv) + JFK, aligned and cut at pauses
 python -m xtts_trainer.speech_data --source sample --output_dir sample_audio
 
-# 10 minutes of continuous English speech, Whisper-transcribed and aligned (--max_minutes to cap it)
-python -m xtts_trainer.speech_data --source long_10m --output_dir sample_audio
+# Continuous English speech, one reader (LibriVox, public domain, files SHA-256 pinned), Whisper-transcribed
+# and aligned: art_of_war_short is 8.4 min, art_of_war is 72 min (--max_minutes caps each file)
+python -m xtts_trainer.speech_data --source art_of_war_short --output_dir sample_audio
 
 # Your own recording: language and speaker are required, never defaulted
 python -m xtts_trainer.speech_data --input_file my_voice.wav --lang en --speaker_name me --output_dir my_data
@@ -261,14 +261,29 @@ Run the harness on the stock model and on yours, then compare them with paired s
 voices and seeds) against pre-registered gates:
 
 ```bash
-python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --output eval/baselines/base.json
-python scripts/run_eval_baseline.py --checkpoint_dir checkpoints/gpt/export --output eval/baselines/tuned.json
+python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --label base --output eval/baselines/base.json
+python scripts/run_eval_baseline.py --checkpoint_dir checkpoints/gpt/export --label tuned --output eval/baselines/tuned.json
 python scripts/compare_ab.py eval/baselines/base.json eval/baselines/tuned.json --gates eval/gates.json
 ```
 
+This uses the eval set's CMU ARCTIC voices, speakers the fine-tune never saw: it checks that nothing regressed.
+To check that a voice fine-tune actually learned **your** speaker, hold out some of their clips first. Training
+on them is then refused while the lock exists:
+
+```bash
+python scripts/build_target_voices.py --dataset my_data/dataset.jsonl   # writes my_data/dataset_train.jsonl
+# train on my_data/dataset_train.jsonl, then measure both models on the held-out voice:
+python scripts/run_eval_baseline.py --checkpoint_dir xtts_base --voices target --label base --output eval/baselines/base_target.json
+python scripts/run_eval_baseline.py --checkpoint_dir checkpoints/gpt/export --voices target --label tuned --output eval/baselines/tuned_target.json
+```
+
+Then copy the `gate` object inside `target_speaker_gate_template` in `eval/gates.json` into the `gates` list, with
+`voices` set to the `target_<speaker>` ids the first command printed, and run `compare_ab.py` on the two target
+manifests.
+
 The gates are relative to the stock model: for example, word error rate may not get worse beyond a set margin,
-and speaker similarity on the target speaker must improve. They are fixed in `eval/gates.json` before
-results are seen.
+and speaker similarity on the target speaker must improve. Fix them in `eval/gates.json` before you look at
+results.
 
 Earlier proof samples on Hugging Face (`proof_outputs/`) were produced by a retired script that checked absolute
 thresholds without a baseline. They are not harness measurements.

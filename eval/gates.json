@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Pre-registered A/B gates for a fine-tune vs stock XTTS-v2 (docs/recipe_design.md §6, phase 8). Fixed before any fine-tuned model is measured; changing them after seeing results defeats them. Margins are [E5] judgement, sized against run 2's seed noise (WER 95% CI half-width ~0.02, SECS ~0.02, UTMOS ~0.07).",
+  "description": "Pre-registered A/B gates for a fine-tune vs stock XTTS-v2 (docs/recipe_design.md \u00a76, phase 8). Fixed before any fine-tuned model is measured; changing them after seeing results defeats them. Margins are [E5] judgement, sized against run 2's seed noise (WER 95% CI half-width ~0.02, SECS ~0.02, UTMOS ~0.07).",
   "gates": [
     {
       "metric": "wer",
@@ -34,13 +34,13 @@
     }
   ],
   "target_speaker_gate_template": {
-    "how": "For voice adaptation, measure both models with the target speaker's held-out clips as reference voices, then add this gate to 'gates' with their speaker ids before running compare_ab.",
+    "how": "For voice adaptation: run scripts/build_target_voices.py on your dataset (it holds out reference clips and writes dataset_train.jsonl to train on), measure both models with python scripts/run_eval_baseline.py --voices target, then add this gate to 'gates' with the voice ids it printed (target_<speaker>) before running compare_ab.",
     "gate": {
       "metric": "secs",
       "rule": "better",
       "margin": 0.0,
       "voices": [
-        "<target speaker ids>"
+        "target_<speaker>"
       ],
       "why": "the fine-tune must sound more like the target speaker than stock cloning does"
     }
