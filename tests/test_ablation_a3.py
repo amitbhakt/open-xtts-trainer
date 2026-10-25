@@ -10,7 +10,7 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
-from scripts.run_ablation_a3 import run_ablation_a3, resolve_dataset
+from scripts.run_ablation_a3 import run_ablation_a3, resolve_dataset, merge_manifests
 from xtts_trainer.models import build_dvae
 from xtts_trainer.stage2_gpt.gpt_trainer import (
     ProjectGPTTrainer,
@@ -81,3 +81,72 @@ def test_ablation_a3_dry_run():
     assert plan["ablation_id"] == "A3"
     assert plan["variants"] == ["upstream", "per_sample"]
     assert plan["eval_batch_size"] == 16
+
+
+def test_merge_manifests(tmp_path):
+    def make_dummy_manifest(seed: int, cer_val: float, ckpt_sha: str = "base_sha"):
+        return {
+            "label": f"dummy_s{seed}",
+            "checkpoint_sha256": {"model.pth": ckpt_sha},
+            "seeds": [seed],
+            "runs": [
+                {
+                    "speaker_id": "spk1",
+                    "language": "en",
+                    "per_seed_results": {
+                        str(seed): [
+                            {
+                                "id": "utt1",
+                                "lang": "en",
+                                "category": "short",
+                                "cer": cer_val,
+                                "wer": cer_val * 1.5,
+                                "secs": 0.85,
+                                "utmos": 3.8,
+                                "duration_s": 2.5,
+                                "duration_ratio": 1.0,
+                                "failures": {"is_empty": False, "is_too_long": False, "is_nan": False},
+                            },
+                            {
+                                "id": "utt2",
+                                "lang": "en",
+                                "category": "short",
+                                "cer": cer_val + 0.01,
+                                "wer": (cer_val + 0.01) * 1.5,
+                                "secs": 0.88,
+                                "utmos": 3.9,
+                                "duration_s": 3.0,
+                                "duration_ratio": 1.05,
+                                "failures": {"is_empty": False, "is_too_long": False, "is_nan": False},
+                            },
+                        ]
+                    },
+                }
+            ],
+        }
+
+    m1 = make_dummy_manifest(1, 0.05, "sha_base")
+    m2 = make_dummy_manifest(2, 0.06, "sha_base")
+
+    out_file = tmp_path / "merged.json"
+    merged = merge_manifests([m1, m2], label="merged_test", output_path=str(out_file))
+
+    assert merged["label"] == "merged_test"
+    assert merged["seeds"] == [1, 2]
+    assert len(merged["runs"]) == 1
+    run0 = merged["runs"][0]
+    assert "1" in run0["per_seed_results"]
+    assert "2" in run0["per_seed_results"]
+    assert "summary_by_language" in merged
+    assert "en" in merged["summary_by_language"]
+
+    from scripts.compare_ab import compare_ab, load_ablation_gates
+
+    m1_cand = make_dummy_manifest(1, 0.04, "sha_cand")
+    m2_cand = make_dummy_manifest(2, 0.05, "sha_cand")
+    merged_cand = merge_manifests([m1_cand, m2_cand], label="merged_cand", output_path=str(tmp_path / "cand.json"))
+
+    gates = load_ablation_gates("A3")
+    res = compare_ab(merged, merged_cand, gates)
+    assert res["pairs"] == 4
+    assert res["passed"] is True
