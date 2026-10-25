@@ -395,3 +395,25 @@ def test_code_fingerprint_tracks_source_changes(tmp_path):
     assert second["n_files"] == 3 and second != first
     (root / "xtts_trainer" / "a.py").write_text("x = 2\n")
     assert get_code_fingerprint(str(root))["sha256"] != second["sha256"]
+
+
+def test_git_info_counts_tracked_changes_not_run_outputs(tmp_path):
+    """A run writes outputs into the checkout; only a change to a tracked file makes the manifest dirty."""
+    import subprocess
+
+    from eval.harness import get_git_info
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", *args], cwd=tmp_path, check=True,
+                       capture_output=True)
+
+    git("init", "-q")
+    (tmp_path / "code.py").write_text("x = 1\n", encoding="utf-8")
+    git("add", "code.py")
+    git("commit", "-q", "-m", "init")
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True).strip()
+    assert get_git_info(str(tmp_path)) == {"commit_sha": head, "is_dirty": False}
+    (tmp_path / "manifest.json").write_text("{}", encoding="utf-8")  # an untracked run output
+    assert get_git_info(str(tmp_path))["is_dirty"] is False
+    (tmp_path / "code.py").write_text("x = 2\n", encoding="utf-8")  # a tracked file edited
+    assert get_git_info(str(tmp_path))["is_dirty"] is True
