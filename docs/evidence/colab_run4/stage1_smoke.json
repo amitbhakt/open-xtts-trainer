@@ -1,0 +1,402 @@
+{
+  "normal": {
+    "outcome": "completed",
+    "best": {
+      "active_codes": 141,
+      "perplexity": 114.27956624543859,
+      "val_recon": 0.10496917739510536,
+      "code_drift": 0.8149779735682819,
+      "step": 40,
+      "epoch": 20,
+      "lr": 4.1e-05
+    },
+    "reference": {
+      "active_codes": 136,
+      "perplexity": 114.5701480227637,
+      "val_recon": 0.2434377521276474,
+      "code_drift": 0.0
+    },
+    "metrics": [
+      {
+        "active_codes": 133,
+        "perplexity": 109.89246677734386,
+        "val_recon": 0.24070056527853012,
+        "code_drift": 0.03524229074889868,
+        "step": 2,
+        "epoch": 1,
+        "lr": 3e-06
+      },
+      {
+        "active_codes": 133,
+        "perplexity": 109.31170055644256,
+        "val_recon": 0.23497003316879272,
+        "code_drift": 0.07048458149779736,
+        "step": 4,
+        "epoch": 2,
+        "lr": 5e-06
+      },
+      {
+        "active_codes": 131,
+        "perplexity": 103.60964910263574,
+        "val_recon": 0.22463233023881912,
+        "code_drift": 0.12334801762114538,
+        "step": 6,
+        "epoch": 3,
+        "lr": 7.000000000000001e-06
+      },
+      {
+        "active_codes": 126,
+        "perplexity": 95.23520708474325,
+        "val_recon": 0.20855092257261276,
+        "code_drift": 0.17180616740088106,
+        "step": 8,
+        "epoch": 4,
+        "lr": 9e-06
+      },
+      {
+        "active_codes": 126,
+        "perplexity": 93.41474877907868,
+        "val_recon": 0.19173000752925873,
+        "code_drift": 0.2599118942731278,
+        "step": 10,
+        "epoch": 5,
+        "lr": 1.1000000000000001e-05
+      },
+      {
+        "active_codes": 127,
+        "perplexity": 94.95945447839286,
+        "val_recon": 0.17566625773906708,
+        "code_drift": 0.3303964757709251,
+        "step": 12,
+        "epoch": 6,
+        "lr": 1.3000000000000001e-05
+      },
+      {
+        "active_codes": 120,
+        "perplexity": 87.06139562658603,
+        "val_recon": 0.1567530781030655,
+        "code_drift": 0.3832599118942731,
+        "step": 14,
+        "epoch": 7,
+        "lr": 1.5e-05
+      },
+      {
+        "active_codes": 118,
+        "perplexity": 83.6792264139781,
+        "val_recon": 0.14411795139312744,
+        "code_drift": 0.4185022026431718,
+        "step": 16,
+        "epoch": 8,
+        "lr": 1.7000000000000003e-05
+      },
+      {
+        "active_codes": 118,
+        "perplexity": 82.6586465785119,
+        "val_recon": 0.13646041974425316,
+        "code_drift": 0.44493392070484583,
+        "step": 18,
+        "epoch": 9,
+        "lr": 1.9e-05
+      },
+      {
+        "active_codes": 119,
+        "perplexity": 83.9808929173064,
+        "val_recon": 0.13250110670924187,
+        "code_drift": 0.46255506607929514,
+        "step": 20,
+        "epoch": 10,
+        "lr": 2.1e-05
+      },
+      {
+        "active_codes": 118,
+        "perplexity": 82.93609073629666,
+        "val_recon": 0.12834978848695755,
+        "code_drift": 0.4933920704845815,
+        "step": 22,
+        "epoch": 11,
+        "lr": 2.3000000000000003e-05
+      },
+      {
+        "active_codes": 120,
+        "perplexity": 86.02692955305886,
+        "val_recon": 0.12379825860261917,
+        "code_drift": 0.4977973568281938,
+        "step": 24,
+        "epoch": 12,
+        "lr": 2.5e-05
+      },
+      {
+        "active_codes": 121,
+        "perplexity": 88.89139244541241,
+        "val_recon": 0.11764968559145927,
+        "code_drift": 0.5594713656387665,
+        "step": 26,
+        "epoch": 13,
+        "lr": 2.7000000000000002e-05
+      },
+      {
+        "active_codes": 128,
+        "perplexity": 94.19352276187341,
+        "val_recon": 0.11471791192889214,
+        "code_drift": 0.6211453744493393,
+        "step": 28,
+        "epoch": 14,
+        "lr": 2.9e-05
+      },
+      {
+        "active_codes": 134,
+        "perplexity": 100.67232636082555,
+        "val_recon": 0.11425609514117241,
+        "code_drift": 0.6607929515418502,
+        "step": 30,
+        "epoch": 15,
+        "lr": 3.1e-05
+      },
+      {
+        "active_codes": 134,
+        "perplexity": 101.9562655661702,
+        "val_recon": 0.11265893280506134,
+        "code_drift": 0.7092511013215859,
+        "step": 32,
+        "epoch": 16,
+        "lr": 3.3e-05
+      },
+      {
+        "active_codes": 133,
+        "perplexity": 101.67254326232644,
+        "val_recon": 0.11227598786354065,
+        "code_drift": 0.762114537444934,
+        "step": 34,
+        "epoch": 17,
+        "lr": 3.5e-05
+      },
+      {
+        "active_codes": 139,
+        "perplexity": 106.23746427189407,
+        "val_recon": 0.1098436787724495,
+        "code_drift": 0.775330396475771,
+        "step": 36,
+        "epoch": 18,
+        "lr": 3.7e-05
+      },
+      {
+        "active_codes": 138,
+        "perplexity": 107.65129830321395,
+        "val_recon": 0.10722960159182549,
+        "code_drift": 0.7929515418502202,
+        "step": 38,
+        "epoch": 19,
+        "lr": 3.9000000000000006e-05
+      },
+      {
+        "active_codes": 141,
+        "perplexity": 114.27956624543859,
+        "val_recon": 0.10496917739510536,
+        "code_drift": 0.8149779735682819,
+        "step": 40,
+        "epoch": 20,
+        "lr": 4.1e-05
+      }
+    ]
+  },
+  "frozen_codebook": {
+    "outcome": "completed",
+    "best": {
+      "active_codes": 147,
+      "perplexity": 123.228314948241,
+      "val_recon": 0.11619218438863754,
+      "code_drift": 0.8149779735682819,
+      "step": 36,
+      "epoch": 18,
+      "lr": 3.7e-05
+    },
+    "reference": {
+      "active_codes": 136,
+      "perplexity": 114.5701480227637,
+      "val_recon": 0.2434377521276474,
+      "code_drift": 0.0
+    },
+    "metrics": [
+      {
+        "active_codes": 136,
+        "perplexity": 114.27151002370951,
+        "val_recon": 0.24013961851596832,
+        "code_drift": 0.00881057268722467,
+        "step": 2,
+        "epoch": 1,
+        "lr": 3e-06
+      },
+      {
+        "active_codes": 137,
+        "perplexity": 114.9273845103228,
+        "val_recon": 0.23453082889318466,
+        "code_drift": 0.048458149779735685,
+        "step": 4,
+        "epoch": 2,
+        "lr": 5e-06
+      },
+      {
+        "active_codes": 139,
+        "perplexity": 116.19544866639973,
+        "val_recon": 0.22530008852481842,
+        "code_drift": 0.07488986784140969,
+        "step": 6,
+        "epoch": 3,
+        "lr": 7.000000000000001e-06
+      },
+      {
+        "active_codes": 138,
+        "perplexity": 113.54114923994578,
+        "val_recon": 0.21357441693544388,
+        "code_drift": 0.12334801762114538,
+        "step": 8,
+        "epoch": 4,
+        "lr": 9e-06
+      },
+      {
+        "active_codes": 137,
+        "perplexity": 112.94110024573695,
+        "val_recon": 0.19746090471744537,
+        "code_drift": 0.2026431718061674,
+        "step": 10,
+        "epoch": 5,
+        "lr": 1.1000000000000001e-05
+      },
+      {
+        "active_codes": 139,
+        "perplexity": 115.79943593723634,
+        "val_recon": 0.18323924392461777,
+        "code_drift": 0.30837004405286345,
+        "step": 12,
+        "epoch": 6,
+        "lr": 1.3000000000000001e-05
+      },
+      {
+        "active_codes": 134,
+        "perplexity": 109.04070056016732,
+        "val_recon": 0.16743766143918037,
+        "code_drift": 0.36123348017621143,
+        "step": 14,
+        "epoch": 7,
+        "lr": 1.5e-05
+      },
+      {
+        "active_codes": 130,
+        "perplexity": 104.32261748454573,
+        "val_recon": 0.1548185758292675,
+        "code_drift": 0.4052863436123348,
+        "step": 16,
+        "epoch": 8,
+        "lr": 1.7000000000000003e-05
+      },
+      {
+        "active_codes": 130,
+        "perplexity": 104.67981780489147,
+        "val_recon": 0.14547964930534363,
+        "code_drift": 0.42731277533039647,
+        "step": 18,
+        "epoch": 9,
+        "lr": 1.9e-05
+      },
+      {
+        "active_codes": 131,
+        "perplexity": 104.82186903784239,
+        "val_recon": 0.1409182883799076,
+        "code_drift": 0.47577092511013214,
+        "step": 20,
+        "epoch": 10,
+        "lr": 2.1e-05
+      },
+      {
+        "active_codes": 131,
+        "perplexity": 105.93391369835176,
+        "val_recon": 0.13865552842617035,
+        "code_drift": 0.4977973568281938,
+        "step": 22,
+        "epoch": 11,
+        "lr": 2.3000000000000003e-05
+      },
+      {
+        "active_codes": 130,
+        "perplexity": 104.28258433902951,
+        "val_recon": 0.13326233625411987,
+        "code_drift": 0.5154185022026432,
+        "step": 24,
+        "epoch": 12,
+        "lr": 2.5e-05
+      },
+      {
+        "active_codes": 128,
+        "perplexity": 101.87935992564174,
+        "val_recon": 0.1325170360505581,
+        "code_drift": 0.5726872246696035,
+        "step": 26,
+        "epoch": 13,
+        "lr": 2.7000000000000002e-05
+      },
+      {
+        "active_codes": 134,
+        "perplexity": 107.9722410454515,
+        "val_recon": 0.12690623104572296,
+        "code_drift": 0.6387665198237885,
+        "step": 28,
+        "epoch": 14,
+        "lr": 2.9e-05
+      },
+      {
+        "active_codes": 136,
+        "perplexity": 109.7194362689527,
+        "val_recon": 0.12788109853863716,
+        "code_drift": 0.6960352422907489,
+        "step": 30,
+        "epoch": 15,
+        "lr": 3.1e-05
+      },
+      {
+        "active_codes": 144,
+        "perplexity": 117.7985841297024,
+        "val_recon": 0.12357970327138901,
+        "code_drift": 0.7268722466960352,
+        "step": 32,
+        "epoch": 16,
+        "lr": 3.3e-05
+      },
+      {
+        "active_codes": 148,
+        "perplexity": 122.8067923785822,
+        "val_recon": 0.12051703780889511,
+        "code_drift": 0.788546255506608,
+        "step": 34,
+        "epoch": 17,
+        "lr": 3.5e-05
+      },
+      {
+        "active_codes": 147,
+        "perplexity": 123.228314948241,
+        "val_recon": 0.11619218438863754,
+        "code_drift": 0.8149779735682819,
+        "step": 36,
+        "epoch": 18,
+        "lr": 3.7e-05
+      },
+      {
+        "active_codes": 141,
+        "perplexity": 117.7902798322301,
+        "val_recon": 0.11730483174324036,
+        "code_drift": 0.8325991189427313,
+        "step": 38,
+        "epoch": 19,
+        "lr": 3.9000000000000006e-05
+      },
+      {
+        "active_codes": 144,
+        "perplexity": 119.05944343764854,
+        "val_recon": 0.11865244805812836,
+        "code_drift": 0.8546255506607929,
+        "step": 40,
+        "epoch": 20,
+        "lr": 4.1e-05
+      }
+    ]
+  }
+}
