@@ -212,10 +212,19 @@ def base_gpt_state(model_path: str) -> Dict[str, torch.Tensor]:
 
 class ProjectGPTTrainer(GPTTrainer):
     def __init__(self, config: GPTTrainerConfig, extra_languages: Sequence[str] = (),
-                 base_model_path: Optional[str] = None, init_seed: int = 42, retrain_for_new_dvae: bool = False):
+                 base_model_path: Optional[str] = None, init_seed: int = 42, retrain_for_new_dvae: bool = False,
+                 masking_mode: str = "per_sample"):
         """retrain_for_new_dvae: acknowledge that the DVAE was trained by Stage 1, so its codes no longer mean
         what the pretrained GPT learned (F1) and this run must retrain the GPT on them. Without it, pairing
-        such a DVAE with pretrained GPT weights is refused."""
+        such a DVAE with pretrained GPT weights is refused.
+
+        masking_mode: 'per_sample' (default, project fix) masks each sample's voice-prompt region individually in code
+        units. 'upstream' reproduces Coqui's buggy masking (cond_idxs passed directly to GPT.forward, masking only the
+        last sample's prompt in mel units) for ablation study A3.
+        """
+        if masking_mode not in ("per_sample", "upstream"):
+            raise ValueError(f"Invalid masking_mode '{masking_mode}', must be 'per_sample' or 'upstream'")
+        self.masking_mode = masking_mode
         args = config.model_args
         if base_model_path and dvae_requires_gpt_retrain(args.dvae_checkpoint) and not retrain_for_new_dvae:
             raise ValueError(
@@ -243,6 +252,11 @@ class ProjectGPTTrainer(GPTTrainer):
             logger.info("GPT weights loaded strictly from %s", base_model_path)
 
     def forward(self, text_inputs, text_lengths, audio_codes, wav_lengths, cond_mels, cond_idxs, cond_lens):
+        if self.masking_mode == "upstream":
+            return self.xtts.gpt(
+                text_inputs, text_lengths, audio_codes, wav_lengths,
+                cond_mels=cond_mels, cond_idxs=cond_idxs, cond_lens=cond_lens,
+            )
         return gpt_losses(self.xtts.gpt, text_inputs, text_lengths, audio_codes, wav_lengths,
                           cond_mels, cond_idxs, cond_lens)
 

@@ -58,11 +58,12 @@ class MmsFaEmitter(Emitter):
 
     name = "torchaudio-mms_fa"
 
-    def __init__(self, device: str = "cpu"):
+    def __init__(self, device: Optional[str] = None):
+        dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
         bundle = torchaudio.pipelines.MMS_FA
         self.labels = tuple(bundle.get_labels(star=STAR))
-        self.model = bundle.get_model(with_star=True).to(device).eval()
-        self.device = device
+        self.model = bundle.get_model(with_star=True).to(dev).eval()
+        self.device = dev
 
     @torch.inference_mode()
     def __call__(self, audio_16k: np.ndarray) -> torch.Tensor:
@@ -164,9 +165,9 @@ class WindowAlignment:
 class CtcAligner:
     """Aligns a transcript to audio. emitter defaults to MMS_FA (loaded on first use)."""
 
-    def __init__(self, emitter: Optional[Emitter] = None, device: str = "cpu", max_window_s: float = MAX_WINDOW_S):
+    def __init__(self, emitter: Optional[Emitter] = None, device: Optional[str] = None, max_window_s: float = MAX_WINDOW_S):
         self._emitter = emitter
-        self.device = device
+        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.max_window_s = max_window_s
 
     @property

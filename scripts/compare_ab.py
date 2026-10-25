@@ -56,10 +56,10 @@ def utterances(manifest: Dict[str, Any]) -> Dict[Key, Dict[str, Any]]:
     return out
 
 
-def bootstrap_ci(diffs: np.ndarray, samples: int = BOOTSTRAP_SAMPLES, seed: int = BOOTSTRAP_SEED) -> Tuple[float, float]:
+def bootstrap_ci(diffs: np.ndarray, samples: int = BOOTSTRAP_SAMPLES, seed: int = BOOTSTRAP_SEED) -> Tuple[Optional[float], Optional[float]]:
     """95% percentile interval of the mean of paired differences."""
     if len(diffs) < 2:
-        return float("nan"), float("nan")
+        return None, None
     rng = np.random.default_rng(seed)
     means = diffs[rng.integers(0, len(diffs), size=(samples, len(diffs)))].mean(axis=1)
     return float(np.percentile(means, 2.5)), float(np.percentile(means, 97.5))
@@ -261,8 +261,9 @@ def main():
         print(f"Decision rule: {gates.get('decision_rule')}")
     for m, s in report["overall"].items():
         if s["n"]:
+            ci_str = f"[{s['ci95'][0]:+.4f}, {s['ci95'][1]:+.4f}]" if s['ci95'][0] is not None and s['ci95'][1] is not None else "[N/A, N/A]"
             print(f"  {m:15s} base {s['base']:.4f}  tuned {s['tuned']:.4f}  diff {s['diff']:+.4f}  "
-                  f"95% CI [{s['ci95'][0]:+.4f}, {s['ci95'][1]:+.4f}]  (n={s['n']})")
+                  f"95% CI {ci_str}  (n={s['n']})")
     for g in report["gates"]:
         details = []
         if g.get("voices"):

@@ -110,15 +110,16 @@ def prepare_recording(
     clip_prefix: str = "clip",
     source: Optional[str] = None,
     max_seconds: Optional[float] = None,
-    device: str = "cpu",
+    device: Optional[str] = None,
 ) -> Tuple[List[DatasetRecord], dict]:
     """Prepare one recording. Returns (records, report); writes clips under output_dir/clips.
 
     transcript: a human transcript of the whole recording (aligned in one window, so at most MAX_WINDOW_S).
     Without it, phrase_transcriber (default: Whisper asr_model) transcribes the recording.
     """
+    dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
     config = config or PrepConfig()
-    aligner = aligner or CtcAligner(device=device)
+    aligner = aligner or CtcAligner(device=dev)
     out_rate = SPEC.output_sample_rate
     audio = load_mono(input_file, out_rate)
     if max_seconds is not None:
