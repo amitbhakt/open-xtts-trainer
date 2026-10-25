@@ -71,4 +71,4 @@ Evaluated across all 5 unseen CMU ARCTIC voices (`arctic_slt`, `arctic_clb`, `ar
 
 - **Execution Environment:** Modal serverless execution (`scripts/modal_run_eval.py`) mounting persistent volumes for checkpoints and cache.
 - **Base Container Commit:** The base container clones from GitHub at `PINNED_COMMIT = "2f1f67ee5261aabd37579d704e62fab4ac177bc4"`, overlaying working tree modifications with deterministic timestamping (`modal overlay`).
-- **Data & Locks:** Target reference clips verified against `eval/target_voices/target_voices.lock.json`; evaluation set verified against `eval/dataset/eval_set.json` (SHA-256 `86c0183f...`).
+- **Data & Locks:** Target reference clips verified against `docs/evidence/run6_target_speaker/evidence/target_voices/target_voices.lock.json`; evaluation set verified against `eval/dataset/eval_set.json` (SHA-256 `86c0183f...`).

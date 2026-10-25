@@ -29,15 +29,40 @@ def compare(m1: Dict[str, Any], m2: Dict[str, Any]) -> Dict[str, Any]:
             if b is None:
                 rows.append({"lang": lang, "metric": metric, "agrees": False, "reason": "missing in run 2"})
                 continue
-            se_a = a["std"] / math.sqrt(a["n"]) if a["n"] > 1 else 0.0
-            se_b = b["std"] / math.sqrt(b["n"]) if b["n"] > 1 else 0.0
+            mean_a = a.get("mean")
+            mean_b = b.get("mean")
+            n_a = a.get("n", 0)
+            n_b = b.get("n", 0)
+            if mean_a is None or mean_b is None or n_a == 0 or n_b == 0:
+                if (mean_a is None or n_a == 0) and (mean_b is None or n_b == 0):
+                    rows.append({
+                        "lang": lang,
+                        "metric": metric,
+                        "mean_run1": None,
+                        "mean_run2": None,
+                        "agrees": True,
+                        "reason": "unavailable (zero samples)",
+                    })
+                else:
+                    which = "run 1" if (mean_a is None or n_a == 0) else "run 2"
+                    rows.append({
+                        "lang": lang,
+                        "metric": metric,
+                        "mean_run1": mean_a,
+                        "mean_run2": mean_b,
+                        "agrees": False,
+                        "reason": f"unavailable in {which} (zero samples)",
+                    })
+                continue
+            se_a = a["std"] / math.sqrt(n_a) if n_a > 1 else 0.0
+            se_b = b["std"] / math.sqrt(n_b) if n_b > 1 else 0.0
             tolerance = 1.96 * math.sqrt(se_a ** 2 + se_b ** 2)
-            diff = abs(a["mean"] - b["mean"])
+            diff = abs(mean_a - mean_b)
             rows.append({
                 "lang": lang,
                 "metric": metric,
-                "mean_run1": a["mean"],
-                "mean_run2": b["mean"],
+                "mean_run1": mean_a,
+                "mean_run2": mean_b,
                 "abs_diff": diff,
                 "tolerance": tolerance,
                 "agrees": bool(diff <= tolerance),
@@ -66,7 +91,8 @@ def main():
         print(f"Runs used different inputs: {result['input_mismatches']}")
     for r in result["rows"]:
         if "reason" in r:
-            print(f"  [FAIL] {r['lang']}/{r['metric']}: {r['reason']}")
+            status = "OK  " if r.get("agrees") else "FAIL"
+            print(f"  [{status}] {r['lang']}/{r['metric']}: {r['reason']}")
         else:
             status = "OK  " if r["agrees"] else "FAIL"
             print(f"  [{status}] {r['lang']}/{r['metric']}: {r['mean_run1']:.4f} vs {r['mean_run2']:.4f} "

@@ -88,9 +88,21 @@ def merge_manifests(seed_manifests: List[Dict[str, Any]], label: str, output_pat
 
 def resolve_dataset(dataset_arg: Optional[str] = None, dry_run: bool = False, source: str = "art_of_war_short") -> str:
     """Resolve a valid dataset_train.jsonl with held-out target voice locks."""
+    target_lock = os.path.join(REPO_ROOT, "eval", "target_voices", "target_voices.lock.json")
     if dataset_arg is not None:
         if not os.path.exists(dataset_arg):
             raise FileNotFoundError(f"Supplied explicit --dataset does not exist: {dataset_arg}")
+        if not os.path.exists(target_lock):
+            raise FileNotFoundError(
+                f"Target voice lock not found at {target_lock}. Cannot verify explicit --dataset: {dataset_arg}"
+            )
+        from eval.target_voices import verify_target_voices
+        try:
+            verify_target_voices(os.path.join(REPO_ROOT, "eval", "target_voices"))
+        except (RuntimeError, FileNotFoundError, ValueError) as e:
+            raise RuntimeError(
+                f"Target voice lock verification failed for explicit --dataset {dataset_arg}: {e}"
+            ) from e
         return os.path.abspath(dataset_arg)
 
     candidates = [

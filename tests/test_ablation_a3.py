@@ -174,3 +174,37 @@ def test_merge_manifests(tmp_path):
     res = compare_ab(merged, merged_cand, gates)
     assert res["pairs"] == 4
     assert res["passed"] is True
+
+
+def test_resolve_dataset_explicit_validation(tmp_path, monkeypatch):
+    ds_file = tmp_path / "dataset_train.jsonl"
+    ds_file.write_text("{}", encoding="utf-8")
+
+    # 1. Non-existent explicit dataset raises FileNotFoundError
+    with pytest.raises(FileNotFoundError, match="Supplied explicit --dataset does not exist"):
+        resolve_dataset(str(tmp_path / "does_not_exist.jsonl"))
+
+    # 2. Missing target-voice lock raises FileNotFoundError
+    monkeypatch.setattr("os.path.exists", lambda p: str(p) == str(ds_file))
+    with pytest.raises(FileNotFoundError, match="Target voice lock not found"):
+        resolve_dataset(str(ds_file))
+
+    # 3. Target-voice lock verification failure raises RuntimeError
+    monkeypatch.setattr("os.path.exists", lambda p: True)
+    import eval.target_voices as tv_mod
+
+    def mock_verify_fail(path):
+        raise RuntimeError("checksum mismatch")
+
+    monkeypatch.setattr(tv_mod, "verify_target_voices", mock_verify_fail)
+    with pytest.raises(RuntimeError, match="Target voice lock verification failed"):
+        resolve_dataset(str(ds_file))
+
+    # 4. Successful verification returns absolute dataset path
+    def mock_verify_ok(path):
+        return {"target_moira_fogarty": "clip.wav"}
+
+    monkeypatch.setattr(tv_mod, "verify_target_voices", mock_verify_ok)
+    resolved = resolve_dataset(str(ds_file))
+    assert resolved == os.path.abspath(str(ds_file))
+

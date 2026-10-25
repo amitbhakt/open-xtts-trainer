@@ -301,6 +301,28 @@ def test_compare_baselines():
     v1 = {**_manifest(), "metrics_version": 1}  # scored under different metric definitions
     assert compare(_manifest(), v1)["input_mismatches"] == ["metrics_version"]
 
+    # Handles zero-sample metrics (mean: None, n: 0) gracefully without crashing
+    m_empty1 = _manifest()
+    m_empty1["summary_by_language"]["en"]["secs"] = {
+        "mean": None, "std": 0.0, "ci95": 0.0, "min": None, "max": None, "n": 0, "n_nan": 0
+    }
+    m_empty2 = _manifest()
+    m_empty2["summary_by_language"]["en"]["secs"] = {
+        "mean": None, "std": 0.0, "ci95": 0.0, "min": None, "max": None, "n": 0, "n_nan": 0
+    }
+    res_both_empty = compare(m_empty1, m_empty2)
+    assert res_both_empty["reproducible"]
+    row_secs = next(r for r in res_both_empty["rows"] if r["metric"] == "secs")
+    assert row_secs["agrees"] is True
+    assert row_secs["reason"] == "unavailable (zero samples)"
+
+    # Mismatch when only one has zero samples
+    res_one_empty = compare(m_empty1, _manifest())
+    assert not res_one_empty["reproducible"]
+    row_secs_one = next(r for r in res_one_empty["rows"] if r["metric"] == "secs")
+    assert row_secs_one["agrees"] is False
+    assert "unavailable in run 1" in row_secs_one["reason"]
+
 
 def test_generate_baseline_dry_run(monkeypatch, tmp_path):
     """Full baseline wiring with a fake XTTS model and fake metric models (no downloads)."""
