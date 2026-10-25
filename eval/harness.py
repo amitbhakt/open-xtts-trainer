@@ -19,7 +19,9 @@ import torch
 import soundfile as sf
 
 from eval.dataset import DEFAULT_EVAL_SET_PATH, load_eval_set
-from xtts_trainer.asr import transcribe as asr_transcribe
+from xtts_trainer.asr import transcribe as asr_transcribe, transcribe_batch as asr_transcribe_batch
+
+_UNPATCHED_ASR_TRANSCRIBE = asr_transcribe
 from xtts_trainer.spec import SPEC
 from eval.metrics import (
     normalize_text,
@@ -195,6 +197,35 @@ class EvaluationHarness:
         """
         return asr_transcribe(audio, sample_rate, lang, self.asr_model_name, device=self.asr_device)
 
+    def transcribe_batch(
+        self,
+        audios: List[np.ndarray],
+        sample_rate: int = SPEC.output_sample_rate,
+        lang: str = "en",
+        batch_size: int = 16,
+    ) -> List[str]:
+        """Transcribe a list of audio arrays in batches using Whisper.
+
+        Args:
+            audios: List of 1D numpy arrays of audio samples.
+            sample_rate: Sampling rate of audio.
+            lang: Expected language for transcription.
+            batch_size: Batch size for GPU inference.
+
+        Returns:
+            List of raw transcription strings from ASR.
+        """
+        if asr_transcribe is not _UNPATCHED_ASR_TRANSCRIBE:
+            return [self.transcribe(a, sample_rate=sample_rate, lang=lang) for a in audios]
+        return asr_transcribe_batch(
+            audios,
+            sample_rate,
+            lang,
+            self.asr_model_name,
+            device=self.asr_device,
+            batch_size=batch_size,
+        )
+
     def evaluate_utterance(
         self,
         model: Any,
@@ -288,6 +319,7 @@ class EvaluationHarness:
         subset_size: Optional[int] = None,
         language: str = "en",
         output_dir: Optional[str] = None,
+        batch_size: int = 16,
     ) -> Dict[str, Any]:
         """Run full evaluation suite across fixed seeds and aggregate statistics.
 
@@ -298,6 +330,7 @@ class EvaluationHarness:
             subset_size: Optional number of sentences, taken evenly across categories (select_subset).
             language: Language to benchmark ('en', 'es', etc.).
             output_dir: Optional directory to save synthesized test waveforms.
+            batch_size: Batch size for Whisper ASR inference.
 
         Returns:
             Dict containing aggregated metrics (mean, std, confidence intervals) and individual runs.
@@ -324,22 +357,88 @@ class EvaluationHarness:
         if subset_size is not None and subset_size > 0:
             sentences = select_subset(sentences, subset_size)
 
-        results_by_seed: Dict[int, List[Dict[str, Any]]] = {}
+        tasks = []
         for seed in seeds:
-            results_by_seed[seed] = []
             for item in sentences:
-                res = self.evaluate_utterance(
-                    model=model,
-                    text=item["text"],
-                    lang=language,
-                    cond_latents=cond_latents,
-                    speaker_emb=speaker_emb,
-                    ref_secs_emb=ref_secs_emb,
-                    seed=seed,
-                )
-                res["id"] = item["id"]
-                res["category"] = item.get("category")
-                results_by_seed[seed].append(res)
+                torch.manual_seed(seed)
+                np.random.seed(seed)
+
+                t0 = time.time()
+                with torch.inference_mode():
+                    res = model.inference(
+                        text=item["text"],
+                        language=language,
+                        gpt_cond_latent=cond_latents,
+                        speaker_embedding=speaker_emb,
+                        temperature=0.75,
+                    )
+                elapsed_s = time.time() - t0
+                audio = np.asarray(res["wav"]).squeeze()
+                health = check_audio_sanity(audio, sample_rate=SPEC.output_sample_rate)
+                tasks.append({
+                    "id": item["id"],
+                    "category": item.get("category"),
+                    "text": item["text"],
+                    "seed": seed,
+                    "audio": audio,
+                    "health": health,
+                    "synthesis_time_s": elapsed_s,
+                })
+
+        # Batched Whisper transcription
+        audios = [t["audio"] for t in tasks]
+        asr_texts = self.transcribe_batch(
+            audios,
+            sample_rate=SPEC.output_sample_rate,
+            lang=language,
+            batch_size=batch_size,
+        )
+
+        results_by_seed: Dict[int, List[Dict[str, Any]]] = {s: [] for s in seeds}
+        for task, asr_text in zip(tasks, asr_texts):
+            health = task["health"]
+            text = task["text"]
+            audio = task["audio"]
+
+            wer = compute_wer(text, asr_text, lang=language)
+            cer = compute_cer(text, asr_text, lang=language)
+
+            if health["is_finite"] and health["duration_s"] > 0:
+                secs = self.speaker_similarity.similarity(ref_secs_emb, audio, SPEC.output_sample_rate)
+                utmos = self.mos_predictor.score(audio, SPEC.output_sample_rate)
+            else:
+                secs, utmos = float("nan"), float("nan")
+
+            duration_ratio = compute_duration_ratio(health["duration_s"], text, lang=language)
+
+            is_empty = bool(health["duration_s"] < 0.3 or health["is_silent"])
+            too_long = is_too_long(health["duration_s"], text, lang=language)
+            is_nan = bool(not health["is_finite"])
+
+            res = {
+                "id": task["id"],
+                "category": task["category"],
+                "text": text,
+                "lang": language,
+                "seed": task["seed"],
+                "asr_text": asr_text,
+                "wer": wer,
+                "cer": cer,
+                "secs": secs,
+                "utmos": utmos,
+                "duration_s": health["duration_s"],
+                "duration_ratio": duration_ratio,
+                "rms": health["rms"],
+                "peak": health["peak"],
+                "hf_ratio": health["hf_ratio"],
+                "synthesis_time_s": task["synthesis_time_s"],
+                "failures": {
+                    "is_empty": is_empty,
+                    "is_too_long": too_long,
+                    "is_nan": is_nan,
+                },
+            }
+            results_by_seed[task["seed"]].append(res)
 
         all_results = [r for rs in results_by_seed.values() for r in rs]
         summary = {

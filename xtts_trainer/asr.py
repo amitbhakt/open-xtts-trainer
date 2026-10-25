@@ -43,6 +43,36 @@ def transcribe(audio: np.ndarray, sample_rate: int, lang: str, model_name: str, 
     return out.get("text", "").strip()
 
 
+def transcribe_batch(
+    audios: List[np.ndarray],
+    sample_rate: int,
+    lang: str,
+    model_name: str,
+    device: str = "cpu",
+    batch_size: int = 16,
+) -> List[str]:
+    """Transcribe a batch of mono audio waveforms using Whisper in batched pipeline mode.
+
+    Passes a list of audio inputs to the Hugging Face pipeline with `batch_size`,
+    leveraging GPU tensor parallelism and avoiding sequential invocation warnings.
+    """
+    if not audios:
+        return []
+    asr = load_asr(model_name, device)
+    inputs = [{"raw": np.asarray(a, dtype=np.float32), "sampling_rate": sample_rate} for a in audios]
+    kwargs = _generate_kwargs(model_name, lang)
+    outs = asr(inputs, batch_size=batch_size, generate_kwargs=kwargs) if kwargs else asr(inputs, batch_size=batch_size)
+    results = []
+    for out in outs:
+        if isinstance(out, dict):
+            results.append(out.get("text", "").strip())
+        elif isinstance(out, list) and len(out) > 0 and isinstance(out[0], dict):
+            results.append(out[0].get("text", "").strip())
+        else:
+            results.append("")
+    return results
+
+
 def transcribe_phrases(
     audio: np.ndarray, sample_rate: int, lang: str, model_name: str, device: str = "cpu"
 ) -> List[Tuple[str, float, Optional[float]]]:
