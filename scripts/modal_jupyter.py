@@ -22,7 +22,7 @@ import modal
 app = modal.App.lookup("open-xtts-jupyter", create_if_missing=True)
 
 # Pinned commit SHA for reproducible container build
-PINNED_COMMIT = "c669dd304d89f81282285576c38a66a1b815f781"
+PINNED_COMMIT = "1963878564fcf85a85285e68340d04c10a4ff0a3"
 
 # Persistent volumes for base models, training runs, and baseline evidence
 volume_cache = modal.Volume.from_name("open-xtts-cache", create_if_missing=True)
