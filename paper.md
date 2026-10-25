@@ -333,8 +333,7 @@ The smoke runs test whether each stage runs correctly. They are not meant to imp
 | Stage 2 | 3 epochs of 3 optimizer steps (9 steps); 6 train and 2 evaluation clips; batch 2, no accumulation; fp32 |
 | Stage 3 | 60 epochs, batch 4; discriminator warm-up 40 steps; mixed precision on CUDA |
 
-**Baseline evaluation.** English pilot: 12 sentences (2 per category) × 5 voices × 2 seeds = 120 utterances,
-scored under metrics version 2.
+**Baseline evaluation.** Full multilingual baseline: 5 languages (`en`, `es`, `fr`, `de`, `hi`), 12 sentences × 5 ARCTIC voices × 3 seeds = 900 utterances, scored under metrics version 2 on locked checkpoint `c7ea2000…` (expanded from the initial 120-utterance English pilot).
 
 ## 5 Results to date
 
@@ -370,7 +369,7 @@ transcripts and durations. Different seeds changed the audio: 47 of 50 durations
 
 The multilingual results in Table 2 establish clear language-dependent baselines: English achieves the highest quality (UTMOS 4.04, WER 0.060), while Spanish and Hindi exhibit higher word error rates (0.099 and 0.101, respectively). Across the 900 utterances, the pipeline had zero silent dropouts (`is_empty`) and zero `NaN` values, with 7 runaway-duration flags (`is_too_long`: 5 Spanish, 2 French).
 
-The evaluation protocol and Metric Version 2 rules were originally established during the initial 60-utterance English category pilot (Colab Run 2; `docs/evidence/colab_run2/README.md`), where the model made no recognised errors on four categories and all sibilant WER stemmed from a single tongue-twister sentence that challenged ASR. That pilot highlighted three measurement artefacts that required methodological corrections:
+The evaluation protocol and Metric Version 2 rules were originally established during the initial 120-utterance English category pilot (Colab Run 2; 60 sentence/voice pairs × 2 seeds; `docs/evidence/colab_run2/README.md`), where the model made no recognised errors on four categories and all sibilant WER stemmed from a single tongue-twister sentence that challenged ASR. That pilot highlighted three measurement artefacts that required methodological corrections:
 
 1. **Duration estimated from written digits.** "4,800,000" is 9 characters but about 2 s of speech. The numbers
    category therefore scored a duration ratio of 1.61. Estimating duration from the cleaned words lowers the
@@ -472,8 +471,7 @@ the effect of F2 on short-text hallucination is a hypothesis to be tested by A3.
 1. **Smoke-scale training.** All training results come from eight clips. They establish that the stages work,
    not how well.
 2. **Alignment thresholds.** The validation thresholds rest on one English recording.
-3. **English-only baseline.** The baseline so far is an English pilot of 120 utterances. The four other
-   languages in the test set are not yet measured.
+3. **Baseline language coverage.** The baseline now covers 900 utterances across five languages (`en`, `es`, `fr`, `de`, `hi`), expanded from the earlier 120-utterance English pilot; the remaining 12 languages supported by XTTS-v2 have not yet been evaluated.
 4. **Automatic metrics only.** Whisper-based WER/CER inherits the ASR model's biases. UTMOS was trained on
    English listening tests and is used only relative to the baseline. SECS is unreliable below about 2 s. No
    human listening test has been run; *[a MUSHRA or MOS study is planned]*.
