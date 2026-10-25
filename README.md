@@ -81,7 +81,7 @@ All 5 pre-registered adaptation gates passed with statistically significant spea
 **Licenses:**
 - XTTS-v2 weights: Coqui Public Model License, non-commercial only.
 - MMS_FA aligner and ECAPA2: CC BY-NC 4.0.
-- CMU ARCTIC reference voices: their own license, kept in [eval/reference_voices/licenses/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/eval/reference_voices/licenses/).
+- CMU ARCTIC reference voices: their own license (downloaded and verified by [scripts/fetch_reference_voices.py](https://github.com/amitbhakt/open-xtts-trainer/blob/main/scripts/fetch_reference_voices.py); upstream source at [festvox.org/cmu_arctic](http://festvox.org/cmu_arctic/)).
 
 > [!WARNING]
 > **DVAE Codebook Retraining Invariant:**  

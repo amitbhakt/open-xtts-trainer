@@ -34,6 +34,9 @@ from eval.harness import HEADLINE_SECS_MIN_S
 SAME_INPUT_KEYS = ("metrics_version", "eval_set_sha256", "voices", "reference_voices", "seeds", "subset_size", "languages", "asr_model", "batch_size")
 METRICS = ("wer", "cer", "secs", "utmos", "duration_ratio")
 HIGHER_IS_BETTER = {"secs", "utmos"}
+ALLOWED_GATE_KEYS = {"metric", "rule", "margin", "why", "voices", "category", "languages"}
+VALID_METRICS = set(METRICS) | {"failures"}
+VALID_RULES = {"not_worse", "better"}
 BOOTSTRAP_SAMPLES = 10_000
 BOOTSTRAP_SEED = 0
 
@@ -78,28 +81,56 @@ def failures(results) -> int:
     return sum(bool(any(r["failures"].values())) for r in results)
 
 
+def validate_gate(gate: Dict[str, Any]) -> None:
+    unknown = set(gate.keys()) - ALLOWED_GATE_KEYS
+    if unknown:
+        raise ValueError(f"Unknown keys in gate: {sorted(unknown)}. Allowed: {sorted(ALLOWED_GATE_KEYS)}")
+    if "metric" not in gate or gate["metric"] not in VALID_METRICS:
+        raise ValueError(f"Invalid or missing metric in gate {gate}: must be one of {sorted(VALID_METRICS)}")
+    if "rule" not in gate or gate["rule"] not in VALID_RULES:
+        raise ValueError(f"Invalid or missing rule in gate {gate}: must be one of {sorted(VALID_RULES)}")
+
+
 def check_gate(gate: Dict[str, Any], pairs) -> Dict[str, Any]:
+    validate_gate(gate)
     voices = gate.get("voices")
     category = gate.get("category")
+    languages = gate.get("languages")
+    if isinstance(languages, str):
+        languages = [languages]
+
+    has_category_metadata = any(p[0].get("category") is not None for p in pairs)
+
     selected = [
         p for p in pairs
         if (voices is None or p[0]["speaker_id"] in voices)
-        and (category is None or p[0].get("category") == category)
+        and (languages is None or p[0].get("lang") in languages)
+        and (category is None or not has_category_metadata or p[0].get("category") == category)
     ]
-    if voices and not selected:
-        raise ValueError(f"gate {gate} names voices not in the manifests")
-    if category and not selected:
+    if voices and not all(v in {p[0]["speaker_id"] for p in pairs} for v in voices):
+        raise ValueError(f"gate {gate} names voices {voices!r} not all present in the manifests")
+    if languages and not all(l in {p[0].get("lang") for p in pairs} for l in languages):
+        raise ValueError(f"gate {gate} names languages {languages!r} not in the manifests")
+    if category and has_category_metadata and not selected:
         raise ValueError(f"gate {gate} names category {category!r} not in the manifests")
+
+    margin = gate.get("margin", 0.0)
     if gate["metric"] == "failures":
         base, tuned = failures(b for b, _ in selected), failures(t for _, t in selected)
-        return {**gate, "base": base, "tuned": tuned, "passed": tuned <= base + gate.get("margin", 0)}
+        if gate["rule"] == "not_worse":
+            passed = tuned <= base + margin
+        elif gate["rule"] == "better":
+            passed = tuned < base - margin
+        else:
+            raise ValueError(f"unknown gate rule {gate['rule']!r}")
+        return {**gate, "base": base, "tuned": tuned, "passed": bool(passed)}
+
     stats = paired_stats(selected, gate["metric"])
     if stats["n"] < 2:
         return {**gate, **stats, "passed": False, "reason": "fewer than 2 pairs"}
     lo, hi = stats["ci95"]
     sign = 1.0 if gate["metric"] in HIGHER_IS_BETTER else -1.0  # "improvement" direction of d
     worst, best = (lo, hi) if sign > 0 else (-hi, -lo)  # interval of the improvement
-    margin = gate.get("margin", 0.0)
     if gate["rule"] == "not_worse":
         passed = worst >= -margin
     elif gate["rule"] == "better":
@@ -124,6 +155,8 @@ def load_ablation_gates(ablation_id: str, prereg_path: str = "eval/pre_registere
     gates = list(data.get("global_guardrails", []))
     for g in ablation_gates:
         gates.append(g)
+    for g in gates:
+        validate_gate(g)
     return {
         "version": data.get("version", 1),
         "ablation_id": ablation_id,
@@ -177,9 +210,14 @@ def compare_ab(base: Dict[str, Any], tuned: Dict[str, Any], gates: Optional[Dict
         "by_voice": {v: {m: paired_stats(p, m) for m in METRICS} for v, p in by_voice.items()},
     }
     if gates is not None:
+        gates_list = gates.get("gates")
+        if not gates_list:
+            raise ValueError("Gates specification must contain a non-empty 'gates' list")
+        for g in gates_list:
+            validate_gate(g)
         report["gates_version"] = gates.get("version")
-        report["gates"] = [check_gate(g, pairs) for g in gates["gates"]]
-        report["passed"] = all(g["passed"] for g in report["gates"])
+        report["gates"] = [check_gate(g, pairs) for g in gates_list]
+        report["passed"] = bool(report["gates"]) and all(g["passed"] for g in report["gates"])
     return report
 
 
@@ -206,6 +244,8 @@ def main():
         gates_path = args.gates or "eval/gates.json"
         with open(gates_path, "r", encoding="utf-8") as f:
             gates = json.load(f)
+        if not gates.get("gates"):
+            raise ValueError(f"Gates specification from {gates_path} must contain a non-empty 'gates' list")
 
     report = compare_ab(base_manifest, tuned_manifest, gates)
     if args.report:

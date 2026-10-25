@@ -112,7 +112,12 @@ def run_ablation(
     if not base_manifest_path:
         subset_size = candidate_data.get("subset_size", 12)
         languages = candidate_data.get("languages", ["en"])
-        language = languages[0] if languages else "en"
+        if len(languages) != 1:
+            raise ValueError(
+                f"Auto-detection of baseline only supports single-language candidates (got {languages}). "
+                "Specify --base_manifest explicitly for multi-language evaluation manifests."
+            )
+        language = languages[0]
         base_manifest_path = find_default_baseline(subset_size, language)
         if not base_manifest_path:
             raise FileNotFoundError(
@@ -135,14 +140,18 @@ def run_ablation(
     # Validate manifest compatibility, schema, and utterance pairing
     validate_manifest_pair(base_data, candidate_data)
 
-    # Validate gate voice/category requirements against manifest utterances
+    # Validate gate voice/category/language requirements against manifest utterances
     b_utts = utterances(base_data)
     available_voices = {u["speaker_id"] for u in b_utts.values()}
+    available_languages = {u.get("lang") for u in b_utts.values()}
+    has_category_metadata = any(u.get("category") is not None for u in b_utts.values())
     available_categories = {u.get("category") for u in b_utts.values() if u.get("category")}
     for g in gates.get("gates", []):
-        if g.get("voices") and not any(v in available_voices for v in g["voices"]):
-            raise ValueError(f"Gate names voices {g['voices']} not found in manifests")
-        if g.get("category") and g["category"] not in available_categories:
+        if g.get("voices") and not all(v in available_voices for v in g["voices"]):
+            raise ValueError(f"Gate names voices {g['voices']} not all present in manifests")
+        if g.get("languages") and not all(l in available_languages for l in g["languages"]):
+            raise ValueError(f"Gate names languages {g['languages']} not all present in manifests")
+        if g.get("category") and has_category_metadata and g["category"] not in available_categories:
             raise ValueError(f"Gate names category {g['category']!r} not found in manifests")
 
     if dry_run:

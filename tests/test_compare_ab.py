@@ -220,16 +220,62 @@ def test_compare_ab_cli_rejects_gates_and_ablation_together(base, tmp_path):
     assert "Cannot specify both --gates and --ablation" in res.stderr
 
 
+def test_gate_validation_and_empty_gates(base):
+    from scripts.compare_ab import check_gate, utterances, validate_gate
+
+    # Unknown key rejected
+    with pytest.raises(ValueError, match="Unknown keys in gate"):
+        validate_gate({"metric": "cer", "rule": "not_worse", "margin": 0.01, "invalid_key": True})
+
+    # Unknown metric rejected
+    with pytest.raises(ValueError, match="Invalid or missing metric in gate"):
+        validate_gate({"metric": "unknown_metric", "rule": "not_worse", "margin": 0.01})
+
+    # Unknown rule rejected
+    with pytest.raises(ValueError, match="Invalid or missing rule in gate"):
+        validate_gate({"metric": "cer", "rule": "unknown_rule", "margin": 0.01})
+
+    # Empty gates list rejected in compare_ab
+    with pytest.raises(ValueError, match="non-empty 'gates' list"):
+        compare_ab(base, tuned_from(base), {"gates": []})
+
+
+def test_gate_languages_filtering(base):
+    from scripts.compare_ab import check_gate, utterances
+
+    b_utts = utterances(base)
+    pairs = [(b_utts[k], b_utts[k]) for k in sorted(b_utts)]
+
+    # English gate on English pairs passes
+    en_gate = {"metric": "cer", "rule": "not_worse", "margin": 0.01, "languages": ["en"]}
+    res = check_gate(en_gate, pairs)
+    assert res["passed"]
+    assert res["n"] == 120
+
+    # Non-matching language raises ValueError
+    de_gate = {"metric": "cer", "rule": "not_worse", "margin": 0.01, "languages": ["de"]}
+    with pytest.raises(ValueError, match="not in the manifests"):
+        check_gate(de_gate, pairs)
+
+
 def test_run_ablation_find_default_baseline():
     from scripts.run_ablation import find_default_baseline
 
-    # Existing baselines in eval/baselines/
-    assert find_default_baseline(12, "en") is not None
-    assert find_default_baseline(12, "de") is not None
-    assert find_default_baseline(12, "es") is not None
-    assert find_default_baseline(12, "fr") is not None
-    assert find_default_baseline(12, "hi") is not None
-    assert find_default_baseline(20, "en") is not None
+    # Existing baselines in eval/baselines/ verify language metadata and filename
+    for lang in ("en", "de", "es", "fr", "hi"):
+        path = find_default_baseline(12, lang)
+        assert path is not None and path.endswith(f"base_xtts_s12_{lang}.json")
+        with open(path, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        assert meta["languages"] == [lang]
+        assert meta["subset_size"] == 12
+
+    path_s20 = find_default_baseline(20, "en")
+    assert path_s20 is not None and path_s20.endswith("base_xtts_s20_en.json")
+    with open(path_s20, "r", encoding="utf-8") as f:
+        meta_s20 = json.load(f)
+    assert meta_s20["languages"] == ["en"]
+    assert meta_s20["subset_size"] == 20
 
     # Missing subset size or unsupported language returns None without falling back to a different subset
     assert find_default_baseline(99, "en") is None
@@ -282,6 +328,14 @@ def test_run_ablation_runner_dry_run_rejects_invalid_inputs(base, tmp_path):
     unpaired_file.write_text(json.dumps(unpaired_tuned), encoding="utf-8")
     with pytest.raises(ValueError, match="utterance sets differ"):
         run_ablation("A3", str(unpaired_file), str(base_file), output_dir=str(tmp_path), dry_run=True)
+
+    # 4. Multi-language candidate auto-detection rejection
+    multi_lang_tuned = tuned_from(base)
+    multi_lang_tuned["languages"] = ["en", "es"]
+    multi_lang_file = tmp_path / "multi_lang.json"
+    multi_lang_file.write_text(json.dumps(multi_lang_tuned), encoding="utf-8")
+    with pytest.raises(ValueError, match="only supports single-language candidates"):
+        run_ablation("A3", str(multi_lang_file), output_dir=str(tmp_path), dry_run=True)
 
 
 def test_failures_gate_requires_metadata_and_counts_utterance_once():

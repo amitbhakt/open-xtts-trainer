@@ -61,7 +61,7 @@
         "cer_short_prompts",
         "duration_ratio_failures"
       ],
-      "decision_rule": "Compare all 12 grid configurations against baseline. A cell is eligible if its short-prompt CER 95% CI upper bound is <= baseline long-prompt CER 95% CI upper bound (category 'long_complex', CER margin <= 0.01) and held-out speaker similarity does not regress (SECS worst CI improvement >= -0.02). Among eligible cells, adopt the most computationally efficient configuration, defined as the minimum short_clip_mix_ratio (primary) and fewest total training steps to reach the validation loss plateau (secondary; GPU-hours tiebreaker).",
+      "decision_rule": "Compare all 12 grid configurations against baseline. A cell is eligible if short-prompt CER does not regress beyond the noise floor (category 'short', CER margin <= 0.01), audio failures do not increase (failures margin <= 0), and held-out speaker similarity does not regress (SECS worst CI improvement >= -0.02). Among eligible cells, adopt the most computationally efficient configuration, defined as the minimum short_clip_mix_ratio (primary) and fewest total training steps to reach the validation loss plateau (secondary; GPU-hours tiebreaker).",
       "gates": [
         {
           "metric": "cer",
@@ -75,6 +75,12 @@
           "rule": "not_worse",
           "margin": 0,
           "why": "Candidate must produce zero additional duration or audio failures on short prompts."
+        },
+        {
+          "metric": "secs",
+          "rule": "not_worse",
+          "margin": 0.02,
+          "why": "Held-out speaker similarity must not regress beyond the 0.02 noise floor margin under short-prompt training."
         }
       ],
       "citations": [
@@ -104,13 +110,13 @@
         "end_to_end_wer",
         "end_to_end_secs"
       ],
-      "decision_rule": "Documented architectural exception to the default frozen-DVAE invariant (README.md Stage 1 Invariant): Retraining or fine-tuning the Stage 1 DVAE alters discrete codebook token assignments and invalidates pretrained Stage 2 GPT checkpoints, requiring a mandatory Stage 2 GPT retrain from scratch. Recommend Stage 1 DVAE fine-tuning only for acoustic-shifted domains where downstream Stage 2 end-to-end intelligibility (WER lower 95% CI improvement > 0.0) or SECS (lower 95% CI improvement > 0.0) demonstrates statistically significant gains over stock DVAE that justify the full Stage 2 retraining compute cost.",
+      "decision_rule": "Documented architectural exception to the default frozen-DVAE invariant (README.md Stage 1 Invariant): Retraining or fine-tuning the Stage 1 DVAE alters discrete codebook token assignments and invalidates pretrained Stage 2 GPT checkpoints, requiring a mandatory Stage 2 GPT retrain from scratch. Recommend Stage 1 DVAE fine-tuning only for acoustic-shifted domains where downstream Stage 2 end-to-end intelligibility achieves a statistically significant gain (WER lower bound of 95% CI improvement > 0.0) over stock DVAE without regressing speaker similarity (SECS worst CI improvement >= -0.02), justifying the full Stage 2 retraining compute cost.",
       "gates": [
         {
           "metric": "wer",
-          "rule": "not_worse",
-          "margin": 0.02,
-          "why": "End-to-end intelligibility must not regress beyond the noise floor under Stage 1 DVAE adaptation."
+          "rule": "better",
+          "margin": 0.0,
+          "why": "Stage 1 DVAE fine-tuning must demonstrate statistically significant downstream WER improvement over stock DVAE (lower bound of 95% CI improvement > 0.0)."
         },
         {
           "metric": "secs",
@@ -141,7 +147,7 @@
         "duration_ratio_failures",
         "secs"
       ],
-      "decision_rule": "Retain per-sample masking fix (mandatory correctness); report measured effect sizes on duration ratio stability and short-prompt CER in paper table.",
+      "decision_rule": "The pre-registered gates verify that the mandatory per-sample conditioning masking bugfix introduces no unexpected regressions (short-prompt CER CI degradation <= 0.01, SECS degradation <= 0.02). Retention of the bugfix is confirmed when these gates pass; measured effect sizes on duration ratio stability and CER are reported in the paper table.",
       "gates": [
         {
           "metric": "cer",
@@ -218,7 +224,8 @@
           "metric": "cer",
           "rule": "not_worse",
           "margin": 0.01,
-          "why": "Base language CER must be preserved within the 0.01 noise floor margin when extending text representation."
+          "languages": ["en"],
+          "why": "Base language (English) CER must be preserved within the 0.01 noise floor margin when extending text representation."
         }
       ],
       "citations": [
@@ -285,12 +292,14 @@
           "metric": "wer",
           "rule": "not_worse",
           "margin": 0.02,
+          "languages": ["en"],
           "why": "Base-language WER must not degrade beyond the 0.02 noise floor margin under multilingual replay."
         },
         {
           "metric": "secs",
           "rule": "not_worse",
           "margin": 0.02,
+          "languages": ["en"],
           "why": "Base-language speaker similarity SECS must not degrade beyond the 0.02 margin under multilingual replay."
         }
       ],
