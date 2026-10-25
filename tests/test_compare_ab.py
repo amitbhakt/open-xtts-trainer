@@ -115,6 +115,10 @@ def test_comparisons_need_identical_inputs(base):
     tuned["runs"][0]["per_seed_results"]["42"].pop()
     with pytest.raises(ValueError, match="unpaired"):
         compare_ab(base, tuned)
+    tuned_batched = tuned_from(base)
+    tuned_batched["batch_size"] = 16  # base has no batch_size (legacy sequential = 1)
+    with pytest.raises(ValueError, match="batch_size"):
+        compare_ab(base, tuned_batched)
 
 
 def test_gates_file_is_pre_registered_and_well_formed():

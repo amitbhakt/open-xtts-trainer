@@ -316,12 +316,14 @@ def main():
                     hashes_match = False
                     break
 
+            cached_batch = cached_data.get("batch_size", 16)
             if (
                 hashes_match
                 and sorted(cached_seeds) == sorted(args.seeds)
                 and cached_subset == args.subset_size
                 and cached_data.get("languages") == ["en"]
                 and cached_data.get("asr_model") == "openai/whisper-large-v3"
+                and cached_batch == args.eval_batch_size
             ):
                 reuse_cached_base = True
         except (json.JSONDecodeError, OSError, KeyError):

@@ -227,7 +227,7 @@ def test_harness_custom_evaluate_utterance_override_preserved(tmp_path):
     mock_model.get_conditioning_latents.return_value = (torch.zeros(1, 1), torch.zeros(1, 1))
 
     mock_sim = SpeakerSimilarity(model=MagicMock())
-    mock_sim.embed_utterance = MagicMock(return_value=torch.zeros(1, 192))
+    mock_sim.embed = MagicMock(return_value=torch.zeros(1, 192))
     mock_mos = UTMOSPredictor(model=MagicMock())
 
     harness = CustomHarness(device="cpu", speaker_similarity=mock_sim, mos_predictor=mock_mos)
