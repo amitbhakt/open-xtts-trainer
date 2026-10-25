@@ -1,0 +1,13 @@
+xtts_trainer/stage2_gpt/export.py
+  ai_agent 107-109
+tests/test_invariants.py
+  ai_agent 394-396
+xtts_trainer/stage2_gpt/gpt_trainer.py
+  ai_agent 231-233
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "dc32d25ddcfa5c3eafdb777a9780938dae861338",
+  "prompts": {}
+}
