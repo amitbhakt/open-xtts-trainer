@@ -248,8 +248,7 @@ def evaluate_source(
     )
     align_time = round(time.time() - t0, 3)
 
-    clean_manifest = os.path.join(out_clean, "metadata.csv")
-    write_prepared(records, clean_manifest, out_clean)
+    write_prepared(out_clean, records, [report])
 
     # Validate clean prepared dataset
     val_clean = validate_dataset(
