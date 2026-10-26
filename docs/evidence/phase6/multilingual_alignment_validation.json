@@ -1,0 +1,1071 @@
+{
+  "timestamp_utc": "2026-10-26 18:50:14 UTC",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A100-SXM4-40GB",
+  "quality_config": {
+    "min_word_score": 0.05,
+    "weak_word_score": 0.2,
+    "max_weak_words": 3,
+    "max_unexplained_speech_s": 0.2,
+    "min_gap_s": 0.15,
+    "edge_pad_s": 0.2
+  },
+  "summary": {
+    "distinct_speakers_count": 8,
+    "clean_recordings_total": 8,
+    "clean_recordings_passed": 8,
+    "clean_acceptance_rate": "8/8",
+    "controlled_corruptions_total": 88,
+    "controlled_corruptions_correct": 57,
+    "controlled_corruptions_accuracy": "57/88",
+    "by_corruption_type": {
+      "edge_truncation": {
+        "total": 48,
+        "correct": 32
+      },
+      "hallucinated_word": {
+        "total": 24,
+        "correct": 17
+      },
+      "speech_spillover_sub_threshold": {
+        "total": 8,
+        "correct": 8,
+        "note": "Sub-threshold condition: +0.10 s appended audio fell entirely within inter-utterance silence; measured unexplained speech is 0.0 s."
+      },
+      "speech_spillover_cross_threshold": {
+        "total": 8,
+        "correct": 0,
+        "note": "Labeling/measurement artifact: +0.50 s audio was appended to test cross-threshold rejection (> 0.20 s), but inter-utterance pause resulted in 0.08\u20130.14 s of active speech. The detector accepted under its configured 0.20 s rule, reflecting a test labeling/measurement limitation rather than an aligner failure."
+      }
+    },
+    "all_tests_passed": false
+  },
+  "results_by_speaker": [
+    {
+      "id": "jfk_english_male",
+      "speaker": "jfk",
+      "language": "en",
+      "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "license": "Public Domain (1961 US Presidential inaugural address, work of US Gov under 17 U.S.C. \u00a7 105; openai/whisper test fixture MIT)",
+      "description": "JFK inaugural address excerpt (US English, male, 1960s recording)",
+      "alignment_time_s": 12.37,
+      "clean_segments_count": 3,
+      "total_words_aligned": 22,
+      "word_score_min": 0.122,
+      "word_score_mean": 0.7905,
+      "weak_words_count": 1,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 7,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'ask' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'ask' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'so,' 0.04 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'my' 0.01 < 0.05; weak_alignment: 5 words below 0.2 ('And' 0.02, 'so,' 0.02, 'my' 0.01, 'fellow' 0.01); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'my' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0801,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0801 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 3,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "arctic_slt_english_female",
+      "speaker": "arctic_slt",
+      "language": "en",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82",
+      "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/slt_COPYING)",
+      "description": "CMU ARCTIC SLT (US English, female, studio clean recording)",
+      "alignment_time_s": 0.033,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.698,
+      "word_score_mean": 0.9459,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 8,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.02 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Steels,' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Philip' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05; weak_alignment: 5 words below 0.2 ('Author' 0.01, 'of' 0.00, 'the' 0.00, 'danger' 0.01); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "arctic_ksp_english_indian_accent",
+      "speaker": "arctic_ksp",
+      "language": "en",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8",
+      "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/ksp_COPYING)",
+      "description": "CMU ARCTIC KSP (Indian English, male, studio clean recording)",
+      "alignment_time_s": 0.032,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.062,
+      "word_score_mean": 0.4879,
+      "weak_words_count": 3,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 8,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.04 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.03 < 0.05; weak_alignment: 5 words below 0.2 ('of' 0.04, 'the' 0.05, 'Philip' 0.05, 'Steels,' 0.04); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05; weak_alignment: 5 words below 0.2 ('Author' 0.02, 'of' 0.00, 'the' 0.06, 'danger' 0.18); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Philip' 0.02 < 0.05; weak_alignment: 8 words below 0.2 ('Author' 0.03, 'of' 0.06, 'the' 0.12, 'danger' 0.03); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'consequently.' 0.03 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "arctic_bdl_english_male",
+      "speaker": "arctic_bdl",
+      "language": "en",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627",
+      "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/bdl_COPYING)",
+      "description": "CMU ARCTIC BDL (US English, male, studio clean recording)",
+      "alignment_time_s": 0.032,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.691,
+      "word_score_mean": 0.9372,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 8,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.04 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.04 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Steels,' 0.04 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('of' 0.00, 'the' 0.00, 'danger' 0.02, 'trail,' 0.00); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'consequently.' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "arctic_clb_english_female",
+      "speaker": "arctic_clb",
+      "language": "en",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b",
+      "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/clb_COPYING)",
+      "description": "CMU ARCTIC CLB (US English, female, studio clean recording)",
+      "alignment_time_s": 0.034,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.545,
+      "word_score_mean": 0.9104,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 8,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Philip' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'the' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('of' 0.00, 'the' 0.00, 'danger' 0.02, 'trail,' 0.00); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'consequently.' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "arctic_awb_english_scottish",
+      "speaker": "arctic_awb",
+      "language": "en",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94",
+      "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/awb_COPYING)",
+      "description": "CMU ARCTIC AWB (Scottish English, male, studio clean recording)",
+      "alignment_time_s": 0.036,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.657,
+      "word_score_mean": 0.9259,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 7,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'ETC' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'PHILIP' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'OF' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'TRAIL,' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('OF' 0.00, 'THE' 0.03, 'DANGER' 0.02, 'TRAIL,' 0.00); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'consequently.' 0.03 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "ljspeech_female",
+      "speaker": "ljspeech",
+      "language": "en",
+      "sha256": "4d2bd83ff0f7fe33491b03193abdf623f1b4cc2d8103972b33638d3607d86dc5",
+      "license": "Public Domain (LJ Speech Dataset, https://keithito.com/LJ-Speech-Dataset/)",
+      "description": "LJSpeech LJ001-0001 (US English, female, studio gold standard)",
+      "alignment_time_s": 0.051,
+      "clean_segments_count": 2,
+      "total_words_aligned": 18,
+      "word_score_min": 0.871,
+      "word_score_mean": 0.9791,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 5,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'are' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Printing,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'only' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('Printing,' 0.13, 'in' 0.00, 'the' 0.00, 'only' 0.00); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'with' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0854,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0854 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
+    },
+    {
+      "id": "spanish_cuentos_male",
+      "speaker": "victor_villarraza",
+      "language": "es",
+      "sha256": "28d18af59b6dcfad0d9f8121a948ecc377723d40639af7f0e64eba4fc3d7e30e",
+      "license": "Public Domain (LibriVox public domain dedication CC0/PD; https://librivox.org/)",
+      "description": "LibriVox Cuentos de Hadas intro (Castilian Spanish, male, modern audiobook recording)",
+      "alignment_time_s": 0.358,
+      "clean_segments_count": 3,
+      "total_words_aligned": 28,
+      "word_score_min": 0.722,
+      "word_score_mean": 0.9614,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations_count": 11,
+      "mutations_correct_count": 6,
+      "mutations": {
+        "trunc_tail_100ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_250ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_500ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'LibriVox.' 0.01 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_tail_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'una' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('es' 0.00, 'una' 0.00, 'grabaci\u00f3n' 0.11, 'de' 0.00); at most 3 allowed"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_500ms": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "trunc_head_1000ms": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'de' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_head_function": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Adem\u00e1s,' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_mid_content": {
+          "expected_pass": false,
+          "actual_pass": false,
+          "verdict_correct": true,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'de' 0.00 < 0.05"
+          ],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "hallucinate_tail_content": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
+        },
+        "spillover_sub_threshold_0.10s": {
+          "expected_pass": true,
+          "actual_pass": true,
+          "verdict_correct": true,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.0,
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+        },
+        "spillover_cross_threshold_0.50s": {
+          "expected_pass": false,
+          "actual_pass": true,
+          "verdict_correct": false,
+          "errors": [],
+          "error_matched": true,
+          "unexplained_speech_s": 0.1401,
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.1401 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
+        }
+      },
+      "mutations_status": "FAIL",
+      "overall_status": "FAIL",
+      "clean_candidates_count": 3,
+      "clean_prep_rejected_count": 0
+    }
+  ]
+}

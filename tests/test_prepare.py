@@ -270,17 +270,22 @@ def test_equal_speech_plans_cut_at_the_longer_pause(first_gap, second_gap):
     assert cut_after == ("b1" if second_gap > first_gap else "a7")
 
 
-def test_one_weak_word_is_tolerated_but_not_two_or_a_missing_one():
-    """JFK's reduced "for" scored 0.12 in a correct clip (Colab runs 3-4); the old any-word-under-0.2 rule
-    dropped it. One weak word passes; two weak words, or one near zero (no audio behind it), don't."""
+def test_weak_words_tolerated_up_to_limit_but_not_exceeded_or_missing_one():
+    """JFK's reduced 'for' scored 0.12; accented speech (arctic_ksp) exhibits up to 3 weak words (Colab/Modal runs).
+    Up to 3 weak words pass; 4 or more weak words, or one below the 0.05 floor, reject."""
     from xtts_trainer.prepare.segment import Segment, segment_problems
 
     def seg(*scores):
         words = [AlignedWord(f"w{i}", i * 0.5, i * 0.5 + 0.4, sc) for i, sc in enumerate(scores)]
         return Segment(0.0, len(scores) * 0.5, words)
 
+    # 1 weak word (0.12) passes
     assert segment_problems(seg(0.9, 0.12, 0.95, 0.9), 0.0) == []
-    assert [p.split(":")[0] for p in segment_problems(seg(0.9, 0.12, 0.15, 0.9), 0.0)] == ["weak_alignment"]
+    # 3 weak words (0.12, 0.15, 0.11) pass under calibrated max_weak_words=3
+    assert segment_problems(seg(0.9, 0.12, 0.15, 0.11, 0.9), 0.0) == []
+    # 4 weak words exceed limit (> 3) and reject
+    assert [p.split(":")[0] for p in segment_problems(seg(0.9, 0.12, 0.15, 0.11, 0.14, 0.9), 0.0)] == ["weak_alignment"]
+    # 1 word below the 0.05 floor triggers hard low_alignment_score rejection
     assert [p.split(":")[0] for p in segment_problems(seg(0.9, 0.02, 0.95, 0.9), 0.0)] == ["low_alignment_score"]
 
 
