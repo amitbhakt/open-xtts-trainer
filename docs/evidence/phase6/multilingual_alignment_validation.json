@@ -152,7 +152,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -161,7 +161,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0801,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0801 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -282,7 +282,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -291,7 +291,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0802,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -412,7 +412,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -421,7 +421,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0802,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -542,7 +542,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -551,7 +551,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0802,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -672,7 +672,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -681,7 +681,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0802,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -800,7 +800,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -809,7 +809,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0802,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0802 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -924,7 +924,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -933,7 +933,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0854,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.0854 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",
@@ -1050,7 +1050,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.0,
-          "note": "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
+          "note": "Injected +0.10 s audio fell within silence preceding candidate 2 speech; measured unexplained active speech is 0.0 s."
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
@@ -1059,7 +1059,7 @@
           "errors": [],
           "error_matched": true,
           "unexplained_speech_s": 0.1401,
-          "note": "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, so the validator correctly accepted under its configured rule."
+          "note": "Injected +0.50 s audio contains pause; measured active speech is 0.1401 s (below 0.20 s floor), so the validator correctly accepted under its configured rule."
         }
       },
       "mutations_status": "FAIL",

@@ -448,9 +448,10 @@ def evaluate_source(
             transcript_text=r0.text,
             expected_pass=True,
         )
+        sub_unexplained = res_sub.get("unexplained_speech_s")
         res_sub["note"] = (
-            "Injected +0.10 s audio fell entirely within silence preceding candidate 2 speech; "
-            "measured unexplained active speech is 0.0 s."
+            f"Injected +0.10 s audio fell within silence preceding candidate 2 speech; "
+            f"measured unexplained active speech is {sub_unexplained} s."
         )
         mutation_tests["spillover_sub_threshold_0.10s"] = res_sub
 
@@ -464,9 +465,12 @@ def evaluate_source(
             expected_pass=False,
             expected_error_substr="unexplained_speech",
         )
+        cross_unexplained = res_cross.get("unexplained_speech_s")
+        comp = "below" if (cross_unexplained or 0.0) <= quality_cfg.max_unexplained_speech_s else "above"
         res_cross["note"] = (
-            "Injected +0.50 s audio contains pause; measured active speech is below 0.20 s floor, "
-            "so the validator correctly accepted under its configured rule."
+            f"Injected +0.50 s audio contains pause; measured active speech is {cross_unexplained} s "
+            f"({comp} {quality_cfg.max_unexplained_speech_s:.2f} s floor), "
+            f"so the validator {'correctly accepted' if res_cross['actual_pass'] else 'rejected'} under its configured rule."
         )
         mutation_tests["spillover_cross_threshold_0.50s"] = res_cross
     else:

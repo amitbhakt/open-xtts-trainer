@@ -20,7 +20,7 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 
 | File | SHA-256 Checksum | Description |
 |---|---|---|
-| [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `e1970ceb4a136ff71fc8370fa1fd3c7ec406877d8ec49d765c372662c533fed4` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
+| [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `7ebcd27c9fbd7eccaff0033d929009f5e91021984d24f2d57f69d5c13f45ac49` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
 | [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `4c4876637495d1256a498f7e3c8ea67a557512573048ac97d473f093c64b5149` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
 
 ---
