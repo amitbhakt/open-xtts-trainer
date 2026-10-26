@@ -213,6 +213,9 @@ def evaluate_source(
     lang = source_cfg["lang"]
     speaker = source_cfg["speaker"]
 
+    out_clean = os.path.join(work_dir, sid, "clean")
+    os.makedirs(out_clean, exist_ok=True)
+
     # 1. Clean data preparation & alignment
     # Calibrated thresholds: max_weak_words=3, max_unexplained_speech_s=0.20
     quality_cfg = QualityConfig(
@@ -220,33 +223,31 @@ def evaluate_source(
         weak_word_score=0.20,
         max_weak_words=3,
         max_unexplained_speech_s=0.20,
-        min_gap_s=0.15,
-        edge_pad_s=0.20,
     )
     seg_cfg = SegmentConfig(
         min_s=source_cfg.get("min_s", 2.0),
         max_s=source_cfg.get("max_s", 11.0),
-        quality=quality_cfg,
+        min_gap_s=0.15,
+        edge_pad_s=0.20,
     )
     prep_cfg = PrepConfig(
         segment=seg_cfg,
-        resample_sr=SPEC.output_sample_rate,
-        max_seconds=source_cfg.get("max_seconds", None),
+        quality=quality_cfg,
     )
 
     t0 = time.time()
-    records, plan = prepare_recording(
-        path=audio_path,
+    records, report = prepare_recording(
+        input_file=audio_path,
+        output_dir=out_clean,
         lang=lang,
         speaker=speaker,
         transcript=source_cfg["transcript"],
         config=prep_cfg,
         aligner=aligner,
+        max_seconds=source_cfg.get("max_seconds", None),
     )
     align_time = round(time.time() - t0, 3)
 
-    out_clean = os.path.join(work_dir, sid, "clean")
-    os.makedirs(out_clean, exist_ok=True)
     clean_manifest = os.path.join(out_clean, "metadata.csv")
     write_prepared(records, clean_manifest, out_clean)
 
@@ -365,16 +366,16 @@ def evaluate_source(
     # Anchored directly to actual spoken word boundaries so cuts genuinely clip phonemes
     words_info = r0.alignment.get("words", [])
     assert len(words_info) >= 2, f"Segment {sid} must have at least 2 aligned words"
-    w_first_start = words_info[0]["start_s"]
-    w_last_end = words_info[-1]["end_s"]
+    w_first_start_global = r0_start + words_info[0]["start_s"]
+    w_last_end_global = r0_start + words_info[-1]["end_s"]
 
     trunc_ladder = [
-        ("trunc_tail_100ms", r0_start, max(r0_start + 0.5, w_last_end - 0.10)),
-        ("trunc_tail_250ms", r0_start, max(r0_start + 0.5, w_last_end - 0.25)),
-        ("trunc_tail_500ms", r0_start, max(r0_start + 0.5, w_last_end - 0.50)),
-        ("trunc_tail_1000ms", r0_start, max(r0_start + 0.5, w_last_end - 1.00)),
-        ("trunc_head_500ms", min(r0_end - 0.5, w_first_start + 0.50), r0_end),
-        ("trunc_head_1000ms", min(r0_end - 0.5, w_first_start + 1.00), r0_end),
+        ("trunc_tail_100ms", r0_start, max(r0_start + 0.5, w_last_end_global - 0.10)),
+        ("trunc_tail_250ms", r0_start, max(r0_start + 0.5, w_last_end_global - 0.25)),
+        ("trunc_tail_500ms", r0_start, max(r0_start + 0.5, w_last_end_global - 0.50)),
+        ("trunc_tail_1000ms", r0_start, max(r0_start + 0.5, w_last_end_global - 1.00)),
+        ("trunc_head_500ms", min(r0_end - 0.5, w_first_start_global + 0.50), r0_end),
+        ("trunc_head_1000ms", min(r0_end - 0.5, w_first_start_global + 1.00), r0_end),
     ]
 
     for m_label, a_s, b_s in trunc_ladder:
@@ -423,12 +424,13 @@ def evaluate_source(
     # -------------------------------------------------------------------------
     # TEST 3: Unexplained Speech Spillover (Sub-threshold vs Cross-threshold)
     # -------------------------------------------------------------------------
-    # If the recording has consecutive speech (e.g. plan has >= 2 segments), test speech bleed
-    if len(plan.segments) >= 2:
-        seg2_start_speech = plan.segments[1].words[0].start_s
+    # If the recording has consecutive speech (e.g. candidates has >= 2 segments), test speech bleed
+    candidates = report.get("candidates", [])
+    if len(candidates) >= 2 and len(candidates[1].get("words", [])) > 0:
+        cand2_first_speech = candidates[1]["words"][0][1]
 
         # Sub-threshold: include 0.10s of sentence 2 speech (<= 0.20s limit) -> Expected: PASS
-        sub_end = seg2_start_speech + 0.10
+        sub_end = cand2_first_speech + 0.10
         clip_sub = src_resampled[int(r0_start * SPEC.output_sample_rate) : int(sub_end * SPEC.output_sample_rate)]
         res_sub = run_blind_test(
             test_id="spillover_sub_threshold_0.10s",
@@ -439,7 +441,7 @@ def evaluate_source(
         mutation_tests["spillover_sub_threshold_0.10s"] = res_sub
 
         # Cross-threshold: include 0.50s of sentence 2 speech (> 0.20s limit) -> Expected: FAIL (unexplained_speech)
-        cross_end = seg2_start_speech + 0.50
+        cross_end = cand2_first_speech + 0.50
         clip_cross = src_resampled[int(r0_start * SPEC.output_sample_rate) : int(cross_end * SPEC.output_sample_rate)]
         res_cross = run_blind_test(
             test_id="spillover_cross_threshold_0.50s",
