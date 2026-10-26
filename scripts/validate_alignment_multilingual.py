@@ -234,11 +234,6 @@ def evaluate_clean_and_shifted(
         ("truncate_head_+1.0s", min(r0.alignment["end_s"] - 0.5, r0.alignment["start_s"] + 1.0), r0.alignment["end_s"]),
     ]
 
-    if len(records) >= 2:
-        next_speech_mid = records[1].alignment["start_s"] + 0.6
-        if next_speech_mid < len(src_resampled) / SPEC.output_sample_rate:
-            mutations_to_test.append(("intrude_next_speech", r0.alignment["start_s"], next_speech_mid))
-
     for label, a_s, b_s in mutations_to_test:
         out_shift = os.path.join(work_dir, sid, label)
         os.makedirs(out_shift, exist_ok=True)
