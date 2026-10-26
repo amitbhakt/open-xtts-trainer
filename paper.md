@@ -417,7 +417,7 @@ On this 8-speaker calibration set, all eight clean recordings passed (accented s
 |---|---|:---:|---|
 | Edge Truncation | 100 ms tail cut | 3/8 (37.5%) | 5 passed: sub-250 ms cuts clip trailing aspiration without dropping vowel nucleus below 0.05 |
 | | 250 ms tail cut | 5/8 (62.5%) | 3 passed: partial coda loss produces word scores in 0.08–0.16 weak tolerance band |
-| | 500 ms tail cut | 2/8 (25.0%) | 6 passed: partial word/vowel loss absorbed in weak band |
+| | 500 ms tail cut | 2/8 (25.0%) | 6 passed: non-monotonic dip; deeper cut removes terminal word and allows trellis realignment across earlier speech without triggering < 0.05 floor |
 | | 1,000 ms tail cut | 7/8 (87.5%) | 1 passed: final word eliminated, prior word boundary shifts |
 | | 500 ms head cut | 7/8 (87.5%) | 1 passed: initial consonant cluster partially preserved |
 | | 1,000 ms head cut | 8/8 (100.0%) | 0 passed: opening word onset completely lost; score drops to 0.00–0.04 (< 0.05 floor) |
@@ -427,7 +427,9 @@ On this 8-speaker calibration set, all eight clean recordings passed (accented s
 | Speech Spillover | Sub-threshold (+100 ms) | 0/8 rejected (0%) | 8/8 correctly accepted: sub-200 ms tolerance functioning as designed |
 | | Cross-threshold (+500 ms) | 0/8 rejected (0%) | 8/8 passed: trailing audio contains pause; active speech measures 80–140 ms (< 200 ms floor) |
 
-A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. However, because this calibration doubled the unexplained-speech tolerance (`max_unexplained_speech_s`) from 0.10 s to 0.20 s to accommodate natural breath and aspiration, and the active unaligned speech portion in the appended audio measured 80–140 ms across diagnostic cases, the active untranscribed speech remained below the relaxed 200 ms floor. Under the previous 0.10 s threshold, several of these spillover cases (such as the 140 ms Spanish spillover) would have triggered rejection; relaxing the threshold to 0.20 s therefore creates a blind spot for trailing speech intrusions under 200 ms. The benchmark thus characterizes in-sample tolerance on clean speech while mapping the operational limits of token-level rejection.
+Tail truncation exhibits a non-monotonic detection pattern (37.5% at 100 ms, 62.5% at 250 ms, 25.0% at 500 ms, and 87.5% at 1,000 ms): while 250 ms cuts directly clip terminal word nuclei dropping scores to 0.01–0.04 (< 0.05 floor), a 500 ms cut often eliminates the terminal word entirely or lands in an inter-word pause, enabling the CTC trellis to realign earlier tokens across remaining frames without triggering the 0.05 floor (the two rejected 500 ms cases scored 0.01 on their truncated terminal words), before 1,000 ms cuts reliably truncate full words and shift prior boundaries.
+
+A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. However, because this calibration doubled the unexplained-speech tolerance (`max_unexplained_speech_s`) from 0.10 s to 0.20 s to accommodate natural breath and aspiration, and the active unaligned speech portion in the appended audio measured 80–140 ms across diagnostic cases, the active untranscribed speech remained below the relaxed 200 ms floor. Under the previous 0.10 s threshold, only the Spanish spillover case (measuring 140 ms of active speech) would have triggered rejection, while the other seven cases measured 80–85 ms and remain below both thresholds; relaxing the threshold to 0.20 s therefore creates an expanded blind spot for trailing speech intrusions between 100 and 200 ms. The benchmark thus characterizes in-sample tolerance on clean speech while mapping the operational limits of token-level rejection.
 
 ### 5.5 Training smoke runs with real weights
 

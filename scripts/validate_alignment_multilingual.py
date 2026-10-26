@@ -355,7 +355,7 @@ def evaluate_source(
             win = aligner.align(audio_clip, SPEC.output_sample_rate, transcript_text)
             unexplained_s = round(win.unexplained_speech_s(0.0, clip_s), 4)
         except AlignmentError:
-            unexplained_s = 0.0
+            unexplained_s = None
 
         return {
             "expected_pass": expected_pass,
@@ -468,26 +468,27 @@ def evaluate_source(
             "skipped": True,
             "skip_reason": skip_msg,
             "expected_pass": True,
-            "actual_pass": True,
-            "verdict_correct": True,
+            "actual_pass": None,
+            "verdict_correct": None,
             "errors": [],
-            "error_matched": True,
-            "unexplained_speech_s": 0.0,
+            "error_matched": None,
+            "unexplained_speech_s": None,
         }
         mutation_tests["spillover_cross_threshold_0.50s"] = {
             "test_id": "spillover_cross_threshold_0.50s",
             "skipped": True,
             "skip_reason": skip_msg,
             "expected_pass": False,
-            "actual_pass": False,
-            "verdict_correct": True,
+            "actual_pass": None,
+            "verdict_correct": None,
             "errors": [],
-            "error_matched": True,
-            "unexplained_speech_s": 0.0,
+            "error_matched": None,
+            "unexplained_speech_s": None,
         }
 
-    # Compute overall mutation status for this speaker
-    all_mutations_correct = all(m["verdict_correct"] for m in mutation_tests.values())
+    # Compute overall mutation status for this speaker (excluding skipped cases)
+    executed_mutations = [m for m in mutation_tests.values() if not m.get("skipped")]
+    all_mutations_correct = all(m.get("verdict_correct") for m in executed_mutations) if executed_mutations else True
 
     return {
         "id": sid,
@@ -508,8 +509,8 @@ def evaluate_source(
         "clean_validation_ok": val_clean.ok,
         "clean_validation_errors": [f"{e.code}: {e.message}" for e in val_clean.errors],
         "clean_status": "PASS" if clean_passed else "FAIL",
-        "mutations_count": len(mutation_tests),
-        "mutations_correct_count": sum(1 for m in mutation_tests.values() if m["verdict_correct"]),
+        "mutations_count": len(executed_mutations),
+        "mutations_correct_count": sum(1 for m in executed_mutations if m.get("verdict_correct")),
         "mutations": mutation_tests,
         "mutations_status": "PASS" if all_mutations_correct else "FAIL",
         "overall_status": "PASS" if (clean_passed and all_mutations_correct) else "FAIL",
@@ -642,21 +643,23 @@ def main():
 
     for r in results:
         for m_name, m_data in r.get("mutations", {}).items():
+            if m_data.get("skipped"):
+                continue
             if m_name.startswith("trunc_"):
                 by_type["edge_truncation"]["total"] += 1
-                if m_data["verdict_correct"]:
+                if m_data.get("verdict_correct"):
                     by_type["edge_truncation"]["correct"] += 1
             elif m_name.startswith("hallucinate_"):
                 by_type["hallucinated_word"]["total"] += 1
-                if m_data["verdict_correct"]:
+                if m_data.get("verdict_correct"):
                     by_type["hallucinated_word"]["correct"] += 1
             elif "sub_threshold" in m_name:
                 by_type["speech_spillover_sub_threshold"]["total"] += 1
-                if m_data["verdict_correct"]:
+                if m_data.get("verdict_correct"):
                     by_type["speech_spillover_sub_threshold"]["correct"] += 1
             elif "cross_threshold" in m_name:
                 by_type["speech_spillover_cross_threshold"]["total"] += 1
-                if m_data["verdict_correct"]:
+                if m_data.get("verdict_correct"):
                     by_type["speech_spillover_cross_threshold"]["correct"] += 1
 
     all_passed = (clean_passed_count == total_clean) and (correct_mutations == total_mutations)

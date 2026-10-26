@@ -108,8 +108,11 @@ Total Edge Truncation: 32/48 rejected (66.7%)
 2. **Tail Truncation**:
    - 100 ms tail cut: 3/8 (37.5%) rejected.
    - 250 ms tail cut: 5/8 (62.5%) rejected.
-   - Tail cuts of 100–500 ms frequently clip trailing silence, post-vocalic aspiration, or nasal release without reducing the core vowel nucleus below the $0.05$ score threshold. The aligner compresses the final character's span into the remaining frames, producing scores in the $0.08 \text{--} 0.16$ range that remain within the weak-word tolerance band.
-   - At $1,000\text{ ms}$, tail truncation reliably eliminates entire words or syllable codas, achieving 87.5% detection.
+   - 500 ms tail cut: 2/8 (25.0%) rejected.
+   - 1,000 ms tail cut: 7/8 (87.5%) rejected.
+   - Milder tail cuts of 100–250 ms frequently clip trailing silence, post-vocalic aspiration, or nasal release without reducing the core vowel nucleus below the $0.05$ score threshold, producing scores in the $0.08 \text{--} 0.16$ range that remain within the weak-word tolerance band.
+   - At 500 ms, detection drops non-monotonically to 25.0% (2/8), lower than the 250 ms rate (62.5%): while a 250 ms cut often clips directly into the nucleus of the final word (dropping its score to 0.01–0.04 and failing the 0.05 floor), a deeper 500 ms cut often amputates the final token entirely or lands in an inter-word boundary, allowing the CTC trellis to realign earlier tokens across the remaining speech frames without triggering the 0.05 hard floor. The two rejected 500 ms cases (`arctic_slt` and `spanish_cuentos_male`) both scored 0.01 and failed the 0.05 floor.
+   - At $1,000\text{ ms}$, tail truncation reliably eliminates multiple words or shifts prior syllable boundaries, driving detection to 87.5% (7/8).
 
 ---
 
@@ -176,7 +179,7 @@ To understand why $+500\text{ms}$ appended audio was not flagged, frame-level tr
 ## 7. Conclusions & Publication Guidance
 
 1. **Clean Generalization**: The MMS-FA aligner and two-tier quality thresholds achieve 100% clean baseline acceptance across 8 vetted speakers, 2 languages, and 5 distinct accent profiles.
-2. **Boundary Sensitivity**: Detection of edge truncation is asymmetric: head truncation is detected at 87.5%–100% severity, while tail truncation detection scales from 37.5% (100 ms) to 87.5% (500–1,000 ms).
+2. **Boundary Sensitivity**: Detection of edge truncation is asymmetric: head truncation is detected at 87.5%–100% severity, while tail truncation detection exhibits a non-monotonic pattern: 37.5% at 100 ms, 62.5% at 250 ms, 25.0% at 500 ms, and 87.5% at 1,000 ms.
 3. **Identified Failure Modes**:
    - Unsupported transcript insertions can be accepted if the aligner's score on silence ($0.06 \text{--} 0.16$) is absorbed by the weak-word tolerance band (`max_weak_words = 3`), or if phonetic similarity allows partial substring alignment.
    - Trailing speech spillover is absorbed as blanks by the CTC trellis and will pass undetected whenever the acoustic duration of the extra speech is under the $200\text{ ms}$ tolerance.

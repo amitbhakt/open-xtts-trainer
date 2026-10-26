@@ -20,8 +20,8 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 
 | File | SHA-256 Checksum | Description |
 |---|---|---|
-| [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `b59ad16e0e298d6c0e073d74db7170a6c5c04a92a7efed65aa7ff6d09b21f165` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
-| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `67257d2514da453325d51e1381771322e1926cd2727346c98c28a6c9d46ee026` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
+| [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `e1970ceb4a136ff71fc8370fa1fd3c7ec406877d8ec49d765c372662c533fed4` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
+| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `4c4876637495d1256a498f7e3c8ea67a557512573048ac97d473f093c64b5149` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
 
 ---
 
@@ -48,7 +48,7 @@ All source recordings are cryptographically pinned in [`scripts/validate_alignme
 - **Edge Truncation**:
   - 100 ms tail cut: 3/8 rejected (37.5%)
   - 250 ms tail cut: 5/8 rejected (62.5%)
-  - 500 ms tail cut: 7/8 rejected (87.5%)
+  - 500 ms tail cut: 2/8 rejected (25.0%)
   - 1,000 ms tail cut: 7/8 rejected (87.5%)
   - 500 ms head cut: 7/8 rejected (87.5%)
   - 1,000 ms head cut: 8/8 rejected (100.0%)
