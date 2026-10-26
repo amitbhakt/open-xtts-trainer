@@ -1,0 +1,64 @@
+{
+  "input_mismatches": [
+    "code_fingerprint",
+    "batch_size"
+  ],
+  "rows": [
+    {
+      "lang": "hi",
+      "metric": "wer",
+      "mean_run1": 0.10053773353284014,
+      "mean_run2": 0.09920092161472513,
+      "abs_diff": 0.0013368119181150079,
+      "tolerance": 0.01569601456710442,
+      "agrees": true
+    },
+    {
+      "lang": "hi",
+      "metric": "cer",
+      "mean_run1": 0.04703079694178253,
+      "mean_run2": 0.0474925308384509,
+      "abs_diff": 0.0004617338966683704,
+      "tolerance": 0.009297855842107641,
+      "agrees": true
+    },
+    {
+      "lang": "hi",
+      "metric": "secs",
+      "mean_run1": 0.5418796065780852,
+      "mean_run2": 0.5405434043871031,
+      "abs_diff": 0.001336202190982072,
+      "tolerance": 0.015234415170630084,
+      "agrees": true
+    },
+    {
+      "lang": "hi",
+      "metric": "secs_all",
+      "mean_run1": 0.5418796065780852,
+      "mean_run2": 0.5405434043871031,
+      "abs_diff": 0.001336202190982072,
+      "tolerance": 0.015234415170630084,
+      "agrees": true
+    },
+    {
+      "lang": "hi",
+      "metric": "utmos",
+      "mean_run1": 3.4541146132681106,
+      "mean_run2": 3.455863012207879,
+      "abs_diff": 0.001748398939768414,
+      "tolerance": 0.05291081807909443,
+      "agrees": true
+    },
+    {
+      "lang": "hi",
+      "metric": "duration_ratio",
+      "mean_run1": 1.2907771758462132,
+      "mean_run2": 1.291587602909695,
+      "abs_diff": 0.0008104270634818889,
+      "tolerance": 0.028413264916711294,
+      "agrees": true
+    }
+  ],
+  "reproducible": false,
+  "all_metrics_agree": true
+}

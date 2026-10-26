@@ -688,6 +688,7 @@ arXiv:2006.11477.
 | Artifact hashes, mel-stats identity (5.2) | `artifacts.lock.json`; `docs/evidence/artifact_verification.json`; `docs/evidence/colab_run1/`, `colab_run2/` |
 | Bit-identical reruns; seed variance (5.2) | `docs/evidence/colab_run1/pilot_en_reproducibility.json`; `docs/evidence/colab_run2/determinism_check.json` |
 | Baseline, Table 2 (5.3) | `eval/baselines/base_xtts_s12_index.json`, `docs/evidence/run5/README.md` |
+| Baseline reproducibility (3.6, 5.3) | `docs/evidence/phase8_reproducibility/README.md`, `docs/evidence/phase8_reproducibility/reproducibility_report.json` |
 | Planner regression (5.4) | `docs/evidence/colab_run3/README.md`; `tests/test_prepare.py` (`test_cuts_prefer_the_longest_pause_jfk`, `test_pause_never_outweighs_speech`, `test_equal_speech_plans_cut_at_the_longer_pause`) |
 | Shifted-cut word scores, Table 3 (5.4) | `docs/evidence/colab_run4/jfk_realign_shift_*.json`; `test_mms_jfk_alignment_and_shifted_cut` |
 | Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/` (`stage1_smoke.json`, `training_summary.json`, `runs_gpt_smoke_log.txt`, `stage3_metrics.jsonl`); drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
