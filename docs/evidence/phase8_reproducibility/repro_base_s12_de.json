@@ -1,0 +1,5110 @@
+{
+  "label": "repro",
+  "description": "XTTS-v2 checkpoint 'repro' (/root/open-xtts-trainer/xtts_base), measured by synthesizing the frozen eval set",
+  "pinned_upstream_commit": "03339e5b790b5e16ea8867a142e8bb26ec646d94",
+  "timestamp": "2026-10-26 07:33:18 UTC",
+  "git": {
+    "commit_sha": "6b9a508c1abd0df7ff6a610372cfcb7685231e8b",
+    "is_dirty": false
+  },
+  "code_fingerprint": {
+    "sha256": "e6259d10075af30098429152b0c7d05d2c1c4c142b60eeaba7ca8dcfea6bd50f",
+    "n_files": 65
+  },
+  "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+  "checkpoint_sha256": {
+    "model.pth": "c7ea20001c6a0a841c77e252d8409f6a74fb423e79b3206a0771ba5989776187",
+    "config.json": "ef262b1454dd2a77e1461b0b2cd53e19b8a7624cc131b837d36df67356bc75e8",
+    "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+  },
+  "voices": "arctic",
+  "reference_voices": [
+    {
+      "speaker_id": "arctic_slt",
+      "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82"
+    },
+    {
+      "speaker_id": "arctic_clb",
+      "sha256": "3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b"
+    },
+    {
+      "speaker_id": "arctic_bdl",
+      "sha256": "886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627"
+    },
+    {
+      "speaker_id": "arctic_awb",
+      "sha256": "63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94"
+    },
+    {
+      "speaker_id": "arctic_ksp",
+      "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8"
+    }
+  ],
+  "asr_model": "openai/whisper-large-v3",
+  "batch_size": 16,
+  "seeds": [
+    42,
+    123,
+    999
+  ],
+  "subset_size": 12,
+  "languages": [
+    "de"
+  ],
+  "metrics_version": 2,
+  "summary_by_language": {
+    "de": {
+      "wer": {
+        "mean": 0.05264241930908597,
+        "std": 0.11960789026003175,
+        "ci95": 0.017473489720095377,
+        "min": 0.0,
+        "max": 0.4166666666666667,
+        "n": 180,
+        "n_nan": 0
+      },
+      "cer": {
+        "mean": 0.03163967200884643,
+        "std": 0.0749589475432011,
+        "ci95": 0.010950735745591316,
+        "min": 0.0,
+        "max": 0.2608695652173913,
+        "n": 180,
+        "n_nan": 0
+      },
+      "secs": {
+        "mean": 0.5114674452278349,
+        "std": 0.06044601793453516,
+        "ci95": 0.008830545131291747,
+        "min": 0.34254688024520874,
+        "max": 0.661918580532074,
+        "n": 180,
+        "n_nan": 0
+      },
+      "utmos": {
+        "mean": 3.44478141201867,
+        "std": 0.2701762559852589,
+        "ci95": 0.039469988320242316,
+        "min": 2.542483329772949,
+        "max": 4.086714267730713,
+        "n": 180,
+        "n_nan": 0
+      },
+      "duration_ratio": {
+        "mean": 1.0636143715879027,
+        "std": 0.17839285474890348,
+        "ci95": 0.026061371928027897,
+        "min": 0.7134814814814815,
+        "max": 1.8517333333333332,
+        "n": 180,
+        "n_nan": 0
+      },
+      "secs_all": {
+        "mean": 0.5114674452278349,
+        "std": 0.06044601793453516,
+        "ci95": 0.008830545131291747,
+        "min": 0.34254688024520874,
+        "max": 0.661918580532074,
+        "n": 180,
+        "n_nan": 0
+      }
+    }
+  },
+  "summary_by_category": {
+    "de": {
+      "_all": {
+        "wer": {
+          "mean": 0.05264241930908597,
+          "std": 0.11960789026003175,
+          "ci95": 0.017473489720095377,
+          "min": 0.0,
+          "max": 0.4166666666666667,
+          "n": 180,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.03163967200884643,
+          "std": 0.0749589475432011,
+          "ci95": 0.010950735745591316,
+          "min": 0.0,
+          "max": 0.2608695652173913,
+          "n": 180,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5114674452278349,
+          "std": 0.06044601793453516,
+          "ci95": 0.008830545131291747,
+          "min": 0.34254688024520874,
+          "max": 0.661918580532074,
+          "n": 180,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.44478141201867,
+          "std": 0.2701762559852589,
+          "ci95": 0.039469988320242316,
+          "min": 2.542483329772949,
+          "max": 4.086714267730713,
+          "n": 180,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0636143715879027,
+          "std": 0.17839285474890348,
+          "ci95": 0.026061371928027897,
+          "min": 0.7134814814814815,
+          "max": 1.8517333333333332,
+          "n": 180,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5114674452278349,
+          "std": 0.06044601793453516,
+          "ci95": 0.008830545131291747,
+          "min": 0.34254688024520874,
+          "max": 0.661918580532074,
+          "n": 180,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        }
+      }
+    }
+  },
+  "failure_counts": {
+    "empty": 0,
+    "too_long": 0,
+    "nan": 0
+  },
+  "runs": [
+    {
+      "timestamp": "2026-10-26 07:24:50 UTC",
+      "git": {
+        "commit_sha": "6b9a508c1abd0df7ff6a610372cfcb7685231e8b",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_slt.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "e6259d10075af30098429152b0c7d05d2c1c4c142b60eeaba7ca8dcfea6bd50f",
+        "n_files": 65
+      },
+      "metrics_version": 2,
+      "language": "de",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.0591977466977467,
+          "std": 0.1254222515730653,
+          "ci95": 0.040971268847201335,
+          "min": 0.0,
+          "max": 0.4166666666666667,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.029476972257148945,
+          "std": 0.07364356554911332,
+          "ci95": 0.024056898079377016,
+          "min": 0.0,
+          "max": 0.2608695652173913,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.42301979826556313,
+          "std": 0.028297681276931566,
+          "ci95": 0.009243909217130978,
+          "min": 0.34254688024520874,
+          "max": 0.4728146195411682,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.64903900358412,
+          "std": 0.20862653148703564,
+          "ci95": 0.06815133361909831,
+          "min": 3.3189966678619385,
+          "max": 4.074705123901367,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9869094644526726,
+          "std": 0.15766121764544877,
+          "ci95": 0.05150266443084659,
+          "min": 0.7374485596707819,
+          "max": 1.4416410256410257,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.42301979826556313,
+          "std": 0.028297681276931566,
+          "ci95": 0.009243909217130978,
+          "min": 0.34254688024520874,
+          "max": 0.4728146195411682,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.0591977466977467,
+              "std": 0.1254222515730653,
+              "ci95": 0.040971268847201335,
+              "min": 0.0,
+              "max": 0.4166666666666667,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.029476972257148945,
+              "std": 0.07364356554911332,
+              "ci95": 0.024056898079377016,
+              "min": 0.0,
+              "max": 0.2608695652173913,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.42301979826556313,
+              "std": 0.028297681276931566,
+              "ci95": 0.009243909217130978,
+              "min": 0.34254688024520874,
+              "max": 0.4728146195411682,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.64903900358412,
+              "std": 0.20862653148703564,
+              "ci95": 0.06815133361909831,
+              "min": 3.3189966678619385,
+              "max": 4.074705123901367,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9869094644526726,
+              "std": 0.15766121764544877,
+              "ci95": 0.05150266443084659,
+              "min": 0.7374485596707819,
+              "max": 1.4416410256410257,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.42301979826556313,
+              "std": 0.028297681276931566,
+              "ci95": 0.009243909217130978,
+              "min": 0.34254688024520874,
+              "max": 0.4728146195411682,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4017781913280487,
+            "utmos": 3.4944658279418945,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8093497942386833,
+            "rms": 0.14642076194286346,
+            "peak": 0.8113729953765869,
+            "hf_ratio": 0.004948079120367765,
+            "synthesis_time_s": 2.818309783935547,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.4464551508426666,
+            "utmos": 3.454800844192505,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0489317269076304,
+            "rms": 0.14921772480010986,
+            "peak": 0.9119994640350342,
+            "hf_ratio": 0.004789938218891621,
+            "synthesis_time_s": 3.0641486644744873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4432388246059418,
+            "utmos": 3.520735502243042,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.9281350210970463,
+            "rms": 0.15703018009662628,
+            "peak": 0.8921803832054138,
+            "hf_ratio": 0.006472558714449406,
+            "synthesis_time_s": 2.585505485534668,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3986944854259491,
+            "utmos": 4.074705123901367,
+            "duration_s": 5.888,
+            "duration_ratio": 0.9813333333333333,
+            "rms": 0.13425935804843903,
+            "peak": 0.8284124135971069,
+            "hf_ratio": 0.00797513872385025,
+            "synthesis_time_s": 2.965941905975342,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4536327123641968,
+            "utmos": 3.6242098808288574,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.0230191570881226,
+            "rms": 0.14207875728607178,
+            "peak": 0.6760529279708862,
+            "hf_ratio": 0.009816019795835018,
+            "synthesis_time_s": 3.6697516441345215,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.4351314604282379,
+            "utmos": 3.3189966678619385,
+            "duration_s": 8.117333333333333,
+            "duration_ratio": 1.4205333333333332,
+            "rms": 0.14436960220336914,
+            "peak": 0.9027810096740723,
+            "hf_ratio": 0.005766583140939474,
+            "synthesis_time_s": 4.725421905517578,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4605206251144409,
+            "utmos": 3.5939629077911377,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 1.1748755020080321,
+            "rms": 0.15192188322544098,
+            "peak": 0.8772326707839966,
+            "hf_ratio": 0.0039530531503260136,
+            "synthesis_time_s": 3.5795536041259766,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.38700759410858154,
+            "utmos": 3.9939332008361816,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.940034188034188,
+            "rms": 0.15301613509655,
+            "peak": 0.9205039143562317,
+            "hf_ratio": 0.007608348503708839,
+            "synthesis_time_s": 2.6155219078063965,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven, vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42351046204566956,
+            "utmos": 3.8097734451293945,
+            "duration_s": 5.706666666666667,
+            "duration_ratio": 0.939921568627451,
+            "rms": 0.14105145633220673,
+            "peak": 0.8118022680282593,
+            "hf_ratio": 0.006895063910633326,
+            "synthesis_time_s": 2.7070326805114746,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4575960040092468,
+            "utmos": 3.968783378601074,
+            "duration_s": 4.96,
+            "duration_ratio": 0.868,
+            "rms": 0.1548975706100464,
+            "peak": 0.8925623297691345,
+            "hf_ratio": 0.003314910689368844,
+            "synthesis_time_s": 2.338688373565674,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3794216811656952,
+            "utmos": 3.9217793941497803,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.7804444444444445,
+            "rms": 0.1535663902759552,
+            "peak": 0.8173509240150452,
+            "hf_ratio": 0.006917594000697136,
+            "synthesis_time_s": 2.157348155975342,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Bundesregierung beschloss, neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.39475491642951965,
+            "utmos": 3.6201276779174805,
+            "duration_s": 6.176,
+            "duration_ratio": 0.9501538461538461,
+            "rms": 0.16294074058532715,
+            "peak": 0.7943216562271118,
+            "hf_ratio": 0.0034107693936675787,
+            "synthesis_time_s": 2.8905675411224365,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "123": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.396577924489975,
+            "utmos": 3.3332359790802,
+            "duration_s": 4.8213333333333335,
+            "duration_ratio": 0.8333168724279836,
+            "rms": 0.1450939178466797,
+            "peak": 0.8511828184127808,
+            "hf_ratio": 0.006716167088598013,
+            "synthesis_time_s": 2.336668014526367,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.44316565990448,
+            "utmos": 3.534606456756592,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8762088353413654,
+            "rms": 0.14404341578483582,
+            "peak": 0.8566572666168213,
+            "hf_ratio": 0.004915361758321524,
+            "synthesis_time_s": 2.4960782527923584,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4004526436328888,
+            "utmos": 3.8812947273254395,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7561181434599156,
+            "rms": 0.16301336884498596,
+            "peak": 0.8292003870010376,
+            "hf_ratio": 0.005837723147124052,
+            "synthesis_time_s": 2.026237964630127,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der All-Stadt.",
+            "wer": 0.15384615384615385,
+            "cer": 0.013888888888888888,
+            "secs": 0.4257170855998993,
+            "utmos": 3.6306824684143066,
+            "duration_s": 6.592,
+            "duration_ratio": 1.0986666666666667,
+            "rms": 0.1371057778596878,
+            "peak": 0.8165299296379089,
+            "hf_ratio": 0.006030559539794922,
+            "synthesis_time_s": 3.014991521835327,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45214366912841797,
+            "utmos": 3.6105544567108154,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0007049808429118,
+            "rms": 0.1510361284017563,
+            "peak": 0.7939526438713074,
+            "hf_ratio": 0.009626130573451519,
+            "synthesis_time_s": 2.8411519527435303,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.3991100490093231,
+            "utmos": 3.89693546295166,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 1.0229333333333333,
+            "rms": 0.14688199758529663,
+            "peak": 0.814678966999054,
+            "hf_ratio": 0.008494962938129902,
+            "synthesis_time_s": 2.715820789337158,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4728146195411682,
+            "utmos": 3.463775873184204,
+            "duration_s": 5.472,
+            "duration_ratio": 0.9229879518072289,
+            "rms": 0.14787377417087555,
+            "peak": 0.7309222221374512,
+            "hf_ratio": 0.004407515749335289,
+            "synthesis_time_s": 2.56483793258667,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4154031574726105,
+            "utmos": 3.9717698097229004,
+            "duration_s": 4.917333333333334,
+            "duration_ratio": 0.8825982905982906,
+            "rms": 0.15134048461914062,
+            "peak": 0.8344737887382507,
+            "hf_ratio": 0.007157646585255861,
+            "synthesis_time_s": 2.2698593139648438,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor, ausverkauft im Haus.",
+            "wer": 0.18181818181818182,
+            "cer": 0.013333333333333334,
+            "secs": 0.42823919653892517,
+            "utmos": 3.9227709770202637,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9627607843137256,
+            "rms": 0.148228257894516,
+            "peak": 0.8318580389022827,
+            "hf_ratio": 0.005608837120234966,
+            "synthesis_time_s": 2.6699326038360596,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4479469060897827,
+            "utmos": 3.430238723754883,
+            "duration_s": 7.424,
+            "duration_ratio": 1.2992000000000001,
+            "rms": 0.1503295600414276,
+            "peak": 0.882968544960022,
+            "hf_ratio": 0.003431783290579915,
+            "synthesis_time_s": 3.4964537620544434,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4222530126571655,
+            "utmos": 3.807572364807129,
+            "duration_s": 6.176,
+            "duration_ratio": 1.0293333333333334,
+            "rms": 0.15232299268245697,
+            "peak": 0.8276611566543579,
+            "hf_ratio": 0.005559015087783337,
+            "synthesis_time_s": 2.8059184551239014,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.34254688024520874,
+            "utmos": 3.537867546081543,
+            "duration_s": 6.538666666666667,
+            "duration_ratio": 1.0059487179487179,
+            "rms": 0.1586161106824875,
+            "peak": 0.8254916667938232,
+            "hf_ratio": 0.0040368493646383286,
+            "synthesis_time_s": 3.037426471710205,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "999": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42280304431915283,
+            "utmos": 3.5020768642425537,
+            "duration_s": 4.266666666666667,
+            "duration_ratio": 0.7374485596707819,
+            "rms": 0.14423850178718567,
+            "peak": 0.6870788335800171,
+            "hf_ratio": 0.007873748429119587,
+            "synthesis_time_s": 1.9399445056915283,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.4578458368778229,
+            "utmos": 3.5543172359466553,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 0.9787630522088354,
+            "rms": 0.14622189104557037,
+            "peak": 0.8681167364120483,
+            "hf_ratio": 0.005627214442938566,
+            "synthesis_time_s": 2.622648000717163,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "K\u00f6nnt ihr bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.2727272727272727,
+            "cer": 0.08695652173913043,
+            "secs": 0.4470970034599304,
+            "utmos": 3.655747652053833,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8884388185654009,
+            "rms": 0.15337404608726501,
+            "peak": 0.9013395309448242,
+            "hf_ratio": 0.007364323362708092,
+            "synthesis_time_s": 2.3141958713531494,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.38950881361961365,
+            "utmos": 3.5137176513671875,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 0.8888888888888888,
+            "rms": 0.1388939470052719,
+            "peak": 0.745681881904602,
+            "hf_ratio": 0.005149233620613813,
+            "synthesis_time_s": 2.4703569412231445,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4278150498867035,
+            "utmos": 3.320734977722168,
+            "duration_s": 5.941333333333334,
+            "duration_ratio": 0.9560766283524904,
+            "rms": 0.1408848911523819,
+            "peak": 0.8207415342330933,
+            "hf_ratio": 0.007741169538348913,
+            "synthesis_time_s": 2.746664524078369,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof, p\u00fcnktlich um 14.30 Uhr kommt.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.4397551715373993,
+            "utmos": 3.5250492095947266,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0882666666666667,
+            "rms": 0.14081040024757385,
+            "peak": 0.7300333380699158,
+            "hf_ratio": 0.005977858789265156,
+            "synthesis_time_s": 2.8144121170043945,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.42614081501960754,
+            "utmos": 3.4662840366363525,
+            "duration_s": 5.888,
+            "duration_ratio": 0.993156626506024,
+            "rms": 0.1491297483444214,
+            "peak": 0.8766251802444458,
+            "hf_ratio": 0.004563724622130394,
+            "synthesis_time_s": 2.630000114440918,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44253239035606384,
+            "utmos": 3.552579402923584,
+            "duration_s": 8.032,
+            "duration_ratio": 1.4416410256410257,
+            "rms": 0.14829972386360168,
+            "peak": 0.8590271472930908,
+            "hf_ratio": 0.009425593540072441,
+            "synthesis_time_s": 3.6034417152404785,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3997713029384613,
+            "utmos": 3.901681423187256,
+            "duration_s": 5.706666666666667,
+            "duration_ratio": 0.939921568627451,
+            "rms": 0.1450490951538086,
+            "peak": 0.8059267997741699,
+            "hf_ratio": 0.0058426400646567345,
+            "synthesis_time_s": 2.551154613494873,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.44335058331489563,
+            "utmos": 3.705244302749634,
+            "duration_s": 6.496,
+            "duration_ratio": 1.1368,
+            "rms": 0.14954744279384613,
+            "peak": 0.8794527649879456,
+            "hf_ratio": 0.003064430085942149,
+            "synthesis_time_s": 2.90921950340271,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.3922034502029419,
+            "utmos": 3.7188773155212402,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 0.9671111111111111,
+            "rms": 0.147142231464386,
+            "peak": 0.828536868095398,
+            "hf_ratio": 0.01050083339214325,
+            "synthesis_time_s": 2.645878314971924,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4117763638496399,
+            "utmos": 3.53151535987854,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 0.9567179487179487,
+            "rms": 0.15603266656398773,
+            "peak": 0.7757023572921753,
+            "hf_ratio": 0.0035504940897226334,
+            "synthesis_time_s": 2.8708016872406006,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_slt"
+    },
+    {
+      "timestamp": "2026-10-26 07:26:50 UTC",
+      "git": {
+        "commit_sha": "6b9a508c1abd0df7ff6a610372cfcb7685231e8b",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_clb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "e6259d10075af30098429152b0c7d05d2c1c4c142b60eeaba7ca8dcfea6bd50f",
+        "n_files": 65
+      },
+      "metrics_version": 2,
+      "language": "de",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.04825036075036075,
+          "std": 0.12044365438525136,
+          "ci95": 0.03934492709918211,
+          "min": 0.0,
+          "max": 0.4166666666666667,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.029083118258222487,
+          "std": 0.07420364045401137,
+          "ci95": 0.024239855881643717,
+          "min": 0.0,
+          "max": 0.2608695652173913,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.49657447470559013,
+          "std": 0.027998234923441858,
+          "ci95": 0.009146090074991007,
+          "min": 0.43174389004707336,
+          "max": 0.5485234260559082,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.346236209074656,
+          "std": 0.29237280857309567,
+          "ci95": 0.09550845080054458,
+          "min": 2.542483329772949,
+          "max": 3.881777286529541,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.0050697145761953,
+          "std": 0.09936562775866534,
+          "ci95": 0.032459438401164005,
+          "min": 0.8124444444444444,
+          "max": 1.361777777777778,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.49657447470559013,
+          "std": 0.027998234923441858,
+          "ci95": 0.009146090074991007,
+          "min": 0.43174389004707336,
+          "max": 0.5485234260559082,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.04825036075036075,
+              "std": 0.12044365438525136,
+              "ci95": 0.03934492709918211,
+              "min": 0.0,
+              "max": 0.4166666666666667,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.029083118258222487,
+              "std": 0.07420364045401137,
+              "ci95": 0.024239855881643717,
+              "min": 0.0,
+              "max": 0.2608695652173913,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.49657447470559013,
+              "std": 0.027998234923441858,
+              "ci95": 0.009146090074991007,
+              "min": 0.43174389004707336,
+              "max": 0.5485234260559082,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.346236209074656,
+              "std": 0.29237280857309567,
+              "ci95": 0.09550845080054458,
+              "min": 2.542483329772949,
+              "max": 3.881777286529541,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.0050697145761953,
+              "std": 0.09936562775866534,
+              "ci95": 0.032459438401164005,
+              "min": 0.8124444444444444,
+              "max": 1.361777777777778,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.49657447470559013,
+              "std": 0.027998234923441858,
+              "ci95": 0.009146090074991007,
+              "min": 0.43174389004707336,
+              "max": 0.5485234260559082,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5210413932800293,
+            "utmos": 3.084045171737671,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.897843621399177,
+            "rms": 0.15487460792064667,
+            "peak": 0.7512182593345642,
+            "hf_ratio": 0.0016981101362034678,
+            "synthesis_time_s": 2.6655492782592773,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.47971102595329285,
+            "utmos": 2.878403663635254,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9859598393574297,
+            "rms": 0.15830673277378082,
+            "peak": 0.715815007686615,
+            "hf_ratio": 0.002939676633104682,
+            "synthesis_time_s": 3.1679317951202393,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5475893020629883,
+            "utmos": 3.5908353328704834,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.9205738396624472,
+            "rms": 0.16103783249855042,
+            "peak": 0.7028897404670715,
+            "hf_ratio": 0.003678732318803668,
+            "synthesis_time_s": 2.78336238861084,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48819518089294434,
+            "utmos": 3.838852882385254,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.8124444444444444,
+            "rms": 0.14445185661315918,
+            "peak": 0.6992319226264954,
+            "hf_ratio": 0.0017612871015444398,
+            "synthesis_time_s": 2.4701757431030273,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5201546549797058,
+            "utmos": 3.01670241355896,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 0.9698084291187739,
+            "rms": 0.15213875472545624,
+            "peak": 0.6836405992507935,
+            "hf_ratio": 0.002733067609369755,
+            "synthesis_time_s": 3.038663864135742,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.4968935251235962,
+            "utmos": 3.4245808124542236,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 1.0546666666666666,
+            "rms": 0.1533886343240738,
+            "peak": 0.7602795362472534,
+            "hf_ratio": 0.002942483639344573,
+            "synthesis_time_s": 3.190519332885742,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4988690912723541,
+            "utmos": 3.099944591522217,
+            "duration_s": 5.888,
+            "duration_ratio": 0.993156626506024,
+            "rms": 0.14995484054088593,
+            "peak": 0.6305769681930542,
+            "hf_ratio": 0.002195528009906411,
+            "synthesis_time_s": 3.05989408493042,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48885929584503174,
+            "utmos": 3.1811070442199707,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.098940170940171,
+            "rms": 0.15963268280029297,
+            "peak": 0.698949933052063,
+            "hf_ratio": 0.0024293314199894667,
+            "synthesis_time_s": 3.1234772205352783,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5485234260559082,
+            "utmos": 3.7297136783599854,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9469490196078432,
+            "rms": 0.1511782705783844,
+            "peak": 0.6416175961494446,
+            "hf_ratio": 0.002995423274114728,
+            "synthesis_time_s": 2.8953006267547607,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4910231828689575,
+            "utmos": 3.2444121837615967,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9743999999999999,
+            "rms": 0.17123627662658691,
+            "peak": 0.6801228523254395,
+            "hf_ratio": 0.0010311338119208813,
+            "synthesis_time_s": 2.830975294113159,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.46480101346969604,
+            "utmos": 3.881777286529541,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.9582222222222222,
+            "rms": 0.15776976943016052,
+            "peak": 0.727483868598938,
+            "hf_ratio": 0.002027316717430949,
+            "synthesis_time_s": 2.9235284328460693,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4893833100795746,
+            "utmos": 3.2104580402374268,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 1.0715897435897437,
+            "rms": 0.1571614146232605,
+            "peak": 0.6959227323532104,
+            "hf_ratio": 0.0022517465986311436,
+            "synthesis_time_s": 3.4611270427703857,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "123": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4933219850063324,
+            "utmos": 3.4739837646484375,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.8812510288065843,
+            "rms": 0.15726187825202942,
+            "peak": 0.6647359132766724,
+            "hf_ratio": 0.002029487630352378,
+            "synthesis_time_s": 2.5665690898895264,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5259100794792175,
+            "utmos": 3.693297863006592,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0255421686746988,
+            "rms": 0.1515132635831833,
+            "peak": 0.7266507148742676,
+            "hf_ratio": 0.0037059111054986715,
+            "synthesis_time_s": 3.212141513824463,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.523967444896698,
+            "utmos": 3.2011470794677734,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.9281350210970463,
+            "rms": 0.16505518555641174,
+            "peak": 0.667181670665741,
+            "hf_ratio": 0.0032249698415398598,
+            "synthesis_time_s": 2.631635904312134,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5112087726593018,
+            "utmos": 3.699518918991089,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9742222222222222,
+            "rms": 0.1458834856748581,
+            "peak": 0.6356029510498047,
+            "hf_ratio": 0.0024250370915979147,
+            "synthesis_time_s": 2.8468716144561768,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5071073770523071,
+            "utmos": 3.5379252433776855,
+            "duration_s": 6.677333333333333,
+            "duration_ratio": 1.0745134099616858,
+            "rms": 0.1537955105304718,
+            "peak": 0.6240845322608948,
+            "hf_ratio": 0.002985229017212987,
+            "synthesis_time_s": 3.439277172088623,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.4709015488624573,
+            "utmos": 3.419025182723999,
+            "duration_s": 7.1466666666666665,
+            "duration_ratio": 1.2506666666666666,
+            "rms": 0.1490495651960373,
+            "peak": 0.7560120820999146,
+            "hf_ratio": 0.0042854128405451775,
+            "synthesis_time_s": 3.3813371658325195,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtenden Gold und Rot und Rot.",
+            "wer": 0.21428571428571427,
+            "cer": 0.1,
+            "secs": 0.5433155298233032,
+            "utmos": 3.2363014221191406,
+            "duration_s": 5.8453333333333335,
+            "duration_ratio": 0.9859598393574297,
+            "rms": 0.15998204052448273,
+            "peak": 0.6645348072052002,
+            "hf_ratio": 0.0011109100887551904,
+            "synthesis_time_s": 2.771630048751831,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48721736669540405,
+            "utmos": 3.263472080230713,
+            "duration_s": 5.984,
+            "duration_ratio": 1.0740512820512822,
+            "rms": 0.16879233717918396,
+            "peak": 0.7427675724029541,
+            "hf_ratio": 0.002417647512629628,
+            "synthesis_time_s": 2.872042655944824,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5310021638870239,
+            "utmos": 3.503513813018799,
+            "duration_s": 5.984,
+            "duration_ratio": 0.9856,
+            "rms": 0.147503063082695,
+            "peak": 0.6080104112625122,
+            "hf_ratio": 0.0036697699688374996,
+            "synthesis_time_s": 2.76910138130188,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47407886385917664,
+            "utmos": 2.542483329772949,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 1.0061333333333333,
+            "rms": 0.16589777171611786,
+            "peak": 0.7371551394462585,
+            "hf_ratio": 0.001130312797613442,
+            "synthesis_time_s": 2.6603565216064453,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4668659567832947,
+            "utmos": 2.7182047367095947,
+            "duration_s": 8.170666666666667,
+            "duration_ratio": 1.361777777777778,
+            "rms": 0.1465473622083664,
+            "peak": 0.7405666708946228,
+            "hf_ratio": 0.0027330482844263315,
+            "synthesis_time_s": 3.7512059211730957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45442870259284973,
+            "utmos": 3.443463087081909,
+            "duration_s": 6.314666666666667,
+            "duration_ratio": 0.9714871794871794,
+            "rms": 0.15467172861099243,
+            "peak": 0.7156654000282288,
+            "hf_ratio": 0.002059265971183777,
+            "synthesis_time_s": 2.9265952110290527,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "999": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4710445702075958,
+            "utmos": 3.2246479988098145,
+            "duration_s": 5.429333333333333,
+            "duration_ratio": 0.93840329218107,
+            "rms": 0.15477663278579712,
+            "peak": 0.6891738772392273,
+            "hf_ratio": 0.0016657095402479172,
+            "synthesis_time_s": 2.5021071434020996,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.43174389004707336,
+            "utmos": 3.2350752353668213,
+            "duration_s": 6.314666666666667,
+            "duration_ratio": 1.0651244979919678,
+            "rms": 0.1554843634366989,
+            "peak": 0.6507382988929749,
+            "hf_ratio": 0.00256233848631382,
+            "synthesis_time_s": 3.0183639526367188,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.45396801829338074,
+            "utmos": 3.4340763092041016,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 1.0188691983122362,
+            "rms": 0.16093780100345612,
+            "peak": 0.7642849087715149,
+            "hf_ratio": 0.004244313109666109,
+            "synthesis_time_s": 3.1015119552612305,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4813648760318756,
+            "utmos": 3.583585023880005,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9279999999999999,
+            "rms": 0.14040572941303253,
+            "peak": 0.6524922847747803,
+            "hf_ratio": 0.0016796705313026905,
+            "synthesis_time_s": 2.9235262870788574,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5216649174690247,
+            "utmos": 3.515573024749756,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 1.0899616858237549,
+            "rms": 0.14729909598827362,
+            "peak": 0.6198288202285767,
+            "hf_ratio": 0.0028840680606663227,
+            "synthesis_time_s": 3.2421042919158936,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.47267547249794006,
+            "utmos": 3.24662184715271,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9743999999999999,
+            "rms": 0.15018659830093384,
+            "peak": 0.7245208621025085,
+            "hf_ratio": 0.0031969037372618914,
+            "synthesis_time_s": 2.682358741760254,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5323052406311035,
+            "utmos": 3.4895548820495605,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0255421686746988,
+            "rms": 0.15836173295974731,
+            "peak": 0.7269115447998047,
+            "hf_ratio": 0.002152190310880542,
+            "synthesis_time_s": 2.943648099899292,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.494133859872818,
+            "utmos": 3.15427827835083,
+            "duration_s": 6.026666666666666,
+            "duration_ratio": 1.0817094017094018,
+            "rms": 0.15391838550567627,
+            "peak": 0.6952389478683472,
+            "hf_ratio": 0.00557983061298728,
+            "synthesis_time_s": 2.855463743209839,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5102430582046509,
+            "utmos": 3.358067274093628,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0014117647058824,
+            "rms": 0.15257222950458527,
+            "peak": 0.6505870223045349,
+            "hf_ratio": 0.0024091065861284733,
+            "synthesis_time_s": 2.7842037677764893,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.502647340297699,
+            "utmos": 3.1853890419006348,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 1.0154666666666667,
+            "rms": 0.17043545842170715,
+            "peak": 0.6884256601333618,
+            "hf_ratio": 0.0009266845881938934,
+            "synthesis_time_s": 2.657390594482422,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5068836212158203,
+            "utmos": 3.6387009620666504,
+            "duration_s": 5.386666666666667,
+            "duration_ratio": 0.8977777777777778,
+            "rms": 0.15177340805530548,
+            "peak": 0.7390944957733154,
+            "hf_ratio": 0.002220593858510256,
+            "synthesis_time_s": 2.5415356159210205,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47363603115081787,
+            "utmos": 3.4857640266418457,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 0.9419487179487179,
+            "rms": 0.14888158440589905,
+            "peak": 0.6394864916801453,
+            "hf_ratio": 0.002445955527946353,
+            "synthesis_time_s": 2.806830406188965,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_clb"
+    },
+    {
+      "timestamp": "2026-10-26 07:28:38 UTC",
+      "git": {
+        "commit_sha": "6b9a508c1abd0df7ff6a610372cfcb7685231e8b",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_bdl.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "e6259d10075af30098429152b0c7d05d2c1c4c142b60eeaba7ca8dcfea6bd50f",
+        "n_files": 65
+      },
+      "metrics_version": 2,
+      "language": "de",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.06235970819304152,
+          "std": 0.1287317301766187,
+          "ci95": 0.04205236519102878,
+          "min": 0.0,
+          "max": 0.4166666666666667,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.04016313663923805,
+          "std": 0.08295462955824474,
+          "ci95": 0.02709851232235995,
+          "min": 0.0,
+          "max": 0.2608695652173913,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5446136941512426,
+          "std": 0.020569104951868554,
+          "ci95": 0.006719240950943728,
+          "min": 0.502527117729187,
+          "max": 0.5817232131958008,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.4995679126845465,
+          "std": 0.2656589245988732,
+          "ci95": 0.08678191536896523,
+          "min": 2.903536796569824,
+          "max": 4.086714267730713,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 0.9181280222238379,
+          "std": 0.14195797057535456,
+          "ci95": 0.04637293705461582,
+          "min": 0.7134814814814815,
+          "max": 1.4741880341880342,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5446136941512426,
+          "std": 0.020569104951868554,
+          "ci95": 0.006719240950943728,
+          "min": 0.502527117729187,
+          "max": 0.5817232131958008,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.06235970819304152,
+              "std": 0.1287317301766187,
+              "ci95": 0.04205236519102878,
+              "min": 0.0,
+              "max": 0.4166666666666667,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.04016313663923805,
+              "std": 0.08295462955824474,
+              "ci95": 0.02709851232235995,
+              "min": 0.0,
+              "max": 0.2608695652173913,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5446136941512426,
+              "std": 0.020569104951868554,
+              "ci95": 0.006719240950943728,
+              "min": 0.502527117729187,
+              "max": 0.5817232131958008,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.4995679126845465,
+              "std": 0.2656589245988732,
+              "ci95": 0.08678191536896523,
+              "min": 2.903536796569824,
+              "max": 4.086714267730713,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 0.9181280222238379,
+              "std": 0.14195797057535456,
+              "ci95": 0.04637293705461582,
+              "min": 0.7134814814814815,
+              "max": 1.4741880341880342,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5446136941512426,
+              "std": 0.020569104951868554,
+              "ci95": 0.006719240950943728,
+              "min": 0.502527117729187,
+              "max": 0.5817232131958008,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5275785326957703,
+            "utmos": 3.363168478012085,
+            "duration_s": 4.128,
+            "duration_ratio": 0.7134814814814815,
+            "rms": 0.13840392231941223,
+            "peak": 0.9617769718170166,
+            "hf_ratio": 0.006719432771205902,
+            "synthesis_time_s": 1.8970630168914795,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5412973165512085,
+            "utmos": 3.8522794246673584,
+            "duration_s": 5.429333333333333,
+            "duration_ratio": 0.9157911646586344,
+            "rms": 0.13654400408267975,
+            "peak": 0.8432999849319458,
+            "hf_ratio": 0.011709150858223438,
+            "synthesis_time_s": 2.4820024967193604,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "k\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5343829393386841,
+            "utmos": 3.4522130489349365,
+            "duration_s": 4.682666666666667,
+            "duration_ratio": 0.8298396624472574,
+            "rms": 0.1373189091682434,
+            "peak": 0.8294337391853333,
+            "hf_ratio": 0.01373907271772623,
+            "synthesis_time_s": 2.1902172565460205,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5441571474075317,
+            "utmos": 2.903536796569824,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9279999999999999,
+            "rms": 0.12032092362642288,
+            "peak": 0.8831422924995422,
+            "hf_ratio": 0.007327400613576174,
+            "synthesis_time_s": 2.691854476928711,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5492299795150757,
+            "utmos": 3.561631202697754,
+            "duration_s": 6.176,
+            "duration_ratio": 0.9938390804597701,
+            "rms": 0.12435929477214813,
+            "peak": 0.9049133062362671,
+            "hf_ratio": 0.010558727197349072,
+            "synthesis_time_s": 2.8672337532043457,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.5140745043754578,
+            "utmos": 3.386986494064331,
+            "duration_s": 4.736,
+            "duration_ratio": 0.8288,
+            "rms": 0.12319137156009674,
+            "peak": 0.8447979688644409,
+            "hf_ratio": 0.017617693170905113,
+            "synthesis_time_s": 2.2554256916046143,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5758216381072998,
+            "utmos": 3.501422882080078,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.8222329317269075,
+            "rms": 0.12916222214698792,
+            "peak": 0.9491761326789856,
+            "hf_ratio": 0.006475951988250017,
+            "synthesis_time_s": 2.3156540393829346,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5771721601486206,
+            "utmos": 2.9166927337646484,
+            "duration_s": 8.213333333333333,
+            "duration_ratio": 1.4741880341880342,
+            "rms": 0.1255437135696411,
+            "peak": 0.8430591821670532,
+            "hf_ratio": 0.014154904522001743,
+            "synthesis_time_s": 3.8238978385925293,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5116069912910461,
+            "utmos": 3.7906112670898438,
+            "duration_s": 5.013333333333334,
+            "duration_ratio": 0.8257254901960785,
+            "rms": 0.12282530963420868,
+            "peak": 0.8246091604232788,
+            "hf_ratio": 0.01947917230427265,
+            "synthesis_time_s": 2.3895039558410645,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5801313519477844,
+            "utmos": 3.5184810161590576,
+            "duration_s": 4.309333333333333,
+            "duration_ratio": 0.7541333333333332,
+            "rms": 0.13088862597942352,
+            "peak": 0.9132115244865417,
+            "hf_ratio": 0.0024328019935637712,
+            "synthesis_time_s": 2.0474789142608643,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5191531777381897,
+            "utmos": 3.471958637237549,
+            "duration_s": 4.736,
+            "duration_ratio": 0.7893333333333333,
+            "rms": 0.1256900578737259,
+            "peak": 0.9211772084236145,
+            "hf_ratio": 0.009830520488321781,
+            "synthesis_time_s": 2.2364296913146973,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5248232483863831,
+            "utmos": 3.4003217220306396,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 1.0420512820512822,
+            "rms": 0.12530416250228882,
+            "peak": 0.8179181814193726,
+            "hf_ratio": 0.015534433536231518,
+            "synthesis_time_s": 3.0896451473236084,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "123": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.523726224899292,
+            "utmos": 3.409237861633301,
+            "duration_s": 4.736,
+            "duration_ratio": 0.8185679012345679,
+            "rms": 0.12782204151153564,
+            "peak": 0.956934928894043,
+            "hf_ratio": 0.006677537690848112,
+            "synthesis_time_s": 2.178438663482666,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5571998953819275,
+            "utmos": 3.6997716426849365,
+            "duration_s": 4.64,
+            "duration_ratio": 0.7826506024096385,
+            "rms": 0.13009825348854065,
+            "peak": 0.8964475989341736,
+            "hf_ratio": 0.010927130468189716,
+            "synthesis_time_s": 2.196303367614746,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5609217286109924,
+            "utmos": 3.8399555683135986,
+            "duration_s": 4.224,
+            "duration_ratio": 0.7485569620253164,
+            "rms": 0.13298198580741882,
+            "peak": 0.8870741128921509,
+            "hf_ratio": 0.016679782420396805,
+            "synthesis_time_s": 1.9601542949676514,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5210488438606262,
+            "utmos": 3.484708786010742,
+            "duration_s": 5.664,
+            "duration_ratio": 0.944,
+            "rms": 0.12292805314064026,
+            "peak": 0.883979082107544,
+            "hf_ratio": 0.011156918480992317,
+            "synthesis_time_s": 2.6730802059173584,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt. Danke daraus.",
+            "wer": 0.2222222222222222,
+            "cer": 0.13924050632911392,
+            "secs": 0.5574086904525757,
+            "utmos": 3.276320457458496,
+            "duration_s": 7.050666666666666,
+            "duration_ratio": 1.1345900383141763,
+            "rms": 0.12184411287307739,
+            "peak": 0.9518377184867859,
+            "hf_ratio": 0.019691677764058113,
+            "synthesis_time_s": 3.2226598262786865,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.502527117729187,
+            "utmos": 3.2927956581115723,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 1.0154666666666667,
+            "rms": 0.1258053332567215,
+            "peak": 0.8860059976577759,
+            "hf_ratio": 0.013381658121943474,
+            "synthesis_time_s": 2.7220206260681152,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5658311247825623,
+            "utmos": 3.6815237998962402,
+            "duration_s": 5.1946666666666665,
+            "duration_ratio": 0.8762088353413654,
+            "rms": 0.12408943474292755,
+            "peak": 0.8872082829475403,
+            "hf_ratio": 0.013047331012785435,
+            "synthesis_time_s": 2.4146358966827393,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.568867564201355,
+            "utmos": 3.2860710620880127,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9917264957264957,
+            "rms": 0.11767534166574478,
+            "peak": 0.902577817440033,
+            "hf_ratio": 0.019961073994636536,
+            "synthesis_time_s": 2.5481085777282715,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5386843085289001,
+            "utmos": 3.731806516647339,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 0.9557333333333334,
+            "rms": 0.125661700963974,
+            "peak": 0.7856212258338928,
+            "hf_ratio": 0.017698107287287712,
+            "synthesis_time_s": 2.6884024143218994,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5551296472549438,
+            "utmos": 3.9531264305114746,
+            "duration_s": 4.778666666666667,
+            "duration_ratio": 0.8362666666666667,
+            "rms": 0.1301899552345276,
+            "peak": 0.9207311868667603,
+            "hf_ratio": 0.0026342032942920923,
+            "synthesis_time_s": 2.218870162963867,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5282560586929321,
+            "utmos": 3.397585868835449,
+            "duration_s": 5.237333333333333,
+            "duration_ratio": 0.8728888888888888,
+            "rms": 0.12832210958003998,
+            "peak": 0.8810113668441772,
+            "hf_ratio": 0.009863495826721191,
+            "synthesis_time_s": 2.399571657180786,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5301417708396912,
+            "utmos": 3.5256638526916504,
+            "duration_s": 5.706666666666667,
+            "duration_ratio": 0.877948717948718,
+            "rms": 0.12561093270778656,
+            "peak": 0.8146375417709351,
+            "hf_ratio": 0.013512304052710533,
+            "synthesis_time_s": 2.634746789932251,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "999": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.532684862613678,
+            "utmos": 3.4680278301239014,
+            "duration_s": 4.405333333333333,
+            "duration_ratio": 0.7614156378600823,
+            "rms": 0.13468655943870544,
+            "peak": 0.9433498978614807,
+            "hf_ratio": 0.006379648577421904,
+            "synthesis_time_s": 2.103166103363037,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5642437934875488,
+            "utmos": 3.689620018005371,
+            "duration_s": 5.0986666666666665,
+            "duration_ratio": 0.860016064257028,
+            "rms": 0.1302574723958969,
+            "peak": 0.9227867126464844,
+            "hf_ratio": 0.012742824852466583,
+            "synthesis_time_s": 2.432655096054077,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5316910743713379,
+            "utmos": 3.3374695777893066,
+            "duration_s": 4.874666666666666,
+            "duration_ratio": 0.8638649789029534,
+            "rms": 0.1302448958158493,
+            "peak": 0.820671558380127,
+            "hf_ratio": 0.017615901306271553,
+            "synthesis_time_s": 2.296107292175293,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5402541756629944,
+            "utmos": 3.5780248641967773,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9208888888888889,
+            "rms": 0.11723025143146515,
+            "peak": 0.8502495288848877,
+            "hf_ratio": 0.010185585357248783,
+            "synthesis_time_s": 2.5650269985198975,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5573291778564453,
+            "utmos": 3.161832571029663,
+            "duration_s": 6.176,
+            "duration_ratio": 0.9938390804597701,
+            "rms": 0.12094515562057495,
+            "peak": 0.8903120756149292,
+            "hf_ratio": 0.012616309337317944,
+            "synthesis_time_s": 2.8773691654205322,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.5399857759475708,
+            "utmos": 3.2760465145111084,
+            "duration_s": 5.333333333333333,
+            "duration_ratio": 0.9333333333333332,
+            "rms": 0.12995032966136932,
+            "peak": 0.8538500070571899,
+            "hf_ratio": 0.013875343836843967,
+            "synthesis_time_s": 2.411581039428711,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5614216327667236,
+            "utmos": 3.658182144165039,
+            "duration_s": 6.634666666666667,
+            "duration_ratio": 1.1191004016064257,
+            "rms": 0.11993346363306046,
+            "peak": 0.9109041094779968,
+            "hf_ratio": 0.011797953397035599,
+            "synthesis_time_s": 3.0457990169525146,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals. Das sagt Datpono.",
+            "wer": 0.25,
+            "cer": 0.208955223880597,
+            "secs": 0.5817232131958008,
+            "utmos": 4.086714267730713,
+            "duration_s": 6.08,
+            "duration_ratio": 1.0912820512820514,
+            "rms": 0.12425655871629715,
+            "peak": 0.9030864834785461,
+            "hf_ratio": 0.018958905711770058,
+            "synthesis_time_s": 2.7516043186187744,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5491865277290344,
+            "utmos": 3.495919704437256,
+            "duration_s": 6.176,
+            "duration_ratio": 1.0172235294117649,
+            "rms": 0.11413788050413132,
+            "peak": 0.7977662086486816,
+            "hf_ratio": 0.018313966691493988,
+            "synthesis_time_s": 2.915323495864868,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5521916151046753,
+            "utmos": 3.3731160163879395,
+            "duration_s": 4.96,
+            "duration_ratio": 0.868,
+            "rms": 0.13311360776424408,
+            "peak": 0.8503484725952148,
+            "hf_ratio": 0.0028519253246486187,
+            "synthesis_time_s": 2.344999074935913,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet? Das st\u00f6rt der...",
+            "wer": 0.25,
+            "cer": 0.1506849315068493,
+            "secs": 0.5567399263381958,
+            "utmos": 3.207552909851074,
+            "duration_s": 5.802666666666667,
+            "duration_ratio": 0.9671111111111111,
+            "rms": 0.12837323546409607,
+            "peak": 0.8471670150756836,
+            "hf_ratio": 0.010361233726143837,
+            "synthesis_time_s": 2.6966166496276855,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5294692516326904,
+            "utmos": 3.9540672302246094,
+            "duration_s": 5.749333333333333,
+            "duration_ratio": 0.8845128205128205,
+            "rms": 0.12816107273101807,
+            "peak": 0.7557051777839661,
+            "hf_ratio": 0.01315524335950613,
+            "synthesis_time_s": 2.6639723777770996,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_bdl"
+    },
+    {
+      "timestamp": "2026-10-26 07:31:00 UTC",
+      "git": {
+        "commit_sha": "6b9a508c1abd0df7ff6a610372cfcb7685231e8b",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_awb.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "e6259d10075af30098429152b0c7d05d2c1c4c142b60eeaba7ca8dcfea6bd50f",
+        "n_files": 65
+      },
+      "metrics_version": 2,
+      "language": "de",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.0422979797979798,
+          "std": 0.11028053562073653,
+          "ci95": 0.0360249749694406,
+          "min": 0.0,
+          "max": 0.4166666666666667,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.02673195138726327,
+          "std": 0.07190872762543678,
+          "ci95": 0.02349018435764268,
+          "min": 0.0,
+          "max": 0.2608695652173913,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5798433514104949,
+          "std": 0.04204961436771979,
+          "ci95": 0.013736207360121799,
+          "min": 0.48906272649765015,
+          "max": 0.661918580532074,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.293894800874922,
+          "std": 0.19936225597938978,
+          "ci95": 0.065125003619934,
+          "min": 2.689492702484131,
+          "max": 3.6818630695343018,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.1792447678366282,
+          "std": 0.1621115451096886,
+          "ci95": 0.05295643806916494,
+          "min": 0.9549958847736626,
+          "max": 1.8517333333333332,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5798433514104949,
+          "std": 0.04204961436771979,
+          "ci95": 0.013736207360121799,
+          "min": 0.48906272649765015,
+          "max": 0.661918580532074,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.0422979797979798,
+              "std": 0.11028053562073653,
+              "ci95": 0.0360249749694406,
+              "min": 0.0,
+              "max": 0.4166666666666667,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.02673195138726327,
+              "std": 0.07190872762543678,
+              "ci95": 0.02349018435764268,
+              "min": 0.0,
+              "max": 0.2608695652173913,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5798433514104949,
+              "std": 0.04204961436771979,
+              "ci95": 0.013736207360121799,
+              "min": 0.48906272649765015,
+              "max": 0.661918580532074,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.293894800874922,
+              "std": 0.19936225597938978,
+              "ci95": 0.065125003619934,
+              "min": 2.689492702484131,
+              "max": 3.6818630695343018,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.1792447678366282,
+              "std": 0.1621115451096886,
+              "ci95": 0.05295643806916494,
+              "min": 0.9549958847736626,
+              "max": 1.8517333333333332,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5798433514104949,
+              "std": 0.04204961436771979,
+              "ci95": 0.013736207360121799,
+              "min": 0.48906272649765015,
+              "max": 0.661918580532074,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.563036322593689,
+            "utmos": 3.2497549057006836,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.098798353909465,
+            "rms": 0.12395960837602615,
+            "peak": 0.9290202856063843,
+            "hf_ratio": 0.0041659679263830185,
+            "synthesis_time_s": 3.6204910278320312,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.6541366577148438,
+            "utmos": 3.158970594406128,
+            "duration_s": 7.242666666666667,
+            "duration_ratio": 1.2216546184738954,
+            "rms": 0.1289568394422531,
+            "peak": 0.9751263856887817,
+            "hf_ratio": 0.00920086819678545,
+            "synthesis_time_s": 3.749957799911499,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6367207169532776,
+            "utmos": 3.5608086585998535,
+            "duration_s": 6.357333333333333,
+            "duration_ratio": 1.1266160337552742,
+            "rms": 0.13934014737606049,
+            "peak": 0.9931443333625793,
+            "hf_ratio": 0.01577552780508995,
+            "synthesis_time_s": 3.304300546646118,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.534884512424469,
+            "utmos": 3.3777003288269043,
+            "duration_s": 7.616,
+            "duration_ratio": 1.2693333333333332,
+            "rms": 0.12224406003952026,
+            "peak": 0.9161590337753296,
+            "hf_ratio": 0.006730361375957727,
+            "synthesis_time_s": 4.257595539093018,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5930706262588501,
+            "utmos": 3.3714258670806885,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 1.0899616858237549,
+            "rms": 0.1302926242351532,
+            "peak": 0.9496589303016663,
+            "hf_ratio": 0.005373398307710886,
+            "synthesis_time_s": 3.577136993408203,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof, p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.5548884868621826,
+            "utmos": 3.430645227432251,
+            "duration_s": 6.538666666666667,
+            "duration_ratio": 1.1442666666666668,
+            "rms": 0.12789352238178253,
+            "peak": 0.9703498482704163,
+            "hf_ratio": 0.013636483810842037,
+            "synthesis_time_s": 3.339158535003662,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5501315593719482,
+            "utmos": 3.286954879760742,
+            "duration_s": 6.496,
+            "duration_ratio": 1.095710843373494,
+            "rms": 0.1260661780834198,
+            "peak": 0.9486313462257385,
+            "hf_ratio": 0.007121238391846418,
+            "synthesis_time_s": 3.2752625942230225,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5786647796630859,
+            "utmos": 3.233227252960205,
+            "duration_s": 6.912,
+            "duration_ratio": 1.2406153846153847,
+            "rms": 0.1287059485912323,
+            "peak": 0.907707154750824,
+            "hf_ratio": 0.013485097326338291,
+            "synthesis_time_s": 3.67462158203125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven. Vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5411580801010132,
+            "utmos": 3.4984350204467773,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.0084392156862745,
+            "rms": 0.13058768212795258,
+            "peak": 0.9770132303237915,
+            "hf_ratio": 0.008722350932657719,
+            "synthesis_time_s": 3.3522448539733887,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5037474632263184,
+            "utmos": 3.1538608074188232,
+            "duration_s": 5.941333333333334,
+            "duration_ratio": 1.0397333333333334,
+            "rms": 0.12586820125579834,
+            "peak": 0.9487909078598022,
+            "hf_ratio": 0.001726643298752606,
+            "synthesis_time_s": 3.055600881576538,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6014145612716675,
+            "utmos": 3.331488609313965,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0364444444444445,
+            "rms": 0.12318363785743713,
+            "peak": 0.8658747673034668,
+            "hf_ratio": 0.007711166050285101,
+            "synthesis_time_s": 3.11179256439209,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien. Und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5611346960067749,
+            "utmos": 3.086026430130005,
+            "duration_s": 7.754666666666667,
+            "duration_ratio": 1.193025641025641,
+            "rms": 0.1302623450756073,
+            "peak": 0.9421938061714172,
+            "hf_ratio": 0.012189296074211597,
+            "synthesis_time_s": 3.9787068367004395,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "123": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5690882205963135,
+            "utmos": 3.015927314758301,
+            "duration_s": 5.568,
+            "duration_ratio": 0.9623703703703703,
+            "rms": 0.13120527565479279,
+            "peak": 0.8932650685310364,
+            "hf_ratio": 0.004429519176483154,
+            "synthesis_time_s": 2.848187208175659,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.595154881477356,
+            "utmos": 3.270692825317383,
+            "duration_s": 6.4,
+            "duration_ratio": 1.0795180722891566,
+            "rms": 0.13197091221809387,
+            "peak": 0.9649389982223511,
+            "hf_ratio": 0.009242605417966843,
+            "synthesis_time_s": 3.2383620738983154,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6306380033493042,
+            "utmos": 3.3048479557037354,
+            "duration_s": 6.1226666666666665,
+            "duration_ratio": 1.0850295358649789,
+            "rms": 0.1346152275800705,
+            "peak": 0.9483321309089661,
+            "hf_ratio": 0.016406375914812088,
+            "synthesis_time_s": 3.060295581817627,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.48906272649765015,
+            "utmos": 3.2304587364196777,
+            "duration_s": 7.7973333333333334,
+            "duration_ratio": 1.2995555555555556,
+            "rms": 0.11701832711696625,
+            "peak": 0.9077585339546204,
+            "hf_ratio": 0.0041329022496938705,
+            "synthesis_time_s": 3.7348031997680664,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5759700536727905,
+            "utmos": 3.1671881675720215,
+            "duration_s": 8.309333333333333,
+            "duration_ratio": 1.3371340996168581,
+            "rms": 0.1251528412103653,
+            "peak": 0.9318888187408447,
+            "hf_ratio": 0.007337526418268681,
+            "synthesis_time_s": 4.3850998878479,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der E-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.3333333333333333,
+            "cer": 0.2463768115942029,
+            "secs": 0.5816552639007568,
+            "utmos": 3.4105117321014404,
+            "duration_s": 8.117333333333333,
+            "duration_ratio": 1.4205333333333332,
+            "rms": 0.11688299477100372,
+            "peak": 0.8990418314933777,
+            "hf_ratio": 0.018252234905958176,
+            "synthesis_time_s": 4.222631931304932,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5574249625205994,
+            "utmos": 3.3205060958862305,
+            "duration_s": 6.453333333333333,
+            "duration_ratio": 1.0885140562248996,
+            "rms": 0.12869513034820557,
+            "peak": 0.9139553308486938,
+            "hf_ratio": 0.007949025370180607,
+            "synthesis_time_s": 3.378763198852539,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.661918580532074,
+            "utmos": 3.230560779571533,
+            "duration_s": 7.616,
+            "duration_ratio": 1.366974358974359,
+            "rms": 0.13108375668525696,
+            "peak": 0.925846517086029,
+            "hf_ratio": 0.009686091914772987,
+            "synthesis_time_s": 3.862912178039551,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5666941404342651,
+            "utmos": 3.419711112976074,
+            "duration_s": 7.978666666666666,
+            "duration_ratio": 1.3141333333333334,
+            "rms": 0.1221906989812851,
+            "peak": 0.9734070301055908,
+            "hf_ratio": 0.013461964204907417,
+            "synthesis_time_s": 4.063117742538452,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5876942873001099,
+            "utmos": 2.689492702484131,
+            "duration_s": 10.581333333333333,
+            "duration_ratio": 1.8517333333333332,
+            "rms": 0.12458279728889465,
+            "peak": 0.9422131180763245,
+            "hf_ratio": 0.003259490942582488,
+            "synthesis_time_s": 5.3034868240356445,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6022165417671204,
+            "utmos": 3.539184808731079,
+            "duration_s": 6.453333333333333,
+            "duration_ratio": 1.0755555555555556,
+            "rms": 0.13128046691417694,
+            "peak": 0.9234672784805298,
+            "hf_ratio": 0.008177142590284348,
+            "synthesis_time_s": 3.2729365825653076,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5476188659667969,
+            "utmos": 3.6818630695343018,
+            "duration_s": 7.050666666666666,
+            "duration_ratio": 1.0847179487179486,
+            "rms": 0.1357019692659378,
+            "peak": 0.9358543753623962,
+            "hf_ratio": 0.009340241551399231,
+            "synthesis_time_s": 3.608354330062866,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "999": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5881794095039368,
+            "utmos": 2.9917118549346924,
+            "duration_s": 5.525333333333333,
+            "duration_ratio": 0.9549958847736626,
+            "rms": 0.1342557966709137,
+            "peak": 0.9587294459342957,
+            "hf_ratio": 0.004727416206151247,
+            "synthesis_time_s": 2.8081936836242676,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.591172456741333,
+            "utmos": 3.3547472953796387,
+            "duration_s": 7.658666666666667,
+            "duration_ratio": 1.2918232931726907,
+            "rms": 0.1253797709941864,
+            "peak": 0.9560472369194031,
+            "hf_ratio": 0.00870729610323906,
+            "synthesis_time_s": 3.8576488494873047,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6561096906661987,
+            "utmos": 3.1030516624450684,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 1.2173502109704641,
+            "rms": 0.1190447062253952,
+            "peak": 0.902001142501831,
+            "hf_ratio": 0.01699727214872837,
+            "synthesis_time_s": 3.3848798274993896,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49118348956108093,
+            "utmos": 3.6611874103546143,
+            "duration_s": 6.496,
+            "duration_ratio": 1.0826666666666667,
+            "rms": 0.1266312301158905,
+            "peak": 0.9128755927085876,
+            "hf_ratio": 0.0032283789478242397,
+            "synthesis_time_s": 3.1692943572998047,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.550060510635376,
+            "utmos": 3.390961170196533,
+            "duration_s": 7.285333333333333,
+            "duration_ratio": 1.172352490421456,
+            "rms": 0.12338940799236298,
+            "peak": 0.8618802428245544,
+            "hf_ratio": 0.008027737960219383,
+            "synthesis_time_s": 3.5498900413513184,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.567657470703125,
+            "utmos": 2.9948859214782715,
+            "duration_s": 6.08,
+            "duration_ratio": 1.064,
+            "rms": 0.12368909269571304,
+            "peak": 0.9206531643867493,
+            "hf_ratio": 0.013596189208328724,
+            "synthesis_time_s": 2.924269914627075,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5815427899360657,
+            "utmos": 3.4369394779205322,
+            "duration_s": 7.008,
+            "duration_ratio": 1.1820722891566264,
+            "rms": 0.1268986612558365,
+            "peak": 0.9209926128387451,
+            "hf_ratio": 0.008921685628592968,
+            "synthesis_time_s": 3.4158101081848145,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals. Oh!",
+            "wer": 0.08333333333333333,
+            "cer": 0.029850746268656716,
+            "secs": 0.6124969720840454,
+            "utmos": 3.2987899780273438,
+            "duration_s": 7.050666666666666,
+            "duration_ratio": 1.2655042735042734,
+            "rms": 0.11781226843595505,
+            "peak": 0.9449110627174377,
+            "hf_ratio": 0.016017422080039978,
+            "synthesis_time_s": 3.394383430480957,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5502033233642578,
+            "utmos": 3.314470052719116,
+            "duration_s": 7.285333333333333,
+            "duration_ratio": 1.1999372549019607,
+            "rms": 0.1375994235277176,
+            "peak": 0.9330422282218933,
+            "hf_ratio": 0.009115696884691715,
+            "synthesis_time_s": 3.55841064453125,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6117693781852722,
+            "utmos": 3.4962825775146484,
+            "duration_s": 7.242666666666667,
+            "duration_ratio": 1.2674666666666665,
+            "rms": 0.1344110667705536,
+            "peak": 0.9539340138435364,
+            "hf_ratio": 0.00455150380730629,
+            "synthesis_time_s": 3.5212981700897217,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6235251426696777,
+            "utmos": 3.3596315383911133,
+            "duration_s": 6.453333333333333,
+            "duration_ratio": 1.0755555555555556,
+            "rms": 0.1295563131570816,
+            "peak": 0.9007612466812134,
+            "hf_ratio": 0.008058255538344383,
+            "synthesis_time_s": 3.1025938987731934,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.6123350262641907,
+            "utmos": 3.1573100090026855,
+            "duration_s": 7.466666666666667,
+            "duration_ratio": 1.1487179487179486,
+            "rms": 0.13997259736061096,
+            "peak": 0.9690585136413574,
+            "hf_ratio": 0.005854297894984484,
+            "synthesis_time_s": 3.6188323497772217,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_awb"
+    },
+    {
+      "timestamp": "2026-10-26 07:33:18 UTC",
+      "git": {
+        "commit_sha": "6b9a508c1abd0df7ff6a610372cfcb7685231e8b",
+        "is_dirty": false
+      },
+      "eval_set_sha256": "86c0183fc4b9ad4c098dc281202367d0d7145ac1a02e544576546d66b6e42e85",
+      "reference_audio": "/root/open-xtts-trainer/eval/reference_voices/arctic_ksp.wav",
+      "asr_model": "openai/whisper-large-v3",
+      "code_fingerprint": {
+        "sha256": "e6259d10075af30098429152b0c7d05d2c1c4c142b60eeaba7ca8dcfea6bd50f",
+        "n_files": 65
+      },
+      "metrics_version": 2,
+      "language": "de",
+      "seeds": [
+        42,
+        123,
+        999
+      ],
+      "summary": {
+        "num_sentences": 12,
+        "num_seeds": 3,
+        "total_evaluations": 36,
+        "wer": {
+          "mean": 0.05110630110630111,
+          "std": 0.11798511380958294,
+          "ci95": 0.03854180384446376,
+          "min": 0.0,
+          "max": 0.4166666666666667,
+          "n": 36,
+          "n_nan": 0
+        },
+        "cer": {
+          "mean": 0.03274318150235938,
+          "std": 0.07511455792052435,
+          "ci95": 0.024537422254037957,
+          "min": 0.0,
+          "max": 0.2608695652173913,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs": {
+          "mean": 0.5132859076062838,
+          "std": 0.026330747801183538,
+          "ci95": 0.008601377615053288,
+          "min": 0.4271094799041748,
+          "max": 0.5564249157905579,
+          "n": 36,
+          "n_nan": 0
+        },
+        "utmos": {
+          "mean": 3.435169133875105,
+          "std": 0.23343109153785063,
+          "ci95": 0.0762541565690312,
+          "min": 2.7595553398132324,
+          "max": 3.7313852310180664,
+          "n": 36,
+          "n_nan": 0
+        },
+        "duration_ratio": {
+          "mean": 1.22871988885018,
+          "std": 0.09195114371130385,
+          "ci95": 0.030037373612359256,
+          "min": 1.0293333333333334,
+          "max": 1.433256704980843,
+          "n": 36,
+          "n_nan": 0
+        },
+        "secs_all": {
+          "mean": 0.5132859076062838,
+          "std": 0.026330747801183538,
+          "ci95": 0.008601377615053288,
+          "min": 0.4271094799041748,
+          "max": 0.5564249157905579,
+          "n": 36,
+          "n_nan": 0
+        },
+        "failure_counts": {
+          "empty": 0,
+          "too_long": 0,
+          "nan": 0
+        },
+        "by_category": {
+          "_all": {
+            "wer": {
+              "mean": 0.05110630110630111,
+              "std": 0.11798511380958294,
+              "ci95": 0.03854180384446376,
+              "min": 0.0,
+              "max": 0.4166666666666667,
+              "n": 36,
+              "n_nan": 0
+            },
+            "cer": {
+              "mean": 0.03274318150235938,
+              "std": 0.07511455792052435,
+              "ci95": 0.024537422254037957,
+              "min": 0.0,
+              "max": 0.2608695652173913,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs": {
+              "mean": 0.5132859076062838,
+              "std": 0.026330747801183538,
+              "ci95": 0.008601377615053288,
+              "min": 0.4271094799041748,
+              "max": 0.5564249157905579,
+              "n": 36,
+              "n_nan": 0
+            },
+            "utmos": {
+              "mean": 3.435169133875105,
+              "std": 0.23343109153785063,
+              "ci95": 0.0762541565690312,
+              "min": 2.7595553398132324,
+              "max": 3.7313852310180664,
+              "n": 36,
+              "n_nan": 0
+            },
+            "duration_ratio": {
+              "mean": 1.22871988885018,
+              "std": 0.09195114371130385,
+              "ci95": 0.030037373612359256,
+              "min": 1.0293333333333334,
+              "max": 1.433256704980843,
+              "n": 36,
+              "n_nan": 0
+            },
+            "secs_all": {
+              "mean": 0.5132859076062838,
+              "std": 0.026330747801183538,
+              "ci95": 0.008601377615053288,
+              "min": 0.4271094799041748,
+              "max": 0.5564249157905579,
+              "n": 36,
+              "n_nan": 0
+            },
+            "failure_counts": {
+              "empty": 0,
+              "too_long": 0,
+              "nan": 0
+            }
+          }
+        }
+      },
+      "per_seed_results": {
+        "42": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebetten Gipfel der Bayerischen Alpen",
+            "wer": 0.09090909090909091,
+            "cer": 0.056338028169014086,
+            "secs": 0.5396029353141785,
+            "utmos": 2.7595553398132324,
+            "duration_s": 7.328,
+            "duration_ratio": 1.266567901234568,
+            "rms": 0.14284895360469818,
+            "peak": 0.7794780135154724,
+            "hf_ratio": 0.008814816363155842,
+            "synthesis_time_s": 3.563121795654297,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5389152765274048,
+            "utmos": 3.279115676879883,
+            "duration_s": 7.328,
+            "duration_ratio": 1.2360481927710842,
+            "rms": 0.13574621081352234,
+            "peak": 0.86414635181427,
+            "hf_ratio": 0.029759619385004044,
+            "synthesis_time_s": 3.5250065326690674,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5296947956085205,
+            "utmos": 3.4057977199554443,
+            "duration_s": 6.592,
+            "duration_ratio": 1.1682025316455695,
+            "rms": 0.15099234879016876,
+            "peak": 0.8685275912284851,
+            "hf_ratio": 0.035539183765649796,
+            "synthesis_time_s": 3.1198203563690186,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5326946973800659,
+            "utmos": 3.6533823013305664,
+            "duration_s": 7.242666666666667,
+            "duration_ratio": 1.207111111111111,
+            "rms": 0.12790048122406006,
+            "peak": 0.7811124324798584,
+            "hf_ratio": 0.012497460469603539,
+            "synthesis_time_s": 3.493669033050537,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5433308482170105,
+            "utmos": 2.7725462913513184,
+            "duration_s": 8.906666666666666,
+            "duration_ratio": 1.433256704980843,
+            "rms": 0.1307344138622284,
+            "peak": 0.7900646328926086,
+            "hf_ratio": 0.008774660527706146,
+            "synthesis_time_s": 4.291057825088501,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.4993909001350403,
+            "utmos": 3.4491515159606934,
+            "duration_s": 7.658666666666667,
+            "duration_ratio": 1.3402666666666667,
+            "rms": 0.14108628034591675,
+            "peak": 0.8297204971313477,
+            "hf_ratio": 0.030968911945819855,
+            "synthesis_time_s": 3.697688102722168,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5497584342956543,
+            "utmos": 3.3503870964050293,
+            "duration_s": 8.170666666666667,
+            "duration_ratio": 1.3781847389558233,
+            "rms": 0.1435634046792984,
+            "peak": 0.7175121307373047,
+            "hf_ratio": 0.012263558804988861,
+            "synthesis_time_s": 3.8671305179595947,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5012814402580261,
+            "utmos": 3.3533735275268555,
+            "duration_s": 7.1466666666666665,
+            "duration_ratio": 1.2827350427350428,
+            "rms": 0.13679829239845276,
+            "peak": 0.8217138648033142,
+            "hf_ratio": 0.04695889726281166,
+            "synthesis_time_s": 3.3190746307373047,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.49318644404411316,
+            "utmos": 3.409248113632202,
+            "duration_s": 8.032,
+            "duration_ratio": 1.3229176470588235,
+            "rms": 0.13284440338611603,
+            "peak": 0.9246495962142944,
+            "hf_ratio": 0.03941800445318222,
+            "synthesis_time_s": 3.7578744888305664,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5165868997573853,
+            "utmos": 3.418166399002075,
+            "duration_s": 7.381333333333333,
+            "duration_ratio": 1.2917333333333332,
+            "rms": 0.15378151834011078,
+            "peak": 0.8518854379653931,
+            "hf_ratio": 0.004448172636330128,
+            "synthesis_time_s": 3.4989469051361084,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.495491623878479,
+            "utmos": 3.719738006591797,
+            "duration_s": 6.176,
+            "duration_ratio": 1.0293333333333334,
+            "rms": 0.15140555799007416,
+            "peak": 0.724376916885376,
+            "hf_ratio": 0.01249142736196518,
+            "synthesis_time_s": 2.9226248264312744,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 42,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4271094799041748,
+            "utmos": 3.3716208934783936,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 1.0715897435897437,
+            "rms": 0.14611832797527313,
+            "peak": 0.8092041015625,
+            "hf_ratio": 0.02796308882534504,
+            "synthesis_time_s": 3.2429065704345703,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "123": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5336707234382629,
+            "utmos": 3.471400499343872,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0748312757201646,
+            "rms": 0.14151161909103394,
+            "peak": 0.8506762981414795,
+            "hf_ratio": 0.014436881989240646,
+            "synthesis_time_s": 2.9860057830810547,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5207564234733582,
+            "utmos": 3.5178866386413574,
+            "duration_s": 7.52,
+            "duration_ratio": 1.268433734939759,
+            "rms": 0.13909812271595,
+            "peak": 0.7989766597747803,
+            "hf_ratio": 0.023935437202453613,
+            "synthesis_time_s": 3.592733383178711,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4963802695274353,
+            "utmos": 3.630105972290039,
+            "duration_s": 6.314666666666667,
+            "duration_ratio": 1.119054852320675,
+            "rms": 0.14252831041812897,
+            "peak": 0.8770798444747925,
+            "hf_ratio": 0.04370468854904175,
+            "synthesis_time_s": 3.0118696689605713,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5004096031188965,
+            "utmos": 3.7105813026428223,
+            "duration_s": 7.381333333333333,
+            "duration_ratio": 1.230222222222222,
+            "rms": 0.13063624501228333,
+            "peak": 0.8785633444786072,
+            "hf_ratio": 0.013718283735215664,
+            "synthesis_time_s": 3.5452914237976074,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5442430973052979,
+            "utmos": 3.34714937210083,
+            "duration_s": 8.074666666666667,
+            "duration_ratio": 1.2993716475095787,
+            "rms": 0.14674420654773712,
+            "peak": 0.8238020539283752,
+            "hf_ratio": 0.01341457013040781,
+            "synthesis_time_s": 3.8717222213745117,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.4745035171508789,
+            "utmos": 3.6268320083618164,
+            "duration_s": 6.8693333333333335,
+            "duration_ratio": 1.2021333333333333,
+            "rms": 0.13895486295223236,
+            "peak": 0.7962334156036377,
+            "hf_ratio": 0.03108953684568405,
+            "synthesis_time_s": 3.202791690826416,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5279594659805298,
+            "utmos": 3.4499330520629883,
+            "duration_s": 7.381333333333333,
+            "duration_ratio": 1.2450441767068272,
+            "rms": 0.14135609567165375,
+            "peak": 0.819908618927002,
+            "hf_ratio": 0.01902569830417633,
+            "synthesis_time_s": 3.42244291305542,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.544322669506073,
+            "utmos": 3.634561061859131,
+            "duration_s": 6.965333333333334,
+            "duration_ratio": 1.2501880341880343,
+            "rms": 0.1452018916606903,
+            "peak": 0.919538676738739,
+            "hf_ratio": 0.02993871085345745,
+            "synthesis_time_s": 3.332456111907959,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5111926794052124,
+            "utmos": 3.3808939456939697,
+            "duration_s": 7.658666666666667,
+            "duration_ratio": 1.2614274509803922,
+            "rms": 0.1417611837387085,
+            "peak": 0.8912328481674194,
+            "hf_ratio": 0.026976268738508224,
+            "synthesis_time_s": 3.6539206504821777,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5074777603149414,
+            "utmos": 3.505197525024414,
+            "duration_s": 6.218666666666667,
+            "duration_ratio": 1.0882666666666667,
+            "rms": 0.1532450020313263,
+            "peak": 0.87361741065979,
+            "hf_ratio": 0.006737624295055866,
+            "synthesis_time_s": 2.900869846343994,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.508655309677124,
+            "utmos": 3.5837619304656982,
+            "duration_s": 6.773333333333333,
+            "duration_ratio": 1.1288888888888888,
+            "rms": 0.1481480747461319,
+            "peak": 0.7731785774230957,
+            "hf_ratio": 0.0117012495175004,
+            "synthesis_time_s": 3.2780003547668457,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 123,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4895796775817871,
+            "utmos": 3.427302837371826,
+            "duration_s": 7.978666666666666,
+            "duration_ratio": 1.2274871794871793,
+            "rms": 0.14953692257404327,
+            "peak": 0.790826678276062,
+            "hf_ratio": 0.020736459642648697,
+            "synthesis_time_s": 3.8490402698516846,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ],
+        "999": [
+          {
+            "id": "de_01",
+            "category": null,
+            "text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der bayerischen Alpen.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Morgensonne schien hell \u00fcber die schneebedeckten Gipfel der Bayerischen Alpen.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5020955204963684,
+            "utmos": 3.1827914714813232,
+            "duration_s": 6.538666666666667,
+            "duration_ratio": 1.1301399176954734,
+            "rms": 0.1466759294271469,
+            "peak": 0.8505319356918335,
+            "hf_ratio": 0.008821172639727592,
+            "synthesis_time_s": 3.1377129554748535,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_02",
+            "category": null,
+            "text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um acht Uhr morgens f\u00fcr alle Studierenden.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Universit\u00e4tsbibliothek \u00f6ffnet t\u00e4glich um 8 Uhr morgens f\u00fcr alle Studierenden.",
+            "wer": 0.09090909090909091,
+            "cer": 0.0547945205479452,
+            "secs": 0.5341498255729675,
+            "utmos": 3.367703914642334,
+            "duration_s": 7.381333333333333,
+            "duration_ratio": 1.2450441767068272,
+            "rms": 0.14317025244235992,
+            "peak": 0.8279691934585571,
+            "hf_ratio": 0.02398928813636303,
+            "synthesis_time_s": 3.487794876098633,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_03",
+            "category": null,
+            "text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "K\u00f6nnten Sie mir bitte den k\u00fcrzesten Weg zum historischen Marktplatz beschreiben?",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.502510666847229,
+            "utmos": 3.3690185546875,
+            "duration_s": 6.912,
+            "duration_ratio": 1.2249113924050632,
+            "rms": 0.13858379423618317,
+            "peak": 0.909848690032959,
+            "hf_ratio": 0.04095558077096939,
+            "synthesis_time_s": 3.3051745891571045,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_04",
+            "category": null,
+            "text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Duft von frisch gebackenem Brot erf\u00fcllte die gem\u00fctliche B\u00e4ckerei in der Altstadt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.47960004210472107,
+            "utmos": 3.4889745712280273,
+            "duration_s": 7.52,
+            "duration_ratio": 1.2533333333333332,
+            "rms": 0.12606386840343475,
+            "peak": 0.8275918960571289,
+            "hf_ratio": 0.016509149223566055,
+            "synthesis_time_s": 3.530381441116333,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_05",
+            "category": null,
+            "text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wissenschaftler haben neue Methoden zur Optimierung neuronaler Sprachmodelle entwickelt.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5564249157905579,
+            "utmos": 3.581912040710449,
+            "duration_s": 7.658666666666667,
+            "duration_ratio": 1.2324291187739465,
+            "rms": 0.14128899574279785,
+            "peak": 0.7972461581230164,
+            "hf_ratio": 0.017297187820076942,
+            "synthesis_time_s": 3.592249870300293,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_06",
+            "category": null,
+            "text": "Der ICE-Zug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um vierzehn Uhr drei\u00dfig.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Der Eiszug erreicht den Berliner Hauptbahnhof p\u00fcnktlich um 14.30 Uhr.",
+            "wer": 0.4166666666666667,
+            "cer": 0.2608695652173913,
+            "secs": 0.5014684200286865,
+            "utmos": 3.683652639389038,
+            "duration_s": 7.658666666666667,
+            "duration_ratio": 1.3402666666666667,
+            "rms": 0.14279185235500336,
+            "peak": 0.7554666996002197,
+            "hf_ratio": 0.02535863406956196,
+            "synthesis_time_s": 3.5482289791107178,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_07",
+            "category": null,
+            "text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Im Herbst f\u00e4rben sich die Bl\u00e4tter der alten Buchenb\u00e4ume in leuchtendem Gold und Rot.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5058654546737671,
+            "utmos": 3.5277419090270996,
+            "duration_s": 7.616,
+            "duration_ratio": 1.2846265060240962,
+            "rms": 0.14184165000915527,
+            "peak": 0.763890266418457,
+            "hf_ratio": 0.013734403997659683,
+            "synthesis_time_s": 3.548506021499634,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_08",
+            "category": null,
+            "text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Bitte schnallen Sie sich an und beachten Sie die Hinweise des Kabinenpersonals.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4971260130405426,
+            "utmos": 3.6187148094177246,
+            "duration_s": 6.538666666666667,
+            "duration_ratio": 1.1736068376068376,
+            "rms": 0.16083163022994995,
+            "peak": 0.8455735445022583,
+            "hf_ratio": 0.022277170792222023,
+            "synthesis_time_s": 3.008878231048584,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_09",
+            "category": null,
+            "text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Das renommierte Orchester spielte eine Symphonie von Beethoven vor ausverkauftem Haus.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.5262261629104614,
+            "utmos": 3.7313852310180664,
+            "duration_s": 7.84,
+            "duration_ratio": 1.291294117647059,
+            "rms": 0.1415926069021225,
+            "peak": 0.8044407367706299,
+            "hf_ratio": 0.030116111040115356,
+            "synthesis_time_s": 3.684659719467163,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_10",
+            "category": null,
+            "text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Ein kalter Wind wehte \u00fcber die weiten Felder und k\u00fcndigte den nahenden Winter an Fort Heath.",
+            "wer": 0.14285714285714285,
+            "cer": 0.13432835820895522,
+            "secs": 0.5402026176452637,
+            "utmos": 2.929814100265503,
+            "duration_s": 7.658666666666667,
+            "duration_ratio": 1.3402666666666667,
+            "rms": 0.14669294655323029,
+            "peak": 0.7822623252868652,
+            "hf_ratio": 0.004673527553677559,
+            "synthesis_time_s": 3.5694711208343506,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_11",
+            "category": null,
+            "text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet?",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Wie viele Teilnehmer haben sich f\u00fcr den Workshop \u00fcber maschinelles Lernen angemeldet? Die...",
+            "wer": 0.08333333333333333,
+            "cer": 0.0410958904109589,
+            "secs": 0.5270237922668457,
+            "utmos": 3.643238067626953,
+            "duration_s": 6.826666666666667,
+            "duration_ratio": 1.1377777777777778,
+            "rms": 0.15218067169189453,
+            "peak": 0.8995758295059204,
+            "hf_ratio": 0.01088098343461752,
+            "synthesis_time_s": 3.120687961578369,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          },
+          {
+            "id": "de_12",
+            "category": null,
+            "text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "lang": "de",
+            "seed": 999,
+            "asr_text": "Die Bundesregierung beschloss neue F\u00f6rderma\u00dfnahmen f\u00fcr erneuerbare Energien und Klimaschutz.",
+            "wer": 0.0,
+            "cer": 0.0,
+            "secs": 0.4794042706489563,
+            "utmos": 3.3134524822235107,
+            "duration_s": 7.52,
+            "duration_ratio": 1.156923076923077,
+            "rms": 0.1428685337305069,
+            "peak": 0.8340139389038086,
+            "hf_ratio": 0.026034504175186157,
+            "synthesis_time_s": 3.5096435546875,
+            "failures": {
+              "is_empty": false,
+              "is_too_long": false,
+              "is_nan": false
+            }
+          }
+        ]
+      },
+      "speaker_id": "arctic_ksp"
+    }
+  ]
+}
