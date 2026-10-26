@@ -158,7 +158,7 @@ The six findings are summarised in Table 1 and their consequences are discussed 
 | ID | Defect | Consequence | Repair |
 |---|---|---|---|
 | F1 | In train mode the DVAE quantizer overwrites its codebook on every forward pass with a running average (decay 0.99). The codebook is not learned by gradient. | Any DVAE training changes what the codes mean, whatever the learning rate. A pretrained GPT no longer matches the codes. | DVAE training is off by default. A trained DVAE is marked as requiring a GPT retrain, and Stage 2 and latent extraction refuse mismatched pairs. |
-| F2 | The prompt-region loss mask in `gpt.py` reuses the loop variable `idx` from padding computation, masking only the final batch sample. | For batch size $N > 1$, samples $0 \dots N-2$ compute autoregressive cross-entropy loss against prompt tokens already present in the conditioning prefix. | Mask prompt spans across all batch samples individually using `cond_idxs` in code coordinates. |
+| F2 | The prompt-region loss mask in `gpt.py` reuses the loop variable `idx` from padding computation, masking only the final batch sample; additionally, prompt bounds are divided by 256 (mel frames) instead of 1024 (code stride). | For batch size $N > 1$, samples $0 \dots N-2$ compute autoregressive cross-entropy loss against prompt tokens already present in the conditioning prefix, while the final sample $N-1$ has incorrect prompt codes masked due to the 256 vs. 1024 coordinate mismatch. | Recompute mel loss from logits, masking prompt spans across all batch samples individually using `cond_idxs` in code coordinates (stride 1024). |
 | F3 | The released `dvae.pth` lacks 3 of the model's 56 tensors (running-statistics buffers). Upstream loads it with `strict=False`. | Non-strict loading hides this mismatch and would hide any real one. | Strict loading with an exact allowlist of those three buffers. |
 | F4 | The tokenizer raises an error for any unlisted language, and inference indexes a per-language character limit. | A model trained on a new language cannot run through stock inference. | A tokenizer subclass with registered languages, used in every code path. |
 | F5 | Hugging Face Whisper word timestamps are contiguous. Separately, when a transcript omits words, CTC alignment stretches a neighbouring word over the extra speech. | Whisper timestamps cannot locate pauses, and missing text goes unnoticed. | Word times come from CTC forced alignment. Missing text is detected as frames the model labels non-blank but the alignment path assigns to blank. |
@@ -191,7 +191,7 @@ It adds four things:
 - the per-sample prompt masking fix (F2) to prevent conditioning-to-target autoregressive leakage [1, 2];
 - strict loading of the base weights;
 - mean-initialised new text rows (F6) rather than random unit-variance rows, anchoring new tokens inside the pre-existing semantic embedding subspace [6, 7, 20];
-- a registered-language tokenizer (F4).
+- a registered-language tokenizer (F4); new-language text uses per-character tokens by default, with BPE merges or romanization as candidate alternatives [22].
 
 New-language runs mix in replay data from the base languages to prevent catastrophic forgetting in lifelong multilingual TTS [8], and the language shares are reported. The
 starting hyperparameters follow the upstream recipe: AdamW (β = 0.9, 0.96), weight decay 10⁻² on weights only,
@@ -330,7 +330,7 @@ The smoke runs test whether each stage runs correctly. They are not meant to imp
 | Stage 2 | 3 epochs of 3 optimizer steps (9 steps); 6 train and 2 evaluation clips; batch 2, no accumulation; fp32 |
 | Stage 3 | 60 epochs, batch 4; discriminator warm-up 40 steps; mixed precision on CUDA [3] |
 
-**Baseline evaluation.** Full multilingual baseline: 5 languages (`en`, `es`, `fr`, `de`, `hi`), 12 sentences × 5 ARCTIC voices [17] × 3 seeds = 900 utterances, scored under metrics version 2 on locked checkpoint `c7ea2000…` (expanded from the initial 120-utterance English pilot). Intelligibility is measured using Whisper large-v3 WER/CER with standard normalisation [12], speaker similarity via ECAPA2 cosine distance [13, 21], and naturalness via UTMOS [14], following the evaluation protocol established in [1]. Paired bootstrap intervals follow Efron and Tibshirani [15].
+**Baseline evaluation.** Full multilingual baseline: 5 languages (`en`, `es`, `fr`, `de`, `hi`), 12 sentences × 5 ARCTIC voices [17] × 3 seeds = 900 utterances, scored under metrics version 2 on locked checkpoint `c7ea2000…` (expanded from the initial 120-utterance English pilot). Intelligibility is measured using Whisper large-v3 WER/CER with standard normalisation [12], speaker similarity via ECAPA2 cosine similarity [13, 21], and naturalness via UTMOS [14], following the evaluation protocol established in [1]. Paired bootstrap intervals follow Efron and Tibshirani [15].
 
 ## 5 Results to date
 
@@ -471,7 +471,7 @@ A critical methodological distinction governs this suite: while studies A1, A2, 
 | A2 | When is DVAE training worth it? | Stock vs trained vs frozen-codebook DVAE, each with a full Stage 2 retrain | Code usage, reconstruction, then end-to-end CER/SECS/UTMOS | Recommend Stage 1 only where end-to-end metrics improve beyond the interval | Zheng et al. (*ICCV* 2023) [5]; Casanova et al. (*Interspeech* 2024) [1] |
 | A3 | Does fixing F2 matter? | Upstream vs per-sample prompt masking | Short-text CER, SECS, duration failures | Retain the fix when the pre-registered non-regression gates pass; report the effect either way | **Proved by our GPU run (§6.1)**; Casanova et al. (*Interspeech* 2024) [1] |
 | A4 | Same-clip vs different-clip prompt | Masked same-clip vs same-speaker different-clip prompt | SECS (held-out speakers), CER | Adopt the better default | Casanova et al. (*ICML* 2022) [9] |
-| A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | Minixhofer et al. (*NAACL* 2022) [7]; Dobler et al. (*EMNLP* 2023) [6] |
+| A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | Minixhofer et al. (*NAACL* 2022) [7]; Dobler et al. (*EMNLP* 2023) [6]; Ebing et al. (2026) [22] |
 | A6 | Does punctuation–pause consistency matter? | With vs without commas inserted at long pauses | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval | Saeki et al. (*Interspeech* 2022) [14] |
 | A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate | Yang et al. (*ICASSP* 2022) [8] |
 | A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a new-language GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats stock beyond the interval | Kong et al. (*NeurIPS* 2020) [3]; Casanova et al. (*Interspeech* 2024) [1] |
@@ -518,7 +518,7 @@ Both variants were evaluated head-to-head on two independent regimes using batch
 
 ### 6.1.1 Loss Decomposition and The Evaluation-Loss Metric
 
-During fine-tuning, upstream masking appeared to yield slightly lower overall evaluation loss (~3.21 vs. ~3.33). To analyze this behavior, we conducted a token-level loss decomposition on the held-out evaluation clips. Both checkpoints were evaluated on identical validation batches ($B=4$, comprising Batch 0 with 423 valid tokens and Batch 1 with 387 valid tokens, totaling $N=810$ active tokens). Cross-entropy loss was calculated directly from raw token-level predictions across two mutually exclusive partitions:
+During fine-tuning, upstream masking appeared to yield slightly lower overall evaluation loss (3.309 vs. 3.424 in the trainer's batch-averaged eval loss). To analyze this behavior, we conducted a token-level loss decomposition on the held-out evaluation clips. Both checkpoints were evaluated on identical validation batches ($B=4$, comprising Batch 0 with 423 valid tokens and Batch 1 with 387 valid tokens, totaling $N=810$ active tokens). Cross-entropy loss was calculated directly from raw token-level predictions across two mutually exclusive partitions:
 1. **Conditioning Prompt Tokens ($\mathcal{L}_{\text{prompt}}$):** Target code positions $[lo_i, hi_i)$ corresponding to the reference voice prompt prefix provided in context ($N=559$ tokens across both batches).
 2. **Speech Generation Tokens ($\mathcal{L}_{\text{gen}}$):** The non-prompt speech codes representing autoregressive speech generation outside the conditioning span ($N=251$ tokens across both batches).
 
@@ -692,10 +692,7 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 
 [21] Y. Gu, X. Yin, and Z. Ma, "Evaluating speaker encoders for zero-shot text-to-speech," arXiv:2506.20190, 2025.
 
-[22] R. Ma, Y. Zhou, and H. Zhang, "The impact of romanization on multilingual language models," arXiv:2601.05776, 2026.
-
-[23] A. Baevski, H. Zhou, A. Mohamed, and M. Auli, "wav2vec 2.0: A framework for self-supervised learning of speech representations," in *Proc. Advances in Neural Information Processing Systems (NeurIPS)*, vol. 33, 2020, pp. 12449–12460.
-arXiv:2006.11477.
+[22] B. Ebing, L. Keller, and G. Glavaš, "One script instead of hundreds? On pretraining romanized encoder language models," arXiv:2601.05776, 2026.
 
 ---
 

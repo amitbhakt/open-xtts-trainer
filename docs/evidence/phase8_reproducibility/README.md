@@ -1,4 +1,4 @@
-# Phase 8 Baseline Reproducibility Verification (Exit Criterion 2)
+# Phase 8 Baseline Statistical Agreement & Cross-Revision Verification (Exit Criterion 2)
 
 **Conducted:** 2026-10-26  
 **Compute:** Modal serverless compute with an NVIDIA A100-SXM4-40GB GPU (`ap-F820RbKzKYLK3kf3JiU0dB`)  
@@ -10,14 +10,14 @@
 
 ## 1. Goal and Verification Protocol
 
-As specified in `REMEDIATION_PLAN.md` (§5 Phase 8 Exit Criterion 2 and §12 Item 6):
+As specified in the baseline verification protocol (§5 Phase 8 Exit Criterion 2, as documented in `eval/baselines/base_xtts_s12_index.json` and `docs/evidence/run5/README.md`):
 > **Phase 8 Exit Criterion 2:** Re-run the baseline evaluation harness and confirm all published baseline metrics reproduce within their 95% confidence interval bounds:
 > $$|\mu_1 - \mu_2| \le 1.96 \times \sqrt{\mathrm{SE}_1^2 + \mathrm{SE}_2^2}$$
 
-This test verifies that:
-1. Model synthesis and metric calculation are statistically reproducible and non-flaky across independent environment boots.
+This evaluation is a cross-revision statistical comparison measuring agreement within pre-registered 95% confidence bounds on the current revision against the published baseline (`base_xtts_s12_index.json`). Because the code fingerprint and batch size differ from the original publication run (which used batch size 1 and commit `1c33371`), the strict same-input comparator reports `reproducible: false` due to input metadata mismatches. This test verifies that:
+1. Model synthesis and metric calculation achieve statistical agreement within 95% confidence bounds across independent environment boots.
 2. Changes to codebase infrastructure, lint rules, and evaluation batching did not introduce numerical drift or regressions.
-3. Every baseline metric reported in `eval/baselines/base_xtts_s12_index.json` reproduces faithfully on fresh GPU instances.
+3. Every baseline metric reported in `eval/baselines/base_xtts_s12_index.json` agrees within its 95% confidence bounds on the current revision.
 
 ---
 
@@ -78,6 +78,6 @@ This test verifies that:
 
 ## 4. Technical Notes
 
-1. **Overall Verdict:** 30 out of 30 statistical tests pass ($100\%$ agreement within pre-registered $95\%$ confidence bounds).
+1. **Overall Verdict & Scope:** 30 out of 30 statistical tests pass ($100\%$ pooled statistical agreement within pre-registered $95\%$ confidence bounds). However, this pooled agreement does not rule out language-specific regressions: notably, Spanish (`es`) WER (0.0990 vs 0.2129) and CER (0.0828 vs 0.1973) more than doubled in the rerun, accompanied by six `too_long` duration failures, though remaining within the wide conservative confidence interval ($\pm 0.2490$ and $\pm 0.2359$).
 2. **ASR Batch Calibration:** Whisper Large-v3 evaluation batch size was set to `batch_size=16` in `xtts_trainer/asr.py`. At `batch_size=32`, float32 attention states exceeded the 40 GB VRAM limit of the A100 GPU (38.64 GiB allocated). At `batch_size=16`, peak VRAM stayed below 18 GiB while delivering identical deterministic transcriptions.
-3. **Input Metadata:** Metadata keys `code_fingerprint` and `batch_size` expectedly reflect the evolution of the repository since baseline publication (commit `1c33371`), confirming the statistical robustness of the evaluation harness across code revisions.
+3. **Cross-Revision Input Metadata & Provenance:** Because this run evaluates the current code revision with batched ASR (`batch_size=16` vs. published `batch_size=1`), metadata keys `code_fingerprint` and `batch_size` differ from the published baseline manifest (commit `1c33371`). Consequently, the strict same-input comparator flags `reproducible: false` due to input metadata differences. The results demonstrate pooled statistical agreement across the suite rather than identical same-input reproduction, and do not rule out language-specific regressions.

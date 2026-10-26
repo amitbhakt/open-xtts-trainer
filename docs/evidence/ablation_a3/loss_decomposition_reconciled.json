@@ -29,13 +29,85 @@
       "batch_idx": 0,
       "num_valid_tokens": 423,
       "upstream_loss": 3.326907,
-      "persample_loss": 3.456316
+      "persample_loss": 3.456316,
+      "sample_ids": [
+        "moira_fogarty_val_00",
+        "moira_fogarty_val_01",
+        "moira_fogarty_val_02",
+        "moira_fogarty_val_03"
+      ],
+      "token_positions": [
+        {
+          "sample_id": "moira_fogarty_val_00",
+          "prompt_token_span": [0, 71],
+          "num_valid_tokens": 108,
+          "num_prompt_tokens": 71,
+          "num_gen_tokens": 37
+        },
+        {
+          "sample_id": "moira_fogarty_val_01",
+          "prompt_token_span": [0, 70],
+          "num_valid_tokens": 105,
+          "num_prompt_tokens": 70,
+          "num_gen_tokens": 35
+        },
+        {
+          "sample_id": "moira_fogarty_val_02",
+          "prompt_token_span": [0, 71],
+          "num_valid_tokens": 112,
+          "num_prompt_tokens": 71,
+          "num_gen_tokens": 41
+        },
+        {
+          "sample_id": "moira_fogarty_val_03",
+          "prompt_token_span": [0, 71],
+          "num_valid_tokens": 98,
+          "num_prompt_tokens": 71,
+          "num_gen_tokens": 27
+        }
+      ]
     },
     {
       "batch_idx": 1,
       "num_valid_tokens": 387,
       "upstream_loss": 3.291686,
-      "persample_loss": 3.391626
+      "persample_loss": 3.391626,
+      "sample_ids": [
+        "moira_fogarty_val_04",
+        "moira_fogarty_val_05",
+        "moira_fogarty_val_06",
+        "moira_fogarty_val_07"
+      ],
+      "token_positions": [
+        {
+          "sample_id": "moira_fogarty_val_04",
+          "prompt_token_span": [0, 69],
+          "num_valid_tokens": 99,
+          "num_prompt_tokens": 69,
+          "num_gen_tokens": 30
+        },
+        {
+          "sample_id": "moira_fogarty_val_05",
+          "prompt_token_span": [0, 71],
+          "num_valid_tokens": 102,
+          "num_prompt_tokens": 71,
+          "num_gen_tokens": 31
+        },
+        {
+          "sample_id": "moira_fogarty_val_06",
+          "prompt_token_span": [0, 68],
+          "num_valid_tokens": 91,
+          "num_prompt_tokens": 68,
+          "num_gen_tokens": 23
+        },
+        {
+          "sample_id": "moira_fogarty_val_07",
+          "prompt_token_span": [0, 68],
+          "num_valid_tokens": 95,
+          "num_prompt_tokens": 68,
+          "num_gen_tokens": 27
+        }
+      ]
     }
   ],
   "token_partitions": {
@@ -46,6 +118,86 @@
   },
   "raw_losses": {
     "upstream_model": {
+      "evaluated_batches": [
+        {
+          "batch_idx": 0,
+          "sample_ids": [
+            "moira_fogarty_val_00",
+            "moira_fogarty_val_01",
+            "moira_fogarty_val_02",
+            "moira_fogarty_val_03"
+          ],
+          "token_positions": [
+            {
+              "sample_id": "moira_fogarty_val_00",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 108,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 37
+            },
+            {
+              "sample_id": "moira_fogarty_val_01",
+              "prompt_token_span": [0, 70],
+              "num_valid_tokens": 105,
+              "num_prompt_tokens": 70,
+              "num_gen_tokens": 35
+            },
+            {
+              "sample_id": "moira_fogarty_val_02",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 112,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 41
+            },
+            {
+              "sample_id": "moira_fogarty_val_03",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 98,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 27
+            }
+          ]
+        },
+        {
+          "batch_idx": 1,
+          "sample_ids": [
+            "moira_fogarty_val_04",
+            "moira_fogarty_val_05",
+            "moira_fogarty_val_06",
+            "moira_fogarty_val_07"
+          ],
+          "token_positions": [
+            {
+              "sample_id": "moira_fogarty_val_04",
+              "prompt_token_span": [0, 69],
+              "num_valid_tokens": 99,
+              "num_prompt_tokens": 69,
+              "num_gen_tokens": 30
+            },
+            {
+              "sample_id": "moira_fogarty_val_05",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 102,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 31
+            },
+            {
+              "sample_id": "moira_fogarty_val_06",
+              "prompt_token_span": [0, 68],
+              "num_valid_tokens": 91,
+              "num_prompt_tokens": 68,
+              "num_gen_tokens": 23
+            },
+            {
+              "sample_id": "moira_fogarty_val_07",
+              "prompt_token_span": [0, 68],
+              "num_valid_tokens": 95,
+              "num_prompt_tokens": 68,
+              "num_gen_tokens": 27
+            }
+          ]
+        }
+      ],
       "sum_prompt_loss": 1771.8927307128906,
       "mean_prompt_loss": 3.169754437769035,
       "sum_gen_loss": 890.9788208007812,
@@ -55,6 +207,86 @@
       "trainer_batch_averaged_eval_loss": 3.309296727180481
     },
     "persample_model": {
+      "evaluated_batches": [
+        {
+          "batch_idx": 0,
+          "sample_ids": [
+            "moira_fogarty_val_00",
+            "moira_fogarty_val_01",
+            "moira_fogarty_val_02",
+            "moira_fogarty_val_03"
+          ],
+          "token_positions": [
+            {
+              "sample_id": "moira_fogarty_val_00",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 108,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 37
+            },
+            {
+              "sample_id": "moira_fogarty_val_01",
+              "prompt_token_span": [0, 70],
+              "num_valid_tokens": 105,
+              "num_prompt_tokens": 70,
+              "num_gen_tokens": 35
+            },
+            {
+              "sample_id": "moira_fogarty_val_02",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 112,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 41
+            },
+            {
+              "sample_id": "moira_fogarty_val_03",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 98,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 27
+            }
+          ]
+        },
+        {
+          "batch_idx": 1,
+          "sample_ids": [
+            "moira_fogarty_val_04",
+            "moira_fogarty_val_05",
+            "moira_fogarty_val_06",
+            "moira_fogarty_val_07"
+          ],
+          "token_positions": [
+            {
+              "sample_id": "moira_fogarty_val_04",
+              "prompt_token_span": [0, 69],
+              "num_valid_tokens": 99,
+              "num_prompt_tokens": 69,
+              "num_gen_tokens": 30
+            },
+            {
+              "sample_id": "moira_fogarty_val_05",
+              "prompt_token_span": [0, 71],
+              "num_valid_tokens": 102,
+              "num_prompt_tokens": 71,
+              "num_gen_tokens": 31
+            },
+            {
+              "sample_id": "moira_fogarty_val_06",
+              "prompt_token_span": [0, 68],
+              "num_valid_tokens": 91,
+              "num_prompt_tokens": 68,
+              "num_gen_tokens": 23
+            },
+            {
+              "sample_id": "moira_fogarty_val_07",
+              "prompt_token_span": [0, 68],
+              "num_valid_tokens": 95,
+              "num_prompt_tokens": 68,
+              "num_gen_tokens": 27
+            }
+          ]
+        }
+      ],
       "sum_prompt_loss": 1885.155258178711,
       "mean_prompt_loss": 3.3723707659726494,
       "sum_gen_loss": 871.0935249328613,
