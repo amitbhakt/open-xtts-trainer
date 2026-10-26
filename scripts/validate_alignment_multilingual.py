@@ -248,20 +248,15 @@ def evaluate_source(
     )
     align_time = round(time.time() - t0, 3)
 
-    write_prepared(out_clean, records, [report])
+    dataset_clean = write_prepared(out_clean, records, [report])
 
     # Validate clean prepared dataset
     val_clean = validate_dataset(
-        records,
-        audio_dir=out_clean,
-        checks=[
-            realignment_checker(
-                aligner=aligner,
-                quality=quality_cfg,
-                vocab_path=vocab_path,
-            )
-        ],
-        single_clip_speaker=True,
+        dataset_clean,
+        vocab_path,
+        eval_set_path=None,
+        reference_lock_path=None,
+        realigner=realignment_checker(aligner, quality=quality_cfg),
     )
 
     clean_passed = val_clean.ok and len(val_clean.errors) == 0
@@ -326,21 +321,20 @@ def evaluate_source(
             speaker=r0.speaker,
             lang=r0.lang,
             sr=r0.sr,
+            duration_s=round(len(audio_clip) / SPEC.output_sample_rate, 4),
+            single_clip_speaker=True,
+            alignment={k: v for k, v in r0.alignment.items() if k != "words"},
+            transcript_source=r0.transcript_source,
         )
-        ds = [rec]
-        write_dataset(ds, os.path.join(test_dir, "metadata.csv"))
+        dataset_path = os.path.join(test_dir, "dataset.jsonl")
+        dataset_shift = write_dataset(dataset_path, [rec])
 
         val = validate_dataset(
-            ds,
-            audio_dir=test_dir,
-            checks=[
-                realignment_checker(
-                    aligner=aligner,
-                    quality=quality_cfg,
-                    vocab_path=vocab_path,
-                )
-            ],
-            single_clip_speaker=True,
+            dataset_shift,
+            vocab_path,
+            eval_set_path=None,
+            reference_lock_path=None,
+            realigner=realignment_checker(aligner, quality=quality_cfg),
         )
 
         actual_pass = val.ok and len(val.errors) == 0
