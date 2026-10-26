@@ -8,8 +8,7 @@ Investigates the two failure modes identified in the multilingual alignment benc
    - Determine whether the inserted word exceeded 0.05 or was absorbed by the weak-word limit.
 2. The speech spillover cases (+500ms):
    - Measure the exact duration change of the terminal word.
-   - Inspect the trellis path over the appended frames: are frames assigned to the final character or to blanks?
-   - Measure the argmax speech emission over the appended frames to verify speech was actually present.
+   - Inspect terminal word boundary stability and argmax emissions over the appended frames to verify speech was actually present.
    - Measure the exact numerical value of unexplained_speech_s.
 
 Usage:
@@ -178,8 +177,13 @@ def main():
         src_resampled = torchaudio.functional.resample(torch.from_numpy(source_audio), sr, SPEC.output_sample_rate).numpy()
 
         candidates = report.get("candidates", [])
-        assert len(candidates) >= 2, f"Expected at least 2 candidates for {sid}"
-        cand2_first_speech = candidates[1]["words"][0][1]
+        next_cand = next(
+            (c for c in candidates if c.get("start_s", 0.0) >= r0_end - 0.05 and len(c.get("words", [])) > 0),
+            None,
+        )
+        if next_cand is None:
+            raise RuntimeError(f"Expected subsequent candidate speech segment after r0 for {sid}")
+        cand2_first_speech = next_cand["words"][0][1]
 
         # 1. Clean slice
         clean_clip = src_resampled[int(r0_start * SPEC.output_sample_rate) : int(r0_end * SPEC.output_sample_rate)]

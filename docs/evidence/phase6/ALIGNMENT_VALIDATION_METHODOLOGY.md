@@ -79,7 +79,7 @@ Evaluated on an **NVIDIA A100-SXM4-40GB GPU** via PyTorch 2.1.2 + CUDA 12.1. Ful
 - **Distinct Vetted Speakers Tested**: 8 (`jfk`, `arctic_slt`, `arctic_ksp`, `arctic_bdl`, `arctic_clb`, `arctic_awb`, `ljspeech`, `spanish_cuentos_male`).
 - **Clean Acceptance Rate**: **8/8 (100%)**.
 - Every clean baseline recording across all 8 speakers and 2 languages was accepted without false-positive rejections.
-- Accented speech verification: `arctic_ksp` (Indian English male) exhibited 1 weak word (`"the"` with score $0.183$). Because $0.183 \ge 0.05$ (Tier 1 floor satisfied) and $1 \le 3$ (Tier 2 weak-word limit satisfied), the utterance was correctly accepted.
+- Accented speech verification: `arctic_ksp` (Indian English male) exhibited 3 weak words with a minimum word score of $0.062$ (and mean word score $0.4879$). Because $0.062 \ge 0.05$ (Tier 1 floor satisfied) and $3 \le 3$ (Tier 2 weak-word limit satisfied), the utterance was correctly accepted.
 
 ---
 
@@ -92,12 +92,12 @@ Observed Rejection Rates by Mutation Type and Severity:
 ---------------------------------------------------------------------
 100 ms tail cut:     3/8 rejected  (37.5%)   [5 passed]
 250 ms tail cut:     5/8 rejected  (62.5%)   [3 passed]
-500 ms tail cut:     7/8 rejected  (87.5%)   [1 passed]
+500 ms tail cut:     2/8 rejected  (25.0%)   [6 passed]
 1,000 ms tail cut:   7/8 rejected  (87.5%)   [1 passed]
 500 ms head cut:     7/8 rejected  (87.5%)   [1 passed]
 1,000 ms head cut:   8/8 rejected  (100.0%)  [0 passed]
 ---------------------------------------------------------------------
-Total Edge Truncation: 37/48 rejected (77.1%)
+Total Edge Truncation: 32/48 rejected (66.7%)
 ```
 
 ### Analysis of Head vs. Tail Cut Asymmetry
@@ -108,8 +108,8 @@ Total Edge Truncation: 37/48 rejected (77.1%)
 2. **Tail Truncation**:
    - 100 ms tail cut: 3/8 (37.5%) rejected.
    - 250 ms tail cut: 5/8 (62.5%) rejected.
-   - Tail cuts of 100–250 ms frequently clip trailing silence, post-vocalic aspiration, or nasal release without reducing the core vowel nucleus below the $0.05$ score threshold. The aligner compresses the final character's span into the remaining frames, producing scores in the $0.08 \text{--} 0.16$ range that remain within the weak-word tolerance band.
-   - At $\ge 500\text{ ms}$, tail truncation reliably eliminates entire words or syllable codas, achieving 87.5% detection.
+   - Tail cuts of 100–500 ms frequently clip trailing silence, post-vocalic aspiration, or nasal release without reducing the core vowel nucleus below the $0.05$ score threshold. The aligner compresses the final character's span into the remaining frames, producing scores in the $0.08 \text{--} 0.16$ range that remain within the weak-word tolerance band.
+   - At $1,000\text{ ms}$, tail truncation reliably eliminates entire words or syllable codas, achieving 87.5% detection.
 
 ---
 

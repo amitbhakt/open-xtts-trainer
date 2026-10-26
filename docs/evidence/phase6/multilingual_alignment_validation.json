@@ -66,7 +66,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'ask' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
@@ -75,21 +76,24 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'ask' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -98,7 +102,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'so,' 0.04 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -107,7 +112,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'my' 0.01 < 0.05; weak_alignment: 5 words below 0.2 ('And' 0.02, 'so,' 0.02, 'my' 0.01, 'fellow' 0.01); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -116,7 +122,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
@@ -125,32 +132,38 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'my' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0801
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 3,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "arctic_slt_english_female",
@@ -179,14 +192,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'etc.' 0.02 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
@@ -195,7 +210,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Steels,' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -204,7 +220,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Philip' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -213,7 +230,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -222,7 +240,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05; weak_alignment: 5 words below 0.2 ('Author' 0.01, 'of' 0.00, 'the' 0.00, 'danger' 0.01); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -231,7 +250,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
@@ -240,32 +260,38 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "arctic_ksp_english_indian_accent",
@@ -292,7 +318,8 @@
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
@@ -301,14 +328,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'etc.' 0.04 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -317,7 +346,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'etc.' 0.03 < 0.05; weak_alignment: 5 words below 0.2 ('of' 0.04, 'the' 0.05, 'Philip' 0.05, 'Steels,' 0.04); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -326,7 +356,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05; weak_alignment: 5 words below 0.2 ('Author' 0.02, 'of' 0.00, 'the' 0.06, 'danger' 0.18); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -335,7 +366,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Philip' 0.02 < 0.05; weak_alignment: 8 words below 0.2 ('Author' 0.03, 'of' 0.06, 'the' 0.12, 'danger' 0.03); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -344,7 +376,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
@@ -353,7 +386,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
@@ -362,25 +396,30 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'consequently.' 0.03 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "arctic_bdl_english_male",
@@ -409,7 +448,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'etc.' 0.04 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
@@ -418,14 +458,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'etc.' 0.04 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -434,7 +476,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Steels,' 0.04 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -443,7 +486,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -452,7 +496,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('of' 0.00, 'the' 0.00, 'danger' 0.02, 'trail,' 0.00); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -461,14 +506,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
@@ -477,25 +524,30 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'consequently.' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "arctic_clb_english_female",
@@ -522,7 +574,8 @@
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
@@ -531,14 +584,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'etc.' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -547,7 +602,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Philip' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -556,7 +612,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'the' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -565,7 +622,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('of' 0.00, 'the' 0.00, 'danger' 0.02, 'trail,' 0.00); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -574,7 +632,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
@@ -583,7 +642,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'trail,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
@@ -592,25 +652,30 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'consequently.' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "arctic_awb_english_scottish",
@@ -637,7 +702,8 @@
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
@@ -646,14 +712,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'ETC' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -662,7 +730,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'PHILIP' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -671,7 +740,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'OF' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -680,7 +750,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'TRAIL,' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('OF' 0.00, 'THE' 0.03, 'DANGER' 0.02, 'TRAIL,' 0.00); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -689,14 +760,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Moreover,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
@@ -705,25 +778,30 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'consequently.' 0.03 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0802
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "ljspeech_female",
@@ -750,21 +828,24 @@
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -773,7 +854,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'are' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
@@ -782,7 +864,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Printing,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -791,14 +874,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'only' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('Printing,' 0.13, 'in' 0.00, 'the' 0.00, 'only' 0.00); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
@@ -807,32 +892,38 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'with' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0854
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 2,
+      "clean_prep_rejected_count": 0
     },
     {
       "id": "spanish_cuentos_male",
@@ -859,14 +950,16 @@
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_250ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_500ms": {
           "expected_pass": false,
@@ -875,7 +968,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'LibriVox.' 0.01 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_tail_1000ms": {
           "expected_pass": false,
@@ -884,14 +978,16 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'una' 0.00 < 0.05; weak_alignment: 4 words below 0.2 ('es' 0.00, 'una' 0.00, 'grabaci\u00f3n' 0.11, 'de' 0.00); at most 3 allowed"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_500ms": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "trunc_head_1000ms": {
           "expected_pass": false,
@@ -900,7 +996,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'de' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_head_function": {
           "expected_pass": false,
@@ -909,7 +1006,8 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'Adem\u00e1s,' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_mid_content": {
           "expected_pass": false,
@@ -918,32 +1016,38 @@
           "errors": [
             "alignment_mismatch: low_alignment_score: 'de' 0.00 < 0.05"
           ],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "hallucinate_tail_content": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_sub_threshold_0.10s": {
           "expected_pass": true,
           "actual_pass": true,
           "verdict_correct": true,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.0
         },
         "spillover_cross_threshold_0.50s": {
           "expected_pass": false,
           "actual_pass": true,
           "verdict_correct": false,
           "errors": [],
-          "error_matched": true
+          "error_matched": true,
+          "unexplained_speech_s": 0.1401
         }
       },
       "mutations_status": "FAIL",
-      "overall_status": "FAIL"
+      "overall_status": "FAIL",
+      "clean_candidates_count": 3,
+      "clean_prep_rejected_count": 0
     }
   ]
 }

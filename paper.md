@@ -403,11 +403,13 @@ Across all three unshifted clips, the lowest re-aligned word score was 0.54. The
 whole 11 s recording was aligned in one pass, but 0.66 when re-aligned within its own clip. A low score from a
 long alignment window is therefore not, by itself, evidence of a bad clip. The rejection thresholds (0.05 floor;
 at most three words below 0.2) sit inside a wide margin between clean clips (≥ 0.54) and the clip cut 1 s wrong
-(≤ 0.02, with five weak words).
+(≤ 0.02, with five weak words). The thresholds were set after inspecting this recording (Section 3.6), and this is
+one shifted clip of one recording in one language, so the margin is evidence for the thresholds, not a validation
+of them.
 
-**Multilingual and multi-speaker validation across 8 vetted voices.** To determine whether these thresholds generalize beyond the single JFK recording, we conducted an empirical benchmark on an NVIDIA A100 GPU across eight distinct vetted baseline speakers spanning two languages (English and Castilian Spanish) and five accent profiles (`jfk_english_male`, `arctic_slt_english_female`, `arctic_ksp_english_indian_accent`, `arctic_bdl_english_male`, `arctic_clb_english_female`, `arctic_awb_english_scottish`, `ljspeech_female`, and `spanish_cuentos_male`).
+**Multilingual and multi-speaker characterization across 8 vetted voices.** To characterize these thresholds across a wider range of acoustic conditions in-sample, we conducted an empirical benchmark on an NVIDIA A100 GPU across eight distinct vetted baseline speakers spanning two languages (English and Castilian Spanish) and five accent profiles (`jfk_english_male`, `arctic_slt_english_female`, `arctic_ksp_english_indian_accent`, `arctic_bdl_english_male`, `arctic_clb_english_female`, `arctic_awb_english_scottish`, `ljspeech_female`, and `spanish_cuentos_male`).
 
-The validator achieved 100% clean baseline acceptance (8/8 clean recordings passed with zero false-positive rejections; accented speech in `arctic_ksp` passed with 1 weak word scoring 0.183). Across an evaluation matrix of 88 controlled corruption tests (11 perturbations per speaker across edge truncations, unspoken transcript word insertions, and trailing speech spillover), the benchmark characterized empirical detection performance and identified specific failure modes (Table 3b; detailed in `docs/evidence/phase6/`):
+On this 8-speaker calibration set, all eight clean recordings passed (accented speech in `arctic_ksp` passed with 3 weak words, minimum score 0.062, within the calibrated tolerance of at most 3 words below 0.20). Across an evaluation matrix of 88 controlled corruption tests (11 perturbations per speaker across edge truncations, unspoken transcript word insertions, and trailing speech spillover), the benchmark characterized empirical detection performance and identified specific failure modes (Table 3b; detailed in `docs/evidence/phase6/`):
 
 **Table 3b.** Observed rejection rates across 88 controlled corruptions on 8 vetted baseline speakers.
 
@@ -415,17 +417,17 @@ The validator achieved 100% clean baseline acceptance (8/8 clean recordings pass
 |---|---|:---:|---|
 | Edge Truncation | 100 ms tail cut | 3/8 (37.5%) | 5 passed: sub-250 ms cuts clip trailing aspiration without dropping vowel nucleus below 0.05 |
 | | 250 ms tail cut | 5/8 (62.5%) | 3 passed: partial coda loss produces word scores in 0.08–0.16 weak tolerance band |
-| | 500 ms tail cut | 7/8 (87.5%) | 1 passed: severe vowel reduction absorbed in weak band |
+| | 500 ms tail cut | 2/8 (25.0%) | 6 passed: partial word/vowel loss absorbed in weak band |
 | | 1,000 ms tail cut | 7/8 (87.5%) | 1 passed: final word eliminated, prior word boundary shifts |
 | | 500 ms head cut | 7/8 (87.5%) | 1 passed: initial consonant cluster partially preserved |
 | | 1,000 ms head cut | 8/8 (100.0%) | 0 passed: opening word onset completely lost; score drops to 0.00–0.04 (< 0.05 floor) |
-| Transcript Insertion | Head function word | 6/8 (75.0%) | 2 passed: weak-word tolerance absorption (score 0.125 on LJSpeech) |
+| Transcript Insertion | Head function word | 7/8 (87.5%) | 1 passed: weak-word tolerance absorption (score 0.125 on LJSpeech) |
 | | Mid content word | 6/8 (75.0%) | 2 passed: phonetic substring match (/dʒər/, /tr/ in "extraordinary" scores 0.234–0.237) |
-| | Tail content word | 5/8 (62.5%) | 3 passed: trailing silence emissions average 0.06–0.16, absorbed by $\le 3$ weak-word limit |
+| | Tail content word | 4/8 (50.0%) | 4 passed: trailing silence emissions average 0.06–0.16, absorbed by $\le 3$ weak-word limit |
 | Speech Spillover | Sub-threshold (+100 ms) | 0/8 rejected (0%) | 8/8 correctly accepted: sub-200 ms tolerance functioning as designed |
 | | Cross-threshold (+500 ms) | 0/8 rejected (0%) | 8/8 passed: trailing audio contains pause; active speech measures 80–140 ms (< 200 ms floor) |
 
-A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word, but because the active unaligned speech portion measured 80–140 ms across diagnostic cases, the measured duration remained below the configured 200 ms threshold. The benchmark thus establishes zero false positives on clean speech while mapping the operational limits of token-level rejection.
+A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. However, because this calibration doubled the unexplained-speech tolerance (`max_unexplained_speech_s`) from 0.10 s to 0.20 s to accommodate natural breath and aspiration, and the active unaligned speech portion in the appended audio measured 80–140 ms across diagnostic cases, the active untranscribed speech remained below the relaxed 200 ms floor. Under the previous 0.10 s threshold, several of these spillover cases (such as the 140 ms Spanish spillover) would have triggered rejection; relaxing the threshold to 0.20 s therefore creates a blind spot for trailing speech intrusions under 200 ms. The benchmark thus characterizes in-sample tolerance on clean speech while mapping the operational limits of token-level rejection.
 
 ### 5.5 Training smoke runs with real weights
 

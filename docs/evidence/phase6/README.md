@@ -8,11 +8,11 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 
 - **Execution Date**: 2026-10-26 18:50 UTC
 - **Compute Hardware**: NVIDIA A100-SXM4-40GB GPU (Modal app `ap-aLtghQDigN7bOJJjqUVrSn`)
-- **Software Environment**: PyTorch 2.1.2 + CUDA 12.1, torchaudio, MMS-FA (`facebook/mms-tts`)
+- **Software Environment**: PyTorch 2.1.2 + CUDA 12.1, torchaudio MMS_FA pipeline (`torchaudio.pipelines.MMS_FA`)
 - **Scope**: Multi-speaker, multilingual validation across **8 distinct vetted baseline voices** and 2 languages (English, Castilian Spanish) across 5 accent profiles.
 - **Evaluation Scale**: 8 clean baseline recordings + 88 controlled corruption tests (11 mutations per speaker) = **96 total alignment tests**.
 - **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed with zero false-positive rejections.
-- **Controlled Corruption Characterization**: 57/88 (64.8%) rejected; characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech.
+- **Controlled Corruption Characterization**: 57/88 (64.8%) correct decisions (49/88 rejected, 8/8 sub-threshold spillover correctly accepted; edge truncation 32/48 rejected, transcript insertions 17/24 rejected); characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech.
 
 ---
 
@@ -20,8 +20,8 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 
 | File | SHA-256 Checksum | Description |
 |---|---|---|
-| [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `471abfb373c6cb505a520f1ddc185f573c258cdcdd74eedd9d8bc7a83de5fd66` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
-| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `3a1fd649ec18c6edf762bd111fd196965eaef9647d629785d8011d751022c327` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
+| [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `b59ad16e0e298d6c0e073d74db7170a6c5c04a92a7efed65aa7ff6d09b21f165` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
+| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `67257d2514da453325d51e1381771322e1926cd2727346c98c28a6c9d46ee026` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
 
 ---
 

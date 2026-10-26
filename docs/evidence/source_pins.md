@@ -132,4 +132,30 @@ e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8  eval/reference
 28d18af59b6dcfad0d9f8121a948ecc377723d40639af7f0e64eba4fc3d7e30e  cuentosdehadas/cuentosdehadas_00_perrault_64kb.mp3
 ```
 
+### Provenance: LibriVox Cuentos de Hadas (Castilian Spanish)
+
+The Spanish audio clip was fetched from the public LibriVox recording on archive.org:
+- Item: `https://archive.org/details/cuentosdehadas_1701_librivox`
+- Metadata: `https://archive.org/metadata/cuentosdehadas_1701_librivox`
+- Published archive.org SHA-1: `b7a041589f18d1a7dea19559d308e3857a0f082e` (size: 2,830,336 bytes, 64Kbps MP3)
+- Download command:
+  ```bash
+  curl -sfL -o cuentosdehadas_00_perrault_64kb.mp3 https://archive.org/download/cuentosdehadas_1701_librivox/cuentosdehadas_00_perrault_64kb.mp3
+  ```
+- Resulting SHA-256: `28d18af59b6dcfad0d9f8121a948ecc377723d40639af7f0e64eba4fc3d7e30e`
+
+### Provenance: CMU ARCTIC Reference Voices (`eval/reference_voices/`)
+
+Deterministic reference audio clips for the ARCTIC speakers are built directly from the official CMU ARCTIC corpus via `scripts/fetch_reference_voices.py` and locked in `eval/dataset/reference_voices.lock.json`:
+- Upstream source: `http://festvox.org/cmu_arctic/packed/cmu_us_<speaker>_arctic.tar.bz2`
+  - `arctic_slt`: tarball SHA-256 `7c173297916acf3cc7fcab2713be4c60b27312316765a90934651d367226b4ea` -> clip SHA-256 `36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82`
+  - `arctic_ksp`: tarball SHA-256 `8029cafce8296f9bed3022c44ef1e7953332b6bf6943c14b929f468122532717` -> clip SHA-256 `e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8`
+  - `arctic_bdl`: tarball SHA-256 `26b91aaf48b2799b2956792b4632c2f926cd0542f402b5452d5adecb60942904` -> clip SHA-256 `886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627`
+  - `arctic_clb`: tarball SHA-256 `3f16dc3f3b97955ea22623efb33b444341013fc660677b2e170efdcc959fa7c6` -> clip SHA-256 `3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b`
+  - `arctic_awb`: tarball SHA-256 `d74a950c9739a65f7bfc4dfa6187f2730fa03de5b8eb3f2da97a51b74df64d3c` -> clip SHA-256 `63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94`
+- Build command:
+  ```bash
+  python scripts/fetch_reference_voices.py
+  ```
+
 Licenses: CMU ARCTIC reference voices carry the CMU ARCTIC Permissive License (`eval/reference_voices/licenses/`); LibriVox Cuentos de Hadas is a public domain dedication (CC0/PD); LJSpeech and JFK are public domain.
