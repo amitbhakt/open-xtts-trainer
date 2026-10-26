@@ -65,8 +65,9 @@ Evaluated across all 5 unseen CMU ARCTIC voices (`arctic_slt`, `arctic_clb`, `ar
 
 ### Reading the unseen-voice results
 * **Decision: all pre-registered gates pass** (`passed: true` in `ab_report_base.json`), so the fix is retained.
-* **The means are dominated by single takes.** One upstream take on `arctic_ksp` has WER 221 (the model kept
-  generating speech) and another 11; together they produce most of the 0.84 mean WER. Medians are 0.0 for both.
+* **The means are dominated by single takes.** One upstream take on `arctic_ksp` (seed 1, `en_51`) has WER 221
+  (the model kept generating speech), and one on `arctic_bdl` (seed 2, `en_53`) has WER 11; together they
+  contribute 0.77 of the 0.84 mean WER. Medians are 0.0 for both.
 
 | Statistic | Upstream (F2) | Per-sample (fix) | Fisher $p$ (exploratory) |
 | :--- | :---: | :---: | :---: |

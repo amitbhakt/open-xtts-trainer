@@ -174,6 +174,15 @@ $ grep -n "UnpicklingError\|torch.save(checkpoint, model_path)" xtts_fork.py
 651:                torch.save(checkpoint, model_path)
 ```
 
-The fork file is byte-identical to the `TTS/tts/models/xtts.py` installed from the pinned commit (`cmp`). So the
-in-place rewrite exists only in the fork; v0.22.0 loads the checkpoint without writing to it.
+The fork file is byte-identical to the one installed from the pinned commit by `uv sync --frozen` (the
+`python3.13` part of the path is the interpreter version and varies; rerun 2026-10-26):
+
+```
+$ cmp xtts_fork.py .venv/lib/python3.13/site-packages/TTS/tts/models/xtts.py; echo "exit $?"
+exit 0
+$ shasum -a 256 .venv/lib/python3.13/site-packages/TTS/tts/models/xtts.py
+dcd55c554fe81a9600e837526ca33b09b7d934dd0bb6d80bb9857159204c055e  .venv/lib/python3.13/site-packages/TTS/tts/models/xtts.py
+```
+
+So the in-place rewrite exists only in the fork; v0.22.0 loads the checkpoint without writing to it.
 

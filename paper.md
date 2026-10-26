@@ -362,8 +362,9 @@ transcripts and durations. Different seeds changed the audio: 47 of 50 durations
 Across environments it is not bit-identical. The Phase 8 rerun of the 5-language baseline (a later commit and a new
 GPU session; `docs/evidence/phase8_reproducibility/`) produced identical audio for 852 of 900 takes (94.7%); the
 other 48 differ. Every language's means agree with the published run within the rerun's 95% tolerance, but one
-case shows how little that can say: one Spanish take became a repetition loop in the rerun (8.96 s → 17.17 s, the
-sentence spoken twice, WER 20.8), which alone moves Spanish mean WER from 0.099 to 0.213 while the median stays 0.0; without that take the two runs
+case shows how little that can say: one Spanish take ran away in the rerun (audio 8.96 s → 17.17 s; Whisper's transcript repeats the sentence's
+opening 25 times, 262 words for a 12-word sentence, WER 20.8). It accounts for the whole net change in Spanish mean
+WER, 0.099 to 0.213 (four other takes changed slightly, in both directions), while the median stays 0.0; without that take the two runs
 match (WER 0.100 vs 0.098, CER 0.083 vs 0.082).
 We therefore claim determinism per seed within an environment, and agreement within intervals across environments,
 not bit-identical reproduction across environments.
@@ -501,13 +502,14 @@ bootstrap 95% confidence intervals, $N=300$, SECS on the $n=253$ pairs where bot
 
 The preservation comparison **fails** its pre-registered SECS gate (`passed: false` in
 `docs/evidence/run6_target_speaker/ab_report_preservation.json`): similarity to unseen voices fell by $0.0236$,
-and the whole confidence interval lies beyond the 0.02 margin. Fine-tuning on 6.4 minutes of one speaker
+beyond the 0.02 margin, and so is the interval's lower end (−0.0290), which is what the `not_worse` rule
+tests; the upper end (−0.0181) is within the margin. Fine-tuning on 6.4 minutes of one speaker
 measurably reduced zero-shot cloning of other speakers. We report this as a failed gate, not a near miss: the
 margin was fixed in advance, and this is the regression it exists to catch.
 
 The WER, CER and failure gates passed, but their mean differences should not be read as broad gains in
 intelligibility. Mean WER and CER are unbounded per take and are dominated by a few runaway takes: on stock, the
-mean CER of 0.1266 comes mostly from one take with CER 12, and both models have a median WER and CER of 0.0.
+mean CER of 0.1266 is strongly influenced by a few takes (CER 12, 10 and 5 contribute 0.090 of it), and both models have a median WER and CER of 0.0.
 Excluding takes with WER above 1.0, mean WER is 0.057 (stock) and 0.042 (tuned). The fine-tuned model produced
 fewer runaway takes (3 failures vs 6) on these voices; that is the substance of those three results.
 
@@ -577,8 +579,9 @@ The target-speaker regime was not part of the pre-registration and is reported a
 | SECS ($n=255$) | 0.5690 | 0.5628 | −0.0062 | [−0.0110, −0.0014] | PASS |
 
 **The means in Tables 7a–7b are dominated by single takes.** WER and CER are unbounded per take, and the median
-is 0.0 for both variants in both regimes. On unseen voices, one upstream take on `arctic_ksp` has WER 221 (the
-model kept generating speech) and another 11; together they produce most of the 0.84 mean. In the target regime,
+is 0.0 for both variants in both regimes. On unseen voices, one upstream take on `arctic_ksp` (seed 1) has WER
+221 (the model kept generating speech) and one on `arctic_bdl` (seed 2) has WER 11; together they contribute 0.77
+of the 0.84 mean. In the target regime,
 the 0.5556 short-prompt CER is one take with CER 5.0 out of 9. Table 7c reports statistics that a single take
 cannot move.
 
@@ -594,9 +597,10 @@ two-sided and exploratory: these comparisons were chosen after seeing the data a
 | Unseen voices | Short prompts with CER > 0.5 | 9 / 45 | 2 / 45 | 0.05 |
 | Target speaker | Short prompts with CER > 0.5 | 1 / 9 | 0 / 9 | 1.00 |
 
-**Conclusion.** The pre-registered decision is met: on unseen voices, every non-regression gate passes
-(`passed: true` in `ab_report_base.json`), so the per-sample fix is retained, as F2's demonstrating test already
-requires (the fix is correct regardless of its measured effect). What the data shows about the size of the effect
+**Conclusion.** The pre-registered decision is only partly evaluated: on unseen voices every non-regression gate
+passes (`passed: true` in `ab_report_base.json`), but on 300 of the pre-registered 900 pairs, so the decision
+stays provisional until the remaining pairs are measured. The per-sample fix is retained either way, because F2's
+demonstrating test shows it is correct regardless of its measured effect. What the data shows about the size of the effect
 is narrower than the means suggest. Per-sample masking produced fewer badly failed short prompts on unseen voices
 (9 vs 2 of 45, $p = 0.05$) and no runaway takes (4 vs 0, $p = 0.12$); outside those takes, intelligibility is
 about the same (mean WER 0.053 vs 0.042, medians 0). This is consistent with F2 causing occasional runaway

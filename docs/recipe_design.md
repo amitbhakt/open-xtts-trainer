@@ -42,7 +42,8 @@ Each finding has a test that demonstrates the upstream behaviour, and a guard th
 
 **Also in the original `coqui-ai/TTS` v0.22.0** (tag commit `fa28f99f`, checked 2026-10-24; commands, file hashes
 and the exact lines are in [`docs/evidence/upstream/coqui_tts_v0.22.0_check.md`](evidence/upstream/coqui_tts_v0.22.0_check.md)):
-these problems date from Coqui's own release, not from the fork. F3 is a property of the released `dvae.pth`
+F1, F2, F4 and F6 date from Coqui's own release, not from the fork. F7 is the exception: the fork introduced it,
+and v0.22.0's loader has no such rewrite (same evidence file). F3 is a property of the released `dvae.pth`
 itself and F5 of Hugging Face Whisper, so neither depends on the code base. Paths in both columns are relative to
 the repository root of each project.
 
@@ -179,7 +180,7 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | Phase | Checks | Status |
 |---|---|---|
 | 0 Pin and record | Upstream pinned; every artifact fetched and hash-verified by one script; `mel_stats` identical across three sources | Done (Colab runs 1–4; Run 5 re-verified every artifact after each step it used them) |
-| 1 Baseline | Stock XTTS-v2 measured on a frozen eval set; reruns identical | Done. Same environment: bit-identical reruns (English pilot, runs 1–2). Run 5: 5-language baseline on the locked weights, 900 utterances (`eval/baselines/base_xtts_s12_index.json`). Cross-environment rerun (Phase 8, different commit and GPU session): 852/900 takes produced identical audio; 48 differ, and one Spanish take became a repetition loop that doubles Spanish mean WER (0.099 → 0.213; medians 0.0 in both). Not bit-identical across environments |
+| 1 Baseline | Stock XTTS-v2 measured on a frozen eval set; reruns identical | Done for same-environment reruns; across environments, means agree within intervals but reruns are not bit-identical. Same environment: bit-identical reruns (English pilot, runs 1–2). Run 5: 5-language baseline on the locked weights, 900 utterances (`eval/baselines/base_xtts_s12_index.json`). Cross-environment rerun (Phase 8, different commit and GPU session): 852/900 takes produced identical audio; 48 differ, and one Spanish take became a repetition loop that doubles Spanish mean WER (0.099 → 0.213; medians 0.0 in both). Not bit-identical across environments |
 | 2 Single source of truth | One spec module, one mel front end, one model factory, strict loading | Done |
 | 3 Data contracts | One dataset format, validated before every stage; latent files carry a schema | Done |
 | 4 Parity | Our spectrograms, models and losses match upstream's, each check shown to fail when broken | Done |
@@ -187,7 +188,7 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Done: real-aligner checks (runs 3–4); sample set prepared and validated with zero edits (run 4) |
 | 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); target speaker fine-tune completed (Moira Fogarty *Art of War*, 10 epochs on A100, loss 3.947 → 3.102) |
 | 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Run 6, one fine-tune measured both ways. Target speaker ($N=60$, `eval/gates_target.json`, the rules `eval/gates.json` fixed in `603e0d3`): all 5 gates pass, SECS +0.0329 [+0.019, +0.048]. Preservation on 5 unseen voices ($N=300$, `eval/gates.json`): **fails** its SECS gate, −0.0236 [−0.029, −0.018] against a 0.02 margin. Manifests in `docs/evidence/run6_target_speaker/` |
-| 9 Automation | CI, pre-commit, PR checklist, fresh-install check | Done: CI installs from a clean checkout (`uv sync --frozen`) and runs ruff and the full test suite on every push |
+| 9 Automation | CI, pre-commit, PR checklist, fresh-install check | CI: done. On every push it installs from a clean checkout (`uv sync --frozen`, the fresh-install check), runs ruff, and runs the test suite with `vocab.json`, `config.json` and `mel_stats.pth` only, so tests needing the full weights, MMS_FA or the reference voices skip there and run on GPU (Colab/Modal). Pre-commit: `.pre-commit-config.yaml` (ruff and the static-invariant tests) is in place; whether contributors run it isn't enforced. PR checklist: `.github/pull_request_template.md` is in place. Local fresh install: `scripts/check_fresh_install.sh` |
 
 ## §7 Bug-class protocol (for every change)
 

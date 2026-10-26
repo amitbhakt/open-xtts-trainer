@@ -68,6 +68,8 @@ def test_every_xtts_checkpoint_load_applies_the_guard():
                     continue
                 path = os.path.join(dirpath, name)
                 code = re.sub(r"#.*", "", Path(path).read_text(encoding="utf-8"))
-                if re.search(r"\.load_checkpoint\(", code) and "patch_xtts_prevent_checkpoint_mutation()" not in code:
+                # Method calls (.load_checkpoint, ._load_checkpoint) and direct calls; not definitions
+                calls = re.search(r"(?<!def )(?<![\w])\.?_?load_checkpoint\(", code)
+                if calls and "patch_xtts_prevent_checkpoint_mutation()" not in code:
                     unguarded.append(os.path.relpath(path, REPO_ROOT))
     assert not unguarded, f"these modules load XTTS checkpoints without the F7 guard: {unguarded}"

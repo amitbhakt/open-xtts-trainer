@@ -54,12 +54,12 @@ Evaluated across all 5 unseen CMU ARCTIC voices (`arctic_slt`, `arctic_clb`, `ar
 *(Note: SECS is evaluated on $n=253$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=300$.)*
 
 **Result: the preservation comparison fails** (`passed: false` in `ab_report_preservation.json`). Its
-pre-registered SECS gate fails: similarity to unseen voices fell by 0.0236, and the whole 95% interval lies beyond
-the 0.02 margin. Adapting to one speaker reduced zero-shot cloning of others; that is the regression this gate
+pre-registered SECS gate fails: similarity to unseen voices fell by 0.0236, beyond the 0.02 margin, and so is the
+interval's lower end (−0.0290), which is what the `not_worse` rule tests; the upper end (−0.0181) is within it. Adapting to one speaker reduced zero-shot cloning of others; that is the regression this gate
 exists to catch, so it is reported as a failure, not a near miss.
 
 The WER, CER and failure gates pass, but their mean differences are dominated by a few runaway takes: stock's mean
-CER of 0.1266 comes mostly from one take with CER 12, and both models have a median WER and CER of 0.0. Excluding
+CER of 0.1266 is strongly influenced by a few takes (CER 12, 10 and 5 contribute 0.090 of it), and both models have a median WER and CER of 0.0. Excluding
 takes with WER above 1.0, mean WER is 0.057 (stock) and 0.042 (tuned). The tuned model had fewer runaway takes
 (3 failures vs 6).
 
