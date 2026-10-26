@@ -36,7 +36,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from xtts_trainer.data import validate_dataset, write_dataset
+from xtts_trainer.data import DatasetRecord, validate_dataset, write_dataset
 from xtts_trainer.data.validate import realignment_checker
 from xtts_trainer.prepare import CtcAligner, PrepConfig, prepare_recording, write_prepared
 from xtts_trainer.prepare.pipeline import load_mono
