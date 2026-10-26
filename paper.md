@@ -609,23 +609,30 @@ arXiv:2406.04904.
 
 [3] J. Kong, J. Kim, and J. Bae, "HiFi-GAN: Generative adversarial networks for efficient and high fidelity
 speech synthesis," in *Proc. Advances in Neural Information Processing Systems (NeurIPS)*, vol. 33, 2020, pp. 17022–17033.
+arXiv:2010.05646.
 
 [4] A. van den Oord, O. Vinyals, and K. Kavukcuoglu, "Neural discrete representation learning," in *Proc.
 Advances in Neural Information Processing Systems (NeurIPS)*, vol. 30, 2017, pp. 6306–6315.
+arXiv:1711.00937.
 
 [5] C. Zheng and A. Vedaldi, "Online clustered codebook," in *Proc. IEEE/CVF International Conference on Computer Vision (ICCV)*, 2023, pp. 22744–22753.
+arXiv:2308.12152.
 
 [6] K. Dobler and G. de Melo, "FOCUS: Effective embedding initialization for monolingual specialization of
 multilingual models," in *Proc. Conference on Empirical Methods in Natural Language Processing (EMNLP)*, 2023, pp. 13440–13454.
+arXiv:2305.14481.
 
 [7] B. Minixhofer, F. Paischer, and N. Rekabsaz, "WECHSEL: Effective initialization of subword embeddings for
 cross-lingual transfer of monolingual language models," in *Proc. Annual Conference of the North American Chapter of the Association for Computational Linguistics (NAACL)*, 2022, pp. 3992–4006.
+arXiv:2112.06598.
 
 [8] M. Yang, S. Ding, T. Chen, T. Wang, and Z. Wang, "Towards lifelong learning of multilingual text-to-speech
-synthesis," in *Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)*, 2022, pp. 7447–7451. arXiv:2110.04482.
+synthesis," in *Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)*, 2022, pp. 7447–7451.
+arXiv:2110.04482.
 
 [9] E. Casanova, J. Weber, C. Shulby, A. C. Junior, E. Gölge, and M. A. Ponti, "YourTTS: Towards zero-shot
-multi-speaker TTS and zero-shot voice conversion for everyone," in *Proc. 39th International Conference on Machine Learning (ICML)*, 2022, pp. 2709–2720. arXiv:2112.02418 (including erratum).
+multi-speaker TTS and zero-shot voice conversion for everyone," in *Proc. 39th International Conference on Machine Learning (ICML)*, 2022, pp. 2709–2720.
+arXiv:2112.02418 (including erratum).
 
 [10] A. Graves, S. Fernández, F. Gomez, and J. Schmidhuber, "Connectionist temporal classification: Labelling
 unsegmented sequence data with recurrent neural networks," in *Proc. 23rd International Conference on Machine Learning (ICML)*, 2006, pp. 369–376.
@@ -633,15 +640,19 @@ unsegmented sequence data with recurrent neural networks," in *Proc. 23rd Intern
 [11] V. Pratap, A. Tjandra, B. Shi, P. Tomasello, A. Babu, S. Kundu, A. Elkahky, Z. Ni, A. Vyas, M. Fazel-Zarandi,
 A. Baevski, Y. Adi, X. Zhang, W. N. Hsu, A. Conneau, and M. Auli, "Scaling speech technology to 1,000+ languages," *Journal of Machine Learning Research (JMLR)*,
 vol. 25, no. 97, pp. 1–52, 2024.
+arXiv:2305.13516.
 
 [12] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, "Robust speech recognition via
 large-scale weak supervision," in *Proc. 40th International Conference on Machine Learning (ICML)*, 2023, pp. 28492–28518.
+arXiv:2212.04356.
 
 [13] J. Thienpondt and K. Demuynck, "ECAPA2: A hybrid neural network architecture and training strategy for
 robust speaker embeddings," in *Proc. IEEE Automatic Speech Recognition and Understanding Workshop (ASRU)*, 2023, pp. 1–8.
+arXiv:2305.08500.
 
 [14] T. Saeki, D. Xin, W. Nakata, T. Koriyama, S. Takamichi, and H. Saruwatari, "UTMOS: UTokyo-SaruLab system for
 VoiceMOS Challenge 2022," in *Proc. Interspeech*, 2022, pp. 4521–4525.
+arXiv:2204.02152.
 
 [15] B. Efron and R. J. Tibshirani, *An Introduction to the Bootstrap*. Boca Raton: Chapman & Hall/CRC, 1993.
 
@@ -664,6 +675,7 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 [22] R. Ma, Y. Zhou, and H. Zhang, "The impact of romanization on multilingual language models," arXiv:2601.05776, 2026.
 
 [23] A. Baevski, H. Zhou, A. Mohamed, and M. Auli, "wav2vec 2.0: A framework for self-supervised learning of speech representations," in *Proc. Advances in Neural Information Processing Systems (NeurIPS)*, vol. 33, 2020, pp. 12449–12460.
+arXiv:2006.11477.
 
 ---
 
