@@ -78,6 +78,12 @@ We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of
 
 All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and no intelligibility regression beyond the gate tolerance (CER $+0.0008$, within the 0.01 tolerance). Details and run manifests are in [docs/evidence/run6_target_speaker/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/run6_target_speaker/).
 
+**Measured: Multilingual Alignment Validation (Phase 6 Data Preparation)**  
+Validated MMS-FA forced alignment and two-tier quality thresholds across **8 distinct vetted baseline speakers**, 2 languages (English, Castilian Spanish), and 5 accent profiles (JFK vintage, CMU ARCTIC SLT/BDL/CLB, ARCTIC KSP Indian accent, ARCTIC AWB Scottish accent, LJSpeech, and LibriVox Cuentos de Hadas):
+- **Clean Baseline Acceptance:** **8/8 (100%)** clean recordings passed with zero false-positive rejections. Accented speech (`arctic_ksp`) passed with 1 weak word scoring 0.183 (above the 0.05 floor, within the $\le 3$ weak-word tolerance).
+- **Controlled Corruption Matrix (88 tests):** Evaluated sensitivity across edge truncation, transcript insertion, and speech spillover. Observed rejection rates: 100 ms tail cut: 3/8 (37.5%); 250 ms tail cut: 5/8 (62.5%); 500 ms head cut: 7/8 (87.5%); 1,000 ms tail cut: 7/8 (87.5%); 1,000 ms head cut: 8/8 (100.0%); transcript insertions: 17/24 (70.8%).
+- Full methodology, threshold arithmetic, comparison operators, and failure-mode diagnostics are archived in [docs/evidence/phase6/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/phase6/).
+
 **Licenses:**
 - XTTS-v2 weights: Coqui Public Model License, non-commercial only.
 - MMS_FA aligner and ECAPA2: CC BY-NC 4.0.

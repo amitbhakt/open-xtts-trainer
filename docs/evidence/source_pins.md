@@ -113,3 +113,23 @@ were fetched again with `-sS --retry 3`, which is the command shown.
 
 Licenses: LJ Speech Dataset is public domain; the JFK clip is the 1961 inaugural address, a US government work
 (public domain); LibriVox recordings are public-domain dedications.
+
+---
+
+## Phase 6 Multilingual & Multi-Speaker Alignment Benchmark Sources
+
+Pinned sources evaluated in `scripts/validate_alignment_multilingual.py` and documented in `docs/evidence/phase6/`:
+
+```
+# Evaluated across 8 distinct vetted baseline speakers, 2 languages, 5 accents
+63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715  jfk/jfk.flac
+36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82  eval/reference_voices/arctic_slt.wav
+e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8  eval/reference_voices/arctic_ksp.wav
+886f17023bc3f0880043252b3f1471ccc35f286500512d939b7f1a91a6d8e627  eval/reference_voices/arctic_bdl.wav
+3764871a513fd11309c58b36b27d291d428502daf0495159ca153c4e5e162e5b  eval/reference_voices/arctic_clb.wav
+63a3e6103b00fcd168df79a4d6ad6fda0e8b1b64eda6d9ce32eddd078c9c9b94  eval/reference_voices/arctic_awb.wav
+4d2bd83ff0f7fe33491b03193abdf623f1b4cc2d8103972b33638d3607d86dc5  ljspeech/LJ001-0001.wav
+28d18af59b6dcfad0d9f8121a948ecc377723d40639af7f0e64eba4fc3d7e30e  cuentosdehadas/cuentosdehadas_00_perrault_64kb.mp3
+```
+
+Licenses: CMU ARCTIC reference voices carry the CMU ARCTIC Permissive License (`eval/reference_voices/licenses/`); LibriVox Cuentos de Hadas is a public domain dedication (CC0/PD); LJSpeech and JFK are public domain.
