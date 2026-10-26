@@ -83,7 +83,7 @@ SOURCES: List[Dict[str, Any]] = [
         "description": "CMU ARCTIC KSP (Indian English, male, studio clean recording)",
         "kind": "local",
         "local_path": os.path.join(REPO_ROOT, "eval", "reference_voices", "arctic_ksp.wav"),
-        "sha256": "3127dd4f9540b616428c0c4516ff2581eeaa806795f50ef7a8b417ae4179e8a0",
+        "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8",
         "transcript": "Author of the danger trail, Philip Steels, etc. Not at this particular case, Tom, apologized Whittemore.",
         "min_s": 2.0,
         "max_s": 11.0,
