@@ -1,0 +1,168 @@
+{
+  "timestamp": "2026-10-26 18:04:04 UTC",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A100-SXM4-40GB",
+  "quality_config": {
+    "min_word_score": 0.05,
+    "weak_word_score": 0.2,
+    "max_weak_words": 3,
+    "max_unexplained_speech_s": 0.2,
+    "min_gap_s": 0.15,
+    "edge_pad_s": 0.2
+  },
+  "all_sources_passed": true,
+  "results": [
+    {
+      "id": "jfk_english_male",
+      "speaker": "jfk",
+      "language": "en",
+      "description": "JFK inaugural address excerpt (US English, male, 1960s recording)",
+      "alignment_time_s": 13.593,
+      "clean_segments_count": 3,
+      "total_words_aligned": 22,
+      "word_score_min": 0.541,
+      "word_score_mean": 0.8792,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations": {
+        "truncate_tail_-1.0s": {
+          "start_s": 0.181,
+          "end_s": 2.897,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'ask' 0.00 < 0.05"
+          ]
+        },
+        "truncate_head_+1.0s": {
+          "start_s": 1.181,
+          "end_s": 3.897,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'my' 0.01 < 0.05"
+          ]
+        }
+      },
+      "mutations_status": "PASS",
+      "overall_status": "PASS"
+    },
+    {
+      "id": "arctic_slt_english_female",
+      "speaker": "arctic_slt",
+      "language": "en",
+      "description": "CMU ARCTIC SLT (US English, female, studio clean recording)",
+      "alignment_time_s": 0.041,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.7062,
+      "word_score_mean": 0.9132,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0201,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations": {
+        "truncate_tail_-1.0s": {
+          "start_s": 0.021,
+          "end_s": 1.948,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.00 < 0.05"
+          ]
+        },
+        "truncate_head_+1.0s": {
+          "start_s": 1.021,
+          "end_s": 2.948,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'of' 0.00 < 0.05"
+          ]
+        }
+      },
+      "mutations_status": "PASS",
+      "overall_status": "PASS"
+    },
+    {
+      "id": "arctic_ksp_english_indian_accent",
+      "speaker": "arctic_ksp",
+      "language": "en",
+      "description": "CMU ARCTIC KSP (Indian English, male, studio clean recording)",
+      "alignment_time_s": 0.041,
+      "clean_segments_count": 2,
+      "total_words_aligned": 16,
+      "word_score_min": 0.1828,
+      "word_score_mean": 0.5618,
+      "weak_words_count": 1,
+      "max_unexplained_speech_s": 0.1404,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations": {
+        "truncate_tail_-1.0s": {
+          "start_s": 0.0,
+          "end_s": 1.888,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'etc.' 0.03 < 0.05; weak_alignment: 5 words below 0.2 ('of' 0.07, 'the' 0.09, 'Philip' 0.15, 'Steels,' 0.12); at most 3 allowed"
+          ]
+        },
+        "truncate_head_+1.0s": {
+          "start_s": 1.0,
+          "end_s": 2.888,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'danger' 0.01 < 0.05; weak_alignment: 6 words below 0.2 ('Author' 0.19, 'of' 0.02, 'the' 0.06, 'danger' 0.01); at most 3 allowed"
+          ]
+        }
+      },
+      "mutations_status": "PASS",
+      "overall_status": "PASS"
+    },
+    {
+      "id": "spanish_cuentos_male",
+      "speaker": "victor_villarraza",
+      "language": "es",
+      "description": "LibriVox Cuentos de Hadas intro (Spanish, male, modern audiobook recording)",
+      "alignment_time_s": 0.534,
+      "clean_segments_count": 3,
+      "total_words_aligned": 28,
+      "word_score_min": 0.7981,
+      "word_score_mean": 0.9714,
+      "weak_words_count": 0,
+      "max_unexplained_speech_s": 0.0,
+      "clean_validation_ok": true,
+      "clean_validation_errors": [],
+      "clean_status": "PASS",
+      "mutations": {
+        "truncate_tail_-1.0s": {
+          "start_s": 0.0,
+          "end_s": 5.307,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'de' 0.00 < 0.05"
+          ]
+        },
+        "truncate_head_+1.0s": {
+          "start_s": 1.0,
+          "end_s": 6.307,
+          "detected_and_rejected": true,
+          "validation_ok": false,
+          "errors": [
+            "alignment_mismatch: low_alignment_score: 'Introducci\u00f3n' 0.01 < 0.05"
+          ]
+        }
+      },
+      "mutations_status": "PASS",
+      "overall_status": "PASS"
+    }
+  ]
+}
