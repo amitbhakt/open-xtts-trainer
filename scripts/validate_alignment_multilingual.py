@@ -236,7 +236,9 @@ def evaluate_clean_and_shifted(
         b = max(a + 0.5, r0.alignment["end_s"] + shift_s)
         clip_shifted = src_resampled[int(a * SPEC.output_sample_rate) : int(b * SPEC.output_sample_rate)]
 
-        sf.write(os.path.join(out_shift, r0.audio), clip_shifted, SPEC.output_sample_rate, subtype="PCM_16")
+        out_clip_path = os.path.join(out_shift, r0.audio)
+        os.makedirs(os.path.dirname(out_clip_path), exist_ok=True)
+        sf.write(out_clip_path, clip_shifted, SPEC.output_sample_rate, subtype="PCM_16")
 
         r_mutated = DatasetRecord(
             audio=r0.audio,
