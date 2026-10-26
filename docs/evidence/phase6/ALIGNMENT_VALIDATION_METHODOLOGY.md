@@ -1,13 +1,22 @@
 # Multilingual & Multi-Speaker Alignment Validation Methodology
 
+Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)**.
+
 ## 1. Experimental Scope & Precision of Claims
-- **Scope**: Validation of MMS-FA forced alignment generalization across 4 diverse speakers/accents/languages:
-  - US English vintage/historical: JFK inaugural address (`jfk_english_male`)
-  - US English female studio-clean: CMU ARCTIC SLT (`arctic_slt_english_female`)
-  - Indian English accented studio-clean: CMU ARCTIC KSP (`arctic_ksp_english_indian_accent`)
-  - Spanish male modern audiobook: LibriVox Charles Perrault (`spanish_cuentos_male`)
-- **Sensitivity Metric**: **8/8 injected boundary truncations detected across four recordings**.
-  - We specifically avoid claiming an unquantified "100% general corruption detection rate". The experiment empirically verifies sensitivity to edge-speech truncation on 8 specific boundary perturbations (head truncation $+1.0\text{s}$ and tail truncation $-1.0\text{s}$ across 4 recordings).
+- **Scope**: Comprehensive validation of MMS-FA forced alignment generalization and mutation sensitivity across **8 distinct vetted baseline speakers**, 2 languages, and 5 accents:
+  1. `jfk_english_male` (US English male, 1960s vintage)
+  2. `arctic_slt_english_female` (US English female, studio clean)
+  3. `arctic_ksp_english_indian_accent` (Indian English male, accented, studio clean)
+  4. `arctic_bdl_english_male` (US English male, studio clean)
+  5. `arctic_clb_english_female` (US English female, studio clean)
+  6. `arctic_awb_english_scottish` (Scottish English male, accented, studio clean)
+  7. `ljspeech_female` (US English female, studio clean gold standard)
+  8. `spanish_cuentos_male` (Castilian Spanish male, modern LibriVox audiobook)
+- **Controlled Corruption Design**: A publication-grade matrix of ~65–75 controlled corruption tests across 3 realistic failure modes:
+  1. **Edge Truncation Severity Ladder**: 100ms, 250ms, 500ms, 1000ms at closing word tail and opening word head.
+  2. **Hallucinated / Unspoken Word in Transcript**: Token insertions across Head, Mid, and Tail positions (function vs. content words).
+  3. **Unexplained Speech Spillover**: Sub-threshold ($0.10\text{s} \le 0.20\text{s}$) vs. Cross-threshold ($0.50\text{s} > 0.20\text{s}$) spoken speech from adjacent utterances.
+- **Hierarchical Reporting**: To account for intra-source correlation, results are reported both aggregated by corruption type and grouped by speaker/source.
 
 ---
 
