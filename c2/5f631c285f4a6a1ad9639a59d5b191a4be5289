@@ -1,0 +1,9 @@
+scripts/validate_alignment_multilingual.py
+  ai_agent 215-218,220-243,246,279-281
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "c25f631c285f4a6a1ad9639a59d5b191a4be5289",
+  "prompts": {}
+}
