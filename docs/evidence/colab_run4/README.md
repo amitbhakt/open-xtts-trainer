@@ -63,8 +63,9 @@ checkpoint after each, at global steps 3, 6 and 9 (`best_model_3.pth`, `_6`, `_9
 **Stage 3, HiFi-GAN** (60 epochs, batch 4, discriminator warm-up 40 steps, CUDA mixed precision).
 Validation mel L1 went from 1.553 (stock decoder) to a best of 1.350 at step 106, 13% lower, and then rose to
 1.367 by step 120. So the best-by-validation checkpoint matters on small data. The first four measurements
-(steps 2–8) are exactly 1.553001582622528, so the recorded validation metric stayed flat for about 8 steps. A
-likely cause is the fp16 loss scaler skipping its first steps on overflow; this has not been checked.
+(steps 2–8) are exactly 1.553001582622528, so the recorded validation metric stayed flat for about 8 steps. Run 5
+confirmed the cause (`docs/evidence/run5/hifigan_metrics.jsonl`): the fp16 loss scaler skipped every one of the
+first 8 generator steps on overflow, halving its scale from 65536 to 256, and validation improved from step 10.
 
 **Stage 1, DVAE** (20 epochs, batch 4, normal and frozen-codebook modes, from `xtts_base/dvae.pth`). Code drift
 is the share of validation code positions where the fine-tuned DVAE picks a different code than the stock one.

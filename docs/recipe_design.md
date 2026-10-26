@@ -2,7 +2,7 @@
 
 This document explains the training recipe. For each choice it gives the evidence behind it and the test
 that guards it. Code comments refer here with short IDs:
-- **F1–F6:** problems found in the upstream code (§2);
+- **F1–F7:** problems found in the upstream code (§2);
 - **§3:** recipe decisions;
 - **A1–A8:** experiments still to run (§5);
 - **Phase 0–9:** verification stages (§6).
@@ -38,6 +38,7 @@ Each finding has a test that demonstrates the upstream behaviour, and a guard th
 | **F4** | The stock tokenizer raises `NotImplementedError` for any language outside its list, and inference indexes `char_limits[language]`, so a model trained on a new language can't run through stock inference. | `tts/layers/xtts/tokenizer.py:651-652` | A tokenizer subclass with explicitly registered languages, used in validation, training, the exported inference loader and latent extraction. | `test_project_tokenizer_registers_languages`, `test_train_export_and_new_language_inference` |
 | **F5** | Hugging Face Whisper word timestamps are contiguous: each word ends exactly where the next begins, so they can't locate pauses. Also: when a transcript is missing words, CTC forced alignment doesn't leave the extra speech unaligned; it stretches a neighbouring word over it. | `tests/fixtures/jfk_whisper_alignment.json` | Word times come from CTC forced alignment (MMS_FA). Missing text is detected as frames where the model hears a character but the alignment path says blank. | `test_whisper_word_timestamps_have_no_gaps`, `test_missing_text_is_detected_as_unexplained_speech` |
 | **F6** | When `GPTTrainer` extends the vocabulary, new text rows get unit-variance random values, and the old *last* row is copied onto the new last row on the assumption that it is `[START]`. In XTTS-v2 `[START]` is 261 and the last row is `[hi]` (6680), so the newest token, typically the new language tag, starts as a copy of `[hi]`. | `tts/layers/xtts/trainer/gpt_trainer.py:113-142` | New rows start at the mean of the existing rows plus small noise (A5). Base weights load strictly through our own path. | `test_new_text_rows_mean_init_and_upstream_f6` |
+| **F7** | The fork's `Xtts._load_checkpoint` catches the `UnpicklingError` a legacy checkpoint raises, converts its pickled `XttsConfig` to a dict, and `torch.save`s the result **over the original `model.pth`**. The released file stores its config that way, so the first load rewrites it: its SHA-256 changed from the locked `c7ea2000…` to `3077a05b…` in Colab runs 1–2, and those runs' baseline manifests can't be tied to the locked weights. Not in coqui-ai/TTS v0.22.0: the fork introduced it. | `TTS/tts/models/xtts.py:639-652` | `patch_xtts_prevent_checkpoint_mutation()` (`xtts_trainer/__init__.py`) does the conversion in memory; every loader applies it. | `test_upstream_f7_load_rewrites_a_legacy_checkpoint_in_place`, `test_guarded_load_leaves_the_checkpoint_untouched`, `test_every_xtts_checkpoint_load_applies_the_guard` |
 
 **Also in the original `coqui-ai/TTS` v0.22.0** (tag commit `fa28f99f`, checked 2026-10-24; commands, file hashes
 and the exact lines are in [`docs/evidence/upstream/coqui_tts_v0.22.0_check.md`](evidence/upstream/coqui_tts_v0.22.0_check.md)):
@@ -51,6 +52,7 @@ the repository root of each project.
 | F2 | `TTS/tts/layers/xtts/gpt.py:541-546` (mask after the loop), `:414` (perceiver divides by 256) | `TTS/tts/layers/xtts/gpt.py:461-465` |
 | F4 | `TTS/tts/layers/xtts/tokenizer.py:643` | `TTS/tts/layers/xtts/tokenizer.py:651-652` |
 | F6 | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:118-137` | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:113-142` |
+| F7 | absent: `TTS/tts/models/xtts.py` has no `UnpicklingError` handler and no `torch.save` | `TTS/tts/models/xtts.py:639-652` (fork only) |
 | Silent sample substitution | `TTS/tts/layers/xtts/trainer/dataset.py:156-180` | same pattern |
 | Non-strict checkpoint and DVAE loads | `TTS/tts/layers/xtts/trainer/gpt_trainer.py:84, 186` | same |
 | Half-clip prompt for short clips | `TTS/tts/layers/xtts/trainer/dataset.py:35` | `TTS/tts/layers/xtts/trainer/dataset.py:36-37` |
@@ -172,20 +174,20 @@ decision rule fixed before running. Results update the evidence tags above.
 ## §6 Verification phases
 
 The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipynb`. Evidence is in
-`docs/evidence/`. Status as of 2026-10-25.
+`docs/evidence/`. Status as of 2026-10-26.
 
 | Phase | Checks | Status |
 |---|---|---|
-| 0 Pin and record | Upstream pinned; every artifact fetched and hash-verified by one script; `mel_stats` identical across three sources | Done (Colab runs 1–3) |
-| 1 Baseline | Stock XTTS-v2 measured on a frozen eval set; reruns identical | Done (rerun identity evidenced on English pilot in runs 1–2; Run 5 completed 5-language baseline on locked weights, 900 utterances; `eval/baselines/base_xtts_s12_index.json`) |
+| 0 Pin and record | Upstream pinned; every artifact fetched and hash-verified by one script; `mel_stats` identical across three sources | Done (Colab runs 1–4; Run 5 re-verified every artifact after each step it used them) |
+| 1 Baseline | Stock XTTS-v2 measured on a frozen eval set; reruns identical | Done. Same environment: bit-identical reruns (English pilot, runs 1–2). Run 5: 5-language baseline on the locked weights, 900 utterances (`eval/baselines/base_xtts_s12_index.json`). Cross-environment rerun (Phase 8, different commit and GPU session): 852/900 takes produced identical audio; 48 differ, and one Spanish take became a repetition loop that doubles Spanish mean WER (0.099 → 0.213; medians 0.0 in both). Not bit-identical across environments |
 | 2 Single source of truth | One spec module, one mel front end, one model factory, strict loading | Done |
 | 3 Data contracts | One dataset format, validated before every stage; latent files carry a schema | Done |
 | 4 Parity | Our spectrograms, models and losses match upstream's, each check shown to fail when broken | Done |
 | 5 Canaries | Vocoder round trip, export identity, overfit, segment alignment | Done; identity on the released weights verified (Run 6, `test_identity_canary_released_model` in `docs/evidence/run6_target_speaker/evidence/identity_canary.xml`) |
 | 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Done: real-aligner checks (runs 3–4); sample set prepared and validated with zero edits (run 4) |
 | 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); target speaker fine-tune completed (Moira Fogarty *Art of War*, 10 epochs on A100, loss 3.947 → 3.102) |
-| 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Done: Target speaker A/B evaluation completed against pre-registered gates in `eval/gates_target.json` ($N=60$); all 5 gates passed (+0.0329 SECS gain, no regression beyond gate tolerance; manifests in `docs/evidence/run6_target_speaker/`) |
-| 9 Automation | CI, pre-commit, PR checklist, fresh-install check | Files in place; fresh install passes locally |
+| 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Run 6, one fine-tune measured both ways. Target speaker ($N=60$, `eval/gates_target.json`, the rules `eval/gates.json` fixed in `603e0d3`): all 5 gates pass, SECS +0.0329 [+0.019, +0.048]. Preservation on 5 unseen voices ($N=300$, `eval/gates.json`): **fails** its SECS gate, −0.0236 [−0.029, −0.018] against a 0.02 margin. Manifests in `docs/evidence/run6_target_speaker/` |
+| 9 Automation | CI, pre-commit, PR checklist, fresh-install check | Done: CI installs from a clean checkout (`uv sync --frozen`) and runs ruff and the full test suite on every push |
 
 ## §7 Bug-class protocol (for every change)
 

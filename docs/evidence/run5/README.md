@@ -50,3 +50,6 @@ Zero silent dropouts (`is_empty = 0`), zero `NaN` values, and 7 runaway-duration
    - Latents extracted in teacher-forced eval mode with true transcript alignment.
    - 30 steps trained with discriminator warm-up.
    - Validation Mel L1 improved from **1.5452 (starting decoder) → 1.4547 (step 30)**.
+   - The fp16 loss scaler skipped every one of the first 8 generator steps on overflow (`skipped_steps_g` = 8 by
+     step 8, `grad_scale_g` 65536 → 256); validation was flat for exactly those steps and improved from step 10.
+     This answers run 4's flat start: normal scaler start-up, not a defect.

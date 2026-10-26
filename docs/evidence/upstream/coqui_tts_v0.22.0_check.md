@@ -156,3 +156,24 @@ Printed with `sed -n "<start>,<end>p" <file>`. Files are under `TTS/tts/layers/x
             self.failed_samples.add(sample_id)
             return self[1]
 ```
+
+## F7: the checkpoint loader that rewrites `model.pth` (added 2026-10-26)
+
+F7 is checked against both code bases, since the claim is that the fork introduced it:
+
+```
+$ curl -sSfL -o xtts_v0.22.0.py https://raw.githubusercontent.com/coqui-ai/TTS/fa28f99f1508b5b5366539b2149963edcb80ba62/TTS/tts/models/xtts.py
+$ curl -sSfL -o xtts_fork.py https://raw.githubusercontent.com/idiap/coqui-ai-TTS/03339e5b790b5e16ea8867a142e8bb26ec646d94/TTS/tts/models/xtts.py
+$ shasum -a 256 xtts_v0.22.0.py xtts_fork.py
+2be596d0900a8ebf4868101ebab9b6bf80409af280877176df826c0d63db3aae  xtts_v0.22.0.py
+dcd55c554fe81a9600e837526ca33b09b7d934dd0bb6d80bb9857159204c055e  xtts_fork.py
+$ grep -n "UnpicklingError\|torch.save(" xtts_v0.22.0.py
+(no output: exit 1)
+$ grep -n "UnpicklingError\|torch.save(checkpoint, model_path)" xtts_fork.py
+642:        except pickle.UnpicklingError:
+651:                torch.save(checkpoint, model_path)
+```
+
+The fork file is byte-identical to the `TTS/tts/models/xtts.py` installed from the pinned commit (`cmp`). So the
+in-place rewrite exists only in the fork; v0.22.0 loads the checkpoint without writing to it.
+

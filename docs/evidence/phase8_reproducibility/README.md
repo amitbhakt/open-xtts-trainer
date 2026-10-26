@@ -21,6 +21,19 @@ This evaluation is a cross-revision statistical comparison measuring agreement w
 
 ---
 
+## What this rerun does and does not show
+
+* **Means agree within the 95% tolerance for every language**, so the published baseline numbers stand.
+* **It is not bit-identical.** 852 of 900 takes produced identical audio (English 172, Spanish 170, French 171,
+  German 167, Hindi 172, each of 180); 48 differ. Runs 1–2 were bit-identical within one environment; this rerun
+  used a later commit and a new GPU session.
+* **One Spanish take explains the Spanish difference.** In the rerun, an `arctic_ksp` take (seed 999) became a
+  repetition loop: 8.96 s → 17.17 s, the sentence spoken twice, WER 20.8. That single take moves Spanish mean WER
+  from 0.099 to 0.213 and CER from 0.083 to 0.197; the median is 0.0 in both runs. Without that take the two runs
+  match: WER 0.100 vs 0.098, CER 0.083 vs 0.082. The tolerance (0.249) is wide
+  because the same kind of runaway takes inflate the standard error, so this comparison could barely fail; read
+  "AGREES" for Spanish WER and CER as "not distinguishable at this sample size", not as reproduction.
+
 ## 2. Files in this Directory
 
 | File | Description |
