@@ -8,7 +8,7 @@ def patch_xtts_prevent_checkpoint_mutation() -> None:
     """Prevent upstream coqui-tts from mutating model.pth on disk during loading.
 
     Upstream Xtts._load_checkpoint re-saves model.pth in place when it encounters
-    a pickled XttsConfig (Open Finding P1 in REMEDIATION_PLAN.md). This mutates
+    a pickled XttsConfig (docs/recipe_design.md §2, F7). This mutates
     the file from its released hash (c7ea2000...) to 3077a05b... on the first load.
     We patch it to perform the config conversion in memory without writing to disk.
     """
@@ -43,6 +43,8 @@ def patch_xtts_prevent_checkpoint_mutation() -> None:
                 # Omit upstream's torch.save(checkpoint, model_path) so artifacts remain immutable on disk
         return checkpoint["model"]
 
+    # Upstream's loader, kept so tests can show the bug (F7); test doubles of Xtts may not define one
+    Xtts._open_xtts_upstream_load_checkpoint = getattr(Xtts, "_load_checkpoint", None)
     Xtts._load_checkpoint = safe_load_checkpoint
     Xtts._open_xtts_no_mutation_patched = True
 

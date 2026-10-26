@@ -35,7 +35,7 @@ Evaluated on held-out reference audio of Moira Fogarty reading *The Art of War* 
 
 *(Note: SECS is evaluated on $n=51$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=60$.)*
 
-**Conclusion:** All 5 pre-registered adaptation gates passed within tolerance (SECS gain of $+0.0329$ passing the `better` rule; WER improved; CER $+0.0008$ and UTMOS $-0.0439$ stayed well within their respective 0.01 and 0.10 tolerance margins). Target speaker similarity improved with high statistical confidence (95% bootstrap CI strictly positive $[+0.0191, +0.0480]$ across $n=51$ pairs). While audio naturalness (UTMOS) decreased slightly by 0.0439 (95% CI $[-0.0831, -0.0065]$), this regression remained within the allowable 0.10 tolerance margin.
+**Conclusion (target speaker):** All 5 pre-registered adaptation gates passed within tolerance (SECS gain of $+0.0329$ passing the `better` rule; WER improved; CER $+0.0008$ and UTMOS $-0.0439$ stayed well within their respective 0.01 and 0.10 tolerance margins). Target speaker similarity improved with high statistical confidence (95% bootstrap CI strictly positive $[+0.0191, +0.0480]$ across $n=51$ pairs). While audio naturalness (UTMOS) decreased slightly by 0.0439 (95% CI $[-0.0831, -0.0065]$), this regression remained within the allowable 0.10 tolerance margin.
 
 ---
 
@@ -49,11 +49,19 @@ Evaluated across all 5 unseen CMU ARCTIC voices (`arctic_slt`, `arctic_clb`, `ar
 | **CER** | `not_worse` (0.01) | 0.1266 | **0.0452** | **−0.0813** | [−0.1821, −0.0077] | **PASS** (improved) |
 | **UTMOS** | `not_worse` (0.10) | 4.0517 | **4.1467** | **+0.0950** | [+0.0603, +0.1305] | **PASS** (improved) |
 | **Failures** | `not_worse` (0) | 6 failures | **3 failures** | **−3** | — | **PASS** (halved) |
-| **SECS** ($n=253$) | `not_worse` (0.02) | 0.5743 | 0.5507 | −0.0236 | [−0.0290, −0.0181] | Missed margin by 0.0036 |
+| **SECS** ($n=253$) | `not_worse` (0.02) | 0.5743 | 0.5507 | −0.0236 | [−0.0290, −0.0181] | **FAIL** |
 
 *(Note: SECS is evaluated on $n=253$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=300$.)*
 
-**Observation:** Fine-tuning on a single clean voice significantly reduced hallucinations and phonetic distortions across unseen speakers (WER improved by $2.78\%$, CER improved by $8.13\%$, UTMOS improved by $+0.095$, and severe synthesis failures dropped by $50\%$). A minor $-0.0236$ shift in zero-shot cloning of unseen speakers reflects expected domain specialization toward the fine-tuned speaker.
+**Result: the preservation comparison fails** (`passed: false` in `ab_report_preservation.json`). Its
+pre-registered SECS gate fails: similarity to unseen voices fell by 0.0236, beyond the 0.02 margin, and so is the
+interval's lower end (−0.0290), which is what the `not_worse` rule tests; the upper end (−0.0181) is within it. Adapting to one speaker reduced zero-shot cloning of others; that is the regression this gate
+exists to catch, so it is reported as a failure, not a near miss.
+
+The WER, CER and failure gates pass, but their mean differences are dominated by a few runaway takes: stock's mean
+CER of 0.1266 is strongly influenced by a few takes (CER 12, 10 and 5 contribute 0.090 of it), and both models have a median WER and CER of 0.0. Excluding
+takes with WER above 1.0, mean WER is 0.057 (stock) and 0.042 (tuned). The tuned model had fewer runaway takes
+(3 failures vs 6).
 
 ---
 

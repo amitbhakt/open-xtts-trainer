@@ -30,18 +30,21 @@ Evaluated on held-out reference audio of Moira Fogarty reading *The Art of War* 
 
 | Metric | Rule / Gate | Upstream Masking (F2) | Per-Sample Masking (Fix) | Paired Difference $\Delta$ | 95% Bootstrap CI | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Short-Prompt CER** | `not_worse` (margin 0.022) | **0.5556 (55.56%)** | **0.0000 (0.00%)** | **−0.5556 (−55.56%)** | [−1.6667, 0.0000] | **PASS** (Major bugfix) |
-| **Overall CER** | `not_worse` (margin 0.01) | 0.0946 (9.46%) | **0.0083 (0.83%)** | **−0.0863 (−8.63%)** | [−0.2552, +0.0001] | **PASS** (11× error drop) |
-| **Overall WER** | `not_worse` (margin 0.02) | 0.0529 (5.29%) | **0.0342 (3.42%)** | **−0.0187 (−1.87%)** | [−0.0550, +0.0018] | **PASS** (Improved) |
+| **Short-Prompt CER** | `not_worse` (margin 0.022) | **0.5556 (55.56%)** | **0.0000 (0.00%)** | **−0.5556 (−55.56%)** | [−1.6667, 0.0000] | PASS |
+| **Overall CER** | `not_worse` (margin 0.01) | 0.0946 (9.46%) | **0.0083 (0.83%)** | **−0.0863 (−8.63%)** | [−0.2552, +0.0001] | PASS |
+| **Overall WER** | `not_worse` (margin 0.02) | 0.0529 (5.29%) | **0.0342 (3.42%)** | **−0.0187 (−1.87%)** | [−0.0550, +0.0018] | PASS |
 | **Naturalness (UTMOS)** | `not_worse` (margin 0.10) | 4.2418 | 4.2134 | −0.0285 | [−0.0778, +0.0177] | **PASS** |
 | **Failures** | `not_worse` (margin 0) | 0 / 60 | 0 / 60 | 0 | [0.0, 0.0] | **PASS** |
-| **Speaker Similarity (SECS)** | `not_worse` (margin 0.02) | 0.5917 | 0.5748 | −0.0170 | [−0.0297, −0.0040] | **FAIL** (CI lower bound −0.0297 exceeds 0.02 margin) |
+| **Speaker Similarity (SECS)** | `not_worse` (margin 0.02) | 0.5917 | 0.5748 | −0.0170 | [−0.0297, −0.0040] | **FAIL** |
 
 *(Note: SECS is evaluated on $n=50$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=60$.)*
 
-### Empirical Findings & Gate Disclosure (Target Voice)
-* **Decisive Proof of Defect F2**: Under upstream batch masking, unmasked prompt tokens leaked into autoregressive training, driving a catastrophic 55.56% character error rate on short prompts. Fixing prompt masking to per-sample code lengths eliminated short-text hallucinations completely (**0.00% CER**) and drove an 11-fold reduction in overall character errors ($9.46\% \to 0.83\%$).
-* **Target Gate Outcome (`passed: false`)**: The target voice report fails its pre-registered SECS gate (`passed: false` in `ab_report_target.json`). While the point estimate difference is $-0.0170$ (within the $0.02$ margin), the bootstrap 95% CI interval $[-0.0297, -0.0040]$ extends to $-0.0297$ due to the sample size ($n=50$ qualifying pairs), exceeding the $-0.0200$ threshold. This is an expected consequence of eliminating unmasked acoustic prompt leakage.
+### Reading the target results
+* **The SECS gate fails** (`passed: false` in `ab_report_target.json`): similarity to the target speaker is 0.0170
+  lower with the fix, and the 95% interval $[-0.0297, -0.0040]$ extends beyond the 0.02 margin.
+* **No detectable intelligibility difference.** The 0.5556 short-prompt CER is a single take (CER 5.0) out of 9
+  short takes; its interval $[-1.6667, 0.0000]$ includes zero, and median WER and CER are 0.0 for both variants.
+* This regime was not in the pre-registration and is reported as an additional analysis.
 
 ---
 
@@ -51,19 +54,37 @@ Evaluated across all 5 unseen CMU ARCTIC voices (`arctic_slt`, `arctic_clb`, `ar
 
 | Metric | Rule / Gate | Upstream Masking (F2) | Per-Sample Masking (Fix) | Paired Difference $\Delta$ | 95% Bootstrap CI | Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Short-Prompt CER** | `not_worse` (margin 0.022) | **6.3111 (631.11%)** | **0.1741 (17.41%)** | **−6.1370 (−613.70%)** | [−16.7003, −0.2667] | **PASS** (Massive hallucination drop) |
-| **Overall CER** | `not_worse` (margin 0.01) | **0.9601 (96.01%)** | **0.0374 (3.74%)** | **−0.9228 (−92.28%)** | [−2.5863, −0.0368] | **PASS** (25× error reduction) |
-| **Overall WER** | `not_worse` (margin 0.02) | **0.8424 (84.24%)** | **0.0422 (4.22%)** | **−0.8002 (−80.02%)** | [−2.3312, −0.0146] | **PASS** (Catastrophic collapse resolved) |
-| **Naturalness (UTMOS)** | `not_worse` (margin 0.10) | 4.1150 | **4.1273** | **+0.0123** | [−0.0187, +0.0441] | **PASS** (Slightly improved) |
-| **Failures** | `not_worse` (margin 0) | 7 / 300 | **3 / 300** | **−4** | — | **PASS** (Reduced from 7 to 3) |
-| **Speaker Similarity (SECS)** | `not_worse` (margin 0.02) | 0.5690 | 0.5628 | **−0.0062** | [−0.0110, −0.0014] | **PASS** (Well within 0.02 margin) |
+| **Short-Prompt CER** | `not_worse` (margin 0.022) | **6.3111 (631.11%)** | **0.1741 (17.41%)** | **−6.1370 (−613.70%)** | [−16.7003, −0.2667] | PASS |
+| **Overall CER** | `not_worse` (margin 0.01) | **0.9601 (96.01%)** | **0.0374 (3.74%)** | **−0.9228 (−92.28%)** | [−2.5863, −0.0368] | PASS |
+| **Overall WER** | `not_worse` (margin 0.02) | **0.8424 (84.24%)** | **0.0422 (4.22%)** | **−0.8002 (−80.02%)** | [−2.3312, −0.0146] | PASS |
+| **Naturalness (UTMOS)** | `not_worse` (margin 0.10) | 4.1150 | **4.1273** | **+0.0123** | [−0.0187, +0.0441] | PASS |
+| **Failures** | `not_worse` (margin 0) | 7 / 300 | **3 / 300** | **−4** | — | PASS |
+| **Speaker Similarity (SECS)** | `not_worse` (margin 0.02) | 0.5690 | 0.5628 | **−0.0062** | [−0.0110, −0.0014] | PASS |
 
 *(Note: SECS is evaluated on $n=255$ qualifying pairs with take durations $\ge 2\text{ s}$ per headline speaker-embedding evaluation rule; overall $N=300$.)*
 
-### Empirical Conclusion (Base Speakers)
-* **Generalization and Preservation**: On unseen speakers, upstream's unmasked prompt leakage caused speech generation to collapse on challenging voices (notably `arctic_ksp` and short prompts), driving upstream WER to 84.24% and CER to 96.01% with 7 catastrophic synthesis failures. Per-sample conditioning masking resolved this breakdown across all 5 unseen speakers, slashing WER to 4.22%, CER to 3.74%, and reducing severe synthesis failures from 7 to 3.
-* **Zero-Shot Speaker Similarity Invariance**: On unseen base speakers ($n=255$ pairs), speaker similarity remained completely preserved: SECS dropped by only $-0.0062$ (from 0.5690 to 0.5628), with the 95% bootstrap CI $[-0.0110, -0.0014]$ strictly inside the allowable pre-registered $0.02$ tolerance margin.
-* **Hypothesis Decision**: In this $N=300$ preservation regime, all 7 pre-registered gates passed (`passed: true` in `ab_report_base.json`), confirming that per-sample conditioning masking prevents cross-speaker collapse while maintaining zero-shot speaker similarity.
+### Reading the unseen-voice results
+* **Decision: all pre-registered gates pass** (`passed: true` in `ab_report_base.json`), so the fix is retained.
+* **The means are dominated by single takes.** One upstream take on `arctic_ksp` (seed 1, `en_51`) has WER 221
+  (the model kept generating speech), and one on `arctic_bdl` (seed 2, `en_53`) has WER 11; together they
+  contribute 0.77 of the 0.84 mean WER. Medians are 0.0 for both.
+
+| Statistic | Upstream (F2) | Per-sample (fix) | Fisher $p$ (exploratory) |
+| :--- | :---: | :---: | :---: |
+| Mean WER without takes above WER 1.0 | 0.053 | 0.042 | — |
+| Runaway takes (WER > 1.0) | 4 / 300 | 0 / 300 | 0.12 |
+| Takes flagged too long | 7 / 300 | 3 / 300 | 0.34 |
+| Short prompts with CER > 0.5 | 9 / 45 | 2 / 45 | 0.05 |
+
+* **What this supports:** fewer badly failed short prompts and no runaway takes with the fix; otherwise similar
+  intelligibility. Consistent with F2 causing occasional runaway generation, but suggestive at $N=300$, not
+  established. The Fisher tests were chosen after seeing the data.
+
+### Deviations from the pre-registration
+1. `eval/pre_registered_ablations.json` specifies "Paired N=300 per seed, across 3 seeds" (900 pairs); this run
+   has 300 pairs in total (5 voices × 20 prompts × 3 seeds). Re-evaluating the existing checkpoints would close it.
+2. Duration-ratio failures are listed as a primary metric; they are reported here but have no gate beyond the
+   shared failures gate.
 
 ---
 
