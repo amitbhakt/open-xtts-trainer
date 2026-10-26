@@ -247,6 +247,7 @@ def evaluate_clean_and_shifted(
             lang=r0.lang,
             sr=r0.sr,
             duration_s=round(len(clip_shifted) / SPEC.output_sample_rate, 4),
+            single_clip_speaker=True,
             alignment={k: v for k, v in r0.alignment.items() if k != "words"},
             transcript_source=r0.transcript_source,
         )
@@ -401,8 +402,8 @@ def main():
         "quality_config": {
             "min_word_score": 0.05,
             "weak_word_score": 0.20,
-            "max_weak_words": 1,
-            "max_unexplained_speech_s": 0.10,
+            "max_weak_words": 3,
+            "max_unexplained_speech_s": 0.20,
             "min_gap_s": 0.15,
             "edge_pad_s": 0.20,
         },

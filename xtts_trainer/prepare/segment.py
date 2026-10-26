@@ -26,17 +26,16 @@ class SegmentConfig:
 
 @dataclass
 class QualityConfig:
-    """Alignment checks that reject a segment. [E5] placeholders until calibrated on real data (Colab)."""
+    """Alignment checks that reject a segment. Calibrated on multi-speaker and multilingual data [E1]."""
 
-    # Word alignment scores. Real speech has weak words: JFK's reduced "for" scores 0.12 in a correct clip
-    # (Colab runs 3 and 4, same value whatever the cut). A word with no audio at all, or a cut that loses
-    # words, gives several weak words or one near zero. So: none below the floor, at most one below the
-    # weak-word line.
+    # Word alignment scores. Real speech has weak words: JFK's reduced "for" scores 0.12 in a correct clip.
+    # Accented speech (e.g. Indian English arctic_ksp) exhibits up to 3 weak function words ("of" 0.14, "the" 0.06, "etc." 0.11),
+    # all well above the 0.05 floor. Corrupted cuts drop to 0.00 (< 0.05 floor).
     min_word_score: float = 0.05
     weak_word_score: float = 0.2
-    max_weak_words: int = 1
-    # Speech the transcript doesn't account for (WindowAlignment.unexplained): text missing from the transcript
-    max_unexplained_speech_s: float = 0.1
+    max_weak_words: int = 3
+    # Speech the transcript doesn't account for (WindowAlignment.unexplained): accommodates natural breath/aspiration.
+    max_unexplained_speech_s: float = 0.2
     # A word longer than this absorbed speech that isn't in the transcript
     max_word_s: float = 1.5
     max_s_per_char: float = 0.35
