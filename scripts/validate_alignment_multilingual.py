@@ -57,6 +57,7 @@ SOURCES: List[Dict[str, Any]] = [
         "url": "https://raw.githubusercontent.com/openai/whisper/86098128c0b4f24f0e2aa2994de830614b474227/tests/jfk.flac",
         "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
         "filename": "jfk.flac",
+        "license": "Public Domain (1961 US Presidential inaugural address, work of US Gov under 17 U.S.C. § 105; openai/whisper test fixture)",
         "transcript": (
             "And so, my fellow Americans: ask not what your country can do for you, "
             "ask what you can do for your country."
@@ -72,6 +73,7 @@ SOURCES: List[Dict[str, Any]] = [
         "kind": "local",
         "local_path": os.path.join(REPO_ROOT, "eval", "reference_voices", "arctic_slt.wav"),
         "sha256": "36895e2c7df0e354c059319fe32c612635b552a25ffc2692d56a8d9ee1d74e82",
+        "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/slt_COPYING)",
         "transcript": "Author of the danger trail, Philip Steels, etc. Not at this particular case, Tom, apologized Whittemore.",
         "min_s": 2.0,
         "max_s": 11.0,
@@ -84,6 +86,7 @@ SOURCES: List[Dict[str, Any]] = [
         "kind": "local",
         "local_path": os.path.join(REPO_ROOT, "eval", "reference_voices", "arctic_ksp.wav"),
         "sha256": "e374c94b05fe476b8563f0ac3086d4c601ead7d80cd42e5512a0d1c7ac424fd8",
+        "license": "CMU ARCTIC Permissive License (Language Technologies Institute, Carnegie Mellon University; eval/reference_voices/licenses/ksp_COPYING)",
         "transcript": "Author of the danger trail, Philip Steels, etc. Not at this particular case, Tom, apologized Whittemore.",
         "min_s": 2.0,
         "max_s": 11.0,
@@ -97,6 +100,7 @@ SOURCES: List[Dict[str, Any]] = [
         "url": "https://archive.org/download/cuentosdehadas_1701_librivox/cuentosdehadas_00_perrault_64kb.mp3",
         "sha256": "28d18af59b6dcfad0d9f8121a948ecc377723d40639af7f0e64eba4fc3d7e30e",
         "filename": "cuentosdehadas_00_perrault_64kb.mp3",
+        "license": "Public Domain (LibriVox public domain dedication CC0/PD; https://librivox.org/)",
         "transcript": (
             "Introducción de Cuentos de Hadas. Esta es una grabación de LibriVox. "
             "Todas las grabaciones de LibriVox están en el dominio público. "
@@ -286,6 +290,8 @@ def evaluate_clean_and_shifted(
         "id": sid,
         "speaker": speaker,
         "language": lang,
+        "sha256": source_cfg["sha256"],
+        "license": source_cfg["license"],
         "description": source_cfg["description"],
         "alignment_time_s": align_time,
         "clean_segments_count": len(records),
