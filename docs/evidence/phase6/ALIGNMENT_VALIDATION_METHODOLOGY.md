@@ -2,56 +2,184 @@
 
 Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)**.
 
+---
+
 ## 1. Experimental Scope & Precision of Claims
-- **Scope**: Comprehensive validation of MMS-FA forced alignment generalization and mutation sensitivity across **8 distinct vetted baseline speakers**, 2 languages, and 5 accents:
-  1. `jfk_english_male` (US English male, 1960s vintage)
-  2. `arctic_slt_english_female` (US English female, studio clean)
+
+- **Scope**: Comprehensive validation of MMS-FA forced alignment generalization and mutation sensitivity across **8 distinct vetted baseline speakers**, 2 languages (English, Castilian Spanish), and 5 accent profiles:
+  1. `jfk_english_male` (US English male, 1960s vintage recording)
+  2. `arctic_slt_english_female` (US English female, studio clean gold standard)
   3. `arctic_ksp_english_indian_accent` (Indian English male, accented, studio clean)
   4. `arctic_bdl_english_male` (US English male, studio clean)
   5. `arctic_clb_english_female` (US English female, studio clean)
   6. `arctic_awb_english_scottish` (Scottish English male, accented, studio clean)
-  7. `ljspeech_female` (US English female, studio clean gold standard)
-  8. `spanish_cuentos_male` (Castilian Spanish male, modern LibriVox audiobook)
-- **Controlled Corruption Design**: A publication-grade matrix of ~65–75 controlled corruption tests across 3 realistic failure modes:
-  1. **Edge Truncation Severity Ladder**: 100ms, 250ms, 500ms, 1000ms at closing word tail and opening word head.
-  2. **Hallucinated / Unspoken Word in Transcript**: Token insertions across Head, Mid, and Tail positions (function vs. content words).
-  3. **Unexplained Speech Spillover**: Sub-threshold ($0.10\text{s} \le 0.20\text{s}$) vs. Cross-threshold ($0.50\text{s} > 0.20\text{s}$) spoken speech from adjacent utterances.
-- **Hierarchical Reporting**: To account for intra-source correlation, results are reported both aggregated by corruption type and grouped by speaker/source.
+  7. `ljspeech_female` (US English female, benchmark standard)
+  8. `spanish_cuentos_male` (Castilian Spanish male, LibriVox audiobook)
+
+- **Controlled Corruption Matrix**: A 96-test evaluation protocol (8 clean baselines + 88 controlled corruptions, 11 mutations per speaker) across 3 realistic failure modes:
+  1. **Edge Truncation Severity Ladder**: 100 ms, 250 ms, 500 ms, 1,000 ms at closing word tail and 500 ms, 1,000 ms at opening word head.
+  2. **Hallucinated / Unspoken Word in Transcript**: Token insertions across Head, Mid, and Tail positions (short function words vs. long content words).
+  3. **Unexplained Speech Spillover**: Sub-threshold ($+0.10\text{s} \le 0.20\text{s}$) vs. Cross-threshold ($+0.50\text{s} > 0.20\text{s}$) spoken audio from adjacent sentence onsets.
+
+- **Defensible Framing**: The benchmark **characterizes detection performance and identifies specific failure modes on a targeted evaluation set**. It establishes zero false-positive rejections on clean baseline speech while mapping empirical detection limits on boundary truncations, transcript insertions, and trailing speech spillover.
 
 ---
 
-## 2. Threshold Calibration & Scoring Mechanics
+## 2. Validator Threshold Arithmetic & Exact Comparison Operators
 
-The validator implements a two-tier quality evaluation to separate true alignment errors from legitimate phonetic variations:
+The alignment validator evaluates segment quality through `xtts_trainer/prepare/segment.py:segment_problems`. A code audit confirms the exact comparison operators implemented, including boundary equality semantics:
 
-### Tier 1: Absolute Rejection Floor (`min_word_score = 0.05`)
-- Any word in the transcript whose CTC posterior alignment score falls below $0.05$ is flagged as `alignment_mismatch: low_alignment_score: '<word>' < 0.05`.
-- This catches missing speech, hallucinated text, or truncated audio clips.
+```python
+# xtts_trainer/prepare/segment.py:153-172
+def segment_problems(segment: Segment, unexplained_speech_s: float, config: Optional[QualityConfig] = None) -> List[str]:
+    config = config or QualityConfig()
+    problems = []
+    worst = min(segment.words, key=lambda w: w.score)
+    if worst.score < config.min_word_score:
+        problems.append(f"low_alignment_score: '{worst.text}' {worst.score:.2f} < {config.min_word_score}")
+    weak = [w for w in segment.words if w.score < config.weak_word_score]
+    if len(weak) > config.max_weak_words:
+        listed = ", ".join(f"'{w.text}' {w.score:.2f}" for w in weak[:4])
+        problems.append(f"weak_alignment: {len(weak)} words below {config.weak_word_score} ({listed}); "
+                        f"at most {config.max_weak_words} allowed")
+    if unexplained_speech_s > config.max_unexplained_speech_s:
+        problems.append(f"unexplained_speech: {unexplained_speech_s:.2f}s of speech not in the transcript")
+    for w in segment.words:
+        limit = max(config.max_word_s, config.max_s_per_char * len(w.text))
+        if w.end_s - w.start_s > limit:
+            problems.append(f"stretched_word: '{w.text}' spans {w.end_s - w.start_s:.2f}s")
+            break
+    return problems
+```
 
-### Tier 2: Accented & Unstressed Tolerance Band (`weak_word_score = 0.20`, `max_weak_words = 3`)
-- Words with $0.05 \le \text{score} < 0.20$ are classified as "weak words".
-- **Why `arctic_ksp` passed with minimum score 0.183**:
-  - In non-native or accented speech (such as Indian English `arctic_ksp`), unstressed function words or non-standard vowel durations frequently register lower CTC posteriors ($0.10 \text{--} 0.19$) despite being fully intelligible and properly articulated.
-  - Enforcing a strict single-weak-word limit (`max_weak_words = 1`) produced false positives on natural accented speech.
-  - Calibrating `max_weak_words = 3` allows valid speech with occasional low-confidence tokens to pass without lowering the safety floor for catastrophic alignment drift.
-  - In `arctic_ksp`, exactly 1 word fell in the weak band ($0.183$). Because $0.183 \ge 0.05$ (Tier 1 satisfied) and $1 \le 3$ (Tier 2 satisfied), the clip validly passed.
+### Threshold Summary Table
 
-### Mutation Contrast
-When a $1.0\text{s}$ truncation was injected into `arctic_ksp`:
-- Word scores for missing words dropped to $0.01 \text{--} 0.03$, triggering hard Tier 1 `alignment_mismatch` rejection.
-- The number of sub-$0.20$ words surged to $5 \text{--} 6$, simultaneously violating the Tier 2 threshold.
+| Parameter | Config Value | Exact Code Comparison | Behavior at Equality | Rationale |
+|---|---|---|---|---|
+| `min_word_score` | `0.05` | `worst.score < 0.05` | Score of $0.050$ passes | Severe failure floor. Rejects missing/severely mutilated words. |
+| `weak_word_score` | `0.20` | `w.score < 0.20` | Score of $0.200$ is not weak | Classifies unstressed/accented words into the weak-word tolerance band. |
+| `max_weak_words` | `3` | `len(weak) > 3` | Exactly 3 weak words passes | Permits natural reduction in accented speech (e.g. Indian English `arctic_ksp`). 4+ rejects. |
+| `max_unexplained_speech_s` | `0.20s` | `unexplained_speech_s > 0.20` | Measured $0.200\text{s}$ passes | Speech detected by CTC emissions outside aligned path. Accommodates brief breath/aspirations. |
+| `max_word_s` | `1.50s` | `(w.end_s - w.start_s) > limit` | Duration equal to limit passes | Prevents unaligned speech from being silently stretched over adjacent words. |
+| `max_s_per_char` | `0.35s` | `limit = max(1.5, 0.35 * len(text))` | Proportional to word length | Accommodates drawn-out polysyllabic words while capping pathological stretching. |
+
+### Word Score Calculation Formula
+In `xtts_trainer/prepare/align.py:align_emission`, word-level alignment scores are computed from character token posterior probabilities:
+$$\text{Score}(W) = \frac{\sum_{s \in \text{spans}} \text{Prob}(s) \times (s_{\text{end}} - s_{\text{start}})}{\sum_{s \in \text{spans}} (s_{\text{end}} - s_{\text{start}})}$$
+where $\text{Prob}(s) = \exp(\text{log\_score})$ from `torchaudio.functional.forced_align`.
+The score is a **frame-weighted average posterior probability** across the character tokens comprising the word, not a naive unweighted arithmetic mean.
 
 ---
 
-## 3. Mutation Protocol & Blinding
+## 3. Empirical Results Across 8 Vetted Baseline Speakers
 
-1. **Source Slicing**:
-   - Clean speech was aligned to compute exact segment time boundaries $[t_{\text{start}}, t_{\text{end}}]$.
-   - Corrupted clips were generated by slicing the resampled source audio at:
-     - `truncate_tail_-1.0s`: $[t_{\text{start}}, \max(t_{\text{start}} + 0.5, t_{\text{end}} - 1.0)]$
-     - `truncate_head_+1.0s`: $[\min(t_{\text{end}} - 0.5, t_{\text{start}} + 1.0), t_{\text{end}}]$
-   - Slices were saved as individual WAV files.
-2. **Blind Validation**:
-   - The corrupted audio files were paired with the **complete, uncorrupted transcript** and written to a standard `metadata.csv` manifest.
-   - The validator (`validate_dataset` with `realignment_checker`) was executed with **zero prior knowledge** of corruption type, presence of synthetic perturbations, or expected outcomes.
-   - Rejection was triggered purely from the CTC forced-alignment posteriors computed from the audio and transcript.
+Evaluated on an **NVIDIA A100-SXM4-40GB GPU** via PyTorch 2.1.2 + CUDA 12.1. Full results saved to `docs/evidence/phase6/multilingual_alignment_validation.json`.
+
+### Clean Baseline Verification (Zero False Positives)
+- **Distinct Vetted Speakers Tested**: 8 (`jfk`, `arctic_slt`, `arctic_ksp`, `arctic_bdl`, `arctic_clb`, `arctic_awb`, `ljspeech`, `spanish_cuentos_male`).
+- **Clean Acceptance Rate**: **8/8 (100%)**.
+- Every clean baseline recording across all 8 speakers and 2 languages was accepted without false-positive rejections.
+- Accented speech verification: `arctic_ksp` (Indian English male) exhibited 1 weak word (`"the"` with score $0.183$). Because $0.183 \ge 0.05$ (Tier 1 floor satisfied) and $1 \le 3$ (Tier 2 weak-word limit satisfied), the utterance was correctly accepted.
+
+---
+
+## 4. Observed Rejection Rates by Mutation Type and Severity
+
+Rejection behavior differed substantially between mutation types and boundary locations. Rather than exhibiting a single uniform sensitivity curve, detection rates depend on cut location, acoustic context, and word length:
+
+```
+Observed Rejection Rates by Mutation Type and Severity:
+---------------------------------------------------------------------
+100 ms tail cut:     3/8 rejected  (37.5%)   [5 passed]
+250 ms tail cut:     5/8 rejected  (62.5%)   [3 passed]
+500 ms tail cut:     7/8 rejected  (87.5%)   [1 passed]
+1,000 ms tail cut:   7/8 rejected  (87.5%)   [1 passed]
+500 ms head cut:     7/8 rejected  (87.5%)   [1 passed]
+1,000 ms head cut:   8/8 rejected  (100.0%)  [0 passed]
+---------------------------------------------------------------------
+Total Edge Truncation: 37/48 rejected (77.1%)
+```
+
+### Analysis of Head vs. Tail Cut Asymmetry
+1. **Head Truncation**:
+   - 1,000 ms head cut: 8/8 (100%) rejected.
+   - 500 ms head cut: 7/8 (87.5%) rejected.
+   - Cutting the onset of an utterance immediately amputates the opening word's consonants or primary vowel. The trellis cannot match the opening characters to the missing acoustics, dropping the word score to $0.00 \text{--} 0.04$ ($< 0.05$ hard floor).
+2. **Tail Truncation**:
+   - 100 ms tail cut: 3/8 (37.5%) rejected.
+   - 250 ms tail cut: 5/8 (62.5%) rejected.
+   - Tail cuts of 100–250 ms frequently clip trailing silence, post-vocalic aspiration, or nasal release without reducing the core vowel nucleus below the $0.05$ score threshold. The aligner compresses the final character's span into the remaining frames, producing scores in the $0.08 \text{--} 0.16$ range that remain within the weak-word tolerance band.
+   - At $\ge 500\text{ ms}$, tail truncation reliably eliminates entire words or syllable codas, achieving 87.5% detection.
+
+---
+
+## 5. Investigation of Failure Mode 1: Transcript Insertions (17/24 Rejected)
+
+Across 24 insertion trials (3 per speaker: head function word, mid content word, tail content word), 17 were rejected and 7 were accepted. A frame-level diagnostic probe (`scripts/diagnose_alignment_edge_cases.py`) on GPU established the exact mechanism for all 7 accepted cases:
+
+| Speaker | Mutation Position | Inserted Token | Inserted Word Score | Utterance Weak Word Count | Acceptance Mechanism |
+|---|---|---|---|---|---|
+| `jfk_english_male` | Tail Content | *"consequently"* | $0.0869$ | 1 ($\le 3$) | Score above 0.05 floor; absorbed by weak-word tolerance |
+| `arctic_slt_english_female` | Tail Content | *"consequently"* | $0.0690$ | 2 ($\le 3$) | Score above 0.05 floor; absorbed by weak-word tolerance |
+| `spanish_cuentos_male` | Tail Content | *"consecuentemente"* | $0.0599$ | 1 ($\le 3$) | Score above 0.05 floor; absorbed by weak-word tolerance |
+| `ljspeech_female` | Tail Content | *"consequently"* | $0.1666$ | 1 ($\le 3$) | Score above 0.05 floor; absorbed by weak-word tolerance |
+| `ljspeech_female` | Head Function | *"Moreover"* | $0.1250$ | 1 ($\le 3$) | Score above 0.05 floor; absorbed by weak-word tolerance |
+| `arctic_bdl_english_male` | Mid Content | *"extraordinary"* | **$0.2371$** | 0 ($\le 3$) | Phonetic substring match (/dʒər/ and /tr/); scored above 0.20 weak threshold |
+| `arctic_awb_english_scottish` | Mid Content | *"extraordinary"* | **$0.2335$** | 0 ($\le 3$) | Phonetic substring match (/dʒər/ and /tr/); scored above 0.20 weak threshold |
+
+### Diagnostic Findings
+1. **Weak-Word Tolerance Absorption (5 cases)**:
+   - For trailing words aligned over low-amplitude background noise or terminal silence, MMS-FA emissions average $0.06 \text{--} 0.16$ across the character sequence.
+   - Because $0.0599 \text{--} 0.1666 \ge 0.05$, the hard floor does not trigger.
+   - Because only 1 or 2 words in the utterance scored below $0.20$, `len(weak) <= 3`, and the segment passes.
+2. **Acoustic Substring Overlap (2 cases)**:
+   - In `arctic_bdl` and `arctic_awb`, inserting *"extraordinary"* between *"danger"* and *"trail"* caused the aligner to map tokens to acoustically similar phones in adjacent words (/dʒər/ and /tr/).
+   - The inserted word scored $> 0.20$, so it was not even classified as a weak word.
+
+---
+
+## 6. Investigation of Failure Mode 2: Speech Spillover (+500 ms Appended Audio)
+
+In the spillover benchmark:
+- **Sub-threshold condition ($+0.10\text{s}$ appended)**: 8/8 correctly accepted (tolerance functioning as intended).
+- **Cross-threshold condition ($+0.50\text{s}$ appended)**: 8/8 passed, evading the expected rejection.
+
+### Frame-Level Diagnostic on Representative Cases
+To understand why $+500\text{ms}$ appended audio was not flagged, frame-level trellis paths, token spans, and RMS speech energies were measured on 3 representative speakers on GPU:
+
+| Metric | `jfk_english_male` | `arctic_slt_english_female` | `spanish_cuentos_male` |
+|---|---|---|---|
+| Inter-utterance silence before appended speech | $0.340\text{s}$ | $0.280\text{s}$ | $0.310\text{s}$ |
+| Appended slice RMS energy | $0.1843$ (speech) | $0.1359$ (speech) | $0.0539$ (speech) |
+| Terminal word duration in clean clip | $0.360\text{s}$ (*"ask"*) | $0.300\text{s}$ (*"etc."*) | $0.620\text{s}$ (*"años"*) |
+| Terminal word duration with $+500\text{ms}$ | $0.379\text{s}$ | $0.280\text{s}$ | $0.620\text{s}$ |
+| Terminal word duration growth | $+0.019\text{s}$ | $-0.020\text{s}$ | $0.000\text{s}$ |
+| Trellis assignment of trailing frames | **BLANK** tokens | **BLANK** tokens | **BLANK** tokens |
+| MMS-FA argmax heard non-blank frames | 6 frames | 6 frames | 11 frames |
+| **Measured `unexplained_speech_s`** | **$0.0801\text{s}$** | **$0.0802\text{s}$** | **$0.1401\text{s}$** |
+| Threshold (`max_unexplained_speech_s`) | $0.2000\text{s}$ | $0.2000\text{s}$ | $0.2000\text{s}$ |
+| Validator Verdict | Passed ($0.0801 \le 0.20$) | Passed ($0.0802 \le 0.20$) | Passed ($0.1401 \le 0.20$) |
+
+> [!NOTE]
+> The measured unexplained speech durations of $80 \text{--} 140\text{ ms}$ directly explain why these three displayed examples passed. Frame-level trellis analysis was confirmed on these three diagnostic cases; while all eight cross-threshold cases passed in the aggregate benchmark, acoustic durations vary by speaker.
+
+### Key Technical Mechanism
+1. **No Terminal Word Stretching**:
+   The CTC trellis does not force the terminal transcript word to stretch across the appended speech. Across all three cases, the terminal word boundary shifted by at most $19\text{ ms}$. Trailing frames were assigned to the CTC blank token (`-`).
+2. **Measurement vs. Injected Duration**:
+   While $500\text{ ms}$ of audio was appended, the initial $280 \text{--} 340\text{ ms}$ consisted of inter-utterance pause/silence. Active speech onset occurred only in the final $160 \text{--} 220\text{ ms}$.
+3. **Argmax Emission Sensitivity**:
+   MMS-FA's argmax emissions detected non-blank speech characters during these trailing frames. However, because the active speech portion lasted only $80 \text{--} 140\text{ ms}$, the measured `unexplained_speech_s` remained below the configured `0.20s` ($200\text{ ms}$) threshold. Thus, the validator correctly executed its configured comparison (`unexplained_speech_s > 0.20`), but the condition did not trigger.
+
+---
+
+## 7. Conclusions & Publication Guidance
+
+1. **Clean Generalization**: The MMS-FA aligner and two-tier quality thresholds achieve 100% clean baseline acceptance across 8 vetted speakers, 2 languages, and 5 distinct accent profiles.
+2. **Boundary Sensitivity**: Detection of edge truncation is asymmetric: head truncation is detected at 87.5%–100% severity, while tail truncation detection scales from 37.5% (100 ms) to 87.5% (500–1,000 ms).
+3. **Identified Failure Modes**:
+   - Unsupported transcript insertions can be accepted if the aligner's score on silence ($0.06 \text{--} 0.16$) is absorbed by the weak-word tolerance band (`max_weak_words = 3`), or if phonetic similarity allows partial substring alignment.
+   - Trailing speech spillover is absorbed as blanks by the CTC trellis and will pass undetected whenever the acoustic duration of the extra speech is under the $200\text{ ms}$ tolerance.
+4. **Future Refinements**: For downstream production recipes, consider:
+   - Proportional weak-word budgeting (e.g. at most 1 weak word per 10 words, rather than a flat allowance of 3).
+   - Tighter unexplained speech thresholds (e.g. $0.10\text{s}$) paired with energy-based VAD boundary checks.
