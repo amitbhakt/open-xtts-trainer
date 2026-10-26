@@ -212,30 +212,38 @@ def evaluate_clean_and_shifted(
     weak_words_count = sum(1 for s in word_scores if s < 0.20)
     max_unexplained_s = max(unexplained_list) if unexplained_list else 0.0
 
-    # Mutation test: shift cut boundary of record 0 by +-1.0s
+    # Mutation sensitivity tests: verify that genuine audio-transcript corruptions are caught and rejected.
+    # 1. truncate_tail: cut audio 1.0s before the end of the sentence (closing words chopped off audio)
+    # 2. truncate_head: start audio 1.0s after the start of the sentence (opening words chopped off audio)
+    # 3. intrude_next_speech: extend audio into the next sentence's spoken words (unexplained speech in audio)
     mutation_results: Dict[str, Any] = {}
-    shifts = [1.0, -1.0]
+    r0 = records[0]
 
-    for shift_s in shifts:
-        shift_label = f"shift_{shift_s:+.1f}s"
-        out_shift = os.path.join(work_dir, sid, shift_label)
+    source_audio, sr = sf.read(audio_path, dtype="float32")
+    if source_cfg.get("max_seconds"):
+        source_audio = source_audio[: int(source_cfg["max_seconds"] * sr)]
+    if source_audio.ndim > 1:
+        source_audio = source_audio.mean(axis=1)
+
+    src_resampled = torchaudio.functional.resample(
+        torch.from_numpy(source_audio), sr, SPEC.output_sample_rate
+    ).numpy()
+
+    mutations_to_test = [
+        ("truncate_tail_-1.0s", r0.alignment["start_s"], max(r0.alignment["start_s"] + 0.5, r0.alignment["end_s"] - 1.0)),
+        ("truncate_head_+1.0s", min(r0.alignment["end_s"] - 0.5, r0.alignment["start_s"] + 1.0), r0.alignment["end_s"]),
+    ]
+
+    if len(records) >= 2:
+        next_speech_mid = records[1].alignment["start_s"] + 0.6
+        if next_speech_mid < len(src_resampled) / SPEC.output_sample_rate:
+            mutations_to_test.append(("intrude_next_speech", r0.alignment["start_s"], next_speech_mid))
+
+    for label, a_s, b_s in mutations_to_test:
+        out_shift = os.path.join(work_dir, sid, label)
         os.makedirs(out_shift, exist_ok=True)
 
-        source_audio, sr = sf.read(audio_path, dtype="float32")
-        if source_cfg.get("max_seconds"):
-            source_audio = source_audio[: int(source_cfg["max_seconds"] * sr)]
-        if source_audio.ndim > 1:
-            source_audio = source_audio.mean(axis=1)
-
-        src_resampled = torchaudio.functional.resample(
-            torch.from_numpy(source_audio), sr, SPEC.output_sample_rate
-        ).numpy()
-
-        r0 = records[0]
-        a = r0.alignment["start_s"]
-        b = max(a + 0.5, r0.alignment["end_s"] + shift_s)
-        clip_shifted = src_resampled[int(a * SPEC.output_sample_rate) : int(b * SPEC.output_sample_rate)]
-
+        clip_shifted = src_resampled[int(a_s * SPEC.output_sample_rate) : int(b_s * SPEC.output_sample_rate)]
         out_clip_path = os.path.join(out_shift, r0.audio)
         os.makedirs(os.path.dirname(out_clip_path), exist_ok=True)
         sf.write(out_clip_path, clip_shifted, SPEC.output_sample_rate, subtype="PCM_16")
@@ -268,8 +276,9 @@ def evaluate_clean_and_shifted(
             for e in val_shift.errors
         ) or (not val_shift.ok)
 
-        mutation_results[shift_label] = {
-            "shift_s": shift_s,
+        mutation_results[label] = {
+            "start_s": round(a_s, 3),
+            "end_s": round(b_s, 3),
             "detected_and_rejected": detected_mismatch,
             "validation_ok": val_shift.ok,
             "errors": [f"{e.code}: {e.message}" for e in val_shift.errors],
