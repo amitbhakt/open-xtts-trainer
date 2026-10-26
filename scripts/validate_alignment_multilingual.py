@@ -104,6 +104,7 @@ SOURCES: List[Dict[str, Any]] = [
         ),
         "min_s": 2.5,
         "max_s": 11.0,
+        "max_seconds": 18.0,
     },
 ]
 
@@ -164,6 +165,7 @@ def evaluate_clean_and_shifted(
         transcript=transcript,
         aligner=aligner,
         config=prep_config,
+        max_seconds=source_cfg.get("max_seconds"),
     )
     align_time = round(time.time() - t0, 3)
 
@@ -220,6 +222,8 @@ def evaluate_clean_and_shifted(
         os.makedirs(out_shift, exist_ok=True)
 
         source_audio, sr = sf.read(audio_path, dtype="float32")
+        if source_cfg.get("max_seconds"):
+            source_audio = source_audio[: int(source_cfg["max_seconds"] * sr)]
         if source_audio.ndim > 1:
             source_audio = source_audio.mean(axis=1)
 
