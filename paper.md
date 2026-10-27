@@ -304,7 +304,9 @@ of the SECS interval to be above zero.
   weak-word allowance was increased from one to three after observing that clean, accented non-native speech
   (`arctic_ksp`, Indian English) produced three weak function words scoring down to 0.062 (a narrow 0.012 margin above
   the floor). The unexplained-speech limit was retained at 0.10 s, where all clean recordings measure 0.00 s. These
-  values are therefore in-sample calibrations on those recordings, not independent validations of them.
+  values are therefore in-sample calibrations on those recordings, not independent validations of them. A
+  pre-registered held-out run then validated them out-of-sample for clean English speech only (Section 5.4,
+  Table 3c).
 - **Continuous integration.** CI runs linting and the full test suite. Tests that need real weights, GPU or
   licensed audio run in a Colab notebook, and their outputs are archived as evidence.
 
@@ -432,7 +434,8 @@ above the $0.05$ floor), registering three weak words below $0.20$. Accommodatin
 0.05 safety floor required calibrating the weak-word allowance to three (`max_weak_words = 3`), narrowing the
 detection margin and trading off sensitivity to short tail truncations. Retaining the unexplained-speech limit at
 0.10 s ensures that clean recordings (all measuring 0.00 s) pass while trailing speech intrusions above 100 ms are
-flagged. These thresholds are therefore in-sample calibrations (`[E5]`), not an independent validation of them.
+flagged. These thresholds are therefore in-sample calibrations (`[E5]`), not an independent validation of them;
+the held-out run below supplies that validation for clean English speech.
 
 **Multi-speaker and cross-accent calibration across 8 baseline voices.** To characterize these thresholds across a wider range of acoustic conditions in-sample, we evaluated an 8-speaker calibration set on an NVIDIA A100 GPU spanning two languages (English and Castilian Spanish) and five accent profiles (`jfk_english_male`, `arctic_slt_english_female`, `arctic_ksp_english_indian_accent`, `arctic_bdl_english_male`, `arctic_clb_english_female`, `arctic_awb_english_scottish`, `ljspeech_female`, and `spanish_cuentos_male`).
 
@@ -456,7 +459,36 @@ On this calibration set, all eight clean recordings passed (accented speech in `
 
 Tail truncation exhibits a non-monotonic detection pattern (37.5% at 100 ms, 62.5% at 250 ms, 25.0% at 500 ms, and 87.5% at 1,000 ms): while 250 ms cuts directly clip terminal word nuclei dropping scores to 0.01–0.04 (< 0.05 floor), a 500 ms cut often eliminates the terminal word entirely or lands in an inter-word pause, enabling the CTC trellis to realign earlier tokens across remaining frames without triggering the 0.05 floor (the two rejected 500 ms cases scored 0.01 on their truncated terminal words), before 1,000 ms cuts reliably truncate full words and shift prior boundaries.
 
-A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. Under the 0.10 s unexplained-speech limit, the Spanish spillover case (measuring 140 ms of active speech) is detected and rejected, while the remaining seven cases had active trailing speech lasting only 80–85 ms (the rest consisting of inter-utterance pause), which fell below the 0.10 s limit. This characterizes in-sample calibration trade-offs; held-out validation across new speakers and additional languages in the locked environment remains pending.
+A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. Under the 0.10 s unexplained-speech limit, the Spanish spillover case (measuring 140 ms of active speech) is detected and rejected, while the remaining seven cases had active trailing speech lasting only 80–85 ms (the rest consisting of inter-utterance pause), which fell below the 0.10 s limit.
+
+**Held-out validation on unseen speakers.** The thresholds above were then frozen and measured out-of-sample
+under a pre-registered protocol (`docs/evidence/phase6_heldout/README.md`, committed before the run), in the locked
+environment (`torch 2.14.1+cu130`, CUDA 13.0), on speakers and text that played no part in setting them: CMU ARCTIC
+`rms` and `jmk` (utterances `a0003`–`a0022`, transcripts from the corpus prompt file) and LibriVox openings in French
+and German (transcripts checked by listening). The one disclosed deviation: the listening checks were recorded in the
+working tree and committed with the results, not before the run.
+
+**Table 3c.** Held-out results. A corruption counts as detected only at a rejection rate of at least 80%
+(pre-registered); intervals are 95% Clopper–Pearson.
+
+| Measure | Result | Pre-registered verdict |
+|---|---|---|
+| Clean acceptance, English | 59/60 (98.3%, [0.911, 1.000]); silence controls 17/17 | Validated |
+| Clean acceptance, French / German | 4/4 ([0.398, 1.000]) / 3/3 ([0.292, 1.000]) | Too few clips to validate |
+| Head speech cut 600 / 300 / 150 ms | 100% / 93.8% / 50.0% rejected | Detected / detected / limitation |
+| Tail speech cut 600 / 300 / 150 / 50 ms | 93.3% / 43.8% / 12.5% / 0% rejected | Detected / limitation / limitation / limitation |
+| Inserted word at the start / middle / end | 100% / 76.5% / 64.7% rejected | Detected / limitation / limitation |
+| Next-utterance spillover 0.50 s / 0.05 s | 80.0% rejected ([0.519, 0.957]) / 14/15 passed | Detected at the bar / passes as intended |
+
+The out-of-sample evidence (`[E1]`) therefore covers **clean acceptance on English**: at most about 9% of clean
+English clips are wrongly rejected, at 95% confidence. The single rejection is `arctic_jmk` "Hardly were **our**
+plans made public", where "our" scored 0.022 (below the 0.05 floor). French and German are reported but not
+validated. Detection is reliable only for large corruptions: head cuts of 300 ms or more, the 600 ms tail cut, an
+inserted opening word, and 0.5 s of spillover. Shorter tail cuts and inserted mid- or end-of-sentence words often
+pass, so the validator is a safety net against gross mis-cuts, not a guarantee of exact boundaries. The recorded
+scores show why (exploratory, `docs/evidence/phase6_heldout/README.md` §6.4): almost every rejection comes from the
+0.05 floor, the weak-word allowance of three never triggers on held-out clean speech, and the corruptions that pass
+typically have a single weak word.
 
 ### 5.5 Training smoke runs with real weights
 
@@ -646,7 +678,7 @@ During fine-tuning, upstream masking appeared to yield slightly lower overall ev
 1. **Conditioning Prompt Tokens ($\mathcal{L}_{\text{prompt}}$):** Target code positions $[lo_i, hi_i)$ corresponding to the reference voice prompt prefix provided in context ($N=559$ tokens across both batches).
 2. **Speech Generation Tokens ($\mathcal{L}_{\text{gen}}$):** The non-prompt speech codes representing autoregressive speech generation outside the conditioning span ($N=251$ tokens across both batches).
 
-**Table 7c.** Token-Level Cross-Entropy Loss Decomposition on Held-Out Validation Clips ($B=4$, $N=810$ Total Active Tokens).
+**Table 7d.** Token-Level Cross-Entropy Loss Decomposition on Held-Out Validation Clips ($B=4$, $N=810$ Total Active Tokens).
 
 | Evaluation Component | Upstream Masking (F2 Defect) | Per-Sample Masking (Bugfix) | $\Delta$ (Bugfix − Upstream) | Notes / Reduction Method |
 | :--- | :---: | :---: | :---: | :--- |
@@ -835,6 +867,7 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 | Planner regression (5.4) | `docs/evidence/colab_run3/README.md`; `tests/test_prepare.py` (`test_cuts_prefer_the_longest_pause_jfk`, `test_pause_never_outweighs_speech`, `test_equal_speech_plans_cut_at_the_longer_pause`) |
 | Shifted-cut word scores, Table 3 (5.4) | `docs/evidence/colab_run4/jfk_realign_shift_*.json`; `test_mms_jfk_alignment_and_shifted_cut` |
 | Multilingual alignment validation, Table 3b (5.4) | `docs/evidence/phase6/README.md`; `docs/evidence/phase6/multilingual_alignment_validation.json`; `docs/evidence/phase6/ALIGNMENT_VALIDATION_METHODOLOGY.md` |
+| Held-out alignment validation on unseen speakers & languages (5.4) | `docs/evidence/phase6_heldout/README.md`; `docs/evidence/phase6_heldout/heldout_alignment_validation.json`; `docs/evidence/phase6_heldout/source_pins.json` |
 | Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/` (`stage1_smoke.json`, `training_summary.json`, `runs_gpt_smoke_log.txt`, `stage3_metrics.jsonl`); drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
 | Paired A/B and gates (3.5) | `scripts/compare_ab.py`; `eval/gates.json`; `tests/test_compare_ab.py` |
 | Target-speaker hold-out guard (3.5) | `eval/target_voices.py`; `xtts_trainer/data/validate.py`; `tests/test_target_voices.py` |

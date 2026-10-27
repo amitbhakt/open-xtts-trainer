@@ -107,3 +107,72 @@ python scripts/validate_alignment_heldout.py --device cuda         # writes held
 The script refuses to run outside the versions pinned in `uv.lock` (`--allow_unlocked_env` exists for development
 and is recorded in the output), and refuses unverified transcripts (`--allow_unverified_transcripts`, also
 recorded). Output: `heldout_alignment_validation.json` in this directory, plus `source_pins.json` on the first run.
+
+---
+
+## 6. Results (run 2026-10-27 09:53 UTC)
+
+Run on an NVIDIA A100-SXM4-40GB GPU in the locked environment (`torch==2.14.1+cu130`, `torchaudio==2.11.0+cu130`,
+CUDA 13.0, `environment_issues: []`), with transcripts verified (`unverified_transcripts_allowed: false`) and every
+download pinned (`source_pins.json`). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json).
+
+**Provenance note.** The protocol, frozen thresholds and script were committed before the run (`562cf21`). Setting
+`transcript_verified: True` for the two LibriVox sources, after listening, was done in the working tree and committed
+with these results, not before the run. The script doesn't record the commit it ran from; the run's code is
+`562cf21` plus that two-line change.
+
+### 6.1 Clean acceptance
+
+| Language | Accepted | 95% Clopper–Pearson CI |
+|---|---|---|
+| English (`rms`, `jmk`) | 59/60 (98.3%) | [0.911, 1.000] |
+| French | 4/4 | [0.398, 1.000] |
+| German | 3/3 | [0.292, 1.000] |
+| All | 66/67 (98.5%) | [0.920, 1.000] |
+
+The one rejection is `arctic_jmk` `arctic_a0022` ("Hardly were our plans made public"): the word "our" scored 0.022,
+below the 0.05 floor; the validator agrees. Both silence-trimming controls passed on all 17 mutated clips.
+
+### 6.2 Mutations
+
+Pre-registered criterion: a corruption counts as detected only where the rejection rate is at least 80%.
+
+| Mutation | Rejected / total | Rejection rate (95% CI) | Expected | Verdict |
+|---|---|---|---|---|
+| `head_speech_cut_600ms` | 15/15 | 100.0% [0.782, 1.000] | reject | Detected |
+| `head_speech_cut_300ms` | 15/16 | 93.8% [0.698, 0.998] | reject | Detected |
+| `head_speech_cut_150ms` | 8/16 | 50.0% [0.247, 0.754] | reject | Not detected (limitation) |
+| `tail_speech_cut_600ms` | 14/15 | 93.3% [0.681, 0.998] | reject | Detected |
+| `tail_speech_cut_300ms` | 7/16 | 43.8% [0.198, 0.701] | reject | Not detected (limitation) |
+| `tail_speech_cut_150ms` | 2/16 | 12.5% [0.016, 0.384] | reject | Not detected (limitation) |
+| `tail_speech_cut_50ms` | 0/17 | 0.0% [0.000, 0.195] | reject | Not detected (limitation) |
+| `insert_head_word` | 17/17 | 100.0% [0.805, 1.000] | reject | Detected |
+| `insert_mid_word` | 13/17 | 76.5% [0.501, 0.932] | reject | Not detected (limitation; below 80%) |
+| `insert_tail_word` | 11/17 | 64.7% [0.383, 0.858] | reject | Not detected (limitation) |
+| `spillover_0.50s` | 12/15 | 80.0% [0.519, 0.957] | reject | Detected (at the bar) |
+| `spillover_0.05s` | 1/15 | 6.7% | pass | 14/15 passed as expected |
+| `control_trim_head_silence`, `control_trim_tail_silence` | 0/17 each | 0% | pass | All passed |
+
+### 6.3 Pre-registered verdict
+
+- **English: validated** for clean acceptance (≥ 90%, both controls pass on every clip). This is out-of-sample
+  evidence (`[E1]`) for the false-rejection rate on clean English speech: at most about 9% at 95% confidence.
+- **French and German: not validated.** 4 and 3 clean clips are too few, as section 4 states in advance; their
+  results are reported only.
+- **Detection: reliable only for large corruptions.** Head cuts of 300 ms or more, the 600 ms tail cut, an inserted
+  opening word, and 0.5 s of spillover (exactly at the 80% bar, with a wide interval). Tail cuts up to 300 ms, the
+  150 ms head cut, and inserted mid- or end-of-sentence words are limitations: they often pass.
+
+### 6.4 Exploratory observations (not pre-registered; not for adopting new thresholds)
+
+These come from the recorded per-word scores, after the results were seen. They suggest hypotheses for a new,
+separately held-out run; adopting a rule tuned on this data would make it in-sample again.
+- The 0.05 floor makes almost every rejection; the weak-word rule (at most 3 below 0.2) makes none. 65 of 67 clean
+  clips have no weak word and 2 have one.
+- Corruptions that pass usually have exactly one weak word, with lowest scores around 0.07–0.14.
+- Unexplained speech reaches 0.081 s on clean clips, and the 0.5 s spillovers that pass sit around 0.08 s: the 0.1 s
+  limit has no margin.
+- A 150 ms tail cut leaves the last word scoring about 0.48 (median): the aligner fits the shortened word.
+- On this data, a 0.10 floor would reject 13 of the 63 missed corruptions with no extra clean rejection, but would
+  reject the in-sample accented speaker (`arctic_ksp`, lowest score 0.062). A boundary check (clips that end while
+  speech is still sounding) is a candidate for the tail cuts; it needs word end times, which this run doesn't log.

@@ -94,12 +94,36 @@ def run_command_remote(cmd: str):
     volume_runs.commit()
     volume_checkpoints.commit()
     volume_baselines.commit()
-    return proc.returncode
+
+    # Collect any newly created/modified evidence files under docs/evidence/phase6_heldout/
+    evidence_dir = Path("/root/open-xtts-trainer/docs/evidence/phase6_heldout")
+    artifacts = {}
+    if evidence_dir.exists():
+        for p in evidence_dir.rglob("*"):
+            if p.is_file():
+                rel = p.relative_to("/root/open-xtts-trainer").as_posix()
+                try:
+                    artifacts[rel] = p.read_text(encoding="utf-8")
+                except UnicodeDecodeError:
+                    artifacts[rel] = p.read_bytes()
+    return {"returncode": proc.returncode, "artifacts": artifacts}
 
 
 @app.local_entrypoint()
 def main(cmd: str = "python scripts/run_run5_pipeline.py", gpu: str = "A100-40GB"):
     print(f"Submitting job to Modal ({gpu})...")
     fn = run_command_remote.with_options(gpu=gpu)
-    fn.remote(cmd)
+    res = fn.remote(cmd)
+    if isinstance(res, dict) and "artifacts" in res:
+        for rel_path, content in res["artifacts"].items():
+            dest = repo_root / rel_path
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            if isinstance(content, str):
+                dest.write_text(content, encoding="utf-8")
+            else:
+                dest.write_bytes(content)
+            print(f"📥 Retrieved artifact: {rel_path}")
+    code = res.get("returncode") if isinstance(res, dict) else res
+    if code:
+        raise SystemExit(f"remote command failed with exit code {code}; retrieved artifacts may be partial")
     print("✅ Completed successfully on Modal!")

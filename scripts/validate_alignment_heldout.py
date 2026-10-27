@@ -91,7 +91,7 @@ HELDOUT_SOURCES: List[Dict[str, Any]] = [
         "max_seconds": 14.46,
         "transcript": ("Ceci est un enregistrement LibriVox. Tous nos enregistrements appartiennent au domaine public. "
                        "Pour vous renseigner à notre sujet ou pour participer, rendez-vous sur librivox point org."),
-        "transcript_verified": False,
+        "transcript_verified": True,
     },
     {
         "id": "librivox_de_grimm", "lang": "de", "kind": "recording",
@@ -104,7 +104,7 @@ HELDOUT_SOURCES: List[Dict[str, Any]] = [
         "transcript": ("Dies ist eine LibriVox-Aufnahme. Alle LibriVox-Aufnahmen sind lizenzfrei und in öffentlichem "
                        "Besitz. Weitere Informationen und Hinweise zur Beteiligung an diesem Projekt gibt es bei "
                        "librivox point org."),
-        "transcript_verified": False,
+        "transcript_verified": True,
     },
 ]
 
