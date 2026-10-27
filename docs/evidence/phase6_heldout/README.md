@@ -31,14 +31,24 @@ None of these speakers is in the calibration set (`jfk`, `arctic_slt`, `arctic_k
 |---|---|---|---|
 | CMU ARCTIC `rms` (US English, male) | `en` | Utterances `arctic_a0003`–`arctic_a0022` (20) | The corpus's own prompt file (`etc/txt.done.data`) |
 | CMU ARCTIC `jmk` (Canadian English, male) | `en` | Utterances `arctic_a0003`–`arctic_a0022` (20) | Same |
-| LibriVox, *Fables de La Fontaine*, opening announcement | `fr` | The segments of the first 16 s | Given in the script; **must be verified by listening** |
-| LibriVox, *Märchen der Gebrüder Grimm*, opening announcement | `de` | The segments of the first 17 s | Same |
+| LibriVox, *Fables de La Fontaine*, opening announcement | `fr` | The segments of the first 14.46 s | Given in the script; **must be verified by listening** |
+| LibriVox, *Märchen der Gebrüder Grimm*, chapter 214, opening announcement | `de` | The segments of the first 13.75 s | Same |
 
 `a0001` and `a0002` are excluded because the calibration voices' reference clips were built from them, so the
 held-out text is new as well as the speakers. Licenses: each ARCTIC speaker's own `COPYING` is downloaded from
 festvox by the run into `licenses/rms_COPYING` and `licenses/jmk_COPYING` and pinned like the audio; the LibriVox
 items' public-domain license, as archive.org publishes it, is recorded in
 [`licenses/librivox_archive_org_license.md`](licenses/librivox_archive_org_license.md).
+
+**LibriVox windows, chosen before the run (2026-10-27).** Each reading opens with a fixed announcement, then the
+reader's credit or the title, which the transcript doesn't cover. So each window ends in the middle of the pause
+after "librivox point org", found as the longest run of 20 ms frames 40 dB below the peak:
+- French: pause 14.12–14.80 s, window 14.46 s. A Whisper check of the earlier 16 s window heard "Enregistré par …"
+  after the announcement, which would have counted as untranscribed speech.
+- German: the first draft used chapter 114, whose noise floor is only 15 dB below its peak, with no pause at all, so
+  its credit couldn't be cut off and it isn't a clean recording. Of 12 chapters screened (first 25 s each), chapter
+  214 is clean (floor −64 dB), its announcement matches the transcript word for word in Whisper's reading, and it
+  pauses 11.9–15.6 s before the title; window 13.75 s.
 
 **Download pins.** Every archive's SHA-256 is recorded in `source_pins.json` on the first run and verified on every
 later one; a mismatch stops the run.

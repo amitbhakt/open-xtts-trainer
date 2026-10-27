@@ -13,7 +13,7 @@ http://creativecommons.org/licenses/publicdomain/ | Märchen
 | Item | File used | licenseurl |
 |---|---|---|
 | `fables_lafontaine_01_librivox` | `fables_01_00_lafontaine_64kb.mp3` | `http://creativecommons.org/licenses/publicdomain/` |
-| `grimm_maerchen_1_librivox` | `grimm_114_erbsenprobe_64kb.mp3` | `http://creativecommons.org/licenses/publicdomain/` |
+| `grimm_maerchen_1_librivox` | `grimm_214_spindel_weberschiffchen_und_nadel_64kb.mp3` | `http://creativecommons.org/licenses/publicdomain/` |
 
 Both files are listed in their items' metadata. The audio itself is pinned by SHA-256 in `../source_pins.json`
 after the first run.

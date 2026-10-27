@@ -86,18 +86,21 @@ HELDOUT_SOURCES: List[Dict[str, Any]] = [
         "id": "librivox_fr_lafontaine", "lang": "fr", "kind": "recording",
         "description": "LibriVox, Fables de La Fontaine, opening announcement (French)",
         "url": "https://archive.org/download/fables_lafontaine_01_librivox/fables_01_00_lafontaine_64kb.mp3",
+        # Ends mid-pause (14.12-14.80 s) after "librivox point org", before the reader credit ("Enregistré par ...")
         "license": "Public domain (archive.org licenseurl; licenses/librivox_archive_org_license.md)",
-        "max_seconds": 16.0,
+        "max_seconds": 14.46,
         "transcript": ("Ceci est un enregistrement LibriVox. Tous nos enregistrements appartiennent au domaine public. "
                        "Pour vous renseigner à notre sujet ou pour participer, rendez-vous sur librivox point org."),
         "transcript_verified": False,
     },
     {
         "id": "librivox_de_grimm", "lang": "de", "kind": "recording",
-        "description": "LibriVox, Märchen der Gebrüder Grimm, opening announcement (German)",
-        "url": "https://archive.org/download/grimm_maerchen_1_librivox/grimm_114_erbsenprobe_64kb.mp3",
+        "description": "LibriVox, Märchen der Gebrüder Grimm, Spindel, Weberschiffchen und Nadel: announcement (German)",
+        # grimm_114 (the first draft's choice) has a noise floor 15 dB below peak and no pauses, so the reader
+        # credit can't be cut off; chapter 214 is clean (floor -64 dB). Ends mid-pause (11.9-15.6 s) before the title.
+        "url": "https://archive.org/download/grimm_maerchen_1_librivox/grimm_214_spindel_weberschiffchen_und_nadel_64kb.mp3",
         "license": "Public domain (archive.org licenseurl; licenses/librivox_archive_org_license.md)",
-        "max_seconds": 17.0,
+        "max_seconds": 13.75,
         "transcript": ("Dies ist eine LibriVox-Aufnahme. Alle LibriVox-Aufnahmen sind lizenzfrei und in öffentlichem "
                        "Besitz. Weitere Informationen und Hinweise zur Beteiligung an diesem Projekt gibt es bei "
                        "librivox point org."),
@@ -290,18 +293,30 @@ def clean_clips(source: Dict[str, Any], work_dir: str, aligner, pins: Dict[str, 
 # --------------------------------------------------------------------------- run
 
 def check_transcripts(work_dir: str, device: str) -> None:
-    """Print Whisper's transcript of each LibriVox window next to the given one, for a listener to verify."""
-    from xtts_trainer.asr import default_asr_model, transcribe
+    """Print Whisper's timestamped transcript around each LibriVox window next to the given one, for a listener.
+
+    Whisper reads 8 s past the window, with timestamps: on a window cut exactly at a pause it can drop a whole
+    sentence (observed on the German window at 13.75 s, not at 12.6 s or 24 s), and the extra seconds show what the
+    window excludes. CER is computed on the segments that end inside the window.
+    """
+    from xtts_trainer.asr import _generate_kwargs, default_asr_model, load_asr
     from xtts_trainer.prepare.pipeline import load_mono
 
     for src in HELDOUT_SOURCES:
         if src["kind"] != "recording":
             continue
         path = download(src["url"], os.path.join(work_dir, src["id"], os.path.basename(src["url"])))
-        audio = load_mono(path, RATE)[: int(src["max_seconds"] * RATE)]  # transcribe() resamples for Whisper
-        heard = transcribe(audio, RATE, src["lang"], default_asr_model(src["lang"]), device)
-        print(f"\n== {src['id']} (first {src['max_seconds']} s; CER vs given: {cer(src['transcript'], heard):.3f})")
-        print(f"given  : {src['transcript']}\nwhisper: {heard}")
+        end = src["max_seconds"]
+        audio = load_mono(path, RATE)[: int((end + 8.0) * RATE)]  # the pipeline resamples for Whisper
+        model = default_asr_model(src["lang"])
+        chunks = load_asr(model, device)({"raw": audio, "sampling_rate": RATE}, return_timestamps=True,
+                                         generate_kwargs=_generate_kwargs(model, src["lang"]))["chunks"]
+        inside = " ".join(c["text"].strip() for c in chunks if c["timestamp"][1] is not None and c["timestamp"][1] <= end)
+        print(f"\n== {src['id']} (window 0-{end} s; CER of the window vs given: {cer(src['transcript'], inside):.3f})")
+        print(f"given  : {src['transcript']}")
+        for c in chunks:
+            where = "inside " if c["timestamp"][1] is not None and c["timestamp"][1] <= end else "OUTSIDE"
+            print(f"  {where} {c['timestamp']}: {c['text'].strip()}")
     print("\nListen to each window; correct the transcript if needed and set transcript_verified: True.")
 
 
