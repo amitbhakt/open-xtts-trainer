@@ -114,12 +114,25 @@ recorded). Output: `heldout_alignment_validation.json` in this directory, plus `
 
 Run on an NVIDIA A100-SXM4-40GB GPU in the locked environment (`torch==2.14.1+cu130`, `torchaudio==2.11.0+cu130`,
 CUDA 13.0, `environment_issues: []`), with transcripts verified (`unverified_transcripts_allowed: false`) and every
-download pinned (`source_pins.json`). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json).
+download pinned (`source_pins.json`). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json); rerun below.
 
 **Provenance note.** The protocol, frozen thresholds and script were committed before the run (`562cf21`). Setting
 `transcript_verified: True` for the two LibriVox sources, after listening, was done in the working tree and committed
 with these results, not before the run. The script doesn't record the commit it ran from; the run's code is
 `562cf21` plus that two-line change.
+
+**Rerun from a committed tree (2026-10-27).** To close that gap, the validation was rerun from `826bd1e`, in which
+the verification flags, the results above and commit recording are all committed, on the same GPU type and locked
+environment. Output: [`heldout_alignment_validation_rerun.json`](heldout_alignment_validation_rerun.json). It
+records `is_dirty: false`. The commit SHA it records (`2812f6b…`) is the runner's container commit: Modal does not
+upload `.git`, so the runner commits the uploaded tree on top of a clone. That container tree matches
+`826bd1e`'s file for file (identical blobs), except the four runtime volume mount points (`runs`, `checkpoints`,
+`xtts_base`, `eval/baselines`), which become symlinks. None of them holds code the run executes.
+
+Every per-clip score, rejection, verdict and summary number in the rerun is identical to the run above. The only
+difference is stronger: the first run *recorded* the source pins, and the rerun *verified* all six downloads
+against them. The rerun is therefore the clean-provenance result. The first run stands as a replicate, and §6.1–6.4
+hold for both.
 
 ### 6.1 Clean acceptance
 
