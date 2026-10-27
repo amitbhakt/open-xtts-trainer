@@ -1,0 +1,22 @@
+scripts/validate_alignment_heldout.py
+  s_bfc6eb584d8e27::t_0d5c90de7c9ab9 323-324,328-331,333-337,402,467-468,477-478
+tests/test_validate_alignment_heldout.py
+  s_bfc6eb584d8e27::t_ebd25e63aa3bc7 171-173
+  s_bfc6eb584d8e27::t_0d5c90de7c9ab9 135-136,149-153,161-162,165-170,174-175,218
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "826bd1e4e8180955ff042962437acc7018ebb5ca",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
