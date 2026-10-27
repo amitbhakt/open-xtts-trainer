@@ -26,16 +26,18 @@ class SegmentConfig:
 
 @dataclass
 class QualityConfig:
-    """Alignment checks that reject a segment. Calibrated on multi-speaker and multilingual data [E1]."""
+    """Alignment checks that reject a segment. Calibrated on 8 baseline speakers [E5]; held-out validation pending."""
 
     # Word alignment scores. Real speech has weak words: JFK's reduced "for" scores 0.12 in a correct clip.
-    # Accented speech (e.g. Indian English arctic_ksp) exhibits up to 3 weak function words ("of" 0.14, "the" 0.06, "etc." 0.11),
-    # all well above the 0.05 floor. Corrupted cuts drop to 0.00 (< 0.05 floor).
+    # Non-native accented speech (e.g. Indian English arctic_ksp) exhibits up to 3 weak function words ("of" 0.14, "the" 0.062, "etc." 0.11),
+    # all above the 0.05 floor. Clean native speech scores >= 0.54, but accented speech approaches the floor (0.062).
+    # Corrupted cuts drop to 0.00 (< 0.05 floor). Calibrated at at most 3 words below 0.20 [E5].
     min_word_score: float = 0.05
     weak_word_score: float = 0.2
     max_weak_words: int = 3
-    # Speech the transcript doesn't account for (WindowAlignment.unexplained): accommodates natural breath/aspiration.
-    max_unexplained_speech_s: float = 0.2
+    # Speech the transcript doesn't account for (WindowAlignment.unexplained): text missing from the transcript.
+    # Kept at 0.10s: all clean recordings measure 0.00s, and 0.10s catches trailing speech intrusions (e.g. Spanish 0.14s).
+    max_unexplained_speech_s: float = 0.1
     # A word longer than this absorbed speech that isn't in the transcript
     max_word_s: float = 1.5
     max_s_per_char: float = 0.35

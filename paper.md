@@ -230,7 +230,7 @@ limits, overlap with the evaluation set and reference voices, and target-speaker
 re-alignment enabled, the validator re-aligns each clip and rejects it if:
 
 - any word scores below 0.05;
-- more than one word scores below 0.2;
+- more than three words score below 0.2 (calibrated on eight baseline recordings; Section 3.6);
 - more than 0.1 s of speech is left unexplained by the transcript;
 - a word is implausibly stretched.
 
@@ -299,9 +299,12 @@ of the SECS interval to be above zero.
   7. measure model behaviour before and after;
   8. link the finding to its guarding test.
 - **Thresholds.** Thresholds come from a baseline, a publication or a stated requirement, never from the current
-  output. One exception is disclosed: the alignment-rejection thresholds (Section 3.4) were set after inspecting
-  word scores on the same JFK recording that Section 5.4 uses to test them. They are therefore tuned on that
-  recording, not validated independently of it.
+  output. One exception is disclosed: the alignment-rejection thresholds (Section 3.4) were calibrated on the eight
+  baseline recordings (`[E5]`) that Section 5.4 analyzes. The floor was set to 0.05 on JFK cut shifts, but the
+  weak-word allowance was increased from one to three after observing that clean, accented non-native speech
+  (`arctic_ksp`, Indian English) produced three weak function words scoring down to 0.062 (a narrow 0.012 margin above
+  the floor). The unexplained-speech limit was retained at 0.10 s, where all clean recordings measure 0.00 s. These
+  values are therefore in-sample calibrations on those recordings, not independent validations of them.
 - **Continuous integration.** CI runs linting and the full test suite. Tests that need real weights, GPU or
   licensed audio run in a Colab notebook, and their outputs are archived as evidence.
 
@@ -422,17 +425,20 @@ re-aligned every clip as the validator does (Table 3). Only the first clip was s
 
 Across all three unshifted clips, the lowest re-aligned word score was 0.54. The word "for" scored 0.12 when the
 whole 11 s recording was aligned in one pass, but 0.66 when re-aligned within its own clip. A low score from a
-long alignment window is therefore not, by itself, evidence of a bad clip. The rejection thresholds (0.05 floor;
-at most three words below 0.2) sit inside a wide margin between clean clips (≥ 0.54) and the clip cut 1 s wrong
-(≤ 0.02, with five weak words). The thresholds were set after inspecting this recording (Section 3.6), and this is
-one shifted clip of one recording in one language, so the margin is evidence for the thresholds, not a validation
-of them.
+long alignment window is therefore not, by itself, evidence of a bad clip. For clean native recordings (JFK,
+LJSpeech, and standard ARCTIC voices), clean clips maintain a wide score margin ($\ge 0.54$). However, on accented
+non-native speech (`arctic_ksp`, Indian English), unstressed function words score down to $0.062$ (only $0.012$
+above the $0.05$ floor), registering three weak words below $0.20$. Accommodating this speaker without dropping the
+0.05 safety floor required calibrating the weak-word allowance to three (`max_weak_words = 3`), narrowing the
+detection margin and trading off sensitivity to short tail truncations. Retaining the unexplained-speech limit at
+0.10 s ensures that clean recordings (all measuring 0.00 s) pass while trailing speech intrusions above 100 ms are
+flagged. These thresholds are therefore in-sample calibrations (`[E5]`), not an independent validation of them.
 
-**Multilingual and multi-speaker characterization across 8 vetted voices.** To characterize these thresholds across a wider range of acoustic conditions in-sample, we conducted an empirical benchmark on an NVIDIA A100 GPU across eight distinct vetted baseline speakers spanning two languages (English and Castilian Spanish) and five accent profiles (`jfk_english_male`, `arctic_slt_english_female`, `arctic_ksp_english_indian_accent`, `arctic_bdl_english_male`, `arctic_clb_english_female`, `arctic_awb_english_scottish`, `ljspeech_female`, and `spanish_cuentos_male`).
+**Multi-speaker and cross-accent calibration across 8 baseline voices.** To characterize these thresholds across a wider range of acoustic conditions in-sample, we evaluated an 8-speaker calibration set on an NVIDIA A100 GPU spanning two languages (English and Castilian Spanish) and five accent profiles (`jfk_english_male`, `arctic_slt_english_female`, `arctic_ksp_english_indian_accent`, `arctic_bdl_english_male`, `arctic_clb_english_female`, `arctic_awb_english_scottish`, `ljspeech_female`, and `spanish_cuentos_male`).
 
-On this 8-speaker calibration set, all eight clean recordings passed (accented speech in `arctic_ksp` passed with 3 weak words, minimum score 0.062, within the calibrated tolerance of at most 3 words below 0.20). Across an evaluation matrix of 88 controlled corruption tests (11 perturbations per speaker across edge truncations, unspoken transcript word insertions, and trailing speech spillover), the benchmark characterized empirical detection performance and identified specific failure modes (Table 3b; detailed in `docs/evidence/phase6/`):
+On this calibration set, all eight clean recordings passed (accented speech in `arctic_ksp` passed with 3 weak words, minimum score 0.062, within the calibrated allowance of at most 3 words below 0.20; all clean clips measured 0.00 s unexplained speech). Across an evaluation matrix of 88 controlled corruption tests (11 perturbations per speaker across edge truncations, unspoken transcript word insertions, and trailing speech spillover), the benchmark characterized empirical detection performance and identified specific failure modes (Table 3b; detailed in `docs/evidence/phase6/`):
 
-**Table 3b.** Observed rejection rates across 88 controlled corruptions on 8 vetted baseline speakers.
+**Table 3b.** Observed rejection rates across 88 controlled corruptions on the 8 baseline calibration speakers (QualityConfig: min_word_score 0.05, weak_word_score 0.20, max_weak_words 3, max_unexplained_speech_s 0.10 s).
 
 | Corruption Category | Mutation Variant & Severity | Observed Rejection Rate | Failure Mode & Mechanism |
 |---|---|:---:|---|
@@ -445,12 +451,12 @@ On this 8-speaker calibration set, all eight clean recordings passed (accented s
 | Transcript Insertion | Head function word | 7/8 (87.5%) | 1 passed: weak-word tolerance absorption (score 0.125 on LJSpeech) |
 | | Mid content word | 6/8 (75.0%) | 2 passed: phonetic substring match (/dʒər/, /tr/ in "extraordinary" scores 0.234–0.237) |
 | | Tail content word | 4/8 (50.0%) | 4 passed: trailing silence emissions average 0.06–0.16, absorbed by $\le 3$ weak-word limit |
-| Speech Spillover | Sub-threshold (+100 ms) | 0/8 rejected (0%) | 8/8 correctly accepted: sub-200 ms tolerance functioning as designed |
-| | Cross-threshold (+500 ms) | 0/8 rejected (0%) | 8/8 passed: trailing audio contains pause; active speech measures 80–140 ms (< 200 ms floor) |
+| Speech Spillover | Sub-threshold (+100 ms) | 0/8 rejected (0%) | 8/8 correctly accepted: sub-100 ms tolerance functioning as designed |
+| | Cross-threshold (+500 ms) | 1/8 rejected (12.5%) | 1 rejected (Spanish: 140 ms unexplained speech > 0.10 s floor); 7 passed (active speech 80–85 ms, remainder pause) |
 
 Tail truncation exhibits a non-monotonic detection pattern (37.5% at 100 ms, 62.5% at 250 ms, 25.0% at 500 ms, and 87.5% at 1,000 ms): while 250 ms cuts directly clip terminal word nuclei dropping scores to 0.01–0.04 (< 0.05 floor), a 500 ms cut often eliminates the terminal word entirely or lands in an inter-word pause, enabling the CTC trellis to realign earlier tokens across remaining frames without triggering the 0.05 floor (the two rejected 500 ms cases scored 0.01 on their truncated terminal words), before 1,000 ms cuts reliably truncate full words and shift prior boundaries.
 
-A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. However, because this calibration doubled the unexplained-speech tolerance (`max_unexplained_speech_s`) from 0.10 s to 0.20 s to accommodate natural breath and aspiration, and the active unaligned speech portion in the appended audio measured 80–140 ms across diagnostic cases, the active untranscribed speech remained below the relaxed 200 ms floor. Under the previous 0.10 s threshold, only the Spanish spillover case (measuring 140 ms of active speech) would have triggered rejection, while the other seven cases measured 80–85 ms and remain below both thresholds; relaxing the threshold to 0.20 s therefore creates an expanded blind spot for trailing speech intrusions between 100 and 200 ms. The benchmark thus characterizes in-sample tolerance on clean speech while mapping the operational limits of token-level rejection.
+A frame-level diagnostic probe on GPU confirmed that trailing speech frames are assigned to CTC blanks rather than stretching the terminal word. Under the 0.10 s unexplained-speech limit, the Spanish spillover case (measuring 140 ms of active speech) is detected and rejected, while the remaining seven cases had active trailing speech lasting only 80–85 ms (the rest consisting of inter-utterance pause), which fell below the 0.10 s limit. This characterizes in-sample calibration trade-offs; held-out validation across new speakers and additional languages in the locked environment remains pending.
 
 ### 5.5 Training smoke runs with real weights
 

@@ -1,18 +1,18 @@
-# Phase 6 Multilingual & Multi-Speaker Alignment Validation Evidence
+# Phase 6 Multi-Speaker Alignment Quality Threshold Calibration
 
-Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)**.
+Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)** as an in-sample threshold calibration (`[E5]`). Held-out validation on unseen voices and additional languages in the locked environment (`torch==2.14.1`) remains pending.
 
 ---
 
-## 1. Overview & Verification Summary
+## 1. Overview & Calibration Summary
 
 - **Execution Date**: 2026-10-26 18:50 UTC
 - **Compute Hardware**: NVIDIA A100-SXM4-40GB GPU (Modal app `ap-aLtghQDigN7bOJJjqUVrSn`)
-- **Software Environment**: PyTorch 2.1.2 + CUDA 12.1, torchaudio MMS_FA pipeline (`torchaudio.pipelines.MMS_FA`)
-- **Scope**: Multi-speaker, multilingual validation across **8 distinct vetted baseline voices** and 2 languages (English, Castilian Spanish) across 5 accent profiles.
+- **Software Environment**: PyTorch 2.1.2 + CUDA 12.1 (exploratory run; locked environment `torch==2.14.1` required for held-out validation)
+- **Scope**: Multi-speaker calibration across **8 baseline voices** and 2 languages (English, Castilian Spanish) across 5 accent profiles.
 - **Evaluation Scale**: 8 clean baseline recordings + 88 controlled corruption tests (11 mutations per speaker) = **96 total alignment tests**.
-- **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed with zero false-positive rejections.
-- **Controlled Corruption Characterization**: 57/88 (64.8%) correct decisions (49/88 rejected, 8/8 sub-threshold spillover correctly accepted; edge truncation 32/48 rejected, transcript insertions 17/24 rejected); characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech.
+- **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed. Calibrated `max_weak_words = 3` to accommodate non-native accented speech (`arctic_ksp`, 3 weak words scoring down to $0.062$), while native clean clips score $\ge 0.54$. Retained `max_unexplained_speech_s = 0.10s` (all clean clips measure $0.00\text{ s}$).
+- **Controlled Corruption Characterization**: Characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech. Under `max_unexplained_speech_s = 0.10s`, Spanish trailing spillover ($0.14\text{s}$) is caught. Held-out validation across new speakers and languages is tracked in reopened plan item 11.
 
 ---
 
