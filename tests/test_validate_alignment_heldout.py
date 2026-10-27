@@ -132,7 +132,8 @@ def test_full_run_end_to_end_on_a_synthetic_source(tmp_path, monkeypatch):
     monkeypatch.setattr(heldout, "PINS_PATH", tmp_path / "pins.json")
     monkeypatch.setattr(prepare_module, "CtcAligner", lambda device=None: tone_aligner())
     out = tmp_path / "report.json"
-    report = heldout.run("cpu", out, str(tmp_path / "work"), allow_unverified=False, allow_unlocked_env=True)
+    report = heldout.run("cpu", out, str(tmp_path / "work"), allow_unverified=False, allow_unlocked_env=True,
+                         allow_dirty=True)
 
     saved = json.loads(out.read_text(encoding="utf-8"))
     assert saved["summary"] == report["summary"] and saved["frozen_quality_config"]["max_weak_words"] == 3
@@ -145,7 +146,11 @@ def test_full_run_end_to_end_on_a_synthetic_source(tmp_path, monkeypatch):
     assert {"control_trim_tail_silence", "insert_head_word", "spillover_0.50s"} <= names
     assert all(m["scores"] for m in result["mutations"] if not m["problems"])
     # A second run verifies the recorded pin instead of re-recording it
-    again = heldout.run("cpu", out, str(tmp_path / "work"), allow_unverified=False, allow_unlocked_env=True)
+    assert saved["git"]["commit_sha"] and "is_dirty" in saved["git"]
+    with pytest.raises(SystemExit, match="exists"):  # a rerun can't silently replace earlier evidence
+        heldout.run("cpu", out, str(tmp_path / "work"), False, True, allow_dirty=True)
+    again = heldout.run("cpu", tmp_path / "rerun.json", str(tmp_path / "work"), allow_unverified=False,
+                        allow_unlocked_env=True, allow_dirty=True)
     assert again["results"][0]["provenance"]["pin"] == "verified"
 
 
@@ -153,10 +158,21 @@ def test_run_refuses_unverified_transcripts_and_unlocked_environments(tmp_path, 
     source = dict(heldout.HELDOUT_SOURCES[2], transcript_verified=False)
     monkeypatch.setattr(heldout, "HELDOUT_SOURCES", [source])
     with pytest.raises(SystemExit, match="not verified"):
-        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=False, allow_unlocked_env=True)
+        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=False, allow_unlocked_env=True,
+                    allow_dirty=True)
     monkeypatch.setattr(heldout, "locked_versions", lambda: {"torch": "0.0.0"})
     with pytest.raises(SystemExit, match="locked environment"):
-        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=False)
+        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=False,
+                    allow_dirty=True)
+
+
+def test_run_refuses_modified_tracked_files(tmp_path, monkeypatch):
+    """A report must name the code that ran; with modified tracked files, the commit SHA wouldn't."""
+    import eval.harness as harness
+
+    monkeypatch.setattr(harness, "get_git_info", lambda repo: {"commit_sha": "x" * 40, "is_dirty": True})
+    with pytest.raises(SystemExit, match="commit them first"):
+        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=True)
 
 
 def test_arctic_source_end_to_end_with_its_own_license(tmp_path, monkeypatch):
@@ -199,7 +215,7 @@ def test_arctic_source_end_to_end_with_its_own_license(tmp_path, monkeypatch):
     monkeypatch.setattr(dataset_module, "CMU_ARCTIC_LICENSE_URL", (tmp_path / "COPYING").as_uri())
     monkeypatch.setattr(prepare_module, "CtcAligner", lambda device=None: tone_aligner())
 
-    report = heldout.run("cpu", tmp_path / "report.json", str(tmp_path / "work"), False, True)
+    report = heldout.run("cpu", tmp_path / "report.json", str(tmp_path / "work"), False, True, allow_dirty=True)
     result = report["results"][0]
     assert result["provenance"]["transcripts"] == "corpus prompt file etc/txt.done.data"
     assert (tmp_path / "evidence" / "licenses" / "zzz_COPYING").read_text() == "test license\n"

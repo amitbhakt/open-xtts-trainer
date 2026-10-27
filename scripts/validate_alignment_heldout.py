@@ -320,9 +320,20 @@ def check_transcripts(work_dir: str, device: str) -> None:
     print("\nListen to each window; correct the transcript if needed and set transcript_verified: True.")
 
 
-def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_unlocked_env: bool) -> Dict[str, Any]:
+def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_unlocked_env: bool,
+        allow_dirty: bool = False, overwrite: bool = False) -> Dict[str, Any]:
     import torch
     import torchaudio
+
+    from eval.harness import get_git_info
+
+    # Every report names the commit it ran from; modified tracked files would make that name wrong
+    git = get_git_info(str(REPO_ROOT))
+    if git["is_dirty"] and not allow_dirty:
+        raise SystemExit("tracked files differ from the commit; commit them first, so the report names the code "
+                         "that ran (--allow_dirty overrides, and is recorded)")
+    if output.exists() and not overwrite:
+        raise SystemExit(f"{output} exists; write a rerun to a new --output so earlier evidence is kept")
 
     from xtts_trainer.data import DatasetRecord, validate_dataset, write_dataset
     from xtts_trainer.data.validate import realignment_checker
@@ -388,6 +399,7 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
         "environment": env | {"python": sys.version.split()[0], "device": device,
                               "cuda": torch.version.cuda if torch.cuda.is_available() else None,
                               "locked": locked_versions(), "environment_issues": env_issues},
+        "git": git | {"dirty_allowed": bool(git["is_dirty"])},
         "unverified_transcripts_allowed": bool(unverified),
         "frozen_quality_config": FROZEN_QUALITY.__dict__, "frozen_segment_config": FROZEN_SEGMENT,
         "results": results,
@@ -452,6 +464,8 @@ def main():
     parser.add_argument("--check_transcripts", action="store_true", help="print Whisper vs given transcripts and stop")
     parser.add_argument("--allow_unverified_transcripts", action="store_true")
     parser.add_argument("--allow_unlocked_env", action="store_true", help="for development only; recorded in output")
+    parser.add_argument("--allow_dirty", action="store_true", help="run with modified tracked files; recorded in output")
+    parser.add_argument("--overwrite", action="store_true", help="replace an existing --output file")
     args = parser.parse_args()
     if args.device is None:
         import torch
@@ -460,7 +474,8 @@ def main():
     if args.check_transcripts:
         check_transcripts(args.work_dir, args.device)
     else:
-        run(args.device, args.output, args.work_dir, args.allow_unverified_transcripts, args.allow_unlocked_env)
+        run(args.device, args.output, args.work_dir, args.allow_unverified_transcripts, args.allow_unlocked_env,
+            allow_dirty=args.allow_dirty, overwrite=args.overwrite)
 
 
 if __name__ == "__main__":
