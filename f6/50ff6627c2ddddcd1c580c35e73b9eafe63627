@@ -1,0 +1,21 @@
+paper.md
+  s_bfc6eb584d8e27::t_4d4d130ed3df25 468-471,872
+docs/evidence/phase6_heldout/README.md
+  s_bfc6eb584d8e27::t_4d4d130ed3df25 117,124-135
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "f650ff6627c2ddddcd1c580c35e73b9eafe63627",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
