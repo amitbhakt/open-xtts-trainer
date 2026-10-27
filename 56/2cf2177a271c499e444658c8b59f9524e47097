@@ -1,0 +1,26 @@
+docs/evidence/phase6_heldout/README.md
+  s_bfc6eb584d8e27::t_17e1acb9aa25a9 34-35,43-51
+  s_bfc6eb584d8e27::t_c428d27ad9d85c 52
+docs/evidence/phase6_heldout/licenses/librivox_archive_org_license.md
+  s_bfc6eb584d8e27::t_17e1acb9aa25a9 16
+scripts/validate_alignment_heldout.py
+  s_bfc6eb584d8e27::t_17e1acb9aa25a9 89,91,98-101,103
+  s_bfc6eb584d8e27::t_e9f8979a514611 302,311
+  s_bfc6eb584d8e27::t_2a44e53cab5851 296-301,309-310,312-319
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "562cf2177a271c499e444658c8b59f9524e47097",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
