@@ -114,7 +114,7 @@ recorded). Output: `heldout_alignment_validation.json` in this directory, plus `
 
 Run on an NVIDIA A100-SXM4-40GB GPU in the locked environment (`torch==2.14.1+cu130`, `torchaudio==2.11.0+cu130`,
 CUDA 13.0, `environment_issues: []`), with transcripts verified (`unverified_transcripts_allowed: false`) and every
-download pinned (`source_pins.json`). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json); rerun below.
+download pinned (`source_pins.json`). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json); two identical reruns below.
 
 **Provenance note.** The protocol, frozen thresholds and script were committed before the run (`562cf21`). Setting
 `transcript_verified: True` for the two LibriVox sources, after listening, was done in the working tree and committed
@@ -133,6 +133,24 @@ Every per-clip score, rejection, verdict and summary number in the rerun is iden
 difference is stronger: the first run *recorded* the source pins, and the rerun *verified* all six downloads
 against them. The rerun is therefore the clean-provenance result. The first run stands as a replicate, and §6.1–6.4
 hold for both.
+
+**Run 3: the full record (2026-10-27).** Runs 1 and 2 recorded the source pins, git state and torch versions, but
+not the other inputs that earlier evidence (runs 4 and 6, ablation A3) records. Commit `f4106c5` adds them to the
+report (format version 2), changing nothing in the analysis. Run 3 ran from that commit on the same GPU type.
+Output: [`heldout_alignment_validation_run3.json`](heldout_alignment_validation_run3.json). It records:
+
+| Record | Value | Check |
+|---|---|---|
+| `vocab.json` (the validator tokenizes every clip with it) | `92826087…` | Matches `artifacts.lock.json`; the script now refuses a mismatch |
+| MMS_FA checkpoint (`ctc_alignment_mling_uroman/model.pt`, 1,262,047,414 bytes) | `20ef1296…` | No published digest exists. The container's fresh download equals an independent local download, byte for byte |
+| Code fingerprint (`eval/harness.get_code_fingerprint`, 69 files) | `cb069f14…` | Equals the fingerprint of `f4106c5` computed locally |
+| Container tree vs `f4106c5` | — | Identical blobs except the four volume mount points, as in the rerun |
+| GPU, `transformers` | NVIDIA A100-SXM4-40GB, 5.20.2 | — |
+| `is_dirty` | `false` | — |
+| Source pins | all six `verified` | — |
+
+Every per-clip score, rejection, verdict and summary number is identical to runs 1 and 2. Run 3 is the reference
+record for this section; runs 1 and 2 are replicates.
 
 ### 6.1 Clean acceptance
 

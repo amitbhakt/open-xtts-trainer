@@ -466,9 +466,10 @@ under a pre-registered protocol (`docs/evidence/phase6_heldout/README.md`, commi
 environment (`torch 2.14.1+cu130`, CUDA 13.0), on speakers and text that played no part in setting them: CMU ARCTIC
 `rms` and `jmk` (utterances `a0003`–`a0022`, transcripts from the corpus prompt file) and LibriVox openings in French
 and German (transcripts checked by listening). In the first run, the listening checks were recorded in the working tree
-and committed with the results, not before the run. A rerun from a fully committed tree (`826bd1e`) reproduced every
-score and verdict exactly, and verified all six source downloads against the pins, so the results below do not
-depend on that deviation.
+and committed with the results, not before the run. Two reruns from fully committed trees reproduced every score and verdict
+exactly, and verified all six source downloads against the pins, so the results below do not depend on that
+deviation. The second rerun (`f4106c5`) also records the vocabulary, alignment-model weight and code hashes, checked
+against the artifact lock and an independent download; it is the reference record.
 
 **Table 3c.** Held-out results. A corruption counts as detected only at a rejection rate of at least 80%
 (pre-registered); intervals are 95% Clopper–Pearson.
@@ -869,7 +870,7 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 | Planner regression (5.4) | `docs/evidence/colab_run3/README.md`; `tests/test_prepare.py` (`test_cuts_prefer_the_longest_pause_jfk`, `test_pause_never_outweighs_speech`, `test_equal_speech_plans_cut_at_the_longer_pause`) |
 | Shifted-cut word scores, Table 3 (5.4) | `docs/evidence/colab_run4/jfk_realign_shift_*.json`; `test_mms_jfk_alignment_and_shifted_cut` |
 | Multilingual alignment validation, Table 3b (5.4) | `docs/evidence/phase6/README.md`; `docs/evidence/phase6/multilingual_alignment_validation.json`; `docs/evidence/phase6/ALIGNMENT_VALIDATION_METHODOLOGY.md` |
-| Held-out alignment validation on unseen speakers & languages (5.4) | `docs/evidence/phase6_heldout/README.md`; `docs/evidence/phase6_heldout/heldout_alignment_validation.json`; `docs/evidence/phase6_heldout/heldout_alignment_validation_rerun.json`; `docs/evidence/phase6_heldout/source_pins.json` |
+| Held-out alignment validation on unseen speakers & languages (5.4) | `docs/evidence/phase6_heldout/README.md`; `docs/evidence/phase6_heldout/heldout_alignment_validation.json`; `docs/evidence/phase6_heldout/heldout_alignment_validation_rerun.json`; `docs/evidence/phase6_heldout/heldout_alignment_validation_run3.json`; `docs/evidence/phase6_heldout/source_pins.json` |
 | Smoke runs and DVAE drift, Table 4 (5.5) | `docs/evidence/colab_run4/` (`stage1_smoke.json`, `training_summary.json`, `runs_gpt_smoke_log.txt`, `stage3_metrics.jsonl`); drift defined in `xtts_trainer/stage1_dvae/train.py` (`evaluate_dvae`) |
 | Paired A/B and gates (3.5) | `scripts/compare_ab.py`; `eval/gates.json`; `tests/test_compare_ab.py` |
 | Target-speaker hold-out guard (3.5) | `eval/target_voices.py`; `xtts_trainer/data/validate.py`; `tests/test_target_voices.py` |
