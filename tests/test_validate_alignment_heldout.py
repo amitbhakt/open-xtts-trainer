@@ -14,6 +14,13 @@ from scripts import validate_alignment_heldout as heldout
 from test_prepare import phrase_words, tone_aligner, tone_speech
 
 RATE = heldout.RATE
+REAL_MMS_FA_WEIGHTS = heldout.mms_fa_weights
+
+
+@pytest.fixture(autouse=True)
+def _no_mms_hashing(monkeypatch):
+    """The real MMS_FA checkpoint is 1.26 GB; runs here use the tone aligner, so don't hash it."""
+    monkeypatch.setattr(heldout, "mms_fa_weights", lambda: None)
 
 
 def _clip(seconds=3.0, first=0.2, last=2.8):
@@ -147,6 +154,8 @@ def test_full_run_end_to_end_on_a_synthetic_source(tmp_path, monkeypatch):
     assert all(m["scores"] for m in result["mutations"] if not m["problems"])
     # A second run verifies the recorded pin instead of re-recording it
     assert saved["git"]["commit_sha"] and "is_dirty" in saved["git"]
+    assert saved["code_fingerprint"]["sha256"] and saved["code_fingerprint"]["n_files"] > 0
+    assert saved["artifacts"]["vocab.json"]["sha256_ok"] is False  # the test vocab isn't the locked one
     with pytest.raises(SystemExit, match="exists"):  # a rerun can't silently replace earlier evidence
         heldout.run("cpu", out, str(tmp_path / "work"), False, True, allow_dirty=True)
     again = heldout.run("cpu", tmp_path / "rerun.json", str(tmp_path / "work"), allow_unverified=False,
@@ -164,6 +173,31 @@ def test_run_refuses_unverified_transcripts_and_unlocked_environments(tmp_path, 
     with pytest.raises(SystemExit, match="locked environment"):
         heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=False,
                     allow_dirty=True)
+
+
+def test_run_refuses_a_vocab_that_is_not_the_locked_one(tmp_path, monkeypatch):
+    from dataset_helpers import write_test_vocab
+
+    write_test_vocab(str(tmp_path / "vocab.json"))
+    monkeypatch.setattr(heldout, "DEFAULT_VOCAB", tmp_path / "vocab.json")
+    monkeypatch.setattr(heldout, "environment_problems", lambda installed, locked: [])
+    with pytest.raises(SystemExit, match="artifacts.lock.json"):
+        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=False,
+                    allow_dirty=True)
+
+
+def test_mms_fa_weights_hashes_the_cached_checkpoint(tmp_path, monkeypatch):
+    import hashlib
+
+    import torch
+
+    monkeypatch.setattr(torch.hub, "get_dir", lambda: str(tmp_path))
+    assert REAL_MMS_FA_WEIGHTS() is None
+    (tmp_path / "checkpoints").mkdir()
+    (tmp_path / "checkpoints" / "model.pt").write_bytes(b"weights")
+    rec = REAL_MMS_FA_WEIGHTS()
+    assert rec["sha256"] == hashlib.sha256(b"weights").hexdigest() and rec["size_bytes"] == 7
+    assert rec["url"].endswith("/model.pt")
 
 
 def test_run_refuses_modified_tracked_files(tmp_path, monkeypatch):

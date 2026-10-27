@@ -33,6 +33,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -158,6 +159,36 @@ def environment_problems(installed: Dict[str, str], locked: Dict[str, str]) -> L
     """Installed versions (local build tags like +cu130 ignored) that differ from uv.lock."""
     return [f"{name} {installed.get(name)} installed, {want} locked" for name, want in locked.items()
             if (installed.get(name) or "").split("+")[0] != want.split("+")[0]]
+
+
+def vocab_check(path: Path) -> Dict[str, Any]:
+    """vocab.json against its artifacts.lock.json entry: the validator tokenizes every clip with it."""
+    entry = json.loads((REPO_ROOT / "artifacts.lock.json").read_text(encoding="utf-8"))["vocab.json"]
+    digest = sha256_file(str(path))
+    return {"sha256": digest, "locked_sha256": entry["sha256"], "sha256_ok": digest == entry["sha256"]}
+
+
+def mms_fa_weights() -> Optional[Dict[str, Any]]:
+    """The MMS_FA checkpoint torch.hub cached and loaded, or None if it isn't cached.
+
+    No digest is published for it, so this records the file rather than verifying it.
+    """
+    import torch
+    import torchaudio
+
+    url = torchaudio.pipelines.MMS_FA._path
+    path = Path(torch.hub.get_dir()) / "checkpoints" / os.path.basename(urllib.parse.urlparse(url).path)
+    if not path.exists():
+        return None
+    return {"url": url, "sha256": sha256_file(str(path)), "size_bytes": path.stat().st_size}
+
+
+def package_version(name: str) -> Optional[str]:
+    from importlib.metadata import PackageNotFoundError, version
+    try:
+        return version(name)
+    except PackageNotFoundError:
+        return None
 
 
 # --------------------------------------------------------------------------- transcripts
@@ -325,7 +356,7 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
     import torch
     import torchaudio
 
-    from eval.harness import get_git_info
+    from eval.harness import get_code_fingerprint, get_git_info
 
     # Every report names the commit it ran from; modified tracked files would make that name wrong
     git = get_git_info(str(REPO_ROOT))
@@ -348,6 +379,9 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
         raise SystemExit(f"transcripts not verified for {unverified}; run --check_transcripts and listen first")
     if not DEFAULT_VOCAB.exists():
         raise SystemExit(f"{DEFAULT_VOCAB} missing: run scripts/fetch_base_artifacts.py first")
+    vocab = vocab_check(DEFAULT_VOCAB)
+    if not vocab["sha256_ok"] and not allow_unlocked_env:
+        raise SystemExit(f"{DEFAULT_VOCAB} doesn't match artifacts.lock.json; run scripts/fetch_base_artifacts.py")
 
     aligner = CtcAligner(device=device)
     pins = load_pins()
@@ -394,12 +428,17 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
               f"{sum(m['correct'] for m in mutations)}/{len(mutations)}")
 
     report = {
-        "format": "open-xtts-heldout-alignment-validation", "version": 1,
+        "format": "open-xtts-heldout-alignment-validation", "version": 2,
         "timestamp_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "environment": env | {"python": sys.version.split()[0], "device": device,
                               "cuda": torch.version.cuda if torch.cuda.is_available() else None,
+                              "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+                              "transformers": package_version("transformers"),
                               "locked": locked_versions(), "environment_issues": env_issues},
         "git": git | {"dirty_allowed": bool(git["is_dirty"])},
+        "code_fingerprint": get_code_fingerprint(str(REPO_ROOT)),
+        # Version 2 adds these and code_fingerprint; version 1 recorded the source pins and git only
+        "artifacts": {"vocab.json": vocab, "mms_fa": mms_fa_weights()},
         "unverified_transcripts_allowed": bool(unverified),
         "frozen_quality_config": FROZEN_QUALITY.__dict__, "frozen_segment_config": FROZEN_SEGMENT,
         "results": results,
