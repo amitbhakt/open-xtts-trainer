@@ -12,6 +12,7 @@ Usage:
     uvx modal run scripts/modal_run_eval.py --gpu A100-40GB --cmd "pytest -q"
 """
 
+import hashlib
 import subprocess
 from pathlib import Path
 import modal
@@ -58,6 +59,16 @@ image = (
 )
 
 
+REMOTE_ROOT = Path("/root/open-xtts-trainer")
+EVIDENCE_DIR = "docs/evidence/phase6_heldout"
+
+
+def evidence_digests(root: Path) -> dict:
+    """SHA-256 of every file under root / EVIDENCE_DIR, keyed by path relative to root."""
+    return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in (root / EVIDENCE_DIR).rglob("*") if p.is_file()}
+
+
 @app.function(
     image=image,
     gpu="A100-40GB",
@@ -83,29 +94,31 @@ def run_command_remote(cmd: str):
         cwd="/root/open-xtts-trainer",
         check=False,
     )
+    before = evidence_digests(REMOTE_ROOT)
     print(f"🔧 Running in Modal container: {cmd}")
+    # No check=True: a failing command must still return what it wrote, with its exit code
     proc = subprocess.run(
         cmd,
         shell=True,
         cwd="/root/open-xtts-trainer",
-        check=True,
+        check=False,
     )
     volume_cache.commit()
     volume_runs.commit()
     volume_checkpoints.commit()
     volume_baselines.commit()
 
-    # Collect any newly created/modified evidence files under docs/evidence/phase6_heldout/
-    evidence_dir = Path("/root/open-xtts-trainer/docs/evidence/phase6_heldout")
+    # Return only evidence files the command created or changed, so unchanged copies from the image never
+    # replace local files edited during the run
     artifacts = {}
-    if evidence_dir.exists():
-        for p in evidence_dir.rglob("*"):
-            if p.is_file():
-                rel = p.relative_to("/root/open-xtts-trainer").as_posix()
-                try:
-                    artifacts[rel] = p.read_text(encoding="utf-8")
-                except UnicodeDecodeError:
-                    artifacts[rel] = p.read_bytes()
+    for rel, digest in evidence_digests(REMOTE_ROOT).items():
+        if before.get(rel) == digest:
+            continue
+        p = REMOTE_ROOT / rel
+        try:
+            artifacts[rel] = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            artifacts[rel] = p.read_bytes()
     return {"returncode": proc.returncode, "artifacts": artifacts}
 
 

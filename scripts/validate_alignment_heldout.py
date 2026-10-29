@@ -155,10 +155,26 @@ def locked_versions(lock_path: Path = REPO_ROOT / "uv.lock", names=("torch", "to
     return found
 
 
-def environment_problems(installed: Dict[str, str], locked: Dict[str, str]) -> List[str]:
-    """Installed versions (local build tags like +cu130 ignored) that differ from uv.lock."""
-    return [f"{name} {installed.get(name)} installed, {want} locked" for name, want in locked.items()
-            if (installed.get(name) or "").split("+")[0] != want.split("+")[0]]
+def all_locked_versions(lock_path: Path = REPO_ROOT / "uv.lock") -> Dict[str, List[str]]:
+    """Every package in uv.lock with its locked versions (several when Python-version markers split it)."""
+    found: Dict[str, List[str]] = {}
+    for name, ver in re.findall(r'\[\[package\]\]\nname = "([^"]+)"\nversion = "([^"]+)"',
+                                lock_path.read_text(encoding="utf-8")):
+        found.setdefault(name, []).append(ver)
+    return found
+
+
+def environment_problems(installed: Dict[str, str], locked: Dict[str, Any]) -> List[str]:
+    """Installed versions (local build tags like +cu130 ignored) that differ from uv.lock.
+
+    A locked value may be one version or a list of them; any listed version counts as locked.
+    """
+    problems = []
+    for name, want in locked.items():
+        allowed = [want] if isinstance(want, str) else want
+        if (installed.get(name) or "").split("+")[0] not in {v.split("+")[0] for v in allowed}:
+            problems.append(f"{name} {installed.get(name)} installed, {' or '.join(allowed)} locked")
+    return problems
 
 
 def vocab_check(path: Path) -> Dict[str, Any]:
@@ -352,7 +368,7 @@ def check_transcripts(work_dir: str, device: str) -> None:
 
 
 def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_unlocked_env: bool,
-        allow_dirty: bool = False, overwrite: bool = False) -> Dict[str, Any]:
+        allow_dirty: bool = False, allow_unlocked_vocab: bool = False) -> Dict[str, Any]:
     import torch
     import torchaudio
 
@@ -363,7 +379,7 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
     if git["is_dirty"] and not allow_dirty:
         raise SystemExit("tracked files differ from the commit; commit them first, so the report names the code "
                          "that ran (--allow_dirty overrides, and is recorded)")
-    if output.exists() and not overwrite:
+    if output.exists():
         raise SystemExit(f"{output} exists; write a rerun to a new --output so earlier evidence is kept")
 
     from xtts_trainer.data import DatasetRecord, validate_dataset, write_dataset
@@ -371,7 +387,10 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
     from xtts_trainer.prepare import CtcAligner
 
     env = {"torch": torch.__version__, "torchaudio": torchaudio.__version__}
-    env_issues = environment_problems(env, locked_versions())
+    # Every installed package uv.lock pins, not just torch: audio decoding, alignment and the intervals depend on more
+    lock = all_locked_versions()
+    installed = {n: v for n in lock if (v := package_version(n))} | env
+    env_issues = environment_problems(installed, {n: lock[n] for n in installed if n in lock} | locked_versions())
     if env_issues and not allow_unlocked_env:
         raise SystemExit(f"not the locked environment ({'; '.join(env_issues)}); install with `uv sync --frozen`")
     unverified = [s["id"] for s in HELDOUT_SOURCES if s["kind"] == "recording" and not s["transcript_verified"]]
@@ -380,8 +399,9 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
     if not DEFAULT_VOCAB.exists():
         raise SystemExit(f"{DEFAULT_VOCAB} missing: run scripts/fetch_base_artifacts.py first")
     vocab = vocab_check(DEFAULT_VOCAB)
-    if not vocab["sha256_ok"] and not allow_unlocked_env:
-        raise SystemExit(f"{DEFAULT_VOCAB} doesn't match artifacts.lock.json; run scripts/fetch_base_artifacts.py")
+    if not vocab["sha256_ok"] and not allow_unlocked_vocab:
+        raise SystemExit(f"{DEFAULT_VOCAB} doesn't match artifacts.lock.json; run scripts/fetch_base_artifacts.py "
+                         "(--allow_unlocked_vocab overrides, and is recorded)")
 
     aligner = CtcAligner(device=device)
     pins = load_pins()
@@ -434,11 +454,12 @@ def run(device: str, output: Path, work_dir: str, allow_unverified: bool, allow_
                               "cuda": torch.version.cuda if torch.cuda.is_available() else None,
                               "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
                               "transformers": package_version("transformers"),
-                              "locked": locked_versions(), "environment_issues": env_issues},
+                              "locked": locked_versions(), "locked_packages_checked": len(installed),
+                              "environment_issues": env_issues},
         "git": git | {"dirty_allowed": bool(git["is_dirty"])},
         "code_fingerprint": get_code_fingerprint(str(REPO_ROOT)),
         # Version 2 adds these and code_fingerprint; version 1 recorded the source pins and git only
-        "artifacts": {"vocab.json": vocab, "mms_fa": mms_fa_weights()},
+        "artifacts": {"vocab.json": vocab | {"unlocked_allowed": not vocab["sha256_ok"]}, "mms_fa": mms_fa_weights()},
         "unverified_transcripts_allowed": bool(unverified),
         "frozen_quality_config": FROZEN_QUALITY.__dict__, "frozen_segment_config": FROZEN_SEGMENT,
         "results": results,
@@ -469,6 +490,33 @@ def clopper_pearson(k: int, n: int, level: float = 0.95) -> List[Optional[float]
     return [round(low, 4), round(high, 4)]
 
 
+def margin_stats(score_lists: List[List[float]], weak: float = 0.2) -> Dict[str, Any]:
+    """Pre-registered analysis item 4: the lowest word score and the weak-word count per clip, summarized."""
+    if not score_lists:
+        return {"n": 0}
+    lows = sorted(min(s) for s in score_lists)
+    weak_counts: Dict[str, int] = {}
+    for s in score_lists:
+        k = str(sum(x < weak for x in s))
+        weak_counts[k] = weak_counts.get(k, 0) + 1
+    return {"n": len(lows), "lowest_score": {"min": round(lows[0], 4), "median": round(float(np.median(lows)), 4),
+                                             "max": round(lows[-1], 4)},
+            "weak_words": dict(sorted(weak_counts.items(), key=lambda kv: int(kv[0])))}
+
+
+def score_margins(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Margins for clean clips that re-aligned, and for each mutation (clips that failed to align have no scores)."""
+    weak = FROZEN_QUALITY.weak_word_score
+    clean = [c["realign"]["scores"] for r in results for c in r["clean"] if c["realign"] and c["realign"]["scores"]]
+    by_mutation: Dict[str, List[List[float]]] = {}
+    for r in results:
+        for m in r["mutations"]:
+            if m["scores"]:
+                by_mutation.setdefault(m["name"], []).append(m["scores"])
+    return {"clean": margin_stats(clean, weak),
+            "mutations": {k: margin_stats(v, weak) for k, v in sorted(by_mutation.items())}}
+
+
 def summarize(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     """The pre-registered summary: clean acceptance overall and per language, and rates per mutation."""
     clean = [(r["lang"], c) for r in results for c in r["clean"]]
@@ -484,14 +532,29 @@ def summarize(results: List[Dict[str, Any]]) -> Dict[str, Any]:
             slot[0] += m["actual_pass"]
             slot[1] += 1
     accepted = sum(c["accepted"] for _, c in clean)
+    # The protocol's unit is the utterance; preparation may split one into several segments, and an utterance
+    # counts as accepted only when every one of its segments is
+    by_utt: Dict[Tuple[str, str, str], bool] = {}
+    for r in results:
+        for c in r["clean"]:
+            key = (r["lang"], r["id"], c["recording"])
+            by_utt[key] = by_utt.get(key, True) and bool(c["accepted"])
+    utt_lang: Dict[str, List[int]] = {}
+    for (lang, _, _), ok in by_utt.items():
+        utt_lang.setdefault(lang, [0, 0])
+        utt_lang[lang][0] += ok
+        utt_lang[lang][1] += 1
     return {
         "clean_accepted": f"{accepted}/{len(clean)}",
         "clean_accepted_ci95": clopper_pearson(accepted, len(clean)),
         "clean_accepted_by_language": {k: {"accepted": f"{a}/{n}", "ci95": clopper_pearson(a, n)}
                                        for k, (a, n) in sorted(by_lang.items())},
+        "clean_utterances_accepted_by_language": {k: {"accepted": f"{a}/{n}", "ci95": clopper_pearson(a, n)}
+                                                  for k, (a, n) in sorted(utt_lang.items())},
         "mutations": {k: {"passed": f"{p}/{n}", "expected": "pass" if e else "reject",
                           "rejected_ci95": clopper_pearson(n - p, n)}
                       for k, (p, n, e) in sorted(by_mutation.items())},
+        "score_margins": score_margins(results),
     }
 
 
@@ -504,7 +567,8 @@ def main():
     parser.add_argument("--allow_unverified_transcripts", action="store_true")
     parser.add_argument("--allow_unlocked_env", action="store_true", help="for development only; recorded in output")
     parser.add_argument("--allow_dirty", action="store_true", help="run with modified tracked files; recorded in output")
-    parser.add_argument("--overwrite", action="store_true", help="replace an existing --output file")
+    parser.add_argument("--allow_unlocked_vocab", action="store_true",
+                        help="run with a vocab.json that isn't in artifacts.lock.json; recorded in output")
     args = parser.parse_args()
     if args.device is None:
         import torch
@@ -514,7 +578,7 @@ def main():
         check_transcripts(args.work_dir, args.device)
     else:
         run(args.device, args.output, args.work_dir, args.allow_unverified_transcripts, args.allow_unlocked_env,
-            allow_dirty=args.allow_dirty, overwrite=args.overwrite)
+            allow_dirty=args.allow_dirty, allow_unlocked_vocab=args.allow_unlocked_vocab)
 
 
 if __name__ == "__main__":

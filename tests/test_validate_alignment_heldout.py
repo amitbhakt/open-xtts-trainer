@@ -70,6 +70,28 @@ def test_environment_check_reads_the_lock():
     assert heldout.environment_problems({"torch": locked["torch"] + "+cu130", "torchaudio": locked["torchaudio"]},
                                         locked) == []
     assert heldout.environment_problems({"torch": "2.1.2", "torchaudio": locked["torchaudio"]}, locked)
+    lock = heldout.all_locked_versions()
+    assert len(lock) > 100 and lock["torch"] == [locked["torch"]]
+    assert heldout.environment_problems({"numpy": "2.2.6"}, {"numpy": ["2.2.6", "2.4.6"]}) == []
+    assert heldout.environment_problems({"numpy": "1.26.0"}, {"numpy": ["2.2.6", "2.4.6"]})
+
+
+def test_summary_reports_utterances_and_score_margins():
+    """An utterance split into segments is accepted only when all of them are; margins per pre-registered item 4."""
+    def clip(rec, ok, scores):
+        return {"recording": rec, "accepted": ok, "realign": {"scores": scores}}
+    results = [{"id": "s", "lang": "en", "clean": [clip("u1", True, [0.9, 0.15]), clip("u1", False, [0.02]),
+                                                    clip("u2", True, [0.8])],
+                "mutations": [{"name": "m", "expected_pass": False, "actual_pass": True, "scores": [0.3, 0.1]},
+                              {"name": "m", "expected_pass": False, "actual_pass": False, "scores": []}]}]
+    summary = heldout.summarize(results)
+    assert summary["clean_accepted"] == "2/3"
+    assert summary["clean_utterances_accepted_by_language"]["en"]["accepted"] == "1/2"
+    margins = summary["score_margins"]
+    assert margins["clean"]["n"] == 3 and margins["clean"]["lowest_score"]["min"] == 0.02
+    assert margins["clean"]["weak_words"] == {"0": 1, "1": 2}
+    assert margins["mutations"]["m"] == {"n": 1, "lowest_score": {"min": 0.1, "median": 0.1, "max": 0.1},
+                                         "weak_words": {"1": 1}}
 
 
 def test_cer_normalizes_case_and_punctuation():
@@ -100,9 +122,12 @@ def test_realign_check_end_to_end_with_a_synthetic_aligner():
 
 
 def test_summary_counts_clean_rejections_and_mutation_rates():
-    results = [{"lang": "en", "clean": [{"accepted": True}, {"accepted": False}],
-                "mutations": [{"name": "insert_head_word", "expected_pass": False, "actual_pass": False}]},
-               {"lang": "fr", "clean": [{"accepted": True}], "mutations": []}]
+    def clip(rec, ok):
+        return {"recording": rec, "accepted": ok, "realign": None}
+    results = [{"id": "a", "lang": "en", "clean": [clip("u1", True), clip("u2", False)],
+                "mutations": [{"name": "insert_head_word", "expected_pass": False, "actual_pass": False,
+                               "scores": []}]},
+               {"id": "b", "lang": "fr", "clean": [clip("u1", True)], "mutations": []}]
     summary = heldout.summarize(results)
     assert summary["clean_accepted"] == "2/3"
     assert {k: v["accepted"] for k, v in summary["clean_accepted_by_language"].items()} == {"en": "1/2", "fr": "1/1"}
@@ -140,7 +165,7 @@ def test_full_run_end_to_end_on_a_synthetic_source(tmp_path, monkeypatch):
     monkeypatch.setattr(prepare_module, "CtcAligner", lambda device=None: tone_aligner())
     out = tmp_path / "report.json"
     report = heldout.run("cpu", out, str(tmp_path / "work"), allow_unverified=False, allow_unlocked_env=True,
-                         allow_dirty=True)
+                         allow_dirty=True, allow_unlocked_vocab=True)
 
     saved = json.loads(out.read_text(encoding="utf-8"))
     assert saved["summary"] == report["summary"] and saved["frozen_quality_config"]["max_weak_words"] == 3
@@ -156,10 +181,12 @@ def test_full_run_end_to_end_on_a_synthetic_source(tmp_path, monkeypatch):
     assert saved["git"]["commit_sha"] and "is_dirty" in saved["git"]
     assert saved["code_fingerprint"]["sha256"] and saved["code_fingerprint"]["n_files"] > 0
     assert saved["artifacts"]["vocab.json"]["sha256_ok"] is False  # the test vocab isn't the locked one
+    assert saved["artifacts"]["vocab.json"]["unlocked_allowed"] is True
+    assert saved["summary"]["score_margins"]["clean"]["n"] > 0
     with pytest.raises(SystemExit, match="exists"):  # a rerun can't silently replace earlier evidence
-        heldout.run("cpu", out, str(tmp_path / "work"), False, True, allow_dirty=True)
+        heldout.run("cpu", out, str(tmp_path / "work"), False, True, allow_dirty=True, allow_unlocked_vocab=True)
     again = heldout.run("cpu", tmp_path / "rerun.json", str(tmp_path / "work"), allow_unverified=False,
-                        allow_unlocked_env=True, allow_dirty=True)
+                        allow_unlocked_env=True, allow_dirty=True, allow_unlocked_vocab=True)
     assert again["results"][0]["provenance"]["pin"] == "verified"
 
 
@@ -180,9 +207,9 @@ def test_run_refuses_a_vocab_that_is_not_the_locked_one(tmp_path, monkeypatch):
 
     write_test_vocab(str(tmp_path / "vocab.json"))
     monkeypatch.setattr(heldout, "DEFAULT_VOCAB", tmp_path / "vocab.json")
-    monkeypatch.setattr(heldout, "environment_problems", lambda installed, locked: [])
+    # Independent of the environment override: allowing an unlocked environment doesn't allow another tokenizer
     with pytest.raises(SystemExit, match="artifacts.lock.json"):
-        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=False,
+        heldout.run("cpu", tmp_path / "r.json", str(tmp_path), allow_unverified=True, allow_unlocked_env=True,
                     allow_dirty=True)
 
 
@@ -249,7 +276,8 @@ def test_arctic_source_end_to_end_with_its_own_license(tmp_path, monkeypatch):
     monkeypatch.setattr(dataset_module, "CMU_ARCTIC_LICENSE_URL", (tmp_path / "COPYING").as_uri())
     monkeypatch.setattr(prepare_module, "CtcAligner", lambda device=None: tone_aligner())
 
-    report = heldout.run("cpu", tmp_path / "report.json", str(tmp_path / "work"), False, True, allow_dirty=True)
+    report = heldout.run("cpu", tmp_path / "report.json", str(tmp_path / "work"), False, True, allow_dirty=True,
+                         allow_unlocked_vocab=True)
     result = report["results"][0]
     assert result["provenance"]["transcripts"] == "corpus prompt file etc/txt.done.data"
     assert (tmp_path / "evidence" / "licenses" / "zzz_COPYING").read_text() == "test license\n"
