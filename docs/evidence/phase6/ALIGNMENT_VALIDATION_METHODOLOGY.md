@@ -21,7 +21,7 @@ Empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phas
   2. **Hallucinated / Unspoken Word in Transcript**: Token insertions across Head, Mid, and Tail positions (short function words vs. long content words).
   3. **Unexplained Speech Spillover**: Sub-threshold ($+0.10\text{s}$ appended, measuring 0.00 s of unexplained speech) vs. cross-threshold ($+0.50\text{s}$ appended, measuring 0.08–0.14 s) audio from adjacent sentence onsets. The labels describe the audio appended; what the validator compares with the limit is the measured unexplained speech.
 
-- **Defensible Framing (`[E5]` Calibration)**: The benchmark **calibrates thresholds in-sample and characterizes detection limits and specific failure modes**. Setting `max_weak_words = 3` was required to accommodate non-native accented speech (`arctic_ksp`, lowest score 0.062 with 3 weak words), while `max_unexplained_speech_s = 0.10s` was retained since all clean recordings measure 0.00 s. Held-out results: `../phase6_heldout/README.md`.
+- **Defensible Framing (`[E5]` Calibration)**: The benchmark **calibrates thresholds in-sample and characterizes detection limits and specific failure modes**. Setting `max_weak_words = 3` was required to accommodate non-native accented speech (`arctic_ksp`, lowest score 0.062 with 3 weak words), while `max_unexplained_speech_s = 0.10s` was retained since all clean recordings measure 0.00 s. The run itself used 0.20 s; verdicts at 0.10 s are recomputed from the recorded unexplained speech (Section 6). Held-out results: `../phase6_heldout/README.md`.
 
 ---
 
@@ -182,9 +182,5 @@ To understand why $+500\text{ms}$ appended audio was not flagged, frame-level tr
 
 1. **In-Sample Calibration Status (`[E5]`)**: The 8-speaker benchmark characterizes threshold behavior in-sample. Setting `max_weak_words = 3` accommodates non-native accented speech (`arctic_ksp`, 3 weak words scoring down to 0.062), but narrows the margin above the 0.05 floor.
 2. **Boundary Sensitivity**: Detection of edge truncation is non-monotonic: 37.5% at 100 ms, 62.5% at 250 ms, 25.0% at 500 ms (where whole-word loss allows trellis realignment without dropping below 0.05), and 87.5% at 1,000 ms. Head truncation is detected at 87.5%–100%.
-3. **Unexplained Speech Retained at 0.10 s**: All clean recordings measure 0.00 s, and 0.10 s catches trailing speech intrusions (Spanish 0.14 s).
-4. **Held-Out Validation Pending (Plan Item 11 Reopened)**: Genuine out-of-sample validation requires:
-   - Evaluation on new held-out speakers (e.g. additional CMU ARCTIC voices, LibriVox readers);
-   - At least two more languages (e.g. French, German, or Hindi);
-   - Execution in the locked repository environment (`torch==2.14.1` from `uv.lock`);
-   - Logging full per-word score distributions to measure threshold trade-offs directly.
+3. **Unexplained Speech Retained at 0.10 s**: All clean recordings measure 0.00 s, and 0.10 s catches trailing speech intrusions (Spanish 0.14 s). The run used 0.20 s; the 0.10 s verdicts are recomputed from the recorded values, not rerun.
+4. **Held-Out Validation (done; `../phase6_heldout/README.md`)**: Run under a pre-registered protocol in the locked environment, on new CMU ARCTIC voices (`rms`, `jmk`) and LibriVox readers in French and German, with full per-word scores logged. Clean acceptance is validated out-of-sample for English (39/40 utterances, 59/60 segments); French and German had too few clips to validate; only large corruptions are reliably detected.

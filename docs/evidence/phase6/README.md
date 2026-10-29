@@ -11,8 +11,8 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 - **Software Environment**: PyTorch 2.1.2 + CUDA 12.1 (exploratory run; locked environment `torch==2.14.1` required for held-out validation)
 - **Scope**: Multi-speaker calibration across **8 baseline voices** and 2 languages (English, Castilian Spanish) across 5 accent profiles.
 - **Evaluation Scale**: 8 clean baseline recordings + 88 controlled corruption tests (11 mutations per speaker) = **96 total alignment tests**.
-- **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed. Calibrated `max_weak_words = 3` to accommodate non-native accented speech (`arctic_ksp`, 3 weak words scoring down to $0.062$), while the studio-clean native clips (four ARCTIC voices, LJSpeech) and the Spanish audiobook score $\ge 0.54$ and JFK's 1961 recording has one weak word (0.122). Retained `max_unexplained_speech_s = 0.10s` (all clean clips measure $0.00\text{ s}$).
-- **Controlled Corruption Characterization**: Characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech. Under `max_unexplained_speech_s = 0.10s`, Spanish trailing spillover ($0.14\text{s}$) is caught. Held-out results: `../phase6_heldout/README.md`.
+- **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed. Calibrated `max_weak_words = 3` to accommodate non-native accented speech (`arctic_ksp`, 3 weak words scoring down to $0.062$), while the studio-clean native clips (four ARCTIC voices, LJSpeech) and the Spanish audiobook have a minimum per-word alignment score $\ge 0.54$; JFK's 1961 recording has one weak word (minimum word score 0.122). The run itself used `max_unexplained_speech_s = 0.20` (`quality_config` in the JSON); the operating 0.10 s limit was applied afterwards by recomputing from the recorded unexplained speech (all clean clips measure $0.00\text{ s}$, so their verdicts are the same at either limit).
+- **Controlled Corruption Characterization**: Characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech. At the 0.10 s limit (by recomputation), Spanish trailing spillover ($0.14\text{s}$) is caught. Held-out results: `../phase6_heldout/README.md`.
 
 ---
 
@@ -21,7 +21,7 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 | File | SHA-256 Checksum | Description |
 |---|---|---|
 | [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `7ebcd27c9fbd7eccaff0033d929009f5e91021984d24f2d57f69d5c13f45ac49` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
-| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `6118bf4c7cd70d1b8998749705e732a3fb2aab107873bd741fcd219075c7f659` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
+| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `c7b65f059a6a08eac71d96c89b98f7ac8cb5179d3b26328a3e53feb42f481e7f` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
 
 ---
 

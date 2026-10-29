@@ -111,7 +111,10 @@ def run_command_remote(cmd: str):
     # Return only evidence files the command created or changed, so unchanged copies from the image never
     # replace local files edited during the run
     artifacts = {}
-    for rel, digest in evidence_digests(REMOTE_ROOT).items():
+    after = evidence_digests(REMOTE_ROOT)
+    # Evidence the command deleted is reported, not silently left behind as a stale local copy
+    deleted = sorted(set(before) - set(after))
+    for rel, digest in after.items():
         if before.get(rel) == digest:
             continue
         p = REMOTE_ROOT / rel
@@ -119,7 +122,7 @@ def run_command_remote(cmd: str):
             artifacts[rel] = p.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             artifacts[rel] = p.read_bytes()
-    return {"returncode": proc.returncode, "artifacts": artifacts}
+    return {"returncode": proc.returncode, "artifacts": artifacts, "deleted": deleted}
 
 
 @app.local_entrypoint()
@@ -137,6 +140,10 @@ def main(cmd: str = "python scripts/run_run5_pipeline.py", gpu: str = "A100-40GB
                 dest.write_bytes(content)
             print(f"📥 Retrieved artifact: {rel_path}")
     code = res.get("returncode") if isinstance(res, dict) else res
+    deleted = res.get("deleted", []) if isinstance(res, dict) else []
+    if deleted:
+        # Local copies are kept: removing evidence is for a person to decide, so fail loudly instead
+        raise SystemExit("remote command deleted evidence files (any local copies were kept): " + ", ".join(deleted))
     if code:
         raise SystemExit(f"remote command failed with exit code {code}; retrieved artifacts may be partial")
     print("✅ Completed successfully on Modal!")

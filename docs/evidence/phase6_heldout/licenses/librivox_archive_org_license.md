@@ -15,7 +15,7 @@ http://creativecommons.org/licenses/publicdomain/ | Märchen
 | `fables_lafontaine_01_librivox` | `fables_01_00_lafontaine_64kb.mp3` | `http://creativecommons.org/licenses/publicdomain/` |
 | `grimm_maerchen_1_librivox` | `grimm_214_spindel_weberschiffchen_und_nadel_64kb.mp3` | `http://creativecommons.org/licenses/publicdomain/` |
 
-Checked again 2026-10-29: each file is listed in its item's `files` metadata, and the downloaded bytes match the
+Checked again 2026-10-29, on macOS (`md5 -q` and `shasum` as shipped there; on Linux use `md5sum "$2" | cut -d' ' -f1` and `sha256sum`/`sha1sum`): each file is listed in its item's `files` metadata, and the downloaded bytes match the
 SHA-1, MD5 and size archive.org publishes there, and the SHA-256 pinned in `../source_pins.json`:
 
 ```
