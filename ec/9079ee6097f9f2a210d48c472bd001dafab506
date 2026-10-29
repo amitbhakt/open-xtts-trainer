@@ -1,0 +1,30 @@
+scripts/modal_run_eval.py
+  s_bfc6eb584d8e27::t_3c027507ef7066 114-117,125,143-145
+  s_bfc6eb584d8e27::t_723495adb3ee74 146
+docs/evidence/phase6/ALIGNMENT_VALIDATION_METHODOLOGY.md
+  s_bfc6eb584d8e27::t_95879196cb859a 24,185-186
+docs/recipe_design.md
+  s_bfc6eb584d8e27::t_95879196cb859a 86
+README.md
+  s_bfc6eb584d8e27::t_95879196cb859a 83
+docs/evidence/phase6_heldout/licenses/librivox_archive_org_license.md
+  s_bfc6eb584d8e27::t_95879196cb859a 18
+docs/evidence/phase6/README.md
+  s_bfc6eb584d8e27::t_95879196cb859a 14-15,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "ec9079ee6097f9f2a210d48c472bd001dafab506",
+  "prompts": {},
+  "sessions": {
+    "s_bfc6eb584d8e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f7542cc-42d4-4c15-8d59-e310749a1856",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
