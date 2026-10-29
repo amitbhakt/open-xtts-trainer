@@ -427,8 +427,10 @@ re-aligned every clip as the validator does (Table 3). Only the first clip was s
 
 Across all three unshifted clips, the lowest re-aligned word score was 0.54. The word "for" scored 0.12 when the
 whole 11 s recording was aligned in one pass, but 0.66 when re-aligned within its own clip. A low score from a
-long alignment window is therefore not, by itself, evidence of a bad clip. For clean native recordings (JFK,
-LJSpeech, and standard ARCTIC voices), clean clips maintain a wide score margin ($\ge 0.54$). However, on accented
+long alignment window is therefore not, by itself, evidence of a bad clip. In the 8-recording calibration, the
+studio-clean native clips (four ARCTIC voices and LJSpeech) and the Spanish audiobook keep a wide score margin
+($\ge 0.54$), while JFK's 1961 recording has one weak word (0.122). This margin is in-sample: on held-out voices,
+one clean `arctic_jmk` clip scored 0.022 ("our") and was rejected (Table 3c). However, on accented
 non-native speech (`arctic_ksp`, Indian English), unstressed function words score down to $0.062$ (only $0.012$
 above the $0.05$ floor), registering three weak words below $0.20$. Accommodating this speaker without dropping the
 0.05 safety floor required calibrating the weak-word allowance to three (`max_weak_words = 3`), narrowing the
@@ -468,7 +470,11 @@ environment (`torch 2.14.1+cu130`, CUDA 13.0), on speakers and text that played 
 and German (transcripts checked by listening). In the first run, the listening checks were recorded in the working tree
 and committed with the results, not before the run. Two reruns from fully committed trees reproduced every score and verdict
 exactly, and verified all six source downloads against the pins, so the results below do not depend on that
-deviation. The second rerun (`f4106c5`) also records the vocabulary, alignment-model weight and code hashes, checked
+deviation. The pins were recorded at the first download, not fixed in advance; the two LibriVox files also match
+the SHA-1, MD5 and size archive.org publishes for them, while festvox publishes no checksum for the ARCTIC archives.
+A second deviation: the protocol counts 40 English clean clips, one per utterance, but preparation splits some
+utterances at pauses, giving 60 segments. Both units are reported; an utterance counts as accepted only when all of
+its segments are, and the verdict is the same at either unit. The second rerun (`f4106c5`) also records the vocabulary, alignment-model weight and code hashes, checked
 against the artifact lock and an independent download; it is the reference record.
 
 **Table 3c.** Held-out results. A corruption counts as detected only at a rejection rate of at least 80%
@@ -476,22 +482,22 @@ against the artifact lock and an independent download; it is the reference recor
 
 | Measure | Result | Pre-registered verdict |
 |---|---|---|
-| Clean acceptance, English | 59/60 (98.3%, [0.911, 1.000]); silence controls 17/17 | Validated |
+| Clean acceptance, English | 39/40 utterances (97.5%, [0.868, 0.999]); 59/60 prepared segments (98.3%, [0.911, 1.000]); silence controls 17/17 | Validated |
 | Clean acceptance, French / German | 4/4 ([0.398, 1.000]) / 3/3 ([0.292, 1.000]) | Too few clips to validate |
 | Head speech cut 600 / 300 / 150 ms | 100% / 93.8% / 50.0% rejected | Detected / detected / limitation |
 | Tail speech cut 600 / 300 / 150 / 50 ms | 93.3% / 43.8% / 12.5% / 0% rejected | Detected / limitation / limitation / limitation |
 | Inserted word at the start / middle / end | 100% / 76.5% / 64.7% rejected | Detected / limitation / limitation |
 | Next-utterance spillover 0.50 s / 0.05 s | 80.0% rejected ([0.519, 0.957]) / 14/15 passed | Detected at the bar / passes as intended |
 
-The out-of-sample evidence (`[E1]`) therefore covers **clean acceptance on English**: at most about 9% of clean
-English clips are wrongly rejected, at 95% confidence. The single rejection is `arctic_jmk` "Hardly were **our**
+The out-of-sample evidence (`[E1]`) therefore covers **clean acceptance on English**: at 95% confidence, at most
+about 13% of clean English utterances (9% of prepared segments) are wrongly rejected. The single rejection is `arctic_jmk` "Hardly were **our**
 plans made public", where "our" scored 0.022 (below the 0.05 floor). French and German are reported but not
 validated. Detection is reliable only for large corruptions: head cuts of 300 ms or more, the 600 ms tail cut, an
 inserted opening word, and 0.5 s of spillover. Shorter tail cuts and inserted mid- or end-of-sentence words often
 pass, so the validator is a safety net against gross mis-cuts, not a guarantee of exact boundaries. The recorded
 scores show why (exploratory, `docs/evidence/phase6_heldout/README.md` §6.4): almost every rejection comes from the
-0.05 floor, the weak-word allowance of three never triggers on held-out clean speech, and the corruptions that pass
-typically have a single weak word.
+0.05 floor, and the weak-word allowance of three never triggers on held-out clean speech. Of the 63 corruptions
+that pass, 40 have no weak word at all, 20 have one and 3 have two.
 
 ### 5.5 Training smoke runs with real weights
 

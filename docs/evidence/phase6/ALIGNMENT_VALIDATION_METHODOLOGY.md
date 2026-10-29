@@ -1,6 +1,6 @@
 # Multilingual & Multi-Speaker Alignment Threshold Calibration Methodology
 
-Empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)** as an in-sample threshold calibration (`[E5]`). Independent held-out validation across new speakers and additional languages in the locked environment (`torch==2.14.1`) remains pending.
+Empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)** as an in-sample threshold calibration (`[E5]`). Held-out validation on unseen voices and languages has since run under a pre-registered protocol (`../phase6_heldout/README.md`): clean acceptance is validated out-of-sample for English (39/40 utterances, 59/60 segments); French and German had too few clips to validate; detection is reliable only for large corruptions.
 
 ---
 
@@ -19,9 +19,9 @@ Empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phas
 - **Controlled Corruption Matrix**: A 96-test evaluation protocol (8 clean baselines + 88 controlled corruptions, 11 mutations per speaker) across 3 realistic failure modes:
   1. **Edge Truncation Severity Ladder**: 100 ms, 250 ms, 500 ms, 1,000 ms at closing word tail and 500 ms, 1,000 ms at opening word head.
   2. **Hallucinated / Unspoken Word in Transcript**: Token insertions across Head, Mid, and Tail positions (short function words vs. long content words).
-  3. **Unexplained Speech Spillover**: Sub-threshold ($+0.10\text{s} \le 0.10\text{s}$) vs. Cross-threshold ($+0.50\text{s} > 0.10\text{s}$) spoken audio from adjacent sentence onsets.
+  3. **Unexplained Speech Spillover**: Sub-threshold ($+0.10\text{s}$ appended, measuring 0.00 s of unexplained speech) vs. cross-threshold ($+0.50\text{s}$ appended, measuring 0.08–0.14 s) audio from adjacent sentence onsets. The labels describe the audio appended; what the validator compares with the limit is the measured unexplained speech.
 
-- **Defensible Framing (`[E5]` Calibration)**: The benchmark **calibrates thresholds in-sample and characterizes detection limits and specific failure modes**. Setting `max_weak_words = 3` was required to accommodate non-native accented speech (`arctic_ksp`, lowest score 0.062 with 3 weak words), while `max_unexplained_speech_s = 0.10s` was retained since all clean recordings measure 0.00 s. Independent held-out validation on unseen voices and languages is tracked in reopened plan item 11.
+- **Defensible Framing (`[E5]` Calibration)**: The benchmark **calibrates thresholds in-sample and characterizes detection limits and specific failure modes**. Setting `max_weak_words = 3` was required to accommodate non-native accented speech (`arctic_ksp`, lowest score 0.062 with 3 weak words), while `max_unexplained_speech_s = 0.10s` was retained since all clean recordings measure 0.00 s. Held-out results: `../phase6_heldout/README.md`.
 
 ---
 
@@ -146,6 +146,8 @@ Across 24 insertion trials (3 per speaker: head function word, mid content word,
 In the spillover benchmark:
 - **Sub-threshold condition ($+0.10\text{s}$ appended)**: 8/8 correctly accepted (tolerance functioning as intended).
 - **Cross-threshold condition ($+0.50\text{s}$ appended)**: 8/8 passed, evading the expected rejection.
+
+These counts were measured with `max_unexplained_speech_s = 0.20`, the setting at run time (`multilingual_alignment_validation.json`, `quality_config`). At the operating 0.10 s limit, recomputed from the recorded `unexplained_speech_s` (no rerun; only this rule depends on the limit, and no other mutation measured between 0.10 and 0.20 s): sub-threshold 8/8 passed, cross-threshold 7/8 passed (Spanish, 0.14 s, rejected), so 58/88 corruptions are classified correctly instead of 57/88. The sub-threshold case is not on the 0.10 s boundary: the 0.10 s appended fell inside the inter-utterance pause, and every speaker measured 0.00 s of unexplained speech.
 
 ### Frame-Level Diagnostic on Representative Cases
 To understand why $+500\text{ms}$ appended audio was not flagged, frame-level trellis paths, token spans, and RMS speech energies were measured on 3 representative speakers on GPU:

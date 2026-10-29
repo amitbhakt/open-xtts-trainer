@@ -26,17 +26,23 @@ class SegmentConfig:
 
 @dataclass
 class QualityConfig:
-    """Alignment checks that reject a segment. Calibrated on 8 baseline speakers [E5]; held-out validation pending."""
+    """Alignment checks that reject a segment. Calibrated on 8 baseline speakers [E5].
+
+    Held-out validation (docs/evidence/phase6_heldout/): clean acceptance validated for English [E1]; French and
+    German too few clips to validate; only large corruptions are reliably detected.
+    """
 
     # Word alignment scores. Real speech has weak words: JFK's reduced "for" scores 0.12 in a correct clip.
     # Non-native accented speech (e.g. Indian English arctic_ksp) exhibits up to 3 weak function words ("of" 0.14, "the" 0.062, "etc." 0.11),
-    # all above the 0.05 floor. Clean native speech scores >= 0.54, but accented speech approaches the floor (0.062).
+    # all above the 0.05 floor. In the calibration set, studio-clean native clips score >= 0.54 (JFK's 1961 recording
+    # has one at 0.12), but accented speech approaches the floor (0.062). Held out, one clean clip scored 0.022.
     # Corrupted cuts drop to 0.00 (< 0.05 floor). Calibrated at at most 3 words below 0.20 [E5].
     min_word_score: float = 0.05
     weak_word_score: float = 0.2
     max_weak_words: int = 3
     # Speech the transcript doesn't account for (WindowAlignment.unexplained): text missing from the transcript.
-    # Kept at 0.10s: all clean recordings measure 0.00s, and 0.10s catches trailing speech intrusions (e.g. Spanish 0.14s).
+    # Kept at 0.10s: the 8 calibration recordings measure 0.00s, and 0.10s catches trailing speech intrusions (e.g.
+    # Spanish 0.14s). Held out, clean clips reach 0.081s, so the margin there is small.
     max_unexplained_speech_s: float = 0.1
     # A word longer than this absorbed speech that isn't in the transcript
     max_word_s: float = 1.5

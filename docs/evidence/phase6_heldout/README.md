@@ -107,6 +107,12 @@ python scripts/validate_alignment_heldout.py --device cuda         # writes held
 The script refuses to run outside the versions pinned in `uv.lock` (`--allow_unlocked_env` exists for development
 and is recorded in the output), and refuses unverified transcripts (`--allow_unverified_transcripts`, also
 recorded). Output: `heldout_alignment_validation.json` in this directory, plus `source_pins.json` on the first run.
+Since `f4106c5` it also refuses a `vocab.json` that isn't in `artifacts.lock.json` (`--allow_unlocked_vocab`,
+recorded, and independent of `--allow_unlocked_env`). It refuses any existing output file; there is no overwrite
+option. Since the review of PR #13, the environment check covers every installed package that `uv.lock` pins (104
+locally), not only torch and torchaudio, and the summary includes the score margins (analysis item 4) and
+utterance-level acceptance. Runs 1–3 predate these two additions; §6.1 and §6.5 compute them from their recorded
+per-clip data.
 
 ---
 
@@ -114,12 +120,23 @@ recorded). Output: `heldout_alignment_validation.json` in this directory, plus `
 
 Run on an NVIDIA A100-SXM4-40GB GPU in the locked environment (`torch==2.14.1+cu130`, `torchaudio==2.11.0+cu130`,
 CUDA 13.0, `environment_issues: []`), with transcripts verified (`unverified_transcripts_allowed: false`) and every
-download pinned (`source_pins.json`). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json); two identical reruns below.
+download pinned (`source_pins.json`; see the pin note below). Full per-clip output: [`heldout_alignment_validation.json`](heldout_alignment_validation.json); two identical reruns below.
 
 **Provenance note.** The protocol, frozen thresholds and script were committed before the run (`562cf21`). Setting
 `transcript_verified: True` for the two LibriVox sources, after listening, was done in the working tree and committed
 with these results, not before the run. The script doesn't record the commit it ran from; the run's code is
 `562cf21` plus that two-line change.
+
+**Pins are first-download records.** `source_pins.json` was written by run 1 from what it downloaded; no hash was
+fixed before that run, so runs 2 and 3 show the bytes did not change, not that run 1's bytes were right. For the
+two LibriVox files there is an independent check: their SHA-256 equals the pin, and their SHA-1, MD5 and size equal
+what archive.org publishes for those files (`licenses/librivox_archive_org_license.md`). Festvox publishes no
+checksums for the ARCTIC archives or their `COPYING` files, so those four pins rest on the first download alone.
+
+**Unit of clean acceptance (deviation).** Section 4 counts "40 English clean clips", one per utterance. Preparation
+cuts at pauses, so some utterances become several segments: 60 in all (`rms` 25 from 20 utterances, `jmk` 35 from
+20). The script counted segments. Both units are reported in §6.1; an utterance counts as accepted only when all its
+segments are. The verdict is the same at either unit.
 
 **Rerun from a committed tree (2026-10-27).** To close that gap, the validation was rerun from `826bd1e`, in which
 the verification flags, the results above and commit recording are all committed, on the same GPU type and locked
@@ -154,12 +171,14 @@ record for this section; runs 1 and 2 are replicates.
 
 ### 6.1 Clean acceptance
 
-| Language | Accepted | 95% Clopper–Pearson CI |
-|---|---|---|
-| English (`rms`, `jmk`) | 59/60 (98.3%) | [0.911, 1.000] |
-| French | 4/4 | [0.398, 1.000] |
-| German | 3/3 | [0.292, 1.000] |
-| All | 66/67 (98.5%) | [0.920, 1.000] |
+| Language | Utterances accepted (protocol unit) | 95% CI | Segments accepted | 95% CI |
+|---|---|---|---|---|
+| English (`rms`, `jmk`) | 39/40 (97.5%) | [0.868, 0.999] | 59/60 (98.3%) | [0.911, 1.000] |
+| French | 1/1 (one opening) | [0.025, 1.000] | 4/4 | [0.398, 1.000] |
+| German | 1/1 (one opening) | [0.025, 1.000] | 3/3 | [0.292, 1.000] |
+| All | 41/42 | — | 66/67 (98.5%) | [0.920, 1.000] |
+
+Intervals are 95% Clopper–Pearson.
 
 The one rejection is `arctic_jmk` `arctic_a0022` ("Hardly were our plans made public"): the word "our" scored 0.022,
 below the 0.05 floor; the validator agrees. Both silence-trimming controls passed on all 17 mutated clips.
@@ -186,8 +205,9 @@ Pre-registered criterion: a corruption counts as detected only where the rejecti
 
 ### 6.3 Pre-registered verdict
 
-- **English: validated** for clean acceptance (≥ 90%, both controls pass on every clip). This is out-of-sample
-  evidence (`[E1]`) for the false-rejection rate on clean English speech: at most about 9% at 95% confidence.
+- **English: validated** for clean acceptance (≥ 90% at either unit, both controls pass on every clip). This is
+  out-of-sample evidence (`[E1]`) for the false-rejection rate on clean English speech: at 95% confidence, at most
+  about 13% of utterances (9% of segments).
 - **French and German: not validated.** 4 and 3 clean clips are too few, as section 4 states in advance; their
   results are reported only.
 - **Detection: reliable only for large corruptions.** Head cuts of 300 ms or more, the 600 ms tail cut, an inserted
@@ -200,10 +220,42 @@ These come from the recorded per-word scores, after the results were seen. They 
 separately held-out run; adopting a rule tuned on this data would make it in-sample again.
 - The 0.05 floor makes almost every rejection; the weak-word rule (at most 3 below 0.2) makes none. 65 of 67 clean
   clips have no weak word and 2 have one.
-- Corruptions that pass usually have exactly one weak word, with lowest scores around 0.07–0.14.
+- Of the 63 corruptions that pass, 40 have no weak word, 20 have one and 3 have two; their lowest word scores
+  range from 0.051 to 0.996 (median 0.35). Most missed corruptions therefore look like clean clips to every
+  score rule, not near-misses of the weak-word rule.
 - Unexplained speech reaches 0.081 s on clean clips, and the 0.5 s spillovers that pass sit around 0.08 s: the 0.1 s
   limit has no margin.
 - A 150 ms tail cut leaves the last word scoring about 0.48 (median): the aligner fits the shortened word.
 - On this data, a 0.10 floor would reject 13 of the 63 missed corruptions with no extra clean rejection, but would
   reject the in-sample accented speaker (`arctic_ksp`, lowest score 0.062). A boundary check (clips that end while
   speech is still sounding) is a candidate for the tail cuts; it needs word end times, which this run doesn't log.
+
+### 6.5 Score margins (pre-registered analysis item 4)
+
+Computed from run 3's recorded per-word scores with `score_margins` (`scripts/validate_alignment_heldout.py`), which
+later runs write into their summary. Per clip: the lowest word score, and the number of words below 0.2. Every clean
+and mutated clip aligned, so every one is counted (67 clean, 226 mutated).
+
+| Clips | n | Lowest score: min | median | max | Clips by weak-word count |
+|---|---|---|---|---|---|
+| Clean (all languages) | 67 | 0.022 | 0.860 | 0.998 | 0: 65, 1: 2 |
+| `control_trim_head_silence` | 17 | 0.230 | 0.872 | 0.990 | 0: 17 |
+| `control_trim_tail_silence` | 17 | 0.173 | 0.882 | 0.994 | 0: 16, 1: 1 |
+| `spillover_0.05s` | 15 | 0.211 | 0.723 | 0.957 | 0: 15 |
+| `spillover_0.50s` | 15 | 0.295 | 0.845 | 0.958 | 0: 15 |
+| `tail_speech_cut_50ms` | 17 | 0.163 | 0.838 | 0.996 | 0: 16, 1: 1 |
+| `tail_speech_cut_150ms` | 16 | 0.022 | 0.460 | 0.896 | 0: 12, 1: 3, 2: 1 |
+| `tail_speech_cut_300ms` | 16 | 0.000 | 0.053 | 0.540 | 0: 2, 1: 12, 2: 2 |
+| `tail_speech_cut_600ms` | 15 | 0.000 | 0.001 | 0.123 | 1: 3, 2: 6, 3: 6 |
+| `head_speech_cut_150ms` | 16 | 0.000 | 0.060 | 0.426 | 0: 7, 1: 5, 2: 4 |
+| `head_speech_cut_300ms` | 16 | 0.000 | 0.003 | 0.090 | 1: 6, 2: 8, 3: 2 |
+| `head_speech_cut_600ms` | 15 | 0.000 | 0.001 | 0.039 | 1: 2, 2: 5, 3: 6, 5: 2 |
+| `insert_head_word` | 17 | 0.000 | 0.000 | 0.000 | 1: 16, 2: 1 |
+| `insert_mid_word` | 17 | 0.000 | 0.000 | 0.150 | 1: 4, 2: 9, 3: 3, 4: 1 |
+| `insert_tail_word` | 17 | 0.000 | 0.000 | 0.143 | 1: 12, 2: 4, 3: 1 |
+
+Against a clean median of 0.86, the median lowest score is ≤ 0.003 for head cuts of 300 ms or more, the 600 ms
+tail cut and all three insertions, so the 0.05 floor rejects most of them. Insertions still pass in 4 of 17 (middle)
+and 6 of 17 (end) clips, where the inserted word happened to score above the floor. The 50 ms and 150 ms tail cuts
+(medians 0.84 and 0.46) overlap the clean distribution, which is why they pass. Spillover leaves the scores clean at
+both lengths; the 0.5 s spillovers are rejected by the unexplained-speech limit, not by any score rule.
