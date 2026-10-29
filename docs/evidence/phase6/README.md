@@ -1,18 +1,18 @@
-# Phase 6 Multilingual & Multi-Speaker Alignment Validation Evidence
+# Phase 6 Multi-Speaker Alignment Quality Threshold Calibration
 
-Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)**.
+Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** and **§6 (Phase 6 Data Preparation)** as an in-sample threshold calibration (`[E5]`). Held-out validation on unseen voices and languages has since run under a pre-registered protocol (`../phase6_heldout/README.md`): clean acceptance is validated out-of-sample for English (39/40 utterances, 59/60 segments); French and German had too few clips to validate; detection is reliable only for large corruptions.
 
 ---
 
-## 1. Overview & Verification Summary
+## 1. Overview & Calibration Summary
 
 - **Execution Date**: 2026-10-26 18:50 UTC
 - **Compute Hardware**: NVIDIA A100-SXM4-40GB GPU (Modal app `ap-aLtghQDigN7bOJJjqUVrSn`)
-- **Software Environment**: PyTorch 2.1.2 + CUDA 12.1, torchaudio MMS_FA pipeline (`torchaudio.pipelines.MMS_FA`)
-- **Scope**: Multi-speaker, multilingual validation across **8 distinct vetted baseline voices** and 2 languages (English, Castilian Spanish) across 5 accent profiles.
+- **Software Environment**: PyTorch 2.1.2 + CUDA 12.1 (exploratory run; locked environment `torch==2.14.1` required for held-out validation)
+- **Scope**: Multi-speaker calibration across **8 baseline voices** and 2 languages (English, Castilian Spanish) across 5 accent profiles.
 - **Evaluation Scale**: 8 clean baseline recordings + 88 controlled corruption tests (11 mutations per speaker) = **96 total alignment tests**.
-- **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed with zero false-positive rejections.
-- **Controlled Corruption Characterization**: 57/88 (64.8%) correct decisions (49/88 rejected, 8/8 sub-threshold spillover correctly accepted; edge truncation 32/48 rejected, transcript insertions 17/24 rejected); characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech.
+- **Clean Baseline Acceptance**: **8/8 (100.0%)** clean recordings passed. Calibrated `max_weak_words = 3` to accommodate non-native accented speech (`arctic_ksp`, 3 weak words scoring down to $0.062$), while the studio-clean native clips (four ARCTIC voices, LJSpeech) and the Spanish audiobook have a minimum per-word alignment score $\ge 0.54$; JFK's 1961 recording has one weak word (minimum word score 0.122). The run itself used `max_unexplained_speech_s = 0.20` (`quality_config` in the JSON); the operating 0.10 s limit was applied afterwards by recomputing from the recorded unexplained speech (all clean clips measure $0.00\text{ s}$, so their verdicts are the same at either limit).
+- **Controlled Corruption Characterization**: Characterizes empirical detection boundaries across cut severity, boundary position, unsupported transcript tokens, and trailing speech. At the 0.10 s limit (by recomputation), Spanish trailing spillover ($0.14\text{s}$) is caught. Held-out results: `../phase6_heldout/README.md`.
 
 ---
 
@@ -21,7 +21,7 @@ Implements and empirically grounds **`docs/recipe_design.md` §2 (Finding F5)** 
 | File | SHA-256 Checksum | Description |
 |---|---|---|
 | [`multilingual_alignment_validation.json`](multilingual_alignment_validation.json) | `7ebcd27c9fbd7eccaff0033d929009f5e91021984d24f2d57f69d5c13f45ac49` | Complete JSON report with metadata, per-speaker metrics, and test-by-test mutation outcomes. |
-| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `4c4876637495d1256a498f7e3c8ea67a557512573048ac97d473f093c64b5149` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
+| [`ALIGNMENT_VALIDATION_METHODOLOGY.md`](ALIGNMENT_VALIDATION_METHODOLOGY.md) | `c7b65f059a6a08eac71d96c89b98f7ac8cb5179d3b26328a3e53feb42f481e7f` | Detailed methodology, threshold arithmetic, comparison operators, and failure-mode diagnostic analysis. |
 
 ---
 
@@ -56,3 +56,4 @@ All source recordings are cryptographically pinned in [`scripts/validate_alignme
 - **Speech Spillover**:
   - Sub-threshold ($+0.10\text{s}$ appended): 8/8 passed (sub-threshold tolerance working as designed).
   - Cross-threshold ($+0.50\text{s}$ appended): 8/8 passed (evaded rejection because inter-utterance pause meant active speech portion measured $80 \text{--} 140\text{ ms}$, below the $200\text{ ms}$ threshold).
+  - These counts were measured with `max_unexplained_speech_s = 0.20`, the setting at run time (`multilingual_alignment_validation.json`, `quality_config`). At the operating 0.10 s limit, recomputed from the recorded `unexplained_speech_s` (no rerun; only this rule depends on the limit, and no other mutation measured between 0.10 and 0.20 s): sub-threshold 8/8 passed, cross-threshold 7/8 passed (Spanish, 0.14 s, rejected), so 58/88 corruptions are classified correctly instead of 57/88. The sub-threshold case is not on the 0.10 s boundary: the 0.10 s appended fell inside the inter-utterance pause, and every speaker measured 0.00 s of unexplained speech.

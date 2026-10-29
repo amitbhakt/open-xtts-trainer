@@ -12,6 +12,7 @@ Usage:
     uvx modal run scripts/modal_run_eval.py --gpu A100-40GB --cmd "pytest -q"
 """
 
+import hashlib
 import subprocess
 from pathlib import Path
 import modal
@@ -58,6 +59,16 @@ image = (
 )
 
 
+REMOTE_ROOT = Path("/root/open-xtts-trainer")
+EVIDENCE_DIR = "docs/evidence/phase6_heldout"
+
+
+def evidence_digests(root: Path) -> dict:
+    """SHA-256 of every file under root / EVIDENCE_DIR, keyed by path relative to root."""
+    return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in (root / EVIDENCE_DIR).rglob("*") if p.is_file()}
+
+
 @app.function(
     image=image,
     gpu="A100-40GB",
@@ -83,23 +94,56 @@ def run_command_remote(cmd: str):
         cwd="/root/open-xtts-trainer",
         check=False,
     )
+    before = evidence_digests(REMOTE_ROOT)
     print(f"🔧 Running in Modal container: {cmd}")
+    # No check=True: a failing command must still return what it wrote, with its exit code
     proc = subprocess.run(
         cmd,
         shell=True,
         cwd="/root/open-xtts-trainer",
-        check=True,
+        check=False,
     )
     volume_cache.commit()
     volume_runs.commit()
     volume_checkpoints.commit()
     volume_baselines.commit()
-    return proc.returncode
+
+    # Return only evidence files the command created or changed, so unchanged copies from the image never
+    # replace local files edited during the run
+    artifacts = {}
+    after = evidence_digests(REMOTE_ROOT)
+    # Evidence the command deleted is reported, not silently left behind as a stale local copy
+    deleted = sorted(set(before) - set(after))
+    for rel, digest in after.items():
+        if before.get(rel) == digest:
+            continue
+        p = REMOTE_ROOT / rel
+        try:
+            artifacts[rel] = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            artifacts[rel] = p.read_bytes()
+    return {"returncode": proc.returncode, "artifacts": artifacts, "deleted": deleted}
 
 
 @app.local_entrypoint()
 def main(cmd: str = "python scripts/run_run5_pipeline.py", gpu: str = "A100-40GB"):
     print(f"Submitting job to Modal ({gpu})...")
     fn = run_command_remote.with_options(gpu=gpu)
-    fn.remote(cmd)
+    res = fn.remote(cmd)
+    if isinstance(res, dict) and "artifacts" in res:
+        for rel_path, content in res["artifacts"].items():
+            dest = repo_root / rel_path
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            if isinstance(content, str):
+                dest.write_text(content, encoding="utf-8")
+            else:
+                dest.write_bytes(content)
+            print(f"📥 Retrieved artifact: {rel_path}")
+    code = res.get("returncode") if isinstance(res, dict) else res
+    deleted = res.get("deleted", []) if isinstance(res, dict) else []
+    if deleted:
+        # Local copies are kept: removing evidence is for a person to decide, so fail loudly instead
+        raise SystemExit("remote command deleted evidence files (any local copies were kept): " + ", ".join(deleted))
+    if code:
+        raise SystemExit(f"remote command failed with exit code {code}; retrieved artifacts may be partial")
     print("✅ Completed successfully on Modal!")
