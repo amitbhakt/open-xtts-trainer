@@ -101,6 +101,10 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 
 **Stage 2: GPT and text**
 
+**Scope (2026-10-31):** the paper's experiments cover speaker adaptation in supported languages only. The
+new-language rows below (F4, F6, tokenisation, replay; ablations A5 and A7) are built and unit-tested, but no
+new-language model has been trained or evaluated; they stay at their current evidence levels.
+
 | Decision | Evidence | Status |
 |---|---|---|
 | A thin wrapper over upstream `GPTTrainer`; don't reimplement the loop. | `[E1]`; `[E4]` community success with it | Built (`stage2_gpt/gpt_trainer.py`) |
@@ -170,7 +174,7 @@ decision rule fixed before running. Results update the evidence tags above.
 | A5 | Text for a new script, and new-row initialization | BPE merges vs per-character vs romanization; mean vs random new rows | CER; tokens per sentence; no base-language regression | Best CER that passes the base-language check |
 | A6 | Does punctuation/pause consistency matter? | Same data with and without commas added at long pauses (`--fix_pauses`) | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval |
 | A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate |
-| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a new-language GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats the stock decoder beyond the interval |
+| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a speaker-adaptation GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats the stock decoder beyond the interval |
 
 ## §6 Verification phases
 

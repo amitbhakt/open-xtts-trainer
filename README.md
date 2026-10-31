@@ -175,6 +175,10 @@ python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_bas
 
 ### 2. Stage 2: Vocabulary Extender & GPT Backbone Fine-Tuning
 
+> **Scope:** the measured results in this repository are for speaker adaptation in languages XTTS-v2 already
+> supports. The new-language path below (vocabulary extension, a registered tokenizer, replay) is implemented and
+> unit-tested, but no new-language model has been trained or evaluated with it.
+
 1. **Extend Tokenizer for a New Language Script:**
    ```bash
    python xtts_trainer/stage2_gpt/vocab_extender.py \
