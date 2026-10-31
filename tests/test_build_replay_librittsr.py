@@ -127,3 +127,44 @@ def test_reader_queues_exclude_and_are_seeded():
     queues = replay.reader_queues(speakers)
     assert sorted(queues["F"]) == ["1", "3"] and queues["M"] == ["2"]
     assert replay.reader_queues(speakers) == queues
+
+
+def _raw_reader(raw, spk, texts):
+    """A reader's extracted utterances (4 s each) with the given texts; returns the utterance ids."""
+    raw.mkdir(parents=True, exist_ok=True)
+    utts = []
+    for k, text in enumerate(texts):
+        utt = f"{spk}_200_{k:06d}_000000"
+        (raw / f"{utt}.wav").write_bytes(_wav_bytes(4.0, 1000 + k))
+        (raw / f"{utt}.normalized.txt").write_text(text)
+        utts.append(utt)
+    return utts
+
+
+def test_a_reader_is_skipped_only_when_it_truly_lacks_usable_clips(tmp_path, monkeypatch):
+    """Usable clips beyond the first batch still count: scanning goes on until enough pass or none are left."""
+    monkeypatch.setattr(replay, "CLIPS_PER_SPEAKER", 2)
+    vocab = write_test_vocab(str(tmp_path / "vocab.json"))
+    texts = [EVAL_SENTENCE] * 14 + [TEXTS[0], TEXTS[2]]  # 14 unusable (eval sentence), 2 usable
+    utts = _raw_reader(tmp_path / "raw", "7", texts)
+    usable = {u for u, t in zip(utts, texts) if t != EVAL_SENTENCE}
+    order = replay.candidate_order(utts, "7")
+    batch = 3 * replay.CLIPS_PER_SPEAKER
+    assert any(order.index(u) >= batch for u in usable)  # the case a single capped batch would wrongly skip
+    (tmp_path / "out" / "clips").mkdir(parents=True)
+    chosen, rejected = replay.usable_clips("7", utts, str(tmp_path / "raw"), str(tmp_path / "out"), vocab)
+    assert {r.source.split()[-1] for r in chosen} == usable
+    assert len(rejected) == 14 and all("eval" in r["reason"] for r in rejected)
+    assert sorted(os.listdir(tmp_path / "out" / "clips")) == sorted(f"librittsr_{u}.wav" for u in usable)
+
+
+def test_a_skipped_readers_usable_clips_are_recorded_and_removed(tmp_path, monkeypatch):
+    monkeypatch.setattr(replay, "CLIPS_PER_SPEAKER", 2)
+    vocab = write_test_vocab(str(tmp_path / "vocab.json"))
+    utts = _raw_reader(tmp_path / "raw", "8", [TEXTS[0], EVAL_SENTENCE])  # only one usable clip
+    (tmp_path / "out" / "clips").mkdir(parents=True)
+    chosen, rejected = replay.usable_clips("8", utts, str(tmp_path / "raw"), str(tmp_path / "out"), vocab)
+    assert chosen == []
+    reasons = {r["utterance"]: r["reason"] for r in rejected}
+    assert reasons.keys() == set(utts) and "reader was skipped" in reasons[utts[0]]
+    assert os.listdir(tmp_path / "out" / "clips") == []

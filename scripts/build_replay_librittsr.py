@@ -6,14 +6,14 @@ et al. 2023; https://www.openslr.org/141/) is a restored, multi-speaker audioboo
 
 Selection, fixed before any audio was looked at:
 - archives: dev_clean.tar.gz and doc.tar.gz, each checked against the MD5 OpenSLR publishes and a SHA-256 pin;
-- speakers: dev-clean readers (speakers.tsv) minus EXCLUDED_READERS; female and male ids, each sorted and shuffled
-  with SELECTION_SEED into a queue; slots are filled alternately (female first) until N_SPEAKERS, each from the
-  front of its gender's queue;
+- speakers: dev-clean readers (speakers.tsv) minus EXCLUDED_READERS; female and male ids are each sorted, then
+  shuffled in turn (female first) by one random.Random(SELECTION_SEED), giving one queue per gender; slots are
+  filled alternately (female first) until N_SPEAKERS, each from the front of its gender's queue;
 - clips: each reader's utterances, sorted and shuffled with a per-reader seed; the first CLIPS_PER_SPEAKER that
   last MIN_S to MAX_S and pass the project's dataset validator (vocabulary, eval-set sentences, reference-voice
   audio, duration rules). A reader with fewer is skipped (LibriTTS-R drops noisy lines, so a few readers have
-  little audio) and the next reader of the same gender takes the slot. Skipped readers and rejected candidates
-  are recorded with their reasons.
+  little audio) and the next reader of the same gender takes the slot. Every utterance looked at and not chosen is
+  recorded with its reason, including a skipped reader's usable ones.
 
 Writes <output_dir>/dataset.jsonl, the clips, and replay_selection.json (pins, license, rule, every choice).
 
@@ -106,7 +106,8 @@ def read_speakers(doc_tar: str, subset: str = SUBSET) -> Dict[str, str]:
 
 def reader_queues(speakers: Dict[str, str], seed: Optional[int] = None,
                   excluded: Optional[Dict[str, str]] = None) -> Dict[str, List[str]]:
-    """gender -> reader ids in selection order (sorted, then shuffled with the seed), excluded readers removed."""
+    """gender -> reader ids in selection order, excluded readers removed. One generator shuffles the sorted female
+    ids, then the sorted male ids, so the male order depends on the seed through the female shuffle too."""
     # Defaults resolved at call time, so the module constants are the single source
     excluded = EXCLUDED_READERS if excluded is None else excluded
     rng = random.Random(SELECTION_SEED if seed is None else seed)
@@ -149,29 +150,35 @@ def candidate_order(utterances: List[str], speaker: str) -> List[str]:
 def usable_clips(spk: str, utts: List[str], raw: str, output_dir: str, vocab_path: str
                  ) -> Tuple[List[DatasetRecord], List[Dict[str, Any]]]:
     """The first CLIPS_PER_SPEAKER clips of one reader, in its seeded order, that pass the duration rule and the
-    validator; and every candidate rejected on the way. Audio of clips not chosen is removed."""
+    validator, or [] when the reader has fewer; and every utterance looked at and not chosen, with its reason.
+
+    Utterances are taken in batches until enough pass or none are left, so a reader is skipped only when it truly
+    has too few usable clips. Audio of clips not chosen is removed.
+    """
     rate = SPEC.output_sample_rate
     rejected: List[Dict[str, Any]] = []
-    candidates: List[DatasetRecord] = []
-    for utt in candidate_order(utts, spk):
-        # Enough candidates that the validator can drop some and still leave CLIPS_PER_SPEAKER
-        if len(candidates) >= 3 * CLIPS_PER_SPEAKER:
-            break
-        info = sf.info(os.path.join(raw, f"{utt}.wav"))
-        duration = info.frames / info.samplerate
-        if not MIN_S <= duration <= MAX_S:
-            rejected.append({"utterance": utt, "speaker": spk, "reason": f"duration {duration:.2f} s"})
-            continue
-        with open(os.path.join(raw, f"{utt}.normalized.txt"), encoding="utf-8") as f:
-            text = " ".join(f.read().split())
-        audio = load_mono(os.path.join(raw, f"{utt}.wav"), rate)
-        rel = f"clips/librittsr_{utt}.wav"
-        sf.write(os.path.join(output_dir, rel), audio, rate, subtype="PCM_16")
-        candidates.append(DatasetRecord(
-            audio=rel, text=text, lang="en", speaker=f"librittsr_{spk}", duration_s=round(len(audio) / rate, 4),
-            sr=rate, transcript_source="dataset", source=f"LibriTTS-R {SUBSET} {utt}"))
     chosen: List[DatasetRecord] = []
-    if candidates:
+    order = candidate_order(utts, spk)
+    batch = 3 * CLIPS_PER_SPEAKER
+    while order and len(chosen) < CLIPS_PER_SPEAKER:
+        candidates: List[DatasetRecord] = []
+        while order and len(candidates) < batch:
+            utt = order.pop(0)
+            info = sf.info(os.path.join(raw, f"{utt}.wav"))
+            duration = info.frames / info.samplerate
+            if not MIN_S <= duration <= MAX_S:
+                rejected.append({"utterance": utt, "speaker": spk, "reason": f"duration {duration:.2f} s"})
+                continue
+            with open(os.path.join(raw, f"{utt}.normalized.txt"), encoding="utf-8") as f:
+                text = " ".join(f.read().split())
+            audio = load_mono(os.path.join(raw, f"{utt}.wav"), rate)
+            rel = f"clips/librittsr_{utt}.wav"
+            sf.write(os.path.join(output_dir, rel), audio, rate, subtype="PCM_16")
+            candidates.append(DatasetRecord(
+                audio=rel, text=text, lang="en", speaker=f"librittsr_{spk}", duration_s=round(len(audio) / rate, 4),
+                sr=rate, transcript_source="dataset", source=f"LibriTTS-R {SUBSET} {utt}"))
+        if not candidates:
+            break
         cand_path = write_dataset(os.path.join(output_dir, f"candidates_{spk}.jsonl"), candidates)
         bad: Dict[str, List[str]] = {}
         for e in validate_dataset(cand_path, vocab_path).errors:  # keyed by audio path, unlike line numbers
@@ -181,12 +188,22 @@ def usable_clips(spk: str, utts: List[str], raw: str, output_dir: str, vocab_pat
             if rec.audio in bad:
                 rejected.append({"utterance": rec.source.split()[-1], "speaker": spk,
                                  "reason": "; ".join(bad[rec.audio])})
+                os.remove(os.path.join(output_dir, rec.audio))
             elif len(chosen) < CLIPS_PER_SPEAKER:
                 chosen.append(rec)
-    for rec in candidates:
-        if rec not in chosen or len(chosen) < CLIPS_PER_SPEAKER:
+            else:
+                # Passed in the same batch after the reader was full: not needed, never part of the set
+                rejected.append({"utterance": rec.source.split()[-1], "speaker": spk,
+                                 "reason": f"usable, not needed (reader already had {CLIPS_PER_SPEAKER})"})
+                os.remove(os.path.join(output_dir, rec.audio))
+    usable = chosen
+    if len(chosen) < CLIPS_PER_SPEAKER:
+        for rec in usable:
+            rejected.append({"utterance": rec.source.split()[-1], "speaker": spk,
+                             "reason": f"usable, but the reader was skipped (only {len(usable)} usable clips)"})
             os.remove(os.path.join(output_dir, rec.audio))
-    return (chosen if len(chosen) == CLIPS_PER_SPEAKER else []), rejected
+        return [], rejected
+    return chosen, rejected
 
 
 def build(output_dir: str, cache_dir: str, vocab_path: str, url_base: str = URL_BASE) -> Dict[str, Any]:

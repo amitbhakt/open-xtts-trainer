@@ -704,6 +704,56 @@
       "reason": "duration 2.28 s"
     },
     {
+      "utterance": "1988_24833_000066_000002",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_148538_000005_000002",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_24833_000018_000001",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_147956_000009_000004",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_147956_000004_000000",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_24833_000024_000002",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_24833_000006_000000",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_24833_000065_000001",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_148538_000002_000002",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1988_24833_000044_000000",
+      "speaker": "1988",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "5536_43363_000001_000003",
       "speaker": "5536",
       "reason": "duration 1.32 s"
@@ -764,6 +814,56 @@
       "reason": "duration 12.88 s"
     },
     {
+      "utterance": "5536_43363_000013_000000",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43359_000005_000002",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43359_000026_000000",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43363_000010_000000",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43358_000027_000001",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43359_000021_000002",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43358_000028_000001",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43359_000015_000002",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43363_000008_000000",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5536_43363_000024_000001",
+      "speaker": "5536",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "3576_138058_000010_000001",
       "speaker": "3576",
       "reason": "duration 1.96 s"
@@ -819,6 +919,26 @@
       "reason": "duration 10.64 s"
     },
     {
+      "utterance": "3576_138058_000042_000000",
+      "speaker": "3576",
+      "reason": "usable, but the reader was skipped (only 4 usable clips)"
+    },
+    {
+      "utterance": "3576_138058_000018_000002",
+      "speaker": "3576",
+      "reason": "usable, but the reader was skipped (only 4 usable clips)"
+    },
+    {
+      "utterance": "3576_138058_000024_000001",
+      "speaker": "3576",
+      "reason": "usable, but the reader was skipped (only 4 usable clips)"
+    },
+    {
+      "utterance": "3576_138058_000033_000000",
+      "speaker": "3576",
+      "reason": "usable, but the reader was skipped (only 4 usable clips)"
+    },
+    {
       "utterance": "2035_147960_000005_000017",
       "speaker": "2035",
       "reason": "duration 1.88 s"
@@ -867,6 +987,56 @@
       "utterance": "2035_147960_000015_000000",
       "speaker": "2035",
       "reason": "duration 2.36 s"
+    },
+    {
+      "utterance": "2035_147960_000011_000004",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147960_000009_000001",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147961_000018_000003",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147960_000022_000000",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147961_000013_000009",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147961_000006_000001",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147961_000004_000005",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147960_000006_000001",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147961_000005_000005",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2035_147961_000005_000000",
+      "speaker": "2035",
+      "reason": "usable, not needed (reader already had 5)"
     },
     {
       "utterance": "251_118436_000015_000000",
@@ -939,6 +1109,56 @@
       "reason": "duration 1.32 s"
     },
     {
+      "utterance": "251_136532_000024_000001",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_136532_000003_000000",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_118436_000021_000001",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_137823_000012_000002",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_118436_000013_000000",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_137823_000056_000002",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_137823_000004_000000",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_136532_000012_000000",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_137823_000012_000001",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "251_118436_000008_000002",
+      "speaker": "251",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "1993_147966_000005_000001",
       "speaker": "1993",
       "reason": "duration 2.56 s"
@@ -992,6 +1212,56 @@
       "utterance": "1993_147966_000007_000004",
       "speaker": "1993",
       "reason": "duration 2.32 s"
+    },
+    {
+      "utterance": "1993_147149_000053_000001",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147965_000007_000004",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147966_000003_000001",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147149_000041_000000",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147149_000006_000002",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147965_000003_000003",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147966_000006_000001",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147964_000005_000000",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147965_000007_000003",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "1993_147966_000014_000000",
+      "speaker": "1993",
+      "reason": "usable, not needed (reader already had 5)"
     },
     {
       "utterance": "777_126732_000076_000002",
@@ -1179,6 +1449,56 @@
       "reason": "duration 1.32 s"
     },
     {
+      "utterance": "6345_64257_000005_000005",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93302_000075_000013",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93306_000044_000000",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93306_000048_000000",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93302_000037_000001",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93302_000049_000003",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93302_000037_000004",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93302_000067_000001",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_93306_000050_000001",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6345_64257_000004_000006",
+      "speaker": "6345",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "2803_154328_000031_000000",
       "speaker": "2803",
       "reason": "duration 2.16 s"
@@ -1264,6 +1584,56 @@
       "reason": "duration 2.84 s"
     },
     {
+      "utterance": "2803_161169_000012_000000",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_161169_000003_000000",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154328_000051_000000",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154328_000044_000000",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154328_000081_000001",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154328_000066_000001",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_161169_000009_000002",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154328_000008_000000",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154328_000002_000000",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2803_154320_000005_000012",
+      "speaker": "2803",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "2412_153948_000015_000001",
       "speaker": "2412",
       "reason": "duration 1.12 s"
@@ -1344,6 +1714,56 @@
       "reason": "duration 2.76 s"
     },
     {
+      "utterance": "2412_153954_000004_000002",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000004_000004",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153947_000017_000005",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000008_000009",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000007_000005",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000005_000002",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000008_000010",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000009_000002",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153947_000034_000000",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "2412_153954_000009_000001",
+      "speaker": "2412",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "6295_244435_000023_000003",
       "speaker": "6295",
       "reason": "duration 2.84 s"
@@ -1407,6 +1827,56 @@
       "utterance": "6295_244435_000030_000000",
       "speaker": "6295",
       "reason": "duration 1.04 s"
+    },
+    {
+      "utterance": "6295_244435_000028_000000",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_64301_000005_000000",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_64301_000013_000006",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_244435_000034_000000",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_64301_000010_000001",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_64301_000002_000001",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_244435_000015_000000",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_64301_000010_000002",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_64301_000007_000000",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6295_244435_000024_000002",
+      "speaker": "6295",
+      "reason": "usable, not needed (reader already had 5)"
     },
     {
       "utterance": "8842_302203_000010_000000",
@@ -1489,6 +1959,56 @@
       "reason": "duration 0.72 s"
     },
     {
+      "utterance": "8842_302201_000006_000001",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302203_000011_000003",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302203_000020_000001",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302201_000007_000003",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302203_000002_000003",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_304647_000017_000002",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302201_000007_000000",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302203_000012_000000",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302201_000014_000003",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "8842_302201_000014_000007",
+      "speaker": "8842",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "7976_110124_000020_000000",
       "speaker": "7976",
       "reason": "duration 1.48 s"
@@ -1564,6 +2084,56 @@
       "reason": "duration 2.84 s"
     },
     {
+      "utterance": "7976_110124_000012_000000",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_105575_000018_000003",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_105575_000020_000002",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_105575_000011_000010",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_110523_000016_000001",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_110124_000057_000000",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_105575_000004_000003",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_110124_000045_000001",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_105575_000010_000001",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "7976_105575_000011_000009",
+      "speaker": "7976",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
       "utterance": "84_121123_000061_000000",
       "speaker": "84",
       "reason": "duration 1.04 s"
@@ -1592,6 +2162,56 @@
       "utterance": "84_121123_000043_000000",
       "speaker": "84",
       "reason": "duration 1.24 s"
+    },
+    {
+      "utterance": "84_121550_000154_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121550_000239_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121550_000268_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121123_000012_000006",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121550_000303_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121550_000012_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121123_000046_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121550_000130_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121550_000194_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "84_121123_000009_000000",
+      "speaker": "84",
+      "reason": "usable, not needed (reader already had 5)"
     },
     {
       "utterance": "5694_64038_000001_000000",
@@ -1627,6 +2247,56 @@
       "utterance": "5694_64029_000022_000003",
       "speaker": "5694",
       "reason": "duration 10.88 s"
+    },
+    {
+      "utterance": "5694_64029_000030_000003",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64038_000015_000001",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64029_000028_000003",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64029_000005_000002",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64025_000005_000004",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64029_000030_000006",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64025_000022_000014",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64029_000016_000002",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64038_000024_000017",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "5694_64029_000016_000007",
+      "speaker": "5694",
+      "reason": "usable, not needed (reader already had 5)"
     },
     {
       "utterance": "6313_66125_000019_000005",
@@ -1707,6 +2377,56 @@
       "utterance": "6313_66129_000047_000000",
       "speaker": "6313",
       "reason": "duration 10.64 s"
+    },
+    {
+      "utterance": "6313_76958_000036_000005",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_66129_000092_000001",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_66129_000048_000000",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_76958_000031_000002",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_66129_000091_000000",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_66129_000071_000001",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_76958_000069_000000",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_66125_000045_000000",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_66129_000065_000001",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
+    },
+    {
+      "utterance": "6313_76958_000040_000001",
+      "speaker": "6313",
+      "reason": "usable, not needed (reader already had 5)"
     }
   ]
 }
