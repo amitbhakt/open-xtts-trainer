@@ -1,8 +1,9 @@
 # M1: a Stage 2 setting that adapts the voice without costing other voices (protocol)
 
-**Status: DRAFT, not yet pre-registered.** This file becomes the pre-registration when its status line reads
-"FROZEN" in a commit made before the first M1 training run. Anything changed after that commit is reported as a
-deviation. Results go in a separate section added after the runs; nothing above it changes.
+**Status: FROZEN 2026-10-31, before any M1 training run.** This is the pre-registration: the commit that first
+shows this status line is the reference. Anything above the results section changed after that commit, and any
+change to the code in section 8, is reported as a deviation. Every M1 run records the commit it ran from. Results
+go in a separate section added after the runs; nothing above it changes.
 
 ## 1. Question
 
@@ -110,7 +111,7 @@ where forgetting happens; if not, it isn't. It is labelled exploratory because i
 Run 6's result and could suggest settings after the fact. It needs a small checkpoint-merging script (not yet
 written).
 
-## 7. Open before freezing
+## 7. Decisions and notes recorded at freezing
 
 - **Replay source for C2:** decided, LibriTTS-R `dev-clean` (section 3). Other CMU ARCTIC speakers were rejected:
   they share the preservation voices' recording setup, which could raise preservation scores through channel
