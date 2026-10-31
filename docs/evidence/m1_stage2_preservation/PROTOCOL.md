@@ -42,11 +42,32 @@ Each candidate gets its own `--run-tag` and `--results-dir`, so no run overwrite
 
 **Second round, only if no screening candidate passes both gate sets:** C4 = C1 + C2. No other combination is run.
 
-**Replay data for C2 (decision needed before freezing; see section 7).** Requirements, whichever source is chosen:
-- other speakers than the target, and none of the five ARCTIC eval voices (`slt`, `clb`, `bdl`, `awb`, `ksp`);
-- no sentence from the frozen eval set (the dataset validator already refuses these);
-- every download pinned by SHA-256, license recorded, prepared and validated like any training data;
-- 75 clips from at least 10 speakers, chosen by a seeded rule written down before the download.
+**Replay data for C2: LibriTTS-R `dev-clean`** (decided 2026-10-31). A restored multi-speaker audiobook corpus at
+24 kHz (Koizumi et al. 2023; https://www.openslr.org/141/), licensed CC BY 4.0 by Google LLC (its `LICENSE.txt`).
+It shares no recording setup with the five ARCTIC preservation voices, so a pass can't come from familiarity with
+their channel. Built by `scripts/build_replay_librittsr.py`:
+- **Archives:** `dev_clean.tar.gz` and `doc.tar.gz`, each checked against the MD5 OpenSLR publishes in its
+  `md5sum.txt` (an independent check, not trust-on-first-use) and a SHA-256 pin.
+- **Speakers:** the 40 `dev-clean` readers (20 F, 20 M, from `speakers.tsv`), minus excluded readers. Female and
+  male ids are each sorted and shuffled with seed 20261031 into a queue; 15 slots are filled alternately (female
+  first), 8 F and 7 M, each from the front of its gender's queue. A reader without 5 usable clips is skipped and
+  recorded, and the next reader of the same gender takes the slot (LibriTTS-R drops noisy lines, so a few readers
+  have little audio).
+- **Excluded:** reader 209, Moira Fogarty, the target speaker. She is in LibriTTS-R (`train-clean-360`), not in
+  `dev-clean`; the exclusion is explicit so the rule holds whichever subset is used.
+- **Clips:** per reader, utterances sorted and shuffled with a per-reader seed; the first 5 that last 3–10 s and
+  pass the project's dataset validator (vocabulary, frozen eval-set sentences, reference-voice audio, durations).
+  75 clips, as many as the target's training clips (50% of C2's training clips). Text is the corpus's normalized
+  transcript.
+- **Recorded:** `replay_selection.json` lists the pins, license, rule, every chosen clip (with its SHA-256),
+  skipped readers and every rejected candidate with its reason.
+- **Built 2026-10-31** (selection uses only the corpus, no training result): 75 clips, 7.5 min, from readers 1988,
+  5536, 2035, 251, 1993, 777, 6345, 2803, 2412, 6295, 8842, 7976, 84, 5694, 6313. Reader 3576 was skipped (15
+  utterances, 4 of them 3–10 s long). All 217 rejected candidates failed the duration rule; none failed validation.
+  A second build gave a byte-identical `replay_selection.json`.
+
+LibriTTS-R comes from LibriVox, like the target recording. That makes replay resemble the target's channel, not
+the preservation voices', so if anything it makes the preservation gate harder to pass with C2, not easier.
 
 ## 4. Decision rule (fixed in advance)
 
@@ -81,15 +102,9 @@ written).
 
 ## 7. Open before freezing
 
-- **Replay source for C2.** Two options:
-  - *Other CMU ARCTIC speakers* (not the five eval voices, nor `rms`/`jmk` used by the alignment validation). Cheap:
-    the project already reads and pins ARCTIC tarballs. But ARCTIC is the preservation voices' own recording
-    setup, so replaying it could raise preservation scores through recording-condition familiarity rather than
-    through speaker generality. That would bias the result towards passing.
-  - *A different multi-speaker corpus* (e.g. LibriTTS-R). No shared recording setup with the preservation voices,
-    so a pass is more convincing. Needs a pinned downloader and prep; its license must be read and recorded at
-    fetch time.
-  - Recommendation: a different corpus.
+- **Replay source for C2:** decided, LibriTTS-R `dev-clean` (section 3). Other CMU ARCTIC speakers were rejected:
+  they share the preservation voices' recording setup, which could raise preservation scores through channel
+  familiarity rather than speaker generality.
 - **Budget.** Screening is four training runs and four evaluations of 360 takes each; confirmation two more of
   each; C4 one more if needed.
 - **Second preservation voice set (for M2).** All candidates are chosen on the same five ARCTIC voices, so the
@@ -102,3 +117,7 @@ written).
 - `scripts/run_target_finetune_ab.py`: `--train-seed`, `--freeze`, `--replay`, `--run-tag`; at the defaults the
   training command is Run 6's. Tested in `tests/test_target_voices.py`.
 - `scripts/compare_ab.py`: the gates, and the M4 `robust` section.
+- `scripts/build_replay_librittsr.py`: C2's replay set, built in the run's own environment before C2 trains
+  (`--output_dir runs/replay_librittsr --evidence docs/evidence/m1_stage2_preservation/replay_selection.json`), then
+  passed as `--replay runs/replay_librittsr/dataset.jsonl`. Tested on fake archives in
+  `tests/test_build_replay_librittsr.py`.

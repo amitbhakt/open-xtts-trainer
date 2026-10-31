@@ -1,0 +1,1712 @@
+{
+  "corpus": "LibriTTS-R",
+  "subset": "dev-clean",
+  "url_base": "https://www.openslr.org/resources/141/",
+  "license": "CC BY 4.0: \"The LibriTTS-R corpus is made available by Google LLC under a Creative Commons Attribution 4.0 International License.\" (LICENSE.txt in doc.tar.gz)",
+  "citation": "Y. Koizumi, H. Zen, S. Karita, Y. Ding, K. Yatabe, N. Morioka, M. Bacchiani, Y. Zhang, W. Han and A. Bapna, \"LibriTTS-R: A Restored Multi-Speaker Text-to-Speech Corpus,\" arXiv, 2023.",
+  "archives": {
+    "doc.tar.gz": {
+      "md5": "dad90f1b357625ce93d695b930977f7f",
+      "sha256": "b59b03462911e559a4ab84f7229752b3578b715d534a31d17b88054eb3cc7389"
+    },
+    "dev_clean.tar.gz": {
+      "md5": "2c1f5312914890634cc2d15783032ff3",
+      "sha256": "02ea52de47ca670d7ad86e714a6c58b207660a3f8a371ad102156776d2262a0c"
+    }
+  },
+  "rule": {
+    "seed": 20261031,
+    "n_speakers": 15,
+    "clips_per_speaker": 5,
+    "duration_s": [
+      3.0,
+      10.0
+    ],
+    "excluded_readers": {
+      "209": "Moira Fogarty, the M1 target speaker"
+    }
+  },
+  "speakers": [
+    {
+      "reader": "1988",
+      "gender": "F"
+    },
+    {
+      "reader": "5536",
+      "gender": "M"
+    },
+    {
+      "reader": "2035",
+      "gender": "F"
+    },
+    {
+      "reader": "251",
+      "gender": "M"
+    },
+    {
+      "reader": "1993",
+      "gender": "F"
+    },
+    {
+      "reader": "777",
+      "gender": "M"
+    },
+    {
+      "reader": "6345",
+      "gender": "F"
+    },
+    {
+      "reader": "2803",
+      "gender": "M"
+    },
+    {
+      "reader": "2412",
+      "gender": "F"
+    },
+    {
+      "reader": "6295",
+      "gender": "M"
+    },
+    {
+      "reader": "8842",
+      "gender": "F"
+    },
+    {
+      "reader": "7976",
+      "gender": "M"
+    },
+    {
+      "reader": "84",
+      "gender": "F"
+    },
+    {
+      "reader": "5694",
+      "gender": "M"
+    },
+    {
+      "reader": "6313",
+      "gender": "F"
+    }
+  ],
+  "skipped_readers": [
+    {
+      "reader": "3576",
+      "gender": "F",
+      "reason": "fewer than 5 usable clips (15 utterances)"
+    }
+  ],
+  "clips": [
+    {
+      "utterance": "1988_24833_000008_000000",
+      "speaker": "librittsr_1988",
+      "duration_s": 6.8,
+      "text": "In fact, one thing this cat business seems to have established is that me and Pop fighting is the main cause of Mom's asthma.",
+      "sha256": "ee5a8aa331ff81dd76a9b1d4604d985f46ea59ec1a4b13f4ab3feadbffb45a3e"
+    },
+    {
+      "utterance": "1988_147956_000012_000000",
+      "speaker": "librittsr_1988",
+      "duration_s": 4.8,
+      "text": "My grandmother always spoke in a very loud tone to foreigners, as if they were deaf.",
+      "sha256": "dc90b99233c557f55f36ce1ece5a0ce5fae35c1c3d89afab44b00a744c493e75"
+    },
+    {
+      "utterance": "1988_24833_000026_000003",
+      "speaker": "librittsr_1988",
+      "duration_s": 5.28,
+      "text": "I hardly know what starts it, but a fight boils up, and we're both breathing fire like dragons on the loose.",
+      "sha256": "a1e725dff3e4f7306bbde47ef135676bd04746d8b130ae8090eb1058f363f19a"
+    },
+    {
+      "utterance": "1988_24833_000055_000001",
+      "speaker": "librittsr_1988",
+      "duration_s": 3.72,
+      "text": "Tom stirs his coffee vigorously and takes one sip and puts the cup down.",
+      "sha256": "77cd6682a33fe17c3d87c97eb96242fa71b35bc8944331de9b103ce31585093b"
+    },
+    {
+      "utterance": "1988_148538_000003_000000",
+      "speaker": "librittsr_1988",
+      "duration_s": 7.28,
+      "text": "I thought that the English constituted the most serious nation on the face of the earth, but I have since seen the Americans and have changed my opinion.",
+      "sha256": "9677441ff2309b8fc6be64b2777ed2c9bbe4543087570786fa326a80b795c642"
+    },
+    {
+      "utterance": "5536_43359_000021_000005",
+      "speaker": "librittsr_5536",
+      "duration_s": 4.2,
+      "text": "His mate may precede or follow him in his devotions, but never accompanies him.",
+      "sha256": "19a83099311817d8a9e82f2d10e11584d837f4c296508d9aaa3c0dd7bf62ca9d"
+    },
+    {
+      "utterance": "5536_43358_000010_000000",
+      "speaker": "librittsr_5536",
+      "duration_s": 9.08,
+      "text": "The original attitude of the American Indian toward the Eternal, the \"Great Mystery\" that surrounds and embraces us, was as simple as it was exalted.",
+      "sha256": "4472ddaf6cbcb45fe5d90d736d4b0e79b75d11b9104d537b1dfe3716a757871b"
+    },
+    {
+      "utterance": "5536_43358_000010_000001",
+      "speaker": "librittsr_5536",
+      "duration_s": 6.96,
+      "text": "To him it was the supreme conception, bringing with it the fullest measure of joy and satisfaction possible in this life.",
+      "sha256": "d05ddf47fd144c57322e92e157bebeca69b7516d62d4fd3d796e0ca35d4f576a"
+    },
+    {
+      "utterance": "5536_43363_000014_000000",
+      "speaker": "librittsr_5536",
+      "duration_s": 6.6,
+      "text": "The father of Little Crow, the chief who led the \"Minnesota massacre\" of eighteen sixty two, was another prophet of some note.",
+      "sha256": "cb0ce4d39b06999cd3e2ca419b9e864620919f736fa9fe8a47d94b661d3957b8"
+    },
+    {
+      "utterance": "5536_43358_000018_000001",
+      "speaker": "librittsr_5536",
+      "duration_s": 9.6,
+      "text": "The first is pure spirit, concerned only with the essence of things, and it was this he sought to strengthen by spiritual prayer, during which the body is subdued by fasting and hardship.",
+      "sha256": "75bc3276a0af9408c28acc2f2197acdf04ee146e18a43752dd68d340f220bd77"
+    },
+    {
+      "utterance": "2035_147961_000005_000003",
+      "speaker": "librittsr_2035",
+      "duration_s": 8.96,
+      "text": "We burrowed down in the straw and curled up close together, watching the angry red die out of the west and the stars begin to shine in the clear, windy sky.",
+      "sha256": "af3ad7d317205a25b53e50a42a893aab7ad557ba21c8c2c8ed54b539110e1330"
+    },
+    {
+      "utterance": "2035_147960_000004_000000",
+      "speaker": "librittsr_2035",
+      "duration_s": 3.04,
+      "text": "The dog town was spread out over perhaps ten acres.",
+      "sha256": "2ab5a30e88274e3b1b35168312033b5e2f2e414420de2c9729efc461da7365d7"
+    },
+    {
+      "utterance": "2035_147961_000007_000013",
+      "speaker": "librittsr_2035",
+      "duration_s": 4.92,
+      "text": "The coyotes broke out again; yap, yap, yap-then the high whine.",
+      "sha256": "a732f33930d7a4286550c0cbeecadb2265c8ac1d8889e508379b54f88ff08a9d"
+    },
+    {
+      "utterance": "2035_147960_000009_000002",
+      "speaker": "librittsr_2035",
+      "duration_s": 5.48,
+      "text": "A faint, fetid smell came from him, and a thread of green liquid oozed from his crushed head.",
+      "sha256": "a33253b65bf10d131b71317c219e957709a0391017b807acbd1fe117e7dc9847"
+    },
+    {
+      "utterance": "2035_147961_000007_000003",
+      "speaker": "librittsr_2035",
+      "duration_s": 3.76,
+      "text": "The firelight flickered on the hewn logs that supported the thatch overhead.",
+      "sha256": "09e000a5012785cc061fdeb5cbb943bce71ae94b4042fa437a113881ae9eff65"
+    },
+    {
+      "utterance": "251_136532_000010_000000",
+      "speaker": "librittsr_251",
+      "duration_s": 5.64,
+      "text": "Selim dropped his rag back in the bucket; she laid her clipboard on top of the case beside her.",
+      "sha256": "ffcd0535aee43ce63135ba703d7c836a3b18241a7829ca3da1a3ebdd8e46adab"
+    },
+    {
+      "utterance": "251_137823_000004_000001",
+      "speaker": "librittsr_251",
+      "duration_s": 4.88,
+      "text": "\"If anyone can get the bugs out of your new invention, genius boy here will do it!\"",
+      "sha256": "638877793c8b2eb983b6dee180a4c9187426a7c17f07c4fe354214eb15ebf739"
+    },
+    {
+      "utterance": "251_118436_000019_000000",
+      "speaker": "librittsr_251",
+      "duration_s": 3.64,
+      "text": "The first speaker favored him with a long, searching stare.",
+      "sha256": "9bdf570d90933115c55db367f886e75e3c24f0fc6237bd19612082b9632eb6aa"
+    },
+    {
+      "utterance": "251_137823_000025_000002",
+      "speaker": "librittsr_251",
+      "duration_s": 5.44,
+      "text": "\"If that beam had landed square on your noggin, even a rock head like you couldn't have survived!\"",
+      "sha256": "e3ec050c31e43fb8814fee1ae61ec4905c3a45eb1509e0b2141ef2cd7ba1d0b3"
+    },
+    {
+      "utterance": "251_137823_000005_000000",
+      "speaker": "librittsr_251",
+      "duration_s": 5.28,
+      "text": "The two boys followed mr Faber and his engineers to a wooden building which was tightly guarded.",
+      "sha256": "4d514f090518308dd857e03da1952367bfcf89aa2e599512ca251592a19a9391"
+    },
+    {
+      "utterance": "1993_147965_000001_000009",
+      "speaker": "librittsr_1993",
+      "duration_s": 8.2,
+      "text": "His prayers reflected what he was thinking about at the time, and it was chiefly through them that we got to know his feelings and his views about things.",
+      "sha256": "a1b91adef62d27392efebd7d2307142d3c6de570a603968731053e66b38bdd28"
+    },
+    {
+      "utterance": "1993_147965_000006_000002",
+      "speaker": "librittsr_1993",
+      "duration_s": 6.56,
+      "text": "As we sat down to the table, it occurred to me that he liked to look at us, and that our faces were open books to him.",
+      "sha256": "2bca56c606b30ce4048896f0f7b470617979248ebc934eb47b77518501d302a3"
+    },
+    {
+      "utterance": "1993_147149_000025_000000",
+      "speaker": "librittsr_1993",
+      "duration_s": 9.52,
+      "text": "She bent down, and fondly, oh! with what passionate fondness, kissed her child, and then gave him up to Alice, who took him with tender care.",
+      "sha256": "787c1179a072a7f143dfaf2a4706cc5af9bf1f6dd680578457e6d23b6b83b6c5"
+    },
+    {
+      "utterance": "1993_147964_000006_000005",
+      "speaker": "librittsr_1993",
+      "duration_s": 6.08,
+      "text": "He used to help my father cut Christmas trees for me in Virginia, and he had not forgotten how much I liked them.",
+      "sha256": "f36f3161b18bf185f5f4bcd892a4739992b36ea1c624787dabbdb83823807af2"
+    },
+    {
+      "utterance": "1993_147149_000054_000006",
+      "speaker": "librittsr_1993",
+      "duration_s": 5.2,
+      "text": "Well, when I'm mrs Harry Carson, may happen I can put some good fortune in Jem's way.",
+      "sha256": "83d61e4406fcaae8423a67eaf18c56af5906951d7ef1cedd9673158828932703"
+    },
+    {
+      "utterance": "777_126732_000074_000000",
+      "speaker": "librittsr_777",
+      "duration_s": 5.8,
+      "text": "\"He glared at me, as if he didn't know who I was, when I went downstairs. His heart was going like a hammer.",
+      "sha256": "28d10709e47d4b032b3101f6bc4331531d29c1094411bab25b602bcb5a60ec89"
+    },
+    {
+      "utterance": "777_126732_000076_000004",
+      "speaker": "librittsr_777",
+      "duration_s": 4.72,
+      "text": "And Mr Ossipon brings every week a pile of these f p tracts to sell at a halfpenny each.",
+      "sha256": "6aaed746a989a5f78e1110075ad36a5cdec7316a56c8e293f3b1475ec6890ad6"
+    },
+    {
+      "utterance": "777_126732_000076_000008",
+      "speaker": "librittsr_777",
+      "duration_s": 8.64,
+      "text": "The other day Stevie got hold of one, and there was a story in it of a German soldier officer tearing half off the ear of a recruit, and nothing was done to him for it.",
+      "sha256": "48feb83ff8b0750bddc80a08557ae1d9dadfd527af0eb12f47eb3f12bada4e9f"
+    },
+    {
+      "utterance": "777_126732_000076_000011",
+      "speaker": "librittsr_777",
+      "duration_s": 3.0,
+      "text": "The story was enough, too, to make one's blood boil.",
+      "sha256": "8da29bf59055414bcd89382b332817ed18f8aedb6459b2d71751aa2efec1c74a"
+    },
+    {
+      "utterance": "777_126732_000076_000000",
+      "speaker": "librittsr_777",
+      "duration_s": 6.92,
+      "text": "\"I wish he had never been to school,\" Mrs Verloc began again brusquely. \"He's always taking away those newspapers from the window to read.",
+      "sha256": "203c8810f1db5d13473fadda6da2376b3fa34f025dd42afbda028dafe8cf0e35"
+    },
+    {
+      "utterance": "6345_64257_000007_000000",
+      "speaker": "librittsr_6345",
+      "duration_s": 4.8,
+      "text": "She found herself at length in an avenue of dark trees, the end of which was far off.",
+      "sha256": "0a1287f01504e89d03b21f3de2f9c0837d7ed0e791be9d0bcc2371ce79d5b437"
+    },
+    {
+      "utterance": "6345_93302_000069_000001",
+      "speaker": "librittsr_6345",
+      "duration_s": 3.76,
+      "text": "And it's good bye for ever. No-it's only painful for both of us.",
+      "sha256": "27a3472ea7f6201edc31591f2bd0193eaf8bb4fd88189f5785cdd85c01b474f6"
+    },
+    {
+      "utterance": "6345_93306_000036_000003",
+      "speaker": "librittsr_6345",
+      "duration_s": 3.28,
+      "text": "The hotel folks let her go-I can't think how people can be so silly.",
+      "sha256": "6fbc3c4b4b407d95eb7c3062e894b6d9b4a0555fca85bc711becae91ef44e45a"
+    },
+    {
+      "utterance": "6345_93302_000050_000000",
+      "speaker": "librittsr_6345",
+      "duration_s": 4.6,
+      "text": "The waitress brought the two thick cups of tea, and looked at him with a tepid curiosity.",
+      "sha256": "43bea38bde2b1be5130308c1148f23524c8d63226b1130ec6ac53bfd394eaac1"
+    },
+    {
+      "utterance": "6345_64257_000010_000005",
+      "speaker": "librittsr_6345",
+      "duration_s": 4.16,
+      "text": "Oh, cold creatures, ye are not what ye seem, and I will none of you!\"",
+      "sha256": "77b9a2b918be88941d870c2ffcb82e13b17370da52692d56fd9cd38b51039a0c"
+    },
+    {
+      "utterance": "2803_154328_000073_000000",
+      "speaker": "librittsr_2803",
+      "duration_s": 7.52,
+      "text": "One of the warriors on guard, startled by an unusual sound, rose and drew nearer to the Ware Atoua.",
+      "sha256": "d6bcbfa00c7286091c111d7cd41db002aa7c21dd3020b98a74e4d0cbcfade472"
+    },
+    {
+      "utterance": "2803_161169_000008_000005",
+      "speaker": "librittsr_2803",
+      "duration_s": 9.16,
+      "text": "But you will find that they are really pulled and pushed by an engine that stands outside the doorway and reaches them by long chains.",
+      "sha256": "5a5374612600a0025016dd1164b7c5d617237300d9c3dc4d84d02df2cbaaa646"
+    },
+    {
+      "utterance": "2803_154328_000030_000001",
+      "speaker": "librittsr_2803",
+      "duration_s": 8.64,
+      "text": "It soon became evident that a man, or men, clinging to the sides of the \"pah,\" were cutting a passage into its exterior wall.",
+      "sha256": "b8e086d24a9c5b6b4f1bc660970289f5eb8d24d7c62c015cbd4be22c8a4ca582"
+    },
+    {
+      "utterance": "2803_154328_000083_000003",
+      "speaker": "librittsr_2803",
+      "duration_s": 8.08,
+      "text": "He was now the object of their anxiety, and whose absence was a black shadow between them and their happiness.",
+      "sha256": "1677516d6a1c27633890907d88a80e5182085bf1e7c0dfa2ca21d5ec4753274d"
+    },
+    {
+      "utterance": "2803_154328_000083_000000",
+      "speaker": "librittsr_2803",
+      "duration_s": 5.56,
+      "text": "Another half an hour and the glorious sun would rise out of the mists of the horizon.",
+      "sha256": "e124476df7edbb8e644f5e2d8f44bf13c175eb3220463358880e9d4a5217d121"
+    },
+    {
+      "utterance": "2412_153954_000007_000006",
+      "speaker": "librittsr_2412",
+      "duration_s": 7.32,
+      "text": "These two were first called out; and in about a quarter of an hour I was made to follow them, which I did in some fear, and with much curiosity.",
+      "sha256": "6cf3a0ea0c84e9c570da5a9a49aaa58a7e28d3546b11a3991f03e8e3e74174fe"
+    },
+    {
+      "utterance": "2412_153954_000011_000001",
+      "speaker": "librittsr_2412",
+      "duration_s": 3.08,
+      "text": "He spoke to me solemnly and sternly for two or three minutes.",
+      "sha256": "7346468d8e836cbff972994a521b897afffe501753f7999ef21d1a8ff714649c"
+    },
+    {
+      "utterance": "2412_153954_000008_000006",
+      "speaker": "librittsr_2412",
+      "duration_s": 4.88,
+      "text": "They even pulled down my eyelids, and looked, I suppose, to see if they were bloodshot; but it was not so.",
+      "sha256": "575598d929640490f19ffd42d9c1d19c5efcc340c5f94be5230f68d04e9b9c94"
+    },
+    {
+      "utterance": "2412_153954_000002_000007",
+      "speaker": "librittsr_2412",
+      "duration_s": 4.52,
+      "text": "My guides spoke to many in passing, and those spoken to showed much amazement.",
+      "sha256": "9774b44992e924c9b648cb34322916cc8d0241019ea962ef0a9e219bdec849bb"
+    },
+    {
+      "utterance": "2412_153947_000020_000004",
+      "speaker": "librittsr_2412",
+      "duration_s": 7.8,
+      "text": "I have also parted with the word \"infortuniam\" (though not without regret), but have not dared to meddle with other similar inaccuracies.",
+      "sha256": "bbe3a2c528eccec1c0d1f6219e989a9aa9f3c2c45d5f3614246b0b3179a81e3f"
+    },
+    {
+      "utterance": "6295_64301_000015_000004",
+      "speaker": "librittsr_6295",
+      "duration_s": 6.08,
+      "text": "He that loveth not his brother whom he hath seen, how shall he love God whom he hath not seen?",
+      "sha256": "db422b9fa22479c6fea759a9c5c67ef357b90adfd9d458d37bb16646ad9ef323"
+    },
+    {
+      "utterance": "6295_244435_000038_000003",
+      "speaker": "librittsr_6295",
+      "duration_s": 6.24,
+      "text": "This was not the fashion of a year ago, when they exchanged a friendly word or two, but Harry knew its cause.",
+      "sha256": "19159ee27248ea3994711ade37c3e333b9f5be69bf574ffdf2ad50b88c547904"
+    },
+    {
+      "utterance": "6295_64301_000012_000002",
+      "speaker": "librittsr_6295",
+      "duration_s": 5.08,
+      "text": "Letty, too, was overcome-more than ever she had been by music.",
+      "sha256": "8c87f496b9bb7883920ac8526b62c7a0968e95fe1126558f997e280c16131e6a"
+    },
+    {
+      "utterance": "6295_64301_000013_000000",
+      "speaker": "librittsr_6295",
+      "duration_s": 6.8,
+      "text": "A mood had taken shape in the mind of the blacksmith, and wandered from its home, seeking another country.",
+      "sha256": "d244ccc2762994167a8e9c6bb5312b6400bf0b141aba26dda74ce9b974e66af5"
+    },
+    {
+      "utterance": "6295_64301_000013_000007",
+      "speaker": "librittsr_6295",
+      "duration_s": 9.2,
+      "text": "It cried aloud that eternity was very long, and like a great palace without a quiet room.",
+      "sha256": "220d76369a4b96d8286ba24fdf73b5cc67a4e881426679cc8a8b56f601e02e3b"
+    },
+    {
+      "utterance": "8842_302201_000014_000014",
+      "speaker": "librittsr_8842",
+      "duration_s": 7.68,
+      "text": "Then, when I say, \"Dear Song, I know,\" I add a stanza as it were handmaid to the others, wherein I say what I desire from this my poem.",
+      "sha256": "76bacef59d31e2ae91cc0c9bf9f9f3b498ae5a5f0010317c87ae7047b2718822"
+    },
+    {
+      "utterance": "8842_302196_000014_000006",
+      "speaker": "librittsr_8842",
+      "duration_s": 5.92,
+      "text": "The task of the translator (and with all humility be it spoken) is one of some self denial.",
+      "sha256": "4d75548d4161b5b3602537edd6560fc7e854b36ca8872df0a91eb7771bea8414"
+    },
+    {
+      "utterance": "8842_302203_000004_000003",
+      "speaker": "librittsr_8842",
+      "duration_s": 6.08,
+      "text": "Also, after I had recovered from my sickness, I bethought me to write these things in rhyme; deeming it a lovely thing to be known.",
+      "sha256": "0142ad3b03fa262ff386334cbbb6dc46a40e6673bd720d9c96f49a6d0bf55c72"
+    },
+    {
+      "utterance": "8842_304647_000017_000001",
+      "speaker": "librittsr_8842",
+      "duration_s": 3.64,
+      "text": "These things gave you birth: So have they mind and God.",
+      "sha256": "1413831a95171d9c0c2b2c7eaea56864bda5da1311f4f72970f7eeedbdb6e359"
+    },
+    {
+      "utterance": "8842_304647_000034_000002",
+      "speaker": "librittsr_8842",
+      "duration_s": 5.68,
+      "text": "Yield, thou deaf, blind, tainted beast, To the wise fervour of a blameless mind!",
+      "sha256": "274815abdf169f9779d1c466a4f0ef1bb56abe9e9c26582a7610f578d9b2a8a9"
+    },
+    {
+      "utterance": "7976_110124_000005_000001",
+      "speaker": "librittsr_7976",
+      "duration_s": 6.68,
+      "text": "Every year at a certain day of a certain month he went away to a distant city to collect money on an account.",
+      "sha256": "5f91cd824f77f96d0fdaaac367d7a889b507c0daca8ec32b00b7a8cc6a6eaf21"
+    },
+    {
+      "utterance": "7976_105575_000014_000002",
+      "speaker": "librittsr_7976",
+      "duration_s": 3.64,
+      "text": "There were simply bushels of them, and the floor was running blood.",
+      "sha256": "24e9bca6aaf83bffad4b47d059360387b862a9d69e03837f7135f51d08382a94"
+    },
+    {
+      "utterance": "7976_110523_000016_000005",
+      "speaker": "librittsr_7976",
+      "duration_s": 6.32,
+      "text": "They knocked at the door, and when the wife opened it, and saw Hansel and Grethel, she exclaimed, \"You wicked children!",
+      "sha256": "33afb9dd0600979f98d3dbab85098aa6dd8027e389fa343f256c0843c7bf78b9"
+    },
+    {
+      "utterance": "7976_110523_000021_000001",
+      "speaker": "librittsr_7976",
+      "duration_s": 6.48,
+      "text": "Nevertheless he comforted Grethel, saying, \"Do not weep; sleep in quiet; the good God will not forsake us.\"",
+      "sha256": "e37a1a173a56a9b9619c03244c15509ffec168a4a9d1eb8d651da69f7a4ed003"
+    },
+    {
+      "utterance": "7976_110124_000014_000000",
+      "speaker": "librittsr_7976",
+      "duration_s": 3.24,
+      "text": "Now, outside this city there was a band of bold robbers.",
+      "sha256": "e6704247d396909f327f9ee7427ad5ce998a3af323a2e5ea9f0eee19e0a5acfc"
+    },
+    {
+      "utterance": "84_121550_000241_000000",
+      "speaker": "librittsr_84",
+      "duration_s": 7.12,
+      "text": "Behold the company that circles her; The rest behind the Griffin are ascending With more melodious song, and more profound.\"",
+      "sha256": "45e93da35ad97707d735281d107be63abea5dc90568c99422926b9287d39b5d0"
+    },
+    {
+      "utterance": "84_121123_000022_000002",
+      "speaker": "librittsr_84",
+      "duration_s": 7.76,
+      "text": "\"Yes, yes,\" continued Morrel; \"recall the scene, for the words you thought were only given to silence and solitude fell into my ears.",
+      "sha256": "60c921588626e9982dd891bdf5891f1a258fa16d5e75cf96e8b7612f0cbe00d3"
+    },
+    {
+      "utterance": "84_121550_000090_000000",
+      "speaker": "librittsr_84",
+      "duration_s": 7.96,
+      "text": "Plumed with six wings was every one of them, The plumage full of eyes; the eyes of Argus If they were living would be such as these.",
+      "sha256": "2e4a1db300fdfedad95f3f3a6b7b1b30ac72709d00ff745bf6730be6a241dbf2"
+    },
+    {
+      "utterance": "84_121550_000072_000000",
+      "speaker": "librittsr_84",
+      "duration_s": 8.64,
+      "text": "Now Helicon must needs pour forth for me, And with her choir Urania must assist me, To put in verse things difficult to think.",
+      "sha256": "2919f0aadeeb3b2c5bd4b4a3180a66e8dbe4fc2969e837125bc447688b6d065a"
+    },
+    {
+      "utterance": "84_121550_000158_000000",
+      "speaker": "librittsr_84",
+      "duration_s": 7.76,
+      "text": "For this I visited the gates of death, And unto him, who so far up has led him, My intercessions were with weeping borne.",
+      "sha256": "34c91b70b8ff399f794767b730ccf1953bfa7aa705b7893c129c4a7c26a6240b"
+    },
+    {
+      "utterance": "5694_64025_000007_000000",
+      "speaker": "librittsr_5694",
+      "duration_s": 4.44,
+      "text": "About noon a courier dashed up and ordered us to go forward and support General Bragg's center.",
+      "sha256": "79be7339fadea1cb19f0341c75fecdc806bcebd984993a0a0d72d1f7975debf1"
+    },
+    {
+      "utterance": "5694_64038_000024_000024",
+      "speaker": "librittsr_5694",
+      "duration_s": 4.24,
+      "text": "He didn't see anything to run from, but the other soldiers began to run, and Jim run, too.",
+      "sha256": "0219097bd79f431bbeb2ec8cf5545ba7b509255a71bd507a8e57fe87a9cc6f79"
+    },
+    {
+      "utterance": "5694_64038_000015_000000",
+      "speaker": "librittsr_5694",
+      "duration_s": 8.16,
+      "text": "On leaving Dalton, after a day's march, we had stopped for the night. Our guns were stacked, and I started off with a comrade to get some wood to cook supper with.",
+      "sha256": "457d0018465af70650407ae9b054d126e71b7d60815c212be59e94fdb354bd80"
+    },
+    {
+      "utterance": "5694_64038_000012_000000",
+      "speaker": "librittsr_5694",
+      "duration_s": 4.68,
+      "text": "But there were some Yankee soldiers in a block house at Ringgold Gap, who thought they would act big.",
+      "sha256": "25cad985b5e19d99c0bb31f3f5f679acaff1ba8cc228c83a88dd82e702c6c8c8"
+    },
+    {
+      "utterance": "5694_64038_000011_000001",
+      "speaker": "librittsr_5694",
+      "duration_s": 9.04,
+      "text": "We saw the United States flag flying from the ramparts, and thought that Yank would probably be asleep or catching lice, or maybe engaged in a game of seven up.",
+      "sha256": "da88b268a8a967f27a96605815a06cb0d5a05d22054e249389cb47ce824fed6a"
+    },
+    {
+      "utterance": "6313_76958_000027_000000",
+      "speaker": "librittsr_6313",
+      "duration_s": 6.16,
+      "text": "Stacy Brown proved the only grumbler in the lot, declaring that he could not sleep a wink on such a bed as that.",
+      "sha256": "01c15ba12366762a8dce5ed3f670a7d859eba525a28e88f775d8aef9effbd272"
+    },
+    {
+      "utterance": "6313_66129_000053_000000",
+      "speaker": "librittsr_6313",
+      "duration_s": 4.4,
+      "text": "At their urgent request, Professor Zepplin told the boys to go ahead and enjoy themselves.",
+      "sha256": "b67948f0812252e1c2e5fd2889a1c6dbb83635e6dcdcf6fa955692bb853d3c35"
+    },
+    {
+      "utterance": "6313_76958_000045_000000",
+      "speaker": "librittsr_6313",
+      "duration_s": 4.68,
+      "text": "Lumpy Bates came running toward him, not daring to call out for fear of waking the camp.",
+      "sha256": "b15f9cc362d301b5551e70542a4b782e427aae4b0df18d9b9e7ef0ba84112383"
+    },
+    {
+      "utterance": "6313_76958_000090_000000",
+      "speaker": "librittsr_6313",
+      "duration_s": 3.56,
+      "text": "The Chinaman showed two rows of white teeth in his expansive grin.",
+      "sha256": "457fd289ee4db0ef59256b99dc304da8b643dc9648fde4363c8e078c0144b956"
+    },
+    {
+      "utterance": "6313_66129_000036_000001",
+      "speaker": "librittsr_6313",
+      "duration_s": 7.96,
+      "text": "\"I'd lose my dignity for a mouthful of that, any day,\" he decided after having sampled the combination. \"President Brown, I withdraw my criticism.",
+      "sha256": "7ba81658e8a568707cabbffbdd1836f8707984b76dab27f2904d1019659f89cf"
+    }
+  ],
+  "rejected": [
+    {
+      "utterance": "1988_24833_000059_000000",
+      "speaker": "1988",
+      "reason": "duration 1.76 s"
+    },
+    {
+      "utterance": "1988_24833_000033_000000",
+      "speaker": "1988",
+      "reason": "duration 2.68 s"
+    },
+    {
+      "utterance": "1988_148538_000013_000001",
+      "speaker": "1988",
+      "reason": "duration 10.32 s"
+    },
+    {
+      "utterance": "1988_24833_000046_000001",
+      "speaker": "1988",
+      "reason": "duration 1.16 s"
+    },
+    {
+      "utterance": "1988_24833_000068_000002",
+      "speaker": "1988",
+      "reason": "duration 2.40 s"
+    },
+    {
+      "utterance": "1988_147956_000007_000002",
+      "speaker": "1988",
+      "reason": "duration 2.48 s"
+    },
+    {
+      "utterance": "1988_147956_000021_000002",
+      "speaker": "1988",
+      "reason": "duration 1.92 s"
+    },
+    {
+      "utterance": "1988_24833_000053_000001",
+      "speaker": "1988",
+      "reason": "duration 0.88 s"
+    },
+    {
+      "utterance": "1988_147956_000002_000004",
+      "speaker": "1988",
+      "reason": "duration 13.24 s"
+    },
+    {
+      "utterance": "1988_24833_000036_000000",
+      "speaker": "1988",
+      "reason": "duration 1.36 s"
+    },
+    {
+      "utterance": "1988_24833_000060_000002",
+      "speaker": "1988",
+      "reason": "duration 2.16 s"
+    },
+    {
+      "utterance": "1988_147956_000019_000000",
+      "speaker": "1988",
+      "reason": "duration 2.88 s"
+    },
+    {
+      "utterance": "1988_24833_000049_000000",
+      "speaker": "1988",
+      "reason": "duration 2.32 s"
+    },
+    {
+      "utterance": "1988_24833_000062_000001",
+      "speaker": "1988",
+      "reason": "duration 1.24 s"
+    },
+    {
+      "utterance": "1988_24833_000003_000000",
+      "speaker": "1988",
+      "reason": "duration 0.92 s"
+    },
+    {
+      "utterance": "1988_24833_000066_000000",
+      "speaker": "1988",
+      "reason": "duration 2.28 s"
+    },
+    {
+      "utterance": "5536_43363_000001_000003",
+      "speaker": "5536",
+      "reason": "duration 1.32 s"
+    },
+    {
+      "utterance": "5536_43358_000027_000003",
+      "speaker": "5536",
+      "reason": "duration 14.80 s"
+    },
+    {
+      "utterance": "5536_43363_000004_000004",
+      "speaker": "5536",
+      "reason": "duration 10.84 s"
+    },
+    {
+      "utterance": "5536_43363_000011_000002",
+      "speaker": "5536",
+      "reason": "duration 1.80 s"
+    },
+    {
+      "utterance": "5536_43363_000004_000000",
+      "speaker": "5536",
+      "reason": "duration 13.64 s"
+    },
+    {
+      "utterance": "5536_43358_000009_000003",
+      "speaker": "5536",
+      "reason": "duration 2.44 s"
+    },
+    {
+      "utterance": "5536_43358_000023_000000",
+      "speaker": "5536",
+      "reason": "duration 1.80 s"
+    },
+    {
+      "utterance": "5536_43358_000017_000002",
+      "speaker": "5536",
+      "reason": "duration 18.80 s"
+    },
+    {
+      "utterance": "5536_43363_000017_000004",
+      "speaker": "5536",
+      "reason": "duration 2.68 s"
+    },
+    {
+      "utterance": "5536_43358_000017_000000",
+      "speaker": "5536",
+      "reason": "duration 15.20 s"
+    },
+    {
+      "utterance": "5536_43358_000023_000001",
+      "speaker": "5536",
+      "reason": "duration 16.28 s"
+    },
+    {
+      "utterance": "5536_43358_000011_000005",
+      "speaker": "5536",
+      "reason": "duration 12.88 s"
+    },
+    {
+      "utterance": "3576_138058_000010_000001",
+      "speaker": "3576",
+      "reason": "duration 1.96 s"
+    },
+    {
+      "utterance": "3576_138058_000039_000000",
+      "speaker": "3576",
+      "reason": "duration 16.84 s"
+    },
+    {
+      "utterance": "3576_138058_000046_000000",
+      "speaker": "3576",
+      "reason": "duration 18.56 s"
+    },
+    {
+      "utterance": "3576_138058_000044_000001",
+      "speaker": "3576",
+      "reason": "duration 20.04 s"
+    },
+    {
+      "utterance": "3576_138058_000019_000003",
+      "speaker": "3576",
+      "reason": "duration 26.12 s"
+    },
+    {
+      "utterance": "3576_138058_000019_000002",
+      "speaker": "3576",
+      "reason": "duration 11.16 s"
+    },
+    {
+      "utterance": "3576_138058_000018_000001",
+      "speaker": "3576",
+      "reason": "duration 10.88 s"
+    },
+    {
+      "utterance": "3576_138058_000051_000000",
+      "speaker": "3576",
+      "reason": "duration 13.92 s"
+    },
+    {
+      "utterance": "3576_138058_000013_000000",
+      "speaker": "3576",
+      "reason": "duration 14.36 s"
+    },
+    {
+      "utterance": "3576_138058_000048_000000",
+      "speaker": "3576",
+      "reason": "duration 22.68 s"
+    },
+    {
+      "utterance": "3576_138058_000037_000000",
+      "speaker": "3576",
+      "reason": "duration 10.64 s"
+    },
+    {
+      "utterance": "2035_147960_000005_000017",
+      "speaker": "2035",
+      "reason": "duration 1.88 s"
+    },
+    {
+      "utterance": "2035_147960_000018_000001",
+      "speaker": "2035",
+      "reason": "duration 2.88 s"
+    },
+    {
+      "utterance": "2035_147960_000018_000006",
+      "speaker": "2035",
+      "reason": "duration 1.04 s"
+    },
+    {
+      "utterance": "2035_147961_000007_000014",
+      "speaker": "2035",
+      "reason": "duration 2.80 s"
+    },
+    {
+      "utterance": "2035_147961_000021_000001",
+      "speaker": "2035",
+      "reason": "duration 2.88 s"
+    },
+    {
+      "utterance": "2035_147960_000005_000018",
+      "speaker": "2035",
+      "reason": "duration 1.28 s"
+    },
+    {
+      "utterance": "2035_147960_000012_000005",
+      "speaker": "2035",
+      "reason": "duration 13.64 s"
+    },
+    {
+      "utterance": "2035_147961_000013_000011",
+      "speaker": "2035",
+      "reason": "duration 2.84 s"
+    },
+    {
+      "utterance": "2035_152373_000006_000000",
+      "speaker": "2035",
+      "reason": "duration 10.40 s"
+    },
+    {
+      "utterance": "2035_147960_000015_000000",
+      "speaker": "2035",
+      "reason": "duration 2.36 s"
+    },
+    {
+      "utterance": "251_118436_000015_000000",
+      "speaker": "251",
+      "reason": "duration 12.64 s"
+    },
+    {
+      "utterance": "251_118436_000032_000007",
+      "speaker": "251",
+      "reason": "duration 2.40 s"
+    },
+    {
+      "utterance": "251_137823_000042_000001",
+      "speaker": "251",
+      "reason": "duration 1.40 s"
+    },
+    {
+      "utterance": "251_118436_000017_000001",
+      "speaker": "251",
+      "reason": "duration 10.36 s"
+    },
+    {
+      "utterance": "251_136532_000004_000001",
+      "speaker": "251",
+      "reason": "duration 15.48 s"
+    },
+    {
+      "utterance": "251_137823_000055_000001",
+      "speaker": "251",
+      "reason": "duration 2.44 s"
+    },
+    {
+      "utterance": "251_137823_000039_000000",
+      "speaker": "251",
+      "reason": "duration 11.12 s"
+    },
+    {
+      "utterance": "251_118436_000012_000003",
+      "speaker": "251",
+      "reason": "duration 1.48 s"
+    },
+    {
+      "utterance": "251_137823_000018_000000",
+      "speaker": "251",
+      "reason": "duration 2.76 s"
+    },
+    {
+      "utterance": "251_136532_000012_000004",
+      "speaker": "251",
+      "reason": "duration 2.92 s"
+    },
+    {
+      "utterance": "251_136532_000019_000002",
+      "speaker": "251",
+      "reason": "duration 10.88 s"
+    },
+    {
+      "utterance": "251_136532_000016_000002",
+      "speaker": "251",
+      "reason": "duration 10.28 s"
+    },
+    {
+      "utterance": "251_137823_000061_000000",
+      "speaker": "251",
+      "reason": "duration 1.56 s"
+    },
+    {
+      "utterance": "251_136532_000014_000000",
+      "speaker": "251",
+      "reason": "duration 1.32 s"
+    },
+    {
+      "utterance": "1993_147966_000005_000001",
+      "speaker": "1993",
+      "reason": "duration 2.56 s"
+    },
+    {
+      "utterance": "1993_147149_000045_000000",
+      "speaker": "1993",
+      "reason": "duration 1.88 s"
+    },
+    {
+      "utterance": "1993_147965_000002_000000",
+      "speaker": "1993",
+      "reason": "duration 10.40 s"
+    },
+    {
+      "utterance": "1993_147149_000005_000002",
+      "speaker": "1993",
+      "reason": "duration 13.36 s"
+    },
+    {
+      "utterance": "1993_147149_000009_000000",
+      "speaker": "1993",
+      "reason": "duration 15.60 s"
+    },
+    {
+      "utterance": "1993_147966_000020_000000",
+      "speaker": "1993",
+      "reason": "duration 2.32 s"
+    },
+    {
+      "utterance": "1993_147966_000004_000002",
+      "speaker": "1993",
+      "reason": "duration 10.60 s"
+    },
+    {
+      "utterance": "1993_147966_000007_000002",
+      "speaker": "1993",
+      "reason": "duration 1.80 s"
+    },
+    {
+      "utterance": "1993_147966_000019_000003",
+      "speaker": "1993",
+      "reason": "duration 12.28 s"
+    },
+    {
+      "utterance": "1993_147149_000053_000000",
+      "speaker": "1993",
+      "reason": "duration 11.92 s"
+    },
+    {
+      "utterance": "1993_147966_000007_000004",
+      "speaker": "1993",
+      "reason": "duration 2.32 s"
+    },
+    {
+      "utterance": "777_126732_000076_000002",
+      "speaker": "777",
+      "reason": "duration 2.16 s"
+    },
+    {
+      "utterance": "777_126732_000076_000006",
+      "speaker": "777",
+      "reason": "duration 1.76 s"
+    },
+    {
+      "utterance": "777_126732_000074_000001",
+      "speaker": "777",
+      "reason": "duration 1.52 s"
+    },
+    {
+      "utterance": "777_126732_000072_000000",
+      "speaker": "777",
+      "reason": "duration 1.76 s"
+    },
+    {
+      "utterance": "777_126732_000076_000009",
+      "speaker": "777",
+      "reason": "duration 0.68 s"
+    },
+    {
+      "utterance": "777_126732_000076_000010",
+      "speaker": "777",
+      "reason": "duration 2.16 s"
+    },
+    {
+      "utterance": "777_126732_000076_000007",
+      "speaker": "777",
+      "reason": "duration 1.20 s"
+    },
+    {
+      "utterance": "777_126732_000076_000005",
+      "speaker": "777",
+      "reason": "duration 2.04 s"
+    },
+    {
+      "utterance": "777_126732_000076_000012",
+      "speaker": "777",
+      "reason": "duration 1.88 s"
+    },
+    {
+      "utterance": "777_126732_000076_000001",
+      "speaker": "777",
+      "reason": "duration 1.92 s"
+    },
+    {
+      "utterance": "777_126732_000072_000003",
+      "speaker": "777",
+      "reason": "duration 1.72 s"
+    },
+    {
+      "utterance": "777_126732_000072_000001",
+      "speaker": "777",
+      "reason": "duration 1.40 s"
+    },
+    {
+      "utterance": "777_126732_000075_000000",
+      "speaker": "777",
+      "reason": "duration 1.56 s"
+    },
+    {
+      "utterance": "777_126732_000074_000003",
+      "speaker": "777",
+      "reason": "duration 1.00 s"
+    },
+    {
+      "utterance": "777_126732_000076_000013",
+      "speaker": "777",
+      "reason": "duration 2.32 s"
+    },
+    {
+      "utterance": "6345_93306_000019_000005",
+      "speaker": "6345",
+      "reason": "duration 0.96 s"
+    },
+    {
+      "utterance": "6345_93302_000075_000006",
+      "speaker": "6345",
+      "reason": "duration 1.44 s"
+    },
+    {
+      "utterance": "6345_93302_000062_000000",
+      "speaker": "6345",
+      "reason": "duration 1.04 s"
+    },
+    {
+      "utterance": "6345_93306_000008_000005",
+      "speaker": "6345",
+      "reason": "duration 2.28 s"
+    },
+    {
+      "utterance": "6345_93302_000054_000003",
+      "speaker": "6345",
+      "reason": "duration 1.52 s"
+    },
+    {
+      "utterance": "6345_93306_000054_000000",
+      "speaker": "6345",
+      "reason": "duration 0.84 s"
+    },
+    {
+      "utterance": "6345_93306_000024_000004",
+      "speaker": "6345",
+      "reason": "duration 1.20 s"
+    },
+    {
+      "utterance": "6345_64257_000009_000014",
+      "speaker": "6345",
+      "reason": "duration 14.16 s"
+    },
+    {
+      "utterance": "6345_93302_000069_000002",
+      "speaker": "6345",
+      "reason": "duration 2.36 s"
+    },
+    {
+      "utterance": "6345_93306_000022_000000",
+      "speaker": "6345",
+      "reason": "duration 2.40 s"
+    },
+    {
+      "utterance": "6345_93302_000048_000000",
+      "speaker": "6345",
+      "reason": "duration 1.76 s"
+    },
+    {
+      "utterance": "6345_93302_000043_000002",
+      "speaker": "6345",
+      "reason": "duration 15.48 s"
+    },
+    {
+      "utterance": "6345_64257_000001_000000",
+      "speaker": "6345",
+      "reason": "duration 0.96 s"
+    },
+    {
+      "utterance": "6345_93306_000013_000000",
+      "speaker": "6345",
+      "reason": "duration 2.48 s"
+    },
+    {
+      "utterance": "6345_93302_000000_000000",
+      "speaker": "6345",
+      "reason": "duration 1.88 s"
+    },
+    {
+      "utterance": "6345_93302_000065_000000",
+      "speaker": "6345",
+      "reason": "duration 1.44 s"
+    },
+    {
+      "utterance": "6345_93302_000058_000001",
+      "speaker": "6345",
+      "reason": "duration 1.20 s"
+    },
+    {
+      "utterance": "6345_93306_000056_000001",
+      "speaker": "6345",
+      "reason": "duration 1.12 s"
+    },
+    {
+      "utterance": "6345_93306_000024_000003",
+      "speaker": "6345",
+      "reason": "duration 1.20 s"
+    },
+    {
+      "utterance": "6345_93302_000042_000003",
+      "speaker": "6345",
+      "reason": "duration 1.76 s"
+    },
+    {
+      "utterance": "6345_93302_000066_000000",
+      "speaker": "6345",
+      "reason": "duration 1.60 s"
+    },
+    {
+      "utterance": "6345_93302_000006_000000",
+      "speaker": "6345",
+      "reason": "duration 1.32 s"
+    },
+    {
+      "utterance": "2803_154328_000031_000000",
+      "speaker": "2803",
+      "reason": "duration 2.16 s"
+    },
+    {
+      "utterance": "2803_154328_000036_000000",
+      "speaker": "2803",
+      "reason": "duration 13.24 s"
+    },
+    {
+      "utterance": "2803_154328_000083_000002",
+      "speaker": "2803",
+      "reason": "duration 2.64 s"
+    },
+    {
+      "utterance": "2803_154328_000028_000000",
+      "speaker": "2803",
+      "reason": "duration 19.60 s"
+    },
+    {
+      "utterance": "2803_154328_000086_000001",
+      "speaker": "2803",
+      "reason": "duration 1.24 s"
+    },
+    {
+      "utterance": "2803_161169_000011_000021",
+      "speaker": "2803",
+      "reason": "duration 14.52 s"
+    },
+    {
+      "utterance": "2803_161169_000011_000008",
+      "speaker": "2803",
+      "reason": "duration 16.96 s"
+    },
+    {
+      "utterance": "2803_154320_000011_000000",
+      "speaker": "2803",
+      "reason": "duration 1.40 s"
+    },
+    {
+      "utterance": "2803_161169_000010_000004",
+      "speaker": "2803",
+      "reason": "duration 14.04 s"
+    },
+    {
+      "utterance": "2803_154328_000011_000000",
+      "speaker": "2803",
+      "reason": "duration 2.96 s"
+    },
+    {
+      "utterance": "2803_161169_000007_000000",
+      "speaker": "2803",
+      "reason": "duration 18.92 s"
+    },
+    {
+      "utterance": "2803_161169_000004_000000",
+      "speaker": "2803",
+      "reason": "duration 10.96 s"
+    },
+    {
+      "utterance": "2803_161169_000008_000003",
+      "speaker": "2803",
+      "reason": "duration 12.44 s"
+    },
+    {
+      "utterance": "2803_154320_000021_000004",
+      "speaker": "2803",
+      "reason": "duration 2.92 s"
+    },
+    {
+      "utterance": "2803_161169_000006_000001",
+      "speaker": "2803",
+      "reason": "duration 2.72 s"
+    },
+    {
+      "utterance": "2803_154320_000021_000003",
+      "speaker": "2803",
+      "reason": "duration 13.40 s"
+    },
+    {
+      "utterance": "2803_154320_000010_000000",
+      "speaker": "2803",
+      "reason": "duration 2.84 s"
+    },
+    {
+      "utterance": "2412_153948_000015_000001",
+      "speaker": "2412",
+      "reason": "duration 1.12 s"
+    },
+    {
+      "utterance": "2412_153954_000007_000000",
+      "speaker": "2412",
+      "reason": "duration 14.84 s"
+    },
+    {
+      "utterance": "2412_153947_000017_000001",
+      "speaker": "2412",
+      "reason": "duration 2.44 s"
+    },
+    {
+      "utterance": "2412_153954_000002_000006",
+      "speaker": "2412",
+      "reason": "duration 1.12 s"
+    },
+    {
+      "utterance": "2412_153948_000012_000004",
+      "speaker": "2412",
+      "reason": "duration 17.08 s"
+    },
+    {
+      "utterance": "2412_153954_000001_000000",
+      "speaker": "2412",
+      "reason": "duration 2.32 s"
+    },
+    {
+      "utterance": "2412_153948_000015_000005",
+      "speaker": "2412",
+      "reason": "duration 2.68 s"
+    },
+    {
+      "utterance": "2412_153948_000011_000003",
+      "speaker": "2412",
+      "reason": "duration 10.56 s"
+    },
+    {
+      "utterance": "2412_153954_000002_000009",
+      "speaker": "2412",
+      "reason": "duration 12.16 s"
+    },
+    {
+      "utterance": "2412_153947_000023_000000",
+      "speaker": "2412",
+      "reason": "duration 2.20 s"
+    },
+    {
+      "utterance": "2412_153954_000004_000001",
+      "speaker": "2412",
+      "reason": "duration 15.96 s"
+    },
+    {
+      "utterance": "2412_153948_000013_000002",
+      "speaker": "2412",
+      "reason": "duration 0.76 s"
+    },
+    {
+      "utterance": "2412_153948_000003_000001",
+      "speaker": "2412",
+      "reason": "duration 15.48 s"
+    },
+    {
+      "utterance": "2412_153954_000003_000004",
+      "speaker": "2412",
+      "reason": "duration 2.24 s"
+    },
+    {
+      "utterance": "2412_153954_000008_000002",
+      "speaker": "2412",
+      "reason": "duration 13.32 s"
+    },
+    {
+      "utterance": "2412_153954_000013_000002",
+      "speaker": "2412",
+      "reason": "duration 2.76 s"
+    },
+    {
+      "utterance": "6295_244435_000023_000003",
+      "speaker": "6295",
+      "reason": "duration 2.84 s"
+    },
+    {
+      "utterance": "6295_64301_000002_000000",
+      "speaker": "6295",
+      "reason": "duration 16.60 s"
+    },
+    {
+      "utterance": "6295_244435_000039_000001",
+      "speaker": "6295",
+      "reason": "duration 1.80 s"
+    },
+    {
+      "utterance": "6295_64301_000016_000008",
+      "speaker": "6295",
+      "reason": "duration 11.60 s"
+    },
+    {
+      "utterance": "6295_244435_000009_000001",
+      "speaker": "6295",
+      "reason": "duration 1.44 s"
+    },
+    {
+      "utterance": "6295_244435_000004_000000",
+      "speaker": "6295",
+      "reason": "duration 0.76 s"
+    },
+    {
+      "utterance": "6295_244435_000007_000000",
+      "speaker": "6295",
+      "reason": "duration 2.60 s"
+    },
+    {
+      "utterance": "6295_64301_000016_000002",
+      "speaker": "6295",
+      "reason": "duration 10.04 s"
+    },
+    {
+      "utterance": "6295_244435_000015_000001",
+      "speaker": "6295",
+      "reason": "duration 1.80 s"
+    },
+    {
+      "utterance": "6295_64301_000016_000005",
+      "speaker": "6295",
+      "reason": "duration 10.12 s"
+    },
+    {
+      "utterance": "6295_64301_000014_000003",
+      "speaker": "6295",
+      "reason": "duration 19.72 s"
+    },
+    {
+      "utterance": "6295_64301_000012_000000",
+      "speaker": "6295",
+      "reason": "duration 11.80 s"
+    },
+    {
+      "utterance": "6295_244435_000030_000000",
+      "speaker": "6295",
+      "reason": "duration 1.04 s"
+    },
+    {
+      "utterance": "8842_302203_000010_000000",
+      "speaker": "8842",
+      "reason": "duration 16.56 s"
+    },
+    {
+      "utterance": "8842_302203_000010_000002",
+      "speaker": "8842",
+      "reason": "duration 2.52 s"
+    },
+    {
+      "utterance": "8842_302201_000008_000005",
+      "speaker": "8842",
+      "reason": "duration 1.16 s"
+    },
+    {
+      "utterance": "8842_302203_000004_000004",
+      "speaker": "8842",
+      "reason": "duration 1.44 s"
+    },
+    {
+      "utterance": "8842_304647_000005_000000",
+      "speaker": "8842",
+      "reason": "duration 0.60 s"
+    },
+    {
+      "utterance": "8842_304647_000034_000001",
+      "speaker": "8842",
+      "reason": "duration 2.36 s"
+    },
+    {
+      "utterance": "8842_302201_000008_000000",
+      "speaker": "8842",
+      "reason": "duration 18.40 s"
+    },
+    {
+      "utterance": "8842_302203_000002_000005",
+      "speaker": "8842",
+      "reason": "duration 10.92 s"
+    },
+    {
+      "utterance": "8842_302201_000014_000013",
+      "speaker": "8842",
+      "reason": "duration 10.56 s"
+    },
+    {
+      "utterance": "8842_302201_000008_000003",
+      "speaker": "8842",
+      "reason": "duration 11.00 s"
+    },
+    {
+      "utterance": "8842_302203_000001_000001",
+      "speaker": "8842",
+      "reason": "duration 11.00 s"
+    },
+    {
+      "utterance": "8842_304647_000039_000000",
+      "speaker": "8842",
+      "reason": "duration 0.72 s"
+    },
+    {
+      "utterance": "8842_302203_000011_000005",
+      "speaker": "8842",
+      "reason": "duration 13.68 s"
+    },
+    {
+      "utterance": "8842_302203_000003_000001",
+      "speaker": "8842",
+      "reason": "duration 15.40 s"
+    },
+    {
+      "utterance": "8842_302201_000014_000009",
+      "speaker": "8842",
+      "reason": "duration 13.68 s"
+    },
+    {
+      "utterance": "8842_304647_000013_000000",
+      "speaker": "8842",
+      "reason": "duration 0.72 s"
+    },
+    {
+      "utterance": "7976_110124_000020_000000",
+      "speaker": "7976",
+      "reason": "duration 1.48 s"
+    },
+    {
+      "utterance": "7976_110523_000011_000000",
+      "speaker": "7976",
+      "reason": "duration 10.72 s"
+    },
+    {
+      "utterance": "7976_105575_000012_000001",
+      "speaker": "7976",
+      "reason": "duration 2.80 s"
+    },
+    {
+      "utterance": "7976_105575_000013_000000",
+      "speaker": "7976",
+      "reason": "duration 10.92 s"
+    },
+    {
+      "utterance": "7976_110523_000005_000000",
+      "speaker": "7976",
+      "reason": "duration 1.40 s"
+    },
+    {
+      "utterance": "7976_105575_000011_000012",
+      "speaker": "7976",
+      "reason": "duration 1.84 s"
+    },
+    {
+      "utterance": "7976_110124_000048_000000",
+      "speaker": "7976",
+      "reason": "duration 2.04 s"
+    },
+    {
+      "utterance": "7976_110523_000012_000002",
+      "speaker": "7976",
+      "reason": "duration 11.72 s"
+    },
+    {
+      "utterance": "7976_110523_000027_000006",
+      "speaker": "7976",
+      "reason": "duration 10.16 s"
+    },
+    {
+      "utterance": "7976_105575_000006_000004",
+      "speaker": "7976",
+      "reason": "duration 19.04 s"
+    },
+    {
+      "utterance": "7976_110124_000032_000006",
+      "speaker": "7976",
+      "reason": "duration 2.60 s"
+    },
+    {
+      "utterance": "7976_110523_000019_000000",
+      "speaker": "7976",
+      "reason": "duration 12.00 s"
+    },
+    {
+      "utterance": "7976_110124_000021_000000",
+      "speaker": "7976",
+      "reason": "duration 1.28 s"
+    },
+    {
+      "utterance": "7976_105575_000012_000002",
+      "speaker": "7976",
+      "reason": "duration 2.60 s"
+    },
+    {
+      "utterance": "7976_110124_000005_000000",
+      "speaker": "7976",
+      "reason": "duration 2.84 s"
+    },
+    {
+      "utterance": "84_121123_000061_000000",
+      "speaker": "84",
+      "reason": "duration 1.04 s"
+    },
+    {
+      "utterance": "84_121123_000016_000000",
+      "speaker": "84",
+      "reason": "duration 2.84 s"
+    },
+    {
+      "utterance": "84_121123_000017_000002",
+      "speaker": "84",
+      "reason": "duration 13.52 s"
+    },
+    {
+      "utterance": "84_121550_000184_000000",
+      "speaker": "84",
+      "reason": "duration 10.04 s"
+    },
+    {
+      "utterance": "84_121123_000031_000000",
+      "speaker": "84",
+      "reason": "duration 2.12 s"
+    },
+    {
+      "utterance": "84_121123_000043_000000",
+      "speaker": "84",
+      "reason": "duration 1.24 s"
+    },
+    {
+      "utterance": "5694_64038_000001_000000",
+      "speaker": "5694",
+      "reason": "duration 1.72 s"
+    },
+    {
+      "utterance": "5694_64029_000013_000012",
+      "speaker": "5694",
+      "reason": "duration 2.56 s"
+    },
+    {
+      "utterance": "5694_64029_000006_000000",
+      "speaker": "5694",
+      "reason": "duration 2.08 s"
+    },
+    {
+      "utterance": "5694_64029_000016_000001",
+      "speaker": "5694",
+      "reason": "duration 2.04 s"
+    },
+    {
+      "utterance": "5694_64038_000008_000000",
+      "speaker": "5694",
+      "reason": "duration 19.36 s"
+    },
+    {
+      "utterance": "5694_64029_000005_000000",
+      "speaker": "5694",
+      "reason": "duration 2.00 s"
+    },
+    {
+      "utterance": "5694_64029_000022_000003",
+      "speaker": "5694",
+      "reason": "duration 10.88 s"
+    },
+    {
+      "utterance": "6313_66125_000019_000005",
+      "speaker": "6313",
+      "reason": "duration 1.48 s"
+    },
+    {
+      "utterance": "6313_66129_000045_000002",
+      "speaker": "6313",
+      "reason": "duration 1.08 s"
+    },
+    {
+      "utterance": "6313_66129_000001_000000",
+      "speaker": "6313",
+      "reason": "duration 0.84 s"
+    },
+    {
+      "utterance": "6313_66129_000088_000000",
+      "speaker": "6313",
+      "reason": "duration 2.08 s"
+    },
+    {
+      "utterance": "6313_66125_000048_000000",
+      "speaker": "6313",
+      "reason": "duration 2.92 s"
+    },
+    {
+      "utterance": "6313_66125_000085_000000",
+      "speaker": "6313",
+      "reason": "duration 12.76 s"
+    },
+    {
+      "utterance": "6313_66129_000027_000001",
+      "speaker": "6313",
+      "reason": "duration 2.24 s"
+    },
+    {
+      "utterance": "6313_66125_000005_000000",
+      "speaker": "6313",
+      "reason": "duration 0.72 s"
+    },
+    {
+      "utterance": "6313_76958_000015_000000",
+      "speaker": "6313",
+      "reason": "duration 2.60 s"
+    },
+    {
+      "utterance": "6313_66129_000004_000002",
+      "speaker": "6313",
+      "reason": "duration 2.36 s"
+    },
+    {
+      "utterance": "6313_76958_000018_000000",
+      "speaker": "6313",
+      "reason": "duration 2.92 s"
+    },
+    {
+      "utterance": "6313_66129_000021_000000",
+      "speaker": "6313",
+      "reason": "duration 0.60 s"
+    },
+    {
+      "utterance": "6313_66125_000067_000000",
+      "speaker": "6313",
+      "reason": "duration 0.60 s"
+    },
+    {
+      "utterance": "6313_66125_000059_000000",
+      "speaker": "6313",
+      "reason": "duration 2.84 s"
+    },
+    {
+      "utterance": "6313_66125_000005_000002",
+      "speaker": "6313",
+      "reason": "duration 2.08 s"
+    },
+    {
+      "utterance": "6313_66129_000047_000000",
+      "speaker": "6313",
+      "reason": "duration 10.64 s"
+    }
+  ]
+}
