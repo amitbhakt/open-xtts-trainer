@@ -35,6 +35,11 @@ os.chdir(REPO_ROOT)
 os.environ["PYTHONPATH"] = f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"
 
 EVAL_BATCH_SIZE = 16
+# M1 candidate C2's replay set. The download cache sits in runs/, a persistent Modal volume, so the 1.36 GB archive
+# is fetched once rather than on every run.
+REPLAY_DIR = "runs/replay_librittsr"
+REPLAY_CACHE = "runs/_cache/librittsr"
+REPLAY_SELECTION = "docs/evidence/m1_stage2_preservation/replay_selection.json"
 
 
 def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
@@ -57,6 +62,24 @@ def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
     if args.replay:
         cmd += ["--replay", *args.replay]
     return cmd
+
+
+def replay_build_command(evidence_dir: str) -> List[str]:
+    return [sys.executable, "scripts/build_replay_librittsr.py", "--output_dir", REPLAY_DIR,
+            "--cache_dir", REPLAY_CACHE, "--vocab", "xtts_base/vocab.json",
+            "--evidence", os.path.join(evidence_dir, "replay_selection.json")]
+
+
+def check_replay_selection(built_path: str, committed_path: str = REPLAY_SELECTION) -> None:
+    """C2 must train on exactly the pre-registered replay set: same clips, byte for byte (each clip's SHA-256)."""
+    with open(built_path, "r", encoding="utf-8") as f:
+        built = json.load(f)
+    with open(committed_path, "r", encoding="utf-8") as f:
+        committed = json.load(f)
+    if built != committed:
+        differ = sorted(k for k in set(built) | set(committed) if built.get(k) != committed.get(k))
+        raise SystemExit(f"replay set differs from the committed {committed_path} in {differ}; "
+                         "C2 would not train on the pre-registered set")
 
 
 def should_reuse_cached_base(
@@ -147,6 +170,9 @@ def main():
     parser.add_argument("--train-seed", type=int, default=1, help="Stage 2 training seed (data split and order)")
     parser.add_argument("--freeze", nargs="+", default=[], choices=["conditioning"], help="GPT parts held at released values")
     parser.add_argument("--replay", nargs="+", default=[], help="Replay dataset.jsonl files (other speakers, same language)")
+    parser.add_argument("--replay-librittsr", action="store_true",
+                        help="M1 C2: build the pre-registered LibriTTS-R replay set, check it against the committed "
+                             "selection, and train with it")
     parser.add_argument("--run-tag", default="", help="Suffix for the run directory, so candidate runs don't overwrite each other")
     args = parser.parse_args()
 
@@ -249,6 +275,11 @@ def main():
     shutil.copytree("eval/target_voices", os.path.join(evidence_dir, "target_voices"), dirs_exist_ok=True)
 
     # 6. Stage 2 GPT fine-tuning
+    if args.replay_librittsr:
+        print("\n🔁 Building the pre-registered LibriTTS-R replay set (M1 C2)...")
+        run_cmd(replay_build_command(evidence_dir))
+        check_replay_selection(os.path.join(evidence_dir, "replay_selection.json"))
+        args.replay = list(args.replay) + [os.path.join(REPLAY_DIR, "dataset.jsonl")]
     run_dir = f"runs/{args.speaker}_finetune" + (f"_{args.run_tag}" if args.run_tag else "")
     export_dir = os.path.join(run_dir, "export")
     if not args.skip_train:

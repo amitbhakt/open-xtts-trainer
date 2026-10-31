@@ -388,3 +388,23 @@ def test_target_runner_training_command_passes_m1_options_and_keeps_run6_default
                            "--eval_fraction", "0.1"]
     m1 = train_command(args(train_seed=2, freeze=["conditioning"], replay=["r/dataset.jsonl"]), "d", "runs/y")
     assert m1[-6:] == ["--seed", "2", "--freeze", "conditioning", "--replay", "r/dataset.jsonl"]
+
+
+def test_c2_replay_is_cached_on_the_runs_volume_and_must_match_the_committed_selection(tmp_path):
+    """M1 C2: the 1.36 GB archive is cached under runs/ (a persistent Modal volume), and training refuses a replay
+    set that differs from the pre-registered one, down to one clip's SHA-256."""
+    from scripts.run_target_finetune_ab import (
+        REPLAY_CACHE, REPLAY_SELECTION, check_replay_selection, replay_build_command,
+    )
+
+    cmd = replay_build_command(str(tmp_path))
+    assert cmd[cmd.index("--cache_dir") + 1] == REPLAY_CACHE and REPLAY_CACHE.startswith("runs/")
+    committed = json.loads(Path(REPLAY_SELECTION).read_text(encoding="utf-8"))
+    same = tmp_path / "same.json"
+    same.write_text(json.dumps(committed), encoding="utf-8")
+    check_replay_selection(str(same))
+    committed["clips"][0]["sha256"] = "0" * 64
+    changed = tmp_path / "changed.json"
+    changed.write_text(json.dumps(committed), encoding="utf-8")
+    with pytest.raises(SystemExit, match="pre-registered"):
+        check_replay_selection(str(changed))

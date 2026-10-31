@@ -35,10 +35,16 @@ Each is one change from Run 6, so a pass can be attributed.
 |---|---|---|---|
 | C0 | None: Run 6 retrained with the current code | Control. Shows whether Run 6's preservation failure reproduces before anything is credited with fixing it | (defaults) |
 | C1 | Freeze the speaker-conditioning path (`conditioning_encoder`, `conditioning_perceiver`) | That path maps any reference clip to the 32 latents every voice is cloned from. Training on one speaker can bend it towards that speaker. The rest of the GPT still adapts | `--freeze conditioning` |
-| C2 | Same-language replay: other English speakers' clips, as many as the target's (50% of training clips) | Rehearsal against forgetting (Yang et al. 2021, for languages; here for speakers) | `--replay <dataset.jsonl>` |
+| C2 | Same-language replay: other English speakers' clips, as many as the target's (50% of training clips) | Rehearsal against forgetting (Yang et al. 2021, for languages; here for speakers) | `--replay-librittsr` |
 | C3 | Half the learning rate (2.5 × 10⁻⁶) | Less drift from the released weights over the same steps | `--lr 2.5e-6` |
 
 Each candidate gets its own `--run-tag` and `--results-dir`, so no run overwrites another.
+
+**C2 also doubles the training steps (decided 2026-10-31).** With 75 replay clips added to 75 target clips and the
+same 10 epochs, C2 takes twice as many optimizer steps as C0, while every target clip is still seen the same number
+of times. C2 is defined as replay *at equal target exposure*, not at equal steps. Matching steps instead (5 epochs)
+would halve how often the target is seen, which changes something else. So a C2 pass is attributed to "replay plus
+the extra steps it brings", and the paper says so.
 
 **Second round, only if no screening candidate passes both gate sets:** C4 = C1 + C2. No other combination is run.
 
@@ -65,6 +71,10 @@ their channel. Built by `scripts/build_replay_librittsr.py`:
   5536, 2035, 251, 1993, 777, 6345, 2803, 2412, 6295, 8842, 7976, 84, 5694, 6313. Reader 3576 was skipped (15
   utterances, 4 of them 3–10 s long). All 217 rejected candidates failed the duration rule; none failed validation.
   A second build gave a byte-identical `replay_selection.json`.
+
+XTTS-v2's own training data may include LibriTTS-derived audiobooks; we have not verified this and claim nothing
+either way. For replay it would not be a flaw: rehearsing data the model was trained on is what replay is meant
+to do.
 
 LibriTTS-R comes from LibriVox, like the target recording. That makes replay resemble the target's channel, not
 the preservation voices', so if anything it makes the preservation gate harder to pass with C2, not easier.
@@ -117,7 +127,9 @@ written).
 - `scripts/run_target_finetune_ab.py`: `--train-seed`, `--freeze`, `--replay`, `--run-tag`; at the defaults the
   training command is Run 6's. Tested in `tests/test_target_voices.py`.
 - `scripts/compare_ab.py`: the gates, and the M4 `robust` section.
-- `scripts/build_replay_librittsr.py`: C2's replay set, built in the run's own environment before C2 trains
-  (`--output_dir runs/replay_librittsr --evidence docs/evidence/m1_stage2_preservation/replay_selection.json`), then
-  passed as `--replay runs/replay_librittsr/dataset.jsonl`. Tested on fake archives in
+- `scripts/build_replay_librittsr.py`: C2's replay set. Tested on fake archives in
   `tests/test_build_replay_librittsr.py`.
+- `scripts/run_target_finetune_ab.py --replay-librittsr`: builds the replay set in the run's own environment, with
+  the 1.36 GB archive cached under `runs/_cache/librittsr` (a persistent Modal volume, so it downloads once), and
+  refuses to train unless the build matches the committed `replay_selection.json` exactly, every clip's SHA-256
+  included. Tested in `tests/test_target_voices.py`.
