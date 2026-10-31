@@ -25,7 +25,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 # Ensure repo root is in sys.path
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -35,6 +35,96 @@ os.chdir(REPO_ROOT)
 os.environ["PYTHONPATH"] = f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"
 
 EVAL_BATCH_SIZE = 16
+# M1 candidate C2's replay set. The download cache sits in runs/, a persistent Modal volume, so the 1.36 GB archive
+# is fetched once rather than on every run.
+REPLAY_DIR = "runs/replay_librittsr"
+REPLAY_CACHE = "runs/_cache/librittsr"
+REPLAY_SELECTION = "docs/evidence/m1_stage2_preservation/replay_selection.json"
+# Run 6's train/eval split. Runs at other training seeds keep it, so every run chooses its checkpoint on the same
+# target clips (M1 confirmation).
+SPLIT_SEED = 1
+
+
+def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
+    """The Stage 2 training command for one run; options left at their defaults are not passed (Run 6's command)."""
+    cmd = [
+        sys.executable, "-m", "xtts_trainer.stage2_gpt.train",
+        "--dataset", train_dataset_path,
+        "--base_dir", "xtts_base",
+        "--output_dir", run_dir,
+        "--epochs", str(args.epochs),
+        "--batch_size", str(args.batch_size),
+        "--grad_accum_steps", str(args.grad_accum_steps),
+        "--lr", str(args.lr),
+        "--eval_fraction", "0.1",
+    ]
+    if args.train_seed != 1:
+        cmd += ["--seed", str(args.train_seed), "--split_seed", str(SPLIT_SEED)]
+    if args.freeze:
+        cmd += ["--freeze", *args.freeze]
+    if args.replay:
+        cmd += ["--replay", *args.replay]
+    return cmd
+
+
+def tree_digest(paths: List[str], root: str) -> str:
+    """One SHA-256 over files' paths (relative to root) and contents: equal digests mean identical files."""
+    digest = hashlib.sha256()
+    for path in sorted(paths, key=lambda q: os.path.relpath(q, root)):
+        with open(path, "rb") as f:
+            digest.update(os.path.relpath(path, root).encode() + b"\0" + hashlib.sha256(f.read()).hexdigest().encode() + b"\n")
+    return digest.hexdigest()
+
+
+def data_identity(train_dataset_path: str, target_dir: str) -> dict:
+    """Hashes that show which target data a run trained and was judged on, so candidates can be shown to share
+    them. Only hashes: the held-out clips and their lock stay private."""
+    from xtts_trainer.data import load_dataset
+
+    data_dir = os.path.dirname(os.path.abspath(train_dataset_path))
+    clips = [r.audio_path(data_dir) for r in load_dataset(train_dataset_path)]
+    held_out = [str(q) for q in Path(target_dir).rglob("*") if q.is_file()]
+    return {"train_dataset_sha256": tree_digest([train_dataset_path], data_dir),
+            "train_clips": len(clips), "train_clips_sha256": tree_digest(clips, data_dir),
+            "target_voices_files": len(held_out), "target_voices_sha256": tree_digest(held_out, target_dir)}
+
+
+def git_tree() -> str:
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], text=True).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return "unknown"
+
+
+def resolve_results_dir(results_dir: Optional[str], run_tag: str) -> str:
+    """The results directory: given explicitly, or derived from the run tag so tagged runs never share one."""
+    if results_dir:
+        return results_dir
+    return "runs/results_target_speaker" + (f"_{run_tag}" if run_tag else "")
+
+
+def check_replay_args(replay: List[str], replay_librittsr: bool) -> None:
+    """C2 trains on the pre-registered set only: no other replay files beside it."""
+    if replay_librittsr and replay:
+        raise SystemExit("--replay-librittsr trains on the pre-registered replay set only; drop --replay")
+
+
+def replay_build_command(evidence_dir: str) -> List[str]:
+    return [sys.executable, "scripts/build_replay_librittsr.py", "--output_dir", REPLAY_DIR,
+            "--cache_dir", REPLAY_CACHE, "--vocab", "xtts_base/vocab.json",
+            "--evidence", os.path.join(evidence_dir, "replay_selection.json")]
+
+
+def check_replay_selection(built_path: str, committed_path: str = REPLAY_SELECTION) -> None:
+    """C2 must train on exactly the pre-registered replay set: same clips, byte for byte (each clip's SHA-256)."""
+    with open(built_path, "r", encoding="utf-8") as f:
+        built = json.load(f)
+    with open(committed_path, "r", encoding="utf-8") as f:
+        committed = json.load(f)
+    if built != committed:
+        differ = sorted(k for k in set(built) | set(committed) if built.get(k) != committed.get(k))
+        raise SystemExit(f"replay set differs from the committed {committed_path} in {differ}; "
+                         "C2 would not train on the pre-registered set")
 
 
 def should_reuse_cached_base(
@@ -112,7 +202,9 @@ def check_artifacts(after: str):
 
 def main():
     parser = argparse.ArgumentParser(description="Run complete Target Voice Adaptation & A/B pipeline headlessly.")
-    parser.add_argument("--results-dir", default="runs/results_target_speaker", help="Path to store evidence and manifests")
+    parser.add_argument("--results-dir", default=None,
+                        help="Path to store evidence and manifests (default: runs/results_target_speaker, with "
+                             "_<run-tag> appended when --run-tag is given)")
     parser.add_argument("--source", default="art_of_war_short", help="Data source key in speech_data.py")
     parser.add_argument("--speaker", default="moira_fogarty", help="Speaker name in the source")
     parser.add_argument("--epochs", type=int, default=10, help="Training epochs for Stage 2 GPT")
@@ -122,7 +214,17 @@ def main():
     parser.add_argument("--subset-size", type=int, default=12, help="Eval subset size per language (default: 12)")
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 123, 999], help="Eval seeds")
     parser.add_argument("--skip-train", action="store_true", help="Skip fine-tuning if checkpoint already exported")
+    parser.add_argument("--train-seed", type=int, default=1, help="Stage 2 training seed (data split and order)")
+    parser.add_argument("--freeze", nargs="+", default=[], choices=["conditioning"], help="GPT parts held at released values")
+    parser.add_argument("--replay", nargs="+", default=[], help="Replay dataset.jsonl files (other speakers, same language)")
+    parser.add_argument("--replay-librittsr", action="store_true",
+                        help="M1 C2: build the pre-registered LibriTTS-R replay set, check it against the committed "
+                             "selection, and train with it")
+    parser.add_argument("--run-tag", default="",
+                        help="Suffix for the training directory and the default results directory, so candidate runs "
+                             "don't overwrite each other")
     args = parser.parse_args()
+    check_replay_args(args.replay, args.replay_librittsr)
 
     if args.speaker != "moira_fogarty":
         raise ValueError(
@@ -131,7 +233,7 @@ def main():
         )
 
     t_start = time.time()
-    results_dir = os.path.abspath(args.results_dir)
+    results_dir = os.path.abspath(resolve_results_dir(args.results_dir, args.run_tag))
     os.makedirs(results_dir, exist_ok=True)
     os.makedirs("runs", exist_ok=True)
     os.makedirs("checkpoints", exist_ok=True)
@@ -161,7 +263,9 @@ def main():
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     env = {
-        "git": {"commit": commit},
+        # On Modal the commit is the container's own (no .git is uploaded); the tree hash and the code fingerprint
+        # identify the real commit
+        "git": {"commit": commit, "tree": git_tree()},
         "python": platform.python_version(),
         "torch": torch.__version__,
         "torchaudio": torchaudio.__version__,
@@ -218,26 +322,24 @@ def main():
         "--report", train_val_report_path,
     ])
 
+    with open(os.path.join(evidence_dir, "data_identity.json"), "w", encoding="utf-8") as f:
+        json.dump(data_identity(train_dataset_path, "eval/target_voices"), f, indent=2)
+
     # Copy prep evidence and target voices
     shutil.copy(os.path.join(data_dir, "prep_report.json"), os.path.join(evidence_dir, "prep_report.json"))
     shutil.copytree("eval/target_voices", os.path.join(evidence_dir, "target_voices"), dirs_exist_ok=True)
 
     # 6. Stage 2 GPT fine-tuning
-    run_dir = f"runs/{args.speaker}_finetune"
+    if args.replay_librittsr:
+        print("\n🔁 Building the pre-registered LibriTTS-R replay set (M1 C2)...")
+        run_cmd(replay_build_command(evidence_dir))
+        check_replay_selection(os.path.join(evidence_dir, "replay_selection.json"))
+        args.replay = [os.path.join(REPLAY_DIR, "dataset.jsonl")]
+    run_dir = f"runs/{args.speaker}_finetune" + (f"_{args.run_tag}" if args.run_tag else "")
     export_dir = os.path.join(run_dir, "export")
     if not args.skip_train:
         print(f"\n🧠 Step 5: Fine-tuning Stage 2 GPT on {train_dataset_path}...")
-        run_cmd([
-            sys.executable, "-m", "xtts_trainer.stage2_gpt.train",
-            "--dataset", train_dataset_path,
-            "--base_dir", "xtts_base",
-            "--output_dir", run_dir,
-            "--epochs", str(args.epochs),
-            "--batch_size", str(args.batch_size),
-            "--grad_accum_steps", str(args.grad_accum_steps),
-            "--lr", str(args.lr),
-            "--eval_fraction", "0.1",
-        ])
+        run_cmd(train_command(args, train_dataset_path, run_dir))
         check_artifacts("stage2_gpt_train")
     else:
         print(f"\n⏩ Skipping Stage 2 training (--skip-train), using {export_dir}")

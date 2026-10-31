@@ -370,3 +370,83 @@ def test_should_reuse_cached_base_requires_explicit_batch_size(tmp_path):
         xtts_base_dir=str(base_dir),
         eval_batch_size=EVAL_BATCH_SIZE,
     ) is False
+
+
+def test_target_runner_training_command_passes_m1_options_and_keeps_run6_default():
+    """Run 6's command is unchanged at the defaults; M1 candidates get their own seed, freeze, replay and run dir."""
+    import argparse
+
+    from scripts.run_target_finetune_ab import train_command
+
+    def args(**kw):
+        base = dict(epochs=10, batch_size=4, grad_accum_steps=8, lr=5e-6, train_seed=1, freeze=[], replay=[])
+        return argparse.Namespace(**{**base, **kw})
+
+    default = train_command(args(), "data/train.jsonl", "runs/x")
+    assert default[3:] == ["--dataset", "data/train.jsonl", "--base_dir", "xtts_base", "--output_dir", "runs/x",
+                           "--epochs", "10", "--batch_size", "4", "--grad_accum_steps", "8", "--lr", "5e-06",
+                           "--eval_fraction", "0.1"]
+    m1 = train_command(args(train_seed=2, freeze=["conditioning"], replay=["r/dataset.jsonl"]), "d", "runs/y")
+    # Another training seed keeps Run 6's split, so the eval clips (and checkpoint choice) don't change
+    assert m1[-8:] == ["--seed", "2", "--split_seed", "1", "--freeze", "conditioning", "--replay", "r/dataset.jsonl"]
+
+
+def test_tagged_runs_get_their_own_results_dir_and_c2_takes_no_extra_replay():
+    from scripts.run_target_finetune_ab import check_replay_args, resolve_results_dir
+
+    assert resolve_results_dir(None, "") == "runs/results_target_speaker"
+    assert resolve_results_dir(None, "c1") == "runs/results_target_speaker_c1"
+    assert resolve_results_dir("runs/m1/c1", "c1") == "runs/m1/c1"
+    check_replay_args([], True)
+    check_replay_args(["r.jsonl"], False)
+    with pytest.raises(SystemExit, match="pre-registered"):
+        check_replay_args(["extra.jsonl"], True)
+
+
+def test_c2_replay_is_cached_on_the_runs_volume_and_must_match_the_committed_selection(tmp_path):
+    """M1 C2: the 1.36 GB archive is cached under runs/ (a persistent Modal volume), and training refuses a replay
+    set that differs from the pre-registered one, down to one clip's SHA-256."""
+    from scripts.run_target_finetune_ab import (
+        REPLAY_CACHE, REPLAY_SELECTION, check_replay_selection, replay_build_command,
+    )
+
+    cmd = replay_build_command(str(tmp_path))
+    assert cmd[cmd.index("--cache_dir") + 1] == REPLAY_CACHE and REPLAY_CACHE.startswith("runs/")
+    committed = json.loads(Path(REPLAY_SELECTION).read_text(encoding="utf-8"))
+    same = tmp_path / "same.json"
+    same.write_text(json.dumps(committed), encoding="utf-8")
+    check_replay_selection(str(same))
+    committed["clips"][0]["sha256"] = "0" * 64
+    changed = tmp_path / "changed.json"
+    changed.write_text(json.dumps(committed), encoding="utf-8")
+    with pytest.raises(SystemExit, match="pre-registered"):
+        check_replay_selection(str(changed))
+
+
+def test_data_identity_shows_whether_runs_share_their_target_data(tmp_path):
+    """M1 candidates must train and be judged on identical target data; data_identity's hashes show it."""
+    from dataset_helpers import write_test_dataset
+    from scripts.run_target_finetune_ab import data_identity
+
+    data = tmp_path / "data"
+    data.mkdir()
+    paths = []
+    for i in range(3):
+        p = data / f"c{i}.wav"
+        sf.write(str(p), (0.1 * np.sin(np.linspace(0, 50 * (i + 1), 22050))).astype("float32"), 22050)
+        paths.append(str(p))
+    ds = write_test_dataset(str(data), paths)
+    target = tmp_path / "target_voices"
+    target.mkdir()
+    (target / "target_voices.lock.json").write_text("{}")
+    (target / "ref.wav").write_bytes(b"ref")
+
+    first = data_identity(ds, str(target))
+    assert first == data_identity(ds, str(target))
+    assert first["train_clips"] == 3 and first["target_voices_files"] == 2
+    sf.write(paths[1], np.zeros(22050, dtype="float32"), 22050)  # one training clip changes
+    changed = data_identity(ds, str(target))
+    assert changed["train_clips_sha256"] != first["train_clips_sha256"]
+    assert changed["target_voices_sha256"] == first["target_voices_sha256"]
+    (target / "ref.wav").write_bytes(b"other")  # a held-out clip changes
+    assert data_identity(ds, str(target))["target_voices_sha256"] != first["target_voices_sha256"]

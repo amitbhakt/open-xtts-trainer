@@ -101,6 +101,11 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 
 **Stage 2: GPT and text**
 
+**Scope (2026-10-31):** the paper's experiments cover speaker adaptation in supported languages only. The
+new-language rows below (F4, F6, tokenisation, base-language replay; ablations A5 and A7) are built and
+unit-tested, but no new-language model has been trained or evaluated; they stay at their current evidence levels.
+Same-language replay from other speakers is a speaker-adaptation candidate (M1), unevaluated until its runs.
+
 | Decision | Evidence | Status |
 |---|---|---|
 | A thin wrapper over upstream `GPTTrainer`; don't reimplement the loop. | `[E1]`; `[E4]` community success with it | Built (`stage2_gpt/gpt_trainer.py`) |
@@ -131,7 +136,7 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 |---|---|---|
 | CER/WER from Whisper large-v3 with the standard normalizer; speaker similarity from ECAPA2 (not the model's own encoder); UTMOS only relative to the baseline. | `[E2]` XTTS paper protocol; `[E3]` ([arXiv 2506.20190](https://arxiv.org/pdf/2506.20190)) | Built (`eval/`) |
 | Duration is estimated from the words XTTS actually says (upstream's text cleaner); "too long" needs both a 2.2× ratio and ≥ 1 s excess; headline speaker similarity counts clips ≥ 2 s. | `[E1]` measured: the written-digit and sub-second-clip artifacts in the stock baseline | Built (metrics version 2) |
-| Fine-tunes are judged by a paired A/B against stock XTTS-v2, with gates fixed in advance. | `[E1]` | Built (`scripts/compare_ab.py`, `eval/gates.json`) |
+| Fine-tunes are judged by a paired A/B against stock XTTS-v2, with gates fixed in advance. | `[E1]` | Built (`scripts/compare_ab.py`, `eval/gates.json`); runaway rate and median WER/CER reported as secondary outcomes, never gates |
 | Voice fine-tunes are also judged on the target speaker, with reference clips held out of training (the validator refuses them), not only on unseen eval voices. | `[E1]` (a fine-tune can't be credited for cloning a voice it trained on) | Built (`scripts/build_target_voices.py`, `--voices target`) |
 | Training data has a stated license, and every downloaded file is checked against a SHA-256 before use (no pin, no download). | `[E1]` | Built. LJSpeech and JFK: commit-pinned URLs. Art of War: archive.org URLs aren't revision-specific, so the hash is the guarantee (changed content fails the check). Each SHA-256 was taken from a file whose SHA-1 matched the original pin (archive.org's published value, or the value computed at pinning), so provenance carries over without relying on SHA-1. Commands and values in [`docs/evidence/source_pins.md`](evidence/source_pins.md). |
 
@@ -170,7 +175,7 @@ decision rule fixed before running. Results update the evidence tags above.
 | A5 | Text for a new script, and new-row initialization | BPE merges vs per-character vs romanization; mean vs random new rows | CER; tokens per sentence; no base-language regression | Best CER that passes the base-language check |
 | A6 | Does punctuation/pause consistency matter? | Same data with and without commas added at long pauses (`--fix_pauses`) | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval |
 | A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate |
-| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a new-language GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats the stock decoder beyond the interval |
+| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a speaker-adaptation GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats the stock decoder beyond the interval |
 
 ## §6 Verification phases
 

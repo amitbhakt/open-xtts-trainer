@@ -374,23 +374,77 @@ def test_split_and_replay_rules():
         split_samples([{"language": "sw"}], 0.1, seed=0)
 
 
+def _noise_dataset(root, name, speaker, n=2, texts=None):
+    d = root / name
+    d.mkdir()
+    paths = []
+    for i in range(n):
+        p = str(d / f"c{i}.wav")
+        sf.write(p, (0.3 * np.sin(np.linspace(0, 400 * (i + 1 + len(name)), 55125))).astype("float32"), 22050)
+        paths.append(p)
+    texts = texts or ["hello world", "nice weather today", "the river runs slowly", "a quiet green field"][:n]
+    return write_test_dataset(str(d), paths, texts=texts, speaker=speaker)
+
+
 @needs_vocab
-def test_replay_must_be_other_languages(tmp_path):
+def test_same_language_replay_must_come_from_other_speakers(tmp_path):
     from xtts_trainer.stage2_gpt.train import train_gpt
 
-    def dataset(name):
-        d = tmp_path / name
-        d.mkdir()
-        paths = []
-        for i in range(2):
-            p = str(d / f"c{i}.wav")
-            sf.write(p, (0.1 * np.random.RandomState(i + len(name)).randn(44100)).astype("float32"), 22050)
-            paths.append(p)
-        return write_test_dataset(str(d), paths, texts=["hello world", "nice weather today"])
+    with pytest.raises(ValueError, match="other speakers"):
+        train_gpt(_noise_dataset(tmp_path, "target", "spk"), str(tmp_path / "run"), str(tmp_path),
+                  vocab_path=REAL_VOCAB, replay_paths=[_noise_dataset(tmp_path, "replay", "spk")])
 
-    with pytest.raises(ValueError, match="replay data must be in other languages"):
-        train_gpt(dataset("target"), str(tmp_path / "run"), str(tmp_path), vocab_path=REAL_VOCAB,
-                  replay_paths=[dataset("replay")])
+
+@needs_vocab
+def test_same_language_replay_trains_only_and_freeze_is_recorded(tmp_path):
+    """M1: other speakers' clips in the target's language join training only, so the eval split (and the best
+    checkpoint's choice) is the target's own; frozen parts are recorded."""
+    from xtts_trainer.stage2_gpt.train import split_samples, load_samples, train_gpt
+
+    base = tmp_path / "base"
+    base.mkdir()
+    torch.save(build_dvae().state_dict(), base / "dvae.pth")
+    target = _noise_dataset(tmp_path, "target", "target_spk", n=4)
+    replay = _noise_dataset(tmp_path, "replay", "other_spk", n=2)
+    # Training seed 2 with split seed 1: other training randomness, the same eval clips as seed 1 (M1 confirmation)
+    export = train_gpt(target, str(tmp_path / "run"), str(base), vocab_path=REAL_VOCAB, replay_paths=[replay],
+                       epochs=1, batch_size=2, grad_accum_steps=1, lr=1e-3, eval_fraction=0.25,
+                       arch_overrides=TINY, load_base_weights=False, freeze=["conditioning", "conditioning"],
+                       seed=2, split_seed=1)
+    summary = json.loads(Path(export, "training_summary.json").read_text(encoding="utf-8"))
+    _, target_eval = split_samples(load_samples([target], REAL_VOCAB, []), 0.25, seed=1)
+    expected_eval = sorted(os.path.relpath(s["audio_file"], s["root_path"]) for s in target_eval)
+    assert summary["eval_clips"] == 1 and summary["eval_audio"] == expected_eval  # the very clips, not a count
+    assert summary["eval_speakers"] == ["target_spk"]  # never a replay speaker
+    assert summary["seed"] == 2 and summary["split_seed"] == 1
+    assert summary["train_clips"] == 3 + 2 and summary["same_language_replay_clips"] == 2
+    assert summary["same_language_replay_share"] == 0.4 and summary["replay_speakers"] == ["other_spk"]
+    # Named twice, frozen and counted once
+    assert summary["frozen_parts"] == ["conditioning"] and summary["frozen_parameter_tensors"] > 0
+    assert (summary["batch_size"], summary["grad_accum_steps"], summary["eval_fraction"]) == (2, 1, 0.25)
+
+
+def test_freezing_conditioning_keeps_it_at_its_starting_values():
+    from xtts_trainer.stage2_gpt.gpt_trainer import FREEZABLE_PARTS, freeze_gpt_parts
+
+    gpt = build_gpt(number_text_tokens=30, start_text_token=28, stop_text_token=0, layers=1, model_dim=64, heads=2)
+    prefixes = FREEZABLE_PARTS["conditioning"]
+    before = {n: p.detach().clone() for n, p in gpt.named_parameters()}
+    once = freeze_gpt_parts(gpt, ["conditioning"])
+    assert once > 0 and freeze_gpt_parts(gpt, ["conditioning", "conditioning"]) == once
+    opt = torch.optim.AdamW([p for p in gpt.parameters() if p.requires_grad], lr=1e-2)
+    torch.manual_seed(0)
+    loss = sum((p.float() ** 2).sum() for p in gpt.parameters())  # touches every parameter
+    loss.backward()
+    opt.step()
+    after = dict(gpt.named_parameters())
+    frozen = [n for n in before if n.startswith(prefixes)]
+    trained = [n for n in before if not n.startswith(prefixes)]
+    assert frozen and trained
+    assert all(torch.equal(before[n], after[n]) for n in frozen)
+    assert any(not torch.equal(before[n], after[n]) for n in trained)
+    with pytest.raises(ValueError, match="unknown parts"):
+        freeze_gpt_parts(gpt, ["decoder"])
 
 
 # --------------------------------------------------------------------------- end to end (F4 inference)

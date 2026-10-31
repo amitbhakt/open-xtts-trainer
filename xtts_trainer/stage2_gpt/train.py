@@ -23,7 +23,7 @@ from xtts_trainer.data import load_validated_dataset
 from xtts_trainer.models import load_state_strict, safe_torch_load
 from xtts_trainer.stage2_gpt.export import export_for_inference
 from xtts_trainer.stage2_gpt.gpt_trainer import (
-    ProjectGPTTrainer, build_gpt_trainer_config, language_shares, records_to_samples,
+    ProjectGPTTrainer, build_gpt_trainer_config, freeze_gpt_parts, language_shares, records_to_samples,
 )
 
 logger = logging.getLogger(__name__)
@@ -139,6 +139,8 @@ def train_gpt(
     retrain_for_new_dvae: bool = False,
     num_workers: int = 0,
     masking_mode: str = "per_sample",
+    freeze: Sequence[str] = (),
+    split_seed: Optional[int] = None,
 ) -> str:
     """Train, then export the best checkpoint (by eval loss) to output_dir/export. Returns the export dir.
 
@@ -146,18 +148,32 @@ def train_gpt(
     from random weights (tests with a reduced architecture only). dvae_path overrides base_dir/dvae.pth; a
     Stage-1-trained DVAE needs retrain_for_new_dvae (see ProjectGPTTrainer).
     masking_mode: 'per_sample' (default project fix) or 'upstream' (ablation A3).
+    replay_paths: clips trained on alongside the target. Replay in another language is split like the target, so
+    its eval loss is monitored. Replay in the target's language must come from other speakers (speaker adaptation,
+    M1) and is used for training only: the eval split, and so the best-checkpoint choice, stays the target's own.
+    freeze: FREEZABLE_PARTS of the GPT held at their released values (e.g. "conditioning").
+    split_seed: seeds the train/eval split only (default: seed). Fixing it while changing seed retrains with other
+    randomness on the same eval clips, so runs at several training seeds choose their checkpoints alike (M1).
     """
     vocab_path = vocab_path or os.path.join(base_dir, "vocab.json")
     languages = [l.lower() for l in languages]
     samples = load_samples([dataset_path], vocab_path, languages)
     replay = load_samples(replay_paths, vocab_path, languages)
-    if replay:
-        overlap = {s["language"] for s in replay} & {s["language"] for s in samples}
-        if overlap:
-            raise ValueError(f"replay data must be in other languages than the target data; both have {sorted(overlap)}")
-    train_samples, eval_samples = split_samples(samples + replay, eval_fraction, seed)
-    logger.info("Stage 2: %d train / %d eval clips; language share of training draws: %s",
-                len(train_samples), len(eval_samples), language_shares(train_samples))
+    target_langs = {s["language"] for s in samples}
+    same_lang = [s for s in replay if s["language"] in target_langs]
+    other_lang = [s for s in replay if s["language"] not in target_langs]
+    shared = {s["speaker_name"] for s in same_lang} & {s["speaker_name"] for s in samples}
+    if shared:
+        raise ValueError(f"replay in the target's language must come from other speakers; both have {sorted(shared)}")
+    split_seed = seed if split_seed is None else split_seed
+    train_samples, eval_samples = split_samples(samples + other_lang, eval_fraction, split_seed)
+    train_samples += same_lang
+    # Upstream draws a language uniformly, then a clip within it, so within a language replay's share is its
+    # share of the clips
+    same_lang_share = round(len(same_lang) / len(train_samples), 4) if train_samples else 0.0
+    logger.info("Stage 2: %d train / %d eval clips; language share of training draws: %s; same-language replay "
+                "%d clips (%.1f%% of training clips)", len(train_samples), len(eval_samples),
+                language_shares(train_samples), len(same_lang), 100 * same_lang_share)
 
     config = build_gpt_trainer_config(
         vocab_path, dvae_path or os.path.join(base_dir, "dvae.pth"), output_dir, extra_languages=languages,
@@ -167,6 +183,9 @@ def train_gpt(
     base_model = os.path.join(base_dir, "model.pth") if load_base_weights else None
     model = ProjectGPTTrainer(config, extra_languages=languages, base_model_path=base_model,
                               retrain_for_new_dvae=retrain_for_new_dvae, masking_mode=masking_mode)
+    frozen = freeze_gpt_parts(model.xtts.gpt, freeze)
+    if frozen:
+        logger.info("Froze %d parameter tensors (%s) at their released values", frozen, ", ".join(freeze))
     if torch.cuda.is_available():
         model.cuda()  # the Trainer would move it anyway; evaluating the base model on CPU is needlessly slow
     loss_before = eval_loss(model, config, eval_samples)
@@ -192,7 +211,16 @@ def train_gpt(
                    "eval_loss_before": loss_before, "eval_loss_best": loss_after, "improved": loss_after < loss_before,
                    "train_clips": len(train_samples), "eval_clips": len(eval_samples),
                    "language_shares": language_shares(train_samples), "languages": list(config.languages),
-                   "retrain_for_new_dvae": retrain_for_new_dvae, "masking_mode": masking_mode}, f, indent=2)
+                   "retrain_for_new_dvae": retrain_for_new_dvae, "masking_mode": masking_mode,
+                   "same_language_replay_clips": len(same_lang), "same_language_replay_share": same_lang_share,
+                   "replay_speakers": sorted({s["speaker_name"] for s in replay}),
+                   "frozen_parts": list(dict.fromkeys(freeze)), "frozen_parameter_tensors": frozen,
+                   "lr": lr, "epochs": epochs, "batch_size": batch_size, "grad_accum_steps": grad_accum_steps,
+                   "eval_fraction": eval_fraction, "seed": seed, "split_seed": split_seed,
+                   # Which clips chose the best checkpoint, and whose they are: a run shows they were the target's
+                   "eval_speakers": sorted({s["speaker_name"] for s in eval_samples}),
+                   "eval_audio": sorted(os.path.relpath(s["audio_file"], s["root_path"]) for s in eval_samples)},
+                  f, indent=2)
     logger.info("Exported best checkpoint to %s", export_dir)
     return export_dir
 
@@ -205,26 +233,32 @@ def main(argv: Optional[List[str]] = None):
     parser.add_argument("--output_dir", required=True)
     parser.add_argument("--vocab_path", default=None, help="Extended vocab (default: base_dir/vocab.json)")
     parser.add_argument("--languages", nargs="+", default=[], help="New language codes registered in the vocab")
-    parser.add_argument("--replay", nargs="+", default=[], help="dataset.jsonl files of base-language replay data")
+    parser.add_argument("--replay", nargs="+", default=[],
+                        help="dataset.jsonl files of replay data: other languages, or other speakers of the target's")
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--grad_accum_steps", type=int, default=8, help="Effective batch = batch_size x this (>= 32)")
     parser.add_argument("--lr", type=float, default=5e-6)
     parser.add_argument("--eval_fraction", type=float, default=0.1)
-    parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--seed", type=int, default=1, help="Training seed; also seeds the split unless --split_seed")
+    parser.add_argument("--split_seed", type=int, default=None,
+                        help="Seed for the train/eval split only (default: --seed); fix it to keep the eval clips")
     parser.add_argument("--dvae_checkpoint", default=None, help="DVAE to code audio with (default: base_dir/dvae.pth)")
     parser.add_argument("--num_workers", type=int, default=2, help="Data loader worker processes")
     parser.add_argument("--retrain_for_new_dvae", action="store_true",
                         help="Required with a Stage-1-trained DVAE: retrain the GPT on its codes")
     parser.add_argument("--masking_mode", choices=["per_sample", "upstream"], default="per_sample",
                         help="Conditioning masking mode: per_sample (project fix) or upstream (buggy Coqui masking for ablation A3)")
+    parser.add_argument("--freeze", nargs="+", default=[], choices=["conditioning"],
+                        help="GPT parts held at their released values (conditioning: speaker conditioning encoder and perceiver)")
     args = parser.parse_args(argv)
     if args.batch_size * args.grad_accum_steps < 32:
         logger.warning("effective batch %d < 32 (docs/recipe_design.md §3 starting point)", args.batch_size * args.grad_accum_steps)
     train_gpt(args.dataset, args.output_dir, args.base_dir, args.vocab_path, args.languages, args.replay,
               args.epochs, args.batch_size, args.grad_accum_steps, args.lr, args.eval_fraction, args.seed,
               dvae_path=args.dvae_checkpoint, retrain_for_new_dvae=args.retrain_for_new_dvae,
-              num_workers=args.num_workers, masking_mode=args.masking_mode)
+              num_workers=args.num_workers, masking_mode=args.masking_mode, freeze=args.freeze,
+              split_seed=args.split_seed)
 
 
 if __name__ == "__main__":

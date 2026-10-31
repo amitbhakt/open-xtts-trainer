@@ -36,6 +36,9 @@ provenance of every later measurement.
 
 We release a three-stage recipe (DVAE, GPT, HiFi-GAN decoder) that repairs these defects. Each repair is guarded
 by a test that fails when the repair is removed. Each recipe decision is graded by the strength of its evidence.
+The experiments cover speaker adaptation in languages the model already supports. The repairs that matter only for
+new languages (the tokenizer and vocabulary-extension defects) are fixed and tested in code, but adapting the model
+to a new language is not evaluated here.
 We also release an evaluation protocol: a frozen 180-sentence, five-language test set, paired A/B comparison
 with bootstrap intervals, pre-registered gates, and target-speaker reference clips that training is barred from
 using.
@@ -80,6 +83,12 @@ contributions are:
   hash-locked target-speaker hold-out clips (Sections 3.5, 5.2–5.3).
 - **C5, a reproducibility discipline.** Every artifact and data source is hash-pinned, runs are deterministic per
   seed within an environment (across environments, 94.7% of takes are identical and means agree within intervals), and every bug fix follows a written protocol: the fix must fail when deliberately broken (Section 3.6).
+
+**Scope.** This paper evaluates the recipe for one task: adapting XTTS-v2 to a new speaker in a language it
+already supports. Adding a new language is a different and larger study. Its parts of the recipe (F4, F6, replay
+of the base languages, and ablations A5 and A7) are described and unit-tested, but no new-language model is trained
+or evaluated, and we make no claim about how well the recipe adds a language. Replay of *other speakers in the same
+language* is different: it is one of the speaker-adaptation candidates in the next experiment.
 
 The repository that accompanies this paper is the evidence for every claim in it. Appendix A maps each claim to
 the file or test that supports it.
@@ -196,7 +205,7 @@ It adds four things:
 - mean-initialised new text rows (F6) rather than random unit-variance rows, anchoring new tokens inside the pre-existing semantic embedding subspace [6, 7, 20];
 - a registered-language tokenizer (F4); new-language text uses per-character tokens by default, with BPE merges or romanization as candidate alternatives [22].
 
-New-language runs mix in replay data from the base languages to prevent catastrophic forgetting in lifelong multilingual TTS [8], and the language shares are reported. The
+New-language runs mix in replay data from the base languages to prevent catastrophic forgetting in lifelong multilingual TTS [8], and the language shares are reported. The new-language parts of this stage (F4, F6, base-language replay) are implemented and unit-tested, but outside this paper's experiments (Section 1, Scope). Same-language replay from other speakers is a speaker-adaptation candidate, unevaluated until its pre-registered runs. The
 starting hyperparameters follow the upstream recipe: AdamW (β = 0.9, 0.96), weight decay 10⁻² on weights only,
 learning rate 5 × 10⁻⁶, and a multi-step schedule. We treat these as defaults to be tuned against evaluation
 loss, not as established values.
@@ -257,6 +266,16 @@ its old hash into a manifest.
 - **Headline SECS:** counts only clips of at least 2 s.
 
 The last two definitions correct measurement artefacts found in the stock baseline (Section 5.3).
+
+**Robust WER/CER (secondary outcomes).** WER is unbounded per take: a take with more errors than reference words
+(WER > 1) can move a mean by more than a gate margin. Such "runaway" takes are usually the model running on,
+looping or babbling, but WER alone cannot prove which, so the label is a heuristic. Every A/B therefore also
+reports, for WER and CER, each arm's runaway rate (takes with WER > 1.0, with a Clopper–Pearson interval), its mean
+without its own runaway takes, its median, and the paired median difference with a bootstrap interval, plus the
+number of runaway takes that occur in one arm only. These are reported next to the gates and never change a gate.
+They were added after Run 6 and A3, whose reports used the same figures computed by hand; recomputed with the
+script on Run 6's preservation manifests they agree (mean WER without runaway takes 0.057 stock, 0.042 tuned).
+On these data the median WER and CER are 0 in both arms, so the runaway counts carry the information.
 
 **Paired A/B comparison.** A fine-tuned model is compared with stock XTTS-v2 on identical inputs. Utterances are
 paired by language, voice, sentence and seed. For each metric we compute the per-pair difference
@@ -586,7 +605,8 @@ fewer runaway takes (3 failures vs 6) on these voices; that is the substance of 
 
 In short: 6.4 minutes of aligned speech produced a statistically significant gain in similarity to the target
 speaker, at a measurable cost in similarity to unseen speakers. A recipe change that keeps the target gain while
-passing the preservation gate (for example, base-language replay, A7, or fewer adaptation steps) is future work.
+passing the preservation gate (for example, replaying other speakers' data during fine-tuning, fewer adaptation
+steps or a lower learning rate, or freezing part of the GPT) is the next experiment.
 
 ## 6 Planned experiments (pre-registered)
 
@@ -607,10 +627,10 @@ earlier report of this defect or measurement of its effect.
 | A2 | When is DVAE training worth it? | Stock vs trained vs frozen-codebook DVAE, each with a full Stage 2 retrain | Code usage, reconstruction, then end-to-end CER/SECS/UTMOS | Recommend Stage 1 only where end-to-end metrics improve beyond the interval | **Not run**; default from Zheng et al. (*ICCV* 2023) [5]; Casanova et al. (*Interspeech* 2024) [1] |
 | A3 | Does fixing F2 matter? | Upstream vs per-sample prompt masking | Short-text CER, SECS, duration failures | Retain the fix when the pre-registered non-regression gates pass; report the effect either way | **Run (§6.1)**: non-regression gates pass on unseen voices; the fix is retained |
 | A4 | Same-clip vs different-clip prompt | Masked same-clip vs same-speaker different-clip prompt | SECS (held-out speakers), CER | Adopt the better default | **Not run**; default from Casanova et al. (*ICML* 2022) [9] |
-| A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | **Not run**; default from Minixhofer et al. (*NAACL* 2022) [7]; Dobler et al. (*EMNLP* 2023) [6]; Ebing et al. (2026) [22] |
+| A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | **Out of scope** (new languages; Section 1, Scope). Not run; default from Minixhofer et al. (*NAACL* 2022) [7]; Dobler et al. (*EMNLP* 2023) [6]; Ebing et al. (2026) [22] |
 | A6 | Does punctuation–pause consistency matter? | With vs without commas inserted at long pauses | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval | **Not run**; default from Saeki et al. (*Interspeech* 2022) [14] |
-| A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate | **Not run**; default from Yang et al. (*ICASSP* 2022) [8] |
-| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a new-language GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats stock beyond the interval | **Not run**; default from Kong et al. (*NeurIPS* 2020) [3]; Casanova et al. (*Interspeech* 2024) [1] |
+| A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate | **Out of scope** (new languages; Section 1, Scope). Not run; default from Yang et al. (*ICASSP* 2022) [8] |
+| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a speaker-adaptation GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats stock beyond the interval | **Not run**; default from Kong et al. (*NeurIPS* 2020) [3]; Casanova et al. (*Interspeech* 2024) [1] |
 
 ### 6.1 Ablation A3: upstream vs per-sample prompt masking (F2)
 
@@ -710,13 +730,14 @@ established by tests rather than by measurement noise. F1 and the drift measurem
 DVAE–GPT code interface is fragile. The community consensus that the DVAE should not be trained has the right
 default for the wrong reason: the reason is coupling, not universality.
 
-**What has not been shown.** Full language adaptation across non-Latin scripts has not yet been evaluated end-to-end. A3 shows the F2 fix passes its non-regression gates and suggests, without establishing, that F2 causes occasional runaway generation on short prompts (§6.1). Ablations A1, A2 and A4–A8 have not been run.
+**What has not been shown.** Adapting the model to a new language is outside this paper's scope and has not been evaluated. A3 shows the F2 fix passes its non-regression gates and suggests, without establishing, that F2 causes occasional runaway generation on short prompts (§6.1). Ablations A1, A2 and A4–A8 have not been run.
 
 **Limitations.**
 
 1. **Smoke-scale training.** All training results come from eight clips. They establish that the stages work,
    not how well.
-2. **Alignment thresholds.** The validation thresholds rest on one English recording.
+2. **Alignment thresholds.** The validation thresholds were calibrated on eight recordings and validated out of
+   sample only for clean English speech (Section 5.4); French and German had too few held-out clips to validate.
 3. **Baseline language coverage.** The baseline now covers 900 utterances across five languages (`en`, `es`, `fr`, `de`, `hi`), expanded from the earlier 120-utterance English pilot; the remaining 12 languages supported by XTTS-v2 have not yet been evaluated.
 4. **Automatic metrics only.** Whisper-based WER/CER inherits the ASR model's biases. UTMOS was trained on
    English listening tests and is used only relative to the baseline. SECS is unreliable below about 2 s. No
@@ -740,7 +761,9 @@ four in the training code present since the original release, and a seventh, int
 that silently rewrites the released weights file. We built a three-stage recipe in which every decision carries its evidence
 level and every repair is guarded by a test, together with a data pipeline whose forced-alignment validator
 detects misplaced cuts on real audio. We also built an evaluation protocol designed so that a fine-tune can be
-judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline is deterministic per seed within an environment and agrees within intervals across environments, DVAE fine-tuning breaks the code interface the pretrained GPT depends on, and Stage 2 GPT fine-tuning adapts to a target speaker on held-out speech (all five target gates pass) at a measurable cost to unseen speakers (the pre-registered preservation SECS gate fails). The planned multi-language experiments will establish which of the recipe's choices improve cross-lingual synthesis. *[To be completed with A1–A8.]*
+judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline is deterministic per seed within an environment and agrees within intervals across environments, DVAE fine-tuning breaks the code interface the pretrained GPT depends on, and Stage 2 GPT fine-tuning adapts to a target speaker on held-out speech (all five target gates pass) at a measurable cost to unseen speakers (the pre-registered preservation SECS gate fails). The next experiments find a Stage 2 setting that keeps the target gain without the cost to unseen speakers,
+replicate it across speakers and training seeds, and add a listening test. Adding a new language is left to
+future work. *[To be completed with those results.]*
 
 ---
 
