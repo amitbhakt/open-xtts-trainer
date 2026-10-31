@@ -14,6 +14,11 @@ Gates come from a JSON file written *before* the results are seen (eval/gates.js
 Metrics where higher is better (secs, utmos) are oriented automatically: "worse" means lower.
   {"metric": "failures", "rule": "not_worse", "margin": 0}  -> tuned failure count <= base count + margin
 
+Alongside the gates, and never part of them, the report has a "robust" section for WER and CER: per-arm medians,
+the runaway rate (takes with WER > RUNAWAY_WER, which make the mean unbounded) with its interval, the mean without
+each arm's runaway takes, and the paired median difference. One runaway take can move a mean by more than a gate
+margin, so these say whether a mean difference is broad or comes from a few takes.
+
 Usage:
     python scripts/compare_ab.py base.json tuned.json --gates eval/gates.json [--report ab.json]
 Exit code 0 if every gate passes, 1 otherwise.
@@ -39,6 +44,9 @@ VALID_METRICS = set(METRICS) | {"failures"}
 VALID_RULES = {"not_worse", "better"}
 BOOTSTRAP_SAMPLES = 10_000
 BOOTSTRAP_SEED = 0
+# A take whose WER exceeds 1 has more errors than reference words: the model ran on or looped, not misread a word
+RUNAWAY_WER = 1.0
+ROBUST_METRICS = ("wer", "cer")
 
 Key = Tuple[str, str, str, int]
 
@@ -75,6 +83,55 @@ def paired_stats(pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]], metric: str
     lo, hi = bootstrap_ci(tuned - base)
     return {"n": len(values), "base": float(base.mean()), "tuned": float(tuned.mean()),
             "diff": float((tuned - base).mean()), "ci95": [lo, hi]}
+
+
+def bootstrap_median_ci(diffs: np.ndarray, samples: int = BOOTSTRAP_SAMPLES,
+                        seed: int = BOOTSTRAP_SEED) -> Tuple[Optional[float], Optional[float]]:
+    """95% percentile interval of the median of paired differences."""
+    if len(diffs) < 2:
+        return None, None
+    rng = np.random.default_rng(seed)
+    medians = np.median(diffs[rng.integers(0, len(diffs), size=(samples, len(diffs)))], axis=1)
+    return float(np.percentile(medians, 2.5)), float(np.percentile(medians, 97.5))
+
+
+def clopper_pearson(k: int, n: int, level: float = 0.95) -> List[Optional[float]]:
+    """Exact binomial interval for k events out of n."""
+    from scipy.stats import beta
+
+    if n == 0:
+        return [None, None]
+    a = (1 - level) / 2
+    low = 0.0 if k == 0 else float(beta.ppf(a, k, n - k + 1))
+    high = 1.0 if k == n else float(beta.ppf(1 - a, k + 1, n - k))
+    return [low, high]
+
+
+def robust_stats(pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]], metric: str) -> Dict[str, Any]:
+    """Medians, runaway takes and the mean without them, for one error-rate metric. Secondary; never a gate."""
+    values = [(b, t) for b, t in pairs if np.isfinite(b[metric]) and np.isfinite(t[metric])
+              and np.isfinite(b["wer"]) and np.isfinite(t["wer"])]
+    if not values:
+        return {"n": 0}
+    base = np.array([b[metric] for b, _ in values])
+    tuned = np.array([t[metric] for _, t in values])
+    base_run = np.array([b["wer"] > RUNAWAY_WER for b, _ in values])
+    tuned_run = np.array([t["wer"] > RUNAWAY_WER for _, t in values])
+    n = len(values)
+
+    def arm(x, runaway):
+        k = int(runaway.sum())
+        kept = x[~runaway]
+        return {"median": float(np.median(x)), "mean": float(x.mean()),
+                "runaway": k, "runaway_rate": k / n, "runaway_rate_ci95": clopper_pearson(k, n),
+                "mean_without_runaway": float(kept.mean()) if len(kept) else None}
+
+    lo, hi = bootstrap_median_ci(tuned - base)
+    return {"n": n, "runaway_wer": RUNAWAY_WER, "base": arm(base, base_run), "tuned": arm(tuned, tuned_run),
+            "median_diff": float(np.median(tuned - base)), "median_diff_ci95": [lo, hi],
+            # Takes that ran away in one arm only: the paired evidence about runaway generation
+            "runaway_base_only": int((base_run & ~tuned_run).sum()),
+            "runaway_tuned_only": int((tuned_run & ~base_run).sum())}
 
 
 def failures(results) -> int:
@@ -212,6 +269,8 @@ def compare_ab(base: Dict[str, Any], tuned: Dict[str, Any], gates: Optional[Dict
         "failures": {"base": failures(b for b, _ in pairs), "tuned": failures(t for _, t in pairs)},
         "by_category": {c: {m: paired_stats(p, m) for m in METRICS} for c, p in by_category.items()},
         "by_voice": {v: {m: paired_stats(p, m) for m in METRICS} for v, p in by_voice.items()},
+        "robust": {"overall": {m: robust_stats(pairs, m) for m in ROBUST_METRICS},
+                   "by_voice": {v: {m: robust_stats(p, m) for m in ROBUST_METRICS} for v, p in by_voice.items()}},
     }
     if gates is not None:
         gates_list = gates.get("gates")
@@ -264,6 +323,13 @@ def main():
             ci_str = f"[{s['ci95'][0]:+.4f}, {s['ci95'][1]:+.4f}]" if s['ci95'][0] is not None and s['ci95'][1] is not None else "[N/A, N/A]"
             print(f"  {m:15s} base {s['base']:.4f}  tuned {s['tuned']:.4f}  diff {s['diff']:+.4f}  "
                   f"95% CI {ci_str}  (n={s['n']})")
+    for m, r in report["robust"]["overall"].items():
+        if r["n"]:
+            ci = r["median_diff_ci95"]
+            ci_str = f"[{ci[0]:+.4f}, {ci[1]:+.4f}]" if ci[0] is not None else "[N/A, N/A]"
+            print(f"  {m} robust: median base {r['base']['median']:.4f}  tuned {r['tuned']['median']:.4f}  "
+                  f"median diff {r['median_diff']:+.4f} {ci_str}; runaway (WER > {RUNAWAY_WER:g}) "
+                  f"base {r['base']['runaway']}/{r['n']}  tuned {r['tuned']['runaway']}/{r['n']}")
     for g in report["gates"]:
         details = []
         if g.get("voices"):

@@ -266,6 +266,15 @@ its old hash into a manifest.
 
 The last two definitions correct measurement artefacts found in the stock baseline (Section 5.3).
 
+**Robust WER/CER (secondary outcomes).** WER is unbounded per take: a take that runs on or loops has more errors
+than reference words, and one such take can move a mean by more than a gate margin. Every A/B therefore also
+reports, for WER and CER, each arm's runaway rate (takes with WER > 1.0, with a Clopper–Pearson interval), its mean
+without its own runaway takes, its median, and the paired median difference with a bootstrap interval, plus the
+number of runaway takes that occur in one arm only. These are reported next to the gates and never change a gate.
+They were added after Run 6 and A3, whose reports used the same figures computed by hand; recomputed with the
+script on Run 6's preservation manifests they agree (mean WER without runaway takes 0.057 stock, 0.042 tuned).
+On these data the median WER and CER are 0 in both arms, so the runaway counts carry the information.
+
 **Paired A/B comparison.** A fine-tuned model is compared with stock XTTS-v2 on identical inputs. Utterances are
 paired by language, voice, sentence and seed. For each metric we compute the per-pair difference
 $d = m_{\text{tuned}} - m_{\text{base}}$, its mean, and a 95% bootstrap interval from 10,000 resamples. The same

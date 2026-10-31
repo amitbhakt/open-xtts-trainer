@@ -283,6 +283,8 @@ python scripts/compare_ab.py eval/baselines/base.json eval/baselines/tuned.json 
 ```
 
 This uses the eval set's CMU ARCTIC voices, speakers the fine-tune never saw: it checks that nothing regressed.
+Next to the gates, the report's `robust` section gives WER/CER medians, runaway takes (WER > 1.0) per arm and the
+mean without them, so a mean moved by one looping take is visible as such. It never changes a gate.
 To check that a voice fine-tune actually learned **your** speaker, hold out some of their clips first. Training
 on them is then refused while the lock exists:
 

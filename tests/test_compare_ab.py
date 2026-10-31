@@ -404,3 +404,50 @@ def test_run_ablation_scalar_selectors(base, tmp_path, monkeypatch):
     monkeypatch.setattr("scripts.run_ablation.PREREG_PATH", str(custom_prereg))
     res = run_ablation("CUSTOM", str(tuned_file), str(base_file), output_dir=str(tmp_path), dry_run=True)
     assert res["dry_run"] is True and res["passed"] is True
+
+
+def test_robust_section_is_neutral_on_identical_outputs(base):
+    report = compare_ab(base, tuned_from(base), GATES)
+    for m in ("wer", "cer"):
+        r = report["robust"]["overall"][m]
+        assert r["n"] == 120 and r["median_diff"] == 0 and r["median_diff_ci95"] == [0.0, 0.0]
+        assert r["base"] == r["tuned"] and r["runaway_base_only"] == r["runaway_tuned_only"] == 0
+    assert set(report["robust"]["by_voice"]) == set(report["by_voice"])
+
+
+def test_one_runaway_take_moves_the_mean_but_not_the_robust_view(base):
+    """M4: a single take that runs on (WER 3.0) shifts mean WER; the median, the runaway count and the mean without
+    runaway takes show it is one take, not a broad regression."""
+    import numpy as np
+
+    from scripts.compare_ab import RUNAWAY_WER
+
+    first = {}
+
+    def run_away_once(r):
+        if not first:
+            first["id"] = r["id"]
+            r.update(wer=3.0)
+    tuned = tuned_from(base, run_away_once)
+    report = compare_ab(base, tuned, GATES)
+    r = report["robust"]["overall"]["wer"]
+    assert report["overall"]["wer"]["diff"] > 0.01  # the mean moves
+    assert r["median_diff"] == 0 and r["runaway_tuned_only"] == 1 and r["runaway_base_only"] == 0
+    assert r["tuned"]["runaway"] == r["base"]["runaway"] + 1 and r["tuned"]["runaway_rate"] > r["base"]["runaway_rate"]
+    tuned_wers = [x["wer"] for run in tuned["runs"] for res in run["per_seed_results"].values() for x in res]
+    kept = [w for w in tuned_wers if w <= RUNAWAY_WER]
+    assert len(kept) == len(tuned_wers) - r["tuned"]["runaway"]
+    assert r["tuned"]["mean_without_runaway"] == pytest.approx(float(np.mean(kept)))
+    assert r["tuned"]["mean_without_runaway"] < r["tuned"]["mean"]
+    # Secondary only: the gates are computed exactly as without it
+    assert all("runaway" not in g for g in report["gates"])
+
+
+def test_runaway_interval_is_exact():
+    from scripts.compare_ab import clopper_pearson
+
+    assert clopper_pearson(0, 0) == [None, None]
+    low, high = clopper_pearson(0, 60)
+    assert low == 0.0 and high == pytest.approx(0.0596, abs=1e-4)  # rule of three: about 3/60
+    low, high = clopper_pearson(60, 60)
+    assert high == 1.0 and low == pytest.approx(0.9404, abs=1e-4)
