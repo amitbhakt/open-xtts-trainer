@@ -370,3 +370,21 @@ def test_should_reuse_cached_base_requires_explicit_batch_size(tmp_path):
         xtts_base_dir=str(base_dir),
         eval_batch_size=EVAL_BATCH_SIZE,
     ) is False
+
+
+def test_target_runner_training_command_passes_m1_options_and_keeps_run6_default():
+    """Run 6's command is unchanged at the defaults; M1 candidates get their own seed, freeze, replay and run dir."""
+    import argparse
+
+    from scripts.run_target_finetune_ab import train_command
+
+    def args(**kw):
+        base = dict(epochs=10, batch_size=4, grad_accum_steps=8, lr=5e-6, train_seed=1, freeze=[], replay=[])
+        return argparse.Namespace(**{**base, **kw})
+
+    default = train_command(args(), "data/train.jsonl", "runs/x")
+    assert default[3:] == ["--dataset", "data/train.jsonl", "--base_dir", "xtts_base", "--output_dir", "runs/x",
+                           "--epochs", "10", "--batch_size", "4", "--grad_accum_steps", "8", "--lr", "5e-06",
+                           "--eval_fraction", "0.1"]
+    m1 = train_command(args(train_seed=2, freeze=["conditioning"], replay=["r/dataset.jsonl"]), "d", "runs/y")
+    assert m1[-6:] == ["--seed", "2", "--freeze", "conditioning", "--replay", "r/dataset.jsonl"]

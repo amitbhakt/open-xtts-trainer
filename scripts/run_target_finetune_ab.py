@@ -37,6 +37,28 @@ os.environ["PYTHONPATH"] = f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"
 EVAL_BATCH_SIZE = 16
 
 
+def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
+    """The Stage 2 training command for one run; options left at their defaults are not passed (Run 6's command)."""
+    cmd = [
+        sys.executable, "-m", "xtts_trainer.stage2_gpt.train",
+        "--dataset", train_dataset_path,
+        "--base_dir", "xtts_base",
+        "--output_dir", run_dir,
+        "--epochs", str(args.epochs),
+        "--batch_size", str(args.batch_size),
+        "--grad_accum_steps", str(args.grad_accum_steps),
+        "--lr", str(args.lr),
+        "--eval_fraction", "0.1",
+    ]
+    if args.train_seed != 1:
+        cmd += ["--seed", str(args.train_seed)]
+    if args.freeze:
+        cmd += ["--freeze", *args.freeze]
+    if args.replay:
+        cmd += ["--replay", *args.replay]
+    return cmd
+
+
 def should_reuse_cached_base(
     cached_data: dict,
     expected_seeds: List[int],
@@ -122,6 +144,10 @@ def main():
     parser.add_argument("--subset-size", type=int, default=12, help="Eval subset size per language (default: 12)")
     parser.add_argument("--seeds", nargs="+", type=int, default=[42, 123, 999], help="Eval seeds")
     parser.add_argument("--skip-train", action="store_true", help="Skip fine-tuning if checkpoint already exported")
+    parser.add_argument("--train-seed", type=int, default=1, help="Stage 2 training seed (data split and order)")
+    parser.add_argument("--freeze", nargs="+", default=[], choices=["conditioning"], help="GPT parts held at released values")
+    parser.add_argument("--replay", nargs="+", default=[], help="Replay dataset.jsonl files (other speakers, same language)")
+    parser.add_argument("--run-tag", default="", help="Suffix for the run directory, so candidate runs don't overwrite each other")
     args = parser.parse_args()
 
     if args.speaker != "moira_fogarty":
@@ -223,21 +249,11 @@ def main():
     shutil.copytree("eval/target_voices", os.path.join(evidence_dir, "target_voices"), dirs_exist_ok=True)
 
     # 6. Stage 2 GPT fine-tuning
-    run_dir = f"runs/{args.speaker}_finetune"
+    run_dir = f"runs/{args.speaker}_finetune" + (f"_{args.run_tag}" if args.run_tag else "")
     export_dir = os.path.join(run_dir, "export")
     if not args.skip_train:
         print(f"\n🧠 Step 5: Fine-tuning Stage 2 GPT on {train_dataset_path}...")
-        run_cmd([
-            sys.executable, "-m", "xtts_trainer.stage2_gpt.train",
-            "--dataset", train_dataset_path,
-            "--base_dir", "xtts_base",
-            "--output_dir", run_dir,
-            "--epochs", str(args.epochs),
-            "--batch_size", str(args.batch_size),
-            "--grad_accum_steps", str(args.grad_accum_steps),
-            "--lr", str(args.lr),
-            "--eval_fraction", "0.1",
-        ])
+        run_cmd(train_command(args, train_dataset_path, run_dir))
         check_artifacts("stage2_gpt_train")
     else:
         print(f"\n⏩ Skipping Stage 2 training (--skip-train), using {export_dir}")
