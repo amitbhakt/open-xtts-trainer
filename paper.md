@@ -85,9 +85,10 @@ contributions are:
   seed within an environment (across environments, 94.7% of takes are identical and means agree within intervals), and every bug fix follows a written protocol: the fix must fail when deliberately broken (Section 3.6).
 
 **Scope.** This paper evaluates the recipe for one task: adapting XTTS-v2 to a new speaker in a language it
-already supports. Adding a new language is a different and larger study. Its parts of the recipe (F4, F6, the
-replay design and ablations A5 and A7) are described and unit-tested, but no new-language model is trained or
-evaluated, and we make no claim about how well the recipe adds a language.
+already supports. Adding a new language is a different and larger study. Its parts of the recipe (F4, F6, replay
+of the base languages, and ablations A5 and A7) are described and unit-tested, but no new-language model is trained
+or evaluated, and we make no claim about how well the recipe adds a language. Replay of *other speakers in the same
+language* is different: it is one of the speaker-adaptation candidates in the next experiment.
 
 The repository that accompanies this paper is the evidence for every claim in it. Appendix A maps each claim to
 the file or test that supports it.
@@ -204,7 +205,7 @@ It adds four things:
 - mean-initialised new text rows (F6) rather than random unit-variance rows, anchoring new tokens inside the pre-existing semantic embedding subspace [6, 7, 20];
 - a registered-language tokenizer (F4); new-language text uses per-character tokens by default, with BPE merges or romanization as candidate alternatives [22].
 
-New-language runs mix in replay data from the base languages to prevent catastrophic forgetting in lifelong multilingual TTS [8], and the language shares are reported. The new-language parts of this stage (F4, F6, replay) are implemented and unit-tested, but outside this paper's experiments (Section 1, Scope). The
+New-language runs mix in replay data from the base languages to prevent catastrophic forgetting in lifelong multilingual TTS [8], and the language shares are reported. The new-language parts of this stage (F4, F6, base-language replay) are implemented and unit-tested, but outside this paper's experiments (Section 1, Scope). Same-language replay from other speakers is a speaker-adaptation candidate, unevaluated until its pre-registered runs. The
 starting hyperparameters follow the upstream recipe: AdamW (β = 0.9, 0.96), weight decay 10⁻² on weights only,
 learning rate 5 × 10⁻⁶, and a multi-step schedule. We treat these as defaults to be tuned against evaluation
 loss, not as established values.
@@ -266,8 +267,9 @@ its old hash into a manifest.
 
 The last two definitions correct measurement artefacts found in the stock baseline (Section 5.3).
 
-**Robust WER/CER (secondary outcomes).** WER is unbounded per take: a take that runs on or loops has more errors
-than reference words, and one such take can move a mean by more than a gate margin. Every A/B therefore also
+**Robust WER/CER (secondary outcomes).** WER is unbounded per take: a take with more errors than reference words
+(WER > 1) can move a mean by more than a gate margin. Such "runaway" takes are usually the model running on,
+looping or babbling, but WER alone cannot prove which, so the label is a heuristic. Every A/B therefore also
 reports, for WER and CER, each arm's runaway rate (takes with WER > 1.0, with a Clopper–Pearson interval), its mean
 without its own runaway takes, its median, and the paired median difference with a bootstrap interval, plus the
 number of runaway takes that occur in one arm only. These are reported next to the gates and never change a gate.

@@ -102,8 +102,9 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 **Stage 2: GPT and text**
 
 **Scope (2026-10-31):** the paper's experiments cover speaker adaptation in supported languages only. The
-new-language rows below (F4, F6, tokenisation, replay; ablations A5 and A7) are built and unit-tested, but no
-new-language model has been trained or evaluated; they stay at their current evidence levels.
+new-language rows below (F4, F6, tokenisation, base-language replay; ablations A5 and A7) are built and
+unit-tested, but no new-language model has been trained or evaluated; they stay at their current evidence levels.
+Same-language replay from other speakers is a speaker-adaptation candidate (M1), unevaluated until its runs.
 
 | Decision | Evidence | Status |
 |---|---|---|

@@ -176,8 +176,10 @@ python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_bas
 ### 2. Stage 2: Vocabulary Extender & GPT Backbone Fine-Tuning
 
 > **Scope:** the measured results in this repository are for speaker adaptation in languages XTTS-v2 already
-> supports. The new-language path below (vocabulary extension, a registered tokenizer, replay) is implemented and
-> unit-tested, but no new-language model has been trained or evaluated with it.
+> supports. The new-language path below (vocabulary extension, a registered tokenizer, replay of other languages) is
+> implemented and unit-tested, but no new-language model has been trained or evaluated with it. Replay is not only a
+> new-language tool: same-language replay from other speakers is an M1 candidate for speaker adaptation
+> (`docs/evidence/m1_stage2_preservation/PROTOCOL.md`), and it too is unevaluated until those runs.
 
 1. **Extend Tokenizer for a New Language Script:**
    ```bash
@@ -284,7 +286,8 @@ python scripts/compare_ab.py eval/baselines/base.json eval/baselines/tuned.json 
 
 This uses the eval set's CMU ARCTIC voices, speakers the fine-tune never saw: it checks that nothing regressed.
 Next to the gates, the report's `robust` section gives WER/CER medians, runaway takes (WER > 1.0) per arm and the
-mean without them, so a mean moved by one looping take is visible as such. It never changes a gate.
+mean without them, so a mean moved by one take with more errors than words (usually a run-on, though WER alone
+can't prove it) is visible as such. It never changes a gate.
 To check that a voice fine-tune actually learned **your** speaker, hold out some of their clips first. Training
 on them is then refused while the lock exists:
 
