@@ -140,6 +140,7 @@ def train_gpt(
     num_workers: int = 0,
     masking_mode: str = "per_sample",
     freeze: Sequence[str] = (),
+    split_seed: Optional[int] = None,
 ) -> str:
     """Train, then export the best checkpoint (by eval loss) to output_dir/export. Returns the export dir.
 
@@ -151,6 +152,8 @@ def train_gpt(
     its eval loss is monitored. Replay in the target's language must come from other speakers (speaker adaptation,
     M1) and is used for training only: the eval split, and so the best-checkpoint choice, stays the target's own.
     freeze: FREEZABLE_PARTS of the GPT held at their released values (e.g. "conditioning").
+    split_seed: seeds the train/eval split only (default: seed). Fixing it while changing seed retrains with other
+    randomness on the same eval clips, so runs at several training seeds choose their checkpoints alike (M1).
     """
     vocab_path = vocab_path or os.path.join(base_dir, "vocab.json")
     languages = [l.lower() for l in languages]
@@ -162,7 +165,8 @@ def train_gpt(
     shared = {s["speaker_name"] for s in same_lang} & {s["speaker_name"] for s in samples}
     if shared:
         raise ValueError(f"replay in the target's language must come from other speakers; both have {sorted(shared)}")
-    train_samples, eval_samples = split_samples(samples + other_lang, eval_fraction, seed)
+    split_seed = seed if split_seed is None else split_seed
+    train_samples, eval_samples = split_samples(samples + other_lang, eval_fraction, split_seed)
     train_samples += same_lang
     # Upstream draws a language uniformly, then a clip within it, so within a language replay's share is its
     # share of the clips
@@ -210,8 +214,13 @@ def train_gpt(
                    "retrain_for_new_dvae": retrain_for_new_dvae, "masking_mode": masking_mode,
                    "same_language_replay_clips": len(same_lang), "same_language_replay_share": same_lang_share,
                    "replay_speakers": sorted({s["speaker_name"] for s in replay}),
-                   "frozen_parts": list(freeze), "frozen_parameter_tensors": frozen,
-                   "lr": lr, "epochs": epochs, "seed": seed}, f, indent=2)
+                   "frozen_parts": list(dict.fromkeys(freeze)), "frozen_parameter_tensors": frozen,
+                   "lr": lr, "epochs": epochs, "batch_size": batch_size, "grad_accum_steps": grad_accum_steps,
+                   "eval_fraction": eval_fraction, "seed": seed, "split_seed": split_seed,
+                   # Which clips chose the best checkpoint, and whose they are: a run shows they were the target's
+                   "eval_speakers": sorted({s["speaker_name"] for s in eval_samples}),
+                   "eval_audio": sorted(os.path.relpath(s["audio_file"], s["root_path"]) for s in eval_samples)},
+                  f, indent=2)
     logger.info("Exported best checkpoint to %s", export_dir)
     return export_dir
 
@@ -231,7 +240,9 @@ def main(argv: Optional[List[str]] = None):
     parser.add_argument("--grad_accum_steps", type=int, default=8, help="Effective batch = batch_size x this (>= 32)")
     parser.add_argument("--lr", type=float, default=5e-6)
     parser.add_argument("--eval_fraction", type=float, default=0.1)
-    parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--seed", type=int, default=1, help="Training seed; also seeds the split unless --split_seed")
+    parser.add_argument("--split_seed", type=int, default=None,
+                        help="Seed for the train/eval split only (default: --seed); fix it to keep the eval clips")
     parser.add_argument("--dvae_checkpoint", default=None, help="DVAE to code audio with (default: base_dir/dvae.pth)")
     parser.add_argument("--num_workers", type=int, default=2, help="Data loader worker processes")
     parser.add_argument("--retrain_for_new_dvae", action="store_true",
@@ -246,7 +257,8 @@ def main(argv: Optional[List[str]] = None):
     train_gpt(args.dataset, args.output_dir, args.base_dir, args.vocab_path, args.languages, args.replay,
               args.epochs, args.batch_size, args.grad_accum_steps, args.lr, args.eval_fraction, args.seed,
               dvae_path=args.dvae_checkpoint, retrain_for_new_dvae=args.retrain_for_new_dvae,
-              num_workers=args.num_workers, masking_mode=args.masking_mode, freeze=args.freeze)
+              num_workers=args.num_workers, masking_mode=args.masking_mode, freeze=args.freeze,
+              split_seed=args.split_seed)
 
 
 if __name__ == "__main__":

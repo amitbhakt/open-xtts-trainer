@@ -406,15 +406,22 @@ def test_same_language_replay_trains_only_and_freeze_is_recorded(tmp_path):
     torch.save(build_dvae().state_dict(), base / "dvae.pth")
     target = _noise_dataset(tmp_path, "target", "target_spk", n=4)
     replay = _noise_dataset(tmp_path, "replay", "other_spk", n=2)
+    # Training seed 2 with split seed 1: other training randomness, the same eval clips as seed 1 (M1 confirmation)
     export = train_gpt(target, str(tmp_path / "run"), str(base), vocab_path=REAL_VOCAB, replay_paths=[replay],
                        epochs=1, batch_size=2, grad_accum_steps=1, lr=1e-3, eval_fraction=0.25,
-                       arch_overrides=TINY, load_base_weights=False, freeze=["conditioning"])
+                       arch_overrides=TINY, load_base_weights=False, freeze=["conditioning", "conditioning"],
+                       seed=2, split_seed=1)
     summary = json.loads(Path(export, "training_summary.json").read_text(encoding="utf-8"))
     _, target_eval = split_samples(load_samples([target], REAL_VOCAB, []), 0.25, seed=1)
-    assert summary["eval_clips"] == len(target_eval) == 1
+    expected_eval = sorted(os.path.relpath(s["audio_file"], s["root_path"]) for s in target_eval)
+    assert summary["eval_clips"] == 1 and summary["eval_audio"] == expected_eval  # the very clips, not a count
+    assert summary["eval_speakers"] == ["target_spk"]  # never a replay speaker
+    assert summary["seed"] == 2 and summary["split_seed"] == 1
     assert summary["train_clips"] == 3 + 2 and summary["same_language_replay_clips"] == 2
     assert summary["same_language_replay_share"] == 0.4 and summary["replay_speakers"] == ["other_spk"]
+    # Named twice, frozen and counted once
     assert summary["frozen_parts"] == ["conditioning"] and summary["frozen_parameter_tensors"] > 0
+    assert (summary["batch_size"], summary["grad_accum_steps"], summary["eval_fraction"]) == (2, 1, 0.25)
 
 
 def test_freezing_conditioning_keeps_it_at_its_starting_values():
@@ -423,7 +430,8 @@ def test_freezing_conditioning_keeps_it_at_its_starting_values():
     gpt = build_gpt(number_text_tokens=30, start_text_token=28, stop_text_token=0, layers=1, model_dim=64, heads=2)
     prefixes = FREEZABLE_PARTS["conditioning"]
     before = {n: p.detach().clone() for n, p in gpt.named_parameters()}
-    assert freeze_gpt_parts(gpt, ["conditioning"]) > 0
+    once = freeze_gpt_parts(gpt, ["conditioning"])
+    assert once > 0 and freeze_gpt_parts(gpt, ["conditioning", "conditioning"]) == once
     opt = torch.optim.AdamW([p for p in gpt.parameters() if p.requires_grad], lr=1e-2)
     torch.manual_seed(0)
     loss = sum((p.float() ** 2).sum() for p in gpt.parameters())  # touches every parameter

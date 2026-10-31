@@ -15,8 +15,9 @@ Metrics where higher is better (secs, utmos) are oriented automatically: "worse"
   {"metric": "failures", "rule": "not_worse", "margin": 0}  -> tuned failure count <= base count + margin
 
 Alongside the gates, and never part of them, the report has a "robust" section for WER and CER: per-arm medians,
-the runaway rate (takes with WER > RUNAWAY_WER, which make the mean unbounded) with its interval, the mean without
-each arm's runaway takes, and the paired median difference. One runaway take can move a mean by more than a gate
+the runaway rate (takes with WER > RUNAWAY_WER: more errors than reference words, usually a run-on or loop, though
+WER alone can't prove which) with its interval, the mean without each arm's runaway takes, and the paired median
+difference. One runaway take can move a mean by more than a gate
 margin, so these say whether a mean difference is broad or comes from a few takes.
 
 Usage:
@@ -44,7 +45,8 @@ VALID_METRICS = set(METRICS) | {"failures"}
 VALID_RULES = {"not_worse", "better"}
 BOOTSTRAP_SAMPLES = 10_000
 BOOTSTRAP_SEED = 0
-# A take whose WER exceeds 1 has more errors than reference words: the model ran on or looped, not misread a word
+# A "runaway" take has WER above 1: more errors than reference words. That is usually the model running on, looping
+# or babbling, but ASR insertions on a bad take can do it too, so it is a heuristic flag, not proof of a loop.
 RUNAWAY_WER = 1.0
 ROBUST_METRICS = ("wer", "cer")
 

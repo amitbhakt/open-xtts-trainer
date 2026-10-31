@@ -159,7 +159,7 @@ def freeze_gpt_parts(gpt: torch.nn.Module, parts: Sequence[str]) -> int:
     if unknown:
         raise ValueError(f"unknown parts to freeze {unknown}; choose from {sorted(FREEZABLE_PARTS)}")
     frozen = 0
-    for part in parts:
+    for part in dict.fromkeys(parts):  # a part named twice is frozen, and counted, once
         matched = [p for name, p in gpt.named_parameters() if name.startswith(FREEZABLE_PARTS[part])]
         if not matched:
             raise ValueError(f"no parameters match {part!r} ({FREEZABLE_PARTS[part]}); the architecture lacks it")

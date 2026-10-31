@@ -416,7 +416,7 @@ def test_robust_section_is_neutral_on_identical_outputs(base):
 
 
 def test_one_runaway_take_moves_the_mean_but_not_the_robust_view(base):
-    """M4: a single take that runs on (WER 3.0) shifts mean WER; the median, the runaway count and the mean without
+    """M4: a single runaway take (WER 3.0) shifts mean WER; the median, the runaway count and the mean without
     runaway takes show it is one take, not a broad regression."""
     import numpy as np
 
