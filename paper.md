@@ -86,9 +86,10 @@ contributions are:
 
 **Scope.** This paper evaluates the recipe for one task: adapting XTTS-v2 to a new speaker in a language it
 already supports. Adding a new language is a different and larger study. Its parts of the recipe (F4, F6, replay
-of the base languages, and ablations A5 and A7) are described and unit-tested, but no new-language model is trained
-or evaluated, and we make no claim about how well the recipe adds a language. Replay of *other speakers in the same
-language* is different: it is one of the speaker-adaptation candidates in the next experiment.
+of the base languages) have their underlying components described and unit-tested, while ablations A5 and A7 remain
+unrun designs with planned alternatives; no new-language model is trained or evaluated, and we make no claim about how
+well the recipe adds a language. Replay of *other speakers in the same language* is different: it is one of the
+speaker-adaptation candidates in the next experiment.
 
 The repository that accompanies this paper is the evidence for every claim in it. Appendix A maps each claim to
 the file or test that supports it.

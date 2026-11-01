@@ -72,8 +72,11 @@ their channel. Built by `scripts/build_replay_librittsr.py`:
 - **Clips:** per reader, utterances sorted and shuffled with a per-reader seed; the first 5 that last 3–10 s and
   pass the project's dataset validator (vocabulary, frozen eval-set sentences, reference-voice audio, durations),
   looking through the reader's utterances until 5 pass or none are left.
-  75 clips, as many as the target's training clips (50% of C2's training clips). Text is the corpus's normalized
-  transcript.
+  75 clips, as many as the target's training clips (50% of C2's training clips). The target training set must have
+  exactly 75 clips (as Moira Fogarty's 95-clip dataset has after holding out 20 evaluation clips) to match the
+  fixed 75-clip replay set and implement the registered 50% replay ratio. The runner enforces this: runs where
+  the target training set does not have 75 clips are rejected under `--replay-librittsr`. Text is the corpus's
+  normalized transcript.
 - **Recorded:** `replay_selection.json` lists the pins, license, rule, every chosen clip (with its SHA-256),
   skipped readers, and every utterance looked at and not chosen, with its reason (including a skipped reader's
   usable clips).
@@ -110,7 +113,7 @@ Every run is reported, whatever it shows, including C0 and any failed confirmati
 ## 5. Reported for every run (secondary; never gates)
 
 - From the `robust` section of each A/B report (M4): per arm, the runaway rate (takes with WER > 1.0: more errors
-  than reference words, a heuristic for run-on or looping takes, not proof) with its Clopper–Pearson interval, median WER/CER, the mean without runaway takes; paired, the median difference and the
+  than reference words, a heuristic for run-on or looping takes, not proof) with its Clopper–Pearson interval, median WER/CER, the mean without runaway takes; paired, the median difference, the paired mean difference over pairs where neither arm ran away, and the
   runaway takes that occur in one arm only.
 - Per-voice SECS differences for the five preservation voices.
 - Eval loss before and at the best step, the best step, and `training_summary.json` (frozen parts, replay share
@@ -132,8 +135,9 @@ written).
   they share the preservation voices' recording setup, which could raise preservation scores through channel
   familiarity rather than speaker generality.
 - **Budget.** Each run trains once and evaluates 720 takes (stock and tuned, target and preservation, since the
-  baselines are regenerated per run). Screening is four runs; confirmation two per candidate confirmed; C4 one
-  more, plus its confirmation, if needed.
+  baselines are regenerated per run). Screening is four runs; each confirmation attempt costs two runs (seeds 2 and 3;
+  even if seed 2 fails, seed 3 still runs to complete the candidate's three-seed stability record); C4 one
+  more, plus its two confirmation runs if needed. Total runs increase by two per failed confirmation attempt.
 - **Second preservation voice set (for M2).** All candidates are chosen on the same five ARCTIC voices, so the
   winner is partly fitted to them. M2 should add preservation voices unused during selection.
 

@@ -162,6 +162,9 @@ def train_gpt(
     target_langs = {s["language"] for s in samples}
     same_lang = [s for s in replay if s["language"] in target_langs]
     other_lang = [s for s in replay if s["language"] not in target_langs]
+    added_same = {s["language"] for s in same_lang if s["language"] in languages}
+    if added_same:
+        raise ValueError(f"replay data for an added language must be in base languages; got replay in {sorted(added_same)}")
     shared = {s["speaker_name"] for s in same_lang} & {s["speaker_name"] for s in samples}
     if shared:
         raise ValueError(f"replay in the target's language must come from other speakers; both have {sorted(shared)}")

@@ -129,8 +129,12 @@ def robust_stats(pairs: List[Tuple[Dict[str, Any], Dict[str, Any]]], metric: str
                 "mean_without_runaway": float(kept.mean()) if len(kept) else None}
 
     lo, hi = bootstrap_median_ci(tuned - base)
+    neither_run = ~base_run & ~tuned_run
+    paired_diff_without_runaway = float((tuned[neither_run] - base[neither_run]).mean()) if neither_run.any() else None
     return {"n": n, "runaway_wer": RUNAWAY_WER, "base": arm(base, base_run), "tuned": arm(tuned, tuned_run),
             "median_diff": float(np.median(tuned - base)), "median_diff_ci95": [lo, hi],
+            "paired_diff_without_runaway": paired_diff_without_runaway,
+            "pairs_without_runaway": int(neither_run.sum()),
             # Takes that ran away in one arm only: the paired evidence about runaway generation
             "runaway_base_only": int((base_run & ~tuned_run).sum()),
             "runaway_tuned_only": int((tuned_run & ~base_run).sum())}
@@ -329,8 +333,9 @@ def main():
         if r["n"]:
             ci = r["median_diff_ci95"]
             ci_str = f"[{ci[0]:+.4f}, {ci[1]:+.4f}]" if ci[0] is not None else "[N/A, N/A]"
+            paired_excl = f"  diff excl runaways {r['paired_diff_without_runaway']:+.4f}" if r.get("paired_diff_without_runaway") is not None else ""
             print(f"  {m} robust: median base {r['base']['median']:.4f}  tuned {r['tuned']['median']:.4f}  "
-                  f"median diff {r['median_diff']:+.4f} {ci_str}; runaway (WER > {RUNAWAY_WER:g}) "
+                  f"median diff {r['median_diff']:+.4f} {ci_str}{paired_excl}; runaway (WER > {RUNAWAY_WER:g}) "
                   f"base {r['base']['runaway']}/{r['n']}  tuned {r['tuned']['runaway']}/{r['n']}")
     for g in report["gates"]:
         details = []

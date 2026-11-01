@@ -103,10 +103,24 @@ def resolve_results_dir(results_dir: Optional[str], run_tag: str) -> str:
     return "runs/results_target_speaker" + (f"_{run_tag}" if run_tag else "")
 
 
-def check_replay_args(replay: List[str], replay_librittsr: bool) -> None:
-    """C2 trains on the pre-registered set only: no other replay files beside it."""
+def check_replay_args(replay: List[str], replay_librittsr: bool, skip_train: bool = False,
+                      export_dir: Optional[str] = None) -> None:
+    """C2 trains on the pre-registered set only: no other replay files beside it.
+    If --skip-train is passed with --replay-librittsr, verify that the reused checkpoint was trained with C2."""
     if replay_librittsr and replay:
         raise SystemExit("--replay-librittsr trains on the pre-registered replay set only; drop --replay")
+    if replay_librittsr and skip_train:
+        summary_path = os.path.join(export_dir or "", "training_summary.json")
+        if not os.path.exists(summary_path):
+            raise SystemExit(f"--replay-librittsr cannot be combined with --skip-train: missing {summary_path}")
+        with open(summary_path, "r", encoding="utf-8") as f:
+            summary = json.load(f)
+        if summary.get("same_language_replay_clips") != 75 or summary.get("same_language_replay_share") != 0.5:
+            raise SystemExit(
+                f"--replay-librittsr with --skip-train requires a checkpoint trained with the 75-clip C2 replay set; "
+                f"got same_language_replay_clips={summary.get('same_language_replay_clips')}, "
+                f"share={summary.get('same_language_replay_share')}"
+            )
 
 
 def replay_build_command(evidence_dir: str) -> List[str]:
@@ -224,7 +238,9 @@ def main():
                         help="Suffix for the training directory and the default results directory, so candidate runs "
                              "don't overwrite each other")
     args = parser.parse_args()
-    check_replay_args(args.replay, args.replay_librittsr)
+    run_dir = f"runs/{args.speaker}_finetune" + (f"_{args.run_tag}" if args.run_tag else "")
+    export_dir = os.path.join(run_dir, "export")
+    check_replay_args(args.replay, args.replay_librittsr, skip_train=args.skip_train, export_dir=export_dir)
 
     if args.speaker != "moira_fogarty":
         raise ValueError(
@@ -331,12 +347,17 @@ def main():
 
     # 6. Stage 2 GPT fine-tuning
     if args.replay_librittsr:
+        from xtts_trainer.data import load_dataset
+        target_clips = len(load_dataset(train_dataset_path))
+        if target_clips != 75:
+            raise SystemExit(
+                f"--replay-librittsr implements candidate C2 at 50% replay ratio (75 clips), "
+                f"requiring exactly 75 target training clips, but {train_dataset_path} has {target_clips}"
+            )
         print("\n🔁 Building the pre-registered LibriTTS-R replay set (M1 C2)...")
         run_cmd(replay_build_command(evidence_dir))
         check_replay_selection(os.path.join(evidence_dir, "replay_selection.json"))
         args.replay = [os.path.join(REPLAY_DIR, "dataset.jsonl")]
-    run_dir = f"runs/{args.speaker}_finetune" + (f"_{args.run_tag}" if args.run_tag else "")
-    export_dir = os.path.join(run_dir, "export")
     if not args.skip_train:
         print(f"\n🧠 Step 5: Fine-tuning Stage 2 GPT on {train_dataset_path}...")
         run_cmd(train_command(args, train_dataset_path, run_dir))

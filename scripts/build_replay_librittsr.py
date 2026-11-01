@@ -119,26 +119,37 @@ def reader_queues(speakers: Dict[str, str], seed: Optional[int] = None,
     return queues
 
 
-def index_and_extract(tar_path: str, speakers: List[str], dest: str) -> Dict[str, List[str]]:
-    """Extract the chosen speakers' utterances (wav + normalized text) into dest; return speaker -> utterance ids.
+def index_archive(tar: tarfile.TarFile) -> Dict[str, Dict[str, Dict[str, tarfile.TarInfo]]]:
+    """Index archive members without reading file contents: speaker -> utt -> ext -> TarInfo."""
+    index: Dict[str, Dict[str, Dict[str, tarfile.TarInfo]]] = {}
+    for member in tar:
+        m = UTTERANCE.match(member.name)
+        if not m or not member.isreg():
+            continue
+        spk, utt, ext = m.group(1), m.group(3), m.group(4)
+        index.setdefault(spk, {}).setdefault(utt, {})[ext] = member
+    return index
 
-    Only regular files whose names match UTTERANCE are read, and each is written to dest/<utterance>.<ext>, so an
-    archive member can't write outside dest.
-    """
-    wanted = set(speakers)
-    utts: Dict[str, set] = {s: set() for s in speakers}
+
+def extract_speaker(tar: tarfile.TarFile, index: Dict[str, Dict[str, Dict[str, tarfile.TarInfo]]],
+                    spk: str, dest: str) -> List[str]:
+    """Extract only one speaker's regular wav + text files into dest; return sorted utterance ids."""
     os.makedirs(dest, exist_ok=True)
+    utts = set()
+    for utt, exts in index.get(spk, {}).items():
+        if "wav" in exts and "normalized.txt" in exts:
+            for ext in ("wav", "normalized.txt"):
+                with open(os.path.join(dest, f"{utt}.{ext}"), "wb") as out:
+                    out.write(tar.extractfile(exts[ext]).read())
+            utts.add(utt)
+    return sorted(utts)
+
+
+def index_and_extract(tar_path: str, speakers: List[str], dest: str) -> Dict[str, List[str]]:
+    """Extract speakers' utterances (wav + normalized text) into dest; return speaker -> utterance ids."""
     with tarfile.open(tar_path, "r:gz") as tar:
-        for member in tar:
-            m = UTTERANCE.match(member.name)
-            if not m or not member.isreg() or m.group(1) not in wanted:
-                continue
-            utt, ext = m.group(3), m.group(4)
-            with open(os.path.join(dest, f"{utt}.{ext}"), "wb") as out:
-                out.write(tar.extractfile(member).read())
-            if ext == "wav":
-                utts[m.group(1)].add(utt)
-    return {s: sorted(u) for s, u in utts.items()}
+        idx = index_archive(tar)
+        return {s: extract_speaker(tar, idx, s, dest) for s in speakers}
 
 
 def candidate_order(utterances: List[str], speaker: str) -> List[str]:
@@ -176,15 +187,19 @@ def usable_clips(spk: str, utts: List[str], raw: str, output_dir: str, vocab_pat
             sf.write(os.path.join(output_dir, rel), audio, rate, subtype="PCM_16")
             candidates.append(DatasetRecord(
                 audio=rel, text=text, lang="en", speaker=f"librittsr_{spk}", duration_s=round(len(audio) / rate, 4),
-                sr=rate, transcript_source="dataset", source=f"LibriTTS-R {SUBSET} {utt}"))
+                sr=rate, transcript_source="dataset", source=f"LibriTTS-R {SUBSET} {utt}",
+                single_clip_speaker=True))
         if not candidates:
             break
         cand_path = write_dataset(os.path.join(output_dir, f"candidates_{spk}.jsonl"), candidates)
         bad: Dict[str, List[str]] = {}
         for e in validate_dataset(cand_path, vocab_path).errors:  # keyed by audio path, unlike line numbers
+            if e.code == "single_clip_speaker":
+                continue
             bad.setdefault(e.audio, []).append(f"{e.code}: {e.message}")
         os.remove(cand_path)
         for rec in candidates:
+            rec.single_clip_speaker = False
             if rec.audio in bad:
                 rejected.append({"utterance": rec.source.split()[-1], "speaker": spk,
                                  "reason": "; ".join(bad[rec.audio])})
@@ -212,7 +227,6 @@ def build(output_dir: str, cache_dir: str, vocab_path: str, url_base: str = URL_
     genders = read_speakers(doc)
     queues = reader_queues(genders)
     raw = os.path.join(cache_dir, "dev_clean_extracted")
-    utts = index_and_extract(dev, queues["F"] + queues["M"], raw)
     os.makedirs(os.path.join(output_dir, "clips"), exist_ok=True)
 
     speakers: List[str] = []
@@ -220,21 +234,24 @@ def build(output_dir: str, cache_dir: str, vocab_path: str, url_base: str = URL_
     rejected: List[Dict[str, Any]] = []
     skipped: List[Dict[str, Any]] = []
     slot = 0
-    while len(speakers) < N_SPEAKERS:
-        gender = ("F", "M")[slot % 2]
-        if not queues[gender]:
-            raise ValueError(f"no {gender} reader left with {CLIPS_PER_SPEAKER} usable clips; "
-                             f"{len(speakers)} of {N_SPEAKERS} chosen")
-        spk = queues[gender].pop(0)
-        clips, rej = usable_clips(spk, utts[spk], raw, output_dir, vocab_path)
-        rejected += rej
-        if not clips:
-            skipped.append({"reader": spk, "gender": gender,
-                            "reason": f"fewer than {CLIPS_PER_SPEAKER} usable clips ({len(utts[spk])} utterances)"})
-            continue
-        speakers.append(spk)
-        chosen += clips
-        slot += 1
+    with tarfile.open(dev, "r:gz") as tar:
+        tar_index = index_archive(tar)
+        while len(speakers) < N_SPEAKERS:
+            gender = ("F", "M")[slot % 2]
+            if not queues[gender]:
+                raise ValueError(f"no {gender} reader left with {CLIPS_PER_SPEAKER} usable clips; "
+                                 f"{len(speakers)} of {N_SPEAKERS} chosen")
+            spk = queues[gender].pop(0)
+            spk_utts = extract_speaker(tar, tar_index, spk, raw)
+            clips, rej = usable_clips(spk, spk_utts, raw, output_dir, vocab_path)
+            rejected += rej
+            if not clips:
+                skipped.append({"reader": spk, "gender": gender,
+                                "reason": f"fewer than {CLIPS_PER_SPEAKER} usable clips ({len(spk_utts)} utterances)"})
+                continue
+            speakers.append(spk)
+            chosen += clips
+            slot += 1
 
     dataset = write_dataset(os.path.join(output_dir, "dataset.jsonl"), chosen)
     final = validate_dataset(dataset, vocab_path)

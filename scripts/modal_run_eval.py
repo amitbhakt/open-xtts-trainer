@@ -71,7 +71,11 @@ REMOTE_ROOT = Path("/root/open-xtts-trainer")
 DEFAULT_EVIDENCE_DIR = "docs/evidence/phase6_heldout"
 # Never brought back: a real person's held-out voice clips, and audio, weights or archives (large, and not evidence)
 PRIVATE_DIRS = {"target_voices"}
-SKIPPED_SUFFIXES = {".wav", ".mp3", ".flac", ".ogg", ".pth", ".pt", ".ckpt", ".safetensors", ".zip", ".tar", ".gz"}
+SKIPPED_SUFFIXES = {
+    ".wav", ".mp3", ".flac", ".ogg", ".m4a", ".opus", ".aac", ".aiff", ".aif",
+    ".pth", ".pt", ".ckpt", ".safetensors", ".bin", ".npy", ".npz", ".onnx", ".pkl",
+    ".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".tgz",
+}
 
 
 def retrievable(rel: str) -> bool:
@@ -81,9 +85,25 @@ def retrievable(rel: str) -> bool:
 
 def evidence_digests(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> dict:
     """SHA-256 of every retrievable file under root / evidence_dir, keyed by path relative to root."""
-    return {rel: hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in (root / evidence_dir).rglob("*")
-            if p.is_file() and retrievable(rel := p.relative_to(root).as_posix())}
+    target_dir = (root / evidence_dir).resolve()
+    digests = {}
+    for p in (root / evidence_dir).rglob("*"):
+        if p.is_symlink() or not p.is_file():
+            continue
+        try:
+            resolved = p.resolve()
+        except (OSError, RuntimeError):
+            continue
+        try:
+            if not resolved.is_relative_to(target_dir):
+                continue
+        except AttributeError:  # Python < 3.9 compatibility
+            if not str(resolved).startswith(str(target_dir)):
+                continue
+        rel = p.relative_to(root).as_posix()
+        if retrievable(rel):
+            digests[rel] = hashlib.sha256(p.read_bytes()).hexdigest()
+    return digests
 
 
 @app.function(
@@ -135,6 +155,13 @@ def run_command_remote(cmd: str, evidence_dir: str = DEFAULT_EVIDENCE_DIR):
         if before.get(rel) == digest:
             continue
         p = REMOTE_ROOT / rel
+        if p.is_symlink() or not p.is_file():
+            continue
+        try:
+            if not p.resolve().is_relative_to((REMOTE_ROOT / evidence_dir).resolve()):
+                continue
+        except (OSError, RuntimeError, AttributeError):
+            continue
         try:
             artifacts[rel] = p.read_text(encoding="utf-8")
         except UnicodeDecodeError:

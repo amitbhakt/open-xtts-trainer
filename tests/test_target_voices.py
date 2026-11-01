@@ -391,7 +391,7 @@ def test_target_runner_training_command_passes_m1_options_and_keeps_run6_default
     assert m1[-8:] == ["--seed", "2", "--split_seed", "1", "--freeze", "conditioning", "--replay", "r/dataset.jsonl"]
 
 
-def test_tagged_runs_get_their_own_results_dir_and_c2_takes_no_extra_replay():
+def test_tagged_runs_get_their_own_results_dir_and_c2_takes_no_extra_replay(tmp_path):
     from scripts.run_target_finetune_ab import check_replay_args, resolve_results_dir
 
     assert resolve_results_dir(None, "") == "runs/results_target_speaker"
@@ -401,6 +401,15 @@ def test_tagged_runs_get_their_own_results_dir_and_c2_takes_no_extra_replay():
     check_replay_args(["r.jsonl"], False)
     with pytest.raises(SystemExit, match="pre-registered"):
         check_replay_args(["extra.jsonl"], True)
+    # --replay-librittsr with --skip-train requires an existing checkpoint trained with C2
+    with pytest.raises(SystemExit, match="missing"):
+        check_replay_args([], True, skip_train=True, export_dir=str(tmp_path))
+    summary = tmp_path / "training_summary.json"
+    summary.write_text(json.dumps({"same_language_replay_clips": 10, "same_language_replay_share": 0.1}))
+    with pytest.raises(SystemExit, match="requires a checkpoint trained with the 75-clip C2"):
+        check_replay_args([], True, skip_train=True, export_dir=str(tmp_path))
+    summary.write_text(json.dumps({"same_language_replay_clips": 75, "same_language_replay_share": 0.5}))
+    check_replay_args([], True, skip_train=True, export_dir=str(tmp_path))
 
 
 def test_c2_replay_is_cached_on_the_runs_volume_and_must_match_the_committed_selection(tmp_path):

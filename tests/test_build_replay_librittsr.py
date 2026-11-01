@@ -168,3 +168,14 @@ def test_a_skipped_readers_usable_clips_are_recorded_and_removed(tmp_path, monke
     reasons = {r["utterance"]: r["reason"] for r in rejected}
     assert reasons.keys() == set(utts) and "reader was skipped" in reasons[utts[0]]
     assert os.listdir(tmp_path / "out" / "clips") == []
+
+
+def test_candidate_batch_with_single_clip_not_rejected_as_single_clip_speaker(tmp_path, monkeypatch):
+    """When a candidate batch contains only 1 clip, it must not be rejected by single_clip_speaker validation."""
+    monkeypatch.setattr(replay, "CLIPS_PER_SPEAKER", 1)
+    vocab = write_test_vocab(str(tmp_path / "vocab.json"))
+    utts = _raw_reader(tmp_path / "raw", "9", [TEXTS[0]])
+    (tmp_path / "out" / "clips").mkdir(parents=True)
+    chosen, rejected = replay.usable_clips("9", utts, str(tmp_path / "raw"), str(tmp_path / "out"), vocab)
+    assert len(chosen) == 1 and chosen[0].source.split()[-1] == utts[0]
+    assert rejected == []

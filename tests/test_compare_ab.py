@@ -412,6 +412,7 @@ def test_robust_section_is_neutral_on_identical_outputs(base):
         r = report["robust"]["overall"][m]
         assert r["n"] == 120 and r["median_diff"] == 0 and r["median_diff_ci95"] == [0.0, 0.0]
         assert r["base"] == r["tuned"] and r["runaway_base_only"] == r["runaway_tuned_only"] == 0
+        assert r["paired_diff_without_runaway"] == 0.0 and r["pairs_without_runaway"] == 120
     assert set(report["robust"]["by_voice"]) == set(report["by_voice"])
 
 
@@ -434,6 +435,7 @@ def test_one_runaway_take_moves_the_mean_but_not_the_robust_view(base):
     assert report["overall"]["wer"]["diff"] > 0.01  # the mean moves
     assert r["median_diff"] == 0 and r["runaway_tuned_only"] == 1 and r["runaway_base_only"] == 0
     assert r["tuned"]["runaway"] == r["base"]["runaway"] + 1 and r["tuned"]["runaway_rate"] > r["base"]["runaway_rate"]
+    assert r["pairs_without_runaway"] == 119 and r["paired_diff_without_runaway"] == 0.0
     tuned_wers = [x["wer"] for run in tuned["runs"] for res in run["per_seed_results"].values() for x in res]
     kept = [w for w in tuned_wers if w <= RUNAWAY_WER]
     assert len(kept) == len(tuned_wers) - r["tuned"]["runaway"]

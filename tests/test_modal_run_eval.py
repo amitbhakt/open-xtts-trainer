@@ -22,12 +22,24 @@ def test_private_clips_audio_and_weights_never_come_back(tmp_path):
         "runs/m1/c1/evidence/target_voices/target_voices.lock.json": "{}",  # the held-out speaker's folder
         "runs/m1/c1/evidence/target_voices/clip_000.wav": "audio",
         "runs/m1/c1/samples/take.WAV": "audio",
+        "runs/m1/c1/samples/take.m4a": "audio",
+        "runs/m1/c1/samples/take.opus": "audio",
         "runs/m1/c1/export/model.pth": "weights",
+        "runs/m1/c1/export/model.bin": "weights",
+        "runs/m1/c1/export/model.onnx": "weights",
+        "runs/m1/c1/export/tensors.npy": "tensors",
+        "runs/m1/c1/export/archive.tar.bz2": "archive",
         "runs/m1/c2/ab_report_target.json": "{}",  # another candidate: not under the chosen folder
     }
     for rel, text in files.items():
         (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / rel).write_text(text)
+    # Symlink pointing to external private file should never come back
+    secret = tmp_path / "secret_clip.wav"
+    secret.write_text("private")
+    symlink = tmp_path / "runs/m1/c1/evidence/leak_report.json"
+    symlink.symlink_to(secret)
+
     got = runner.evidence_digests(tmp_path, "runs/m1/c1")
     assert set(got) == {"runs/m1/c1/ab_report_target.json", "runs/m1/c1/evidence/training_summary.json"}
 
