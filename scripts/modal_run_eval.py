@@ -10,6 +10,14 @@ Usage:
 
     # Quick smoke test or test suite:
     uvx modal run scripts/modal_run_eval.py --gpu A100-40GB --cmd "pytest -q"
+
+    # An M1 candidate: results are written under runs/ (a persistent volume) and brought back from there
+    uvx modal run scripts/modal_run_eval.py --gpu A100-40GB --evidence-dir runs/m1/c1 \
+        --cmd "python scripts/run_target_finetune_ab.py --subset-size 20 --results-dir runs/m1/c1 --run-tag c1 --freeze conditioning"
+
+Only files the command created or changed under --evidence-dir come back, and never private or bulky ones: the
+held-out target speaker's clips (any target_voices/ folder), audio, weights or archives. Run it from the checkout
+that holds eval/target_voices/, since the local folder is what gets uploaded.
 """
 
 import hashlib
@@ -60,13 +68,55 @@ image = (
 
 
 REMOTE_ROOT = Path("/root/open-xtts-trainer")
-EVIDENCE_DIR = "docs/evidence/phase6_heldout"
+DEFAULT_EVIDENCE_DIR = "docs/evidence/phase6_heldout"
+# Never brought back: a real person's held-out voice clips, and audio, weights or archives (large, and not evidence)
+PRIVATE_DIRS = {"target_voices"}
+SKIPPED_SUFFIXES = {
+    ".wav", ".mp3", ".flac", ".ogg", ".m4a", ".opus", ".aac", ".aiff", ".aif",
+    ".pth", ".pt", ".ckpt", ".safetensors", ".bin", ".npy", ".npz", ".onnx", ".pkl",
+    ".zip", ".tar", ".gz", ".bz2", ".xz", ".7z", ".tgz",
+}
 
 
-def evidence_digests(root: Path) -> dict:
-    """SHA-256 of every file under root / EVIDENCE_DIR, keyed by path relative to root."""
-    return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in (root / EVIDENCE_DIR).rglob("*") if p.is_file()}
+def retrievable(rel: str) -> bool:
+    path = Path(rel)
+    return not (PRIVATE_DIRS & set(path.parts)) and path.suffix.lower() not in SKIPPED_SUFFIXES
+
+
+def tracked_evidence_files(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> set:
+    """Set of all non-private file and symlink paths under root / evidence_dir, for deletion tracking."""
+    files = set()
+    for p in (root / evidence_dir).rglob("*"):
+        if not p.is_file() and not p.is_symlink():
+            continue
+        rel = p.relative_to(root).as_posix()
+        path = Path(rel)
+        if not (PRIVATE_DIRS & set(path.parts)):
+            files.add(rel)
+    return files
+
+
+def evidence_digests(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> dict:
+    """SHA-256 of every retrievable file under root / evidence_dir, keyed by path relative to root."""
+    target_dir = (root / evidence_dir).resolve()
+    digests = {}
+    for p in (root / evidence_dir).rglob("*"):
+        if p.is_symlink() or not p.is_file():
+            continue
+        try:
+            resolved = p.resolve()
+        except (OSError, RuntimeError):
+            continue
+        try:
+            if not resolved.is_relative_to(target_dir):
+                continue
+        except AttributeError:  # Python < 3.9 compatibility
+            if not str(resolved).startswith(str(target_dir)):
+                continue
+        rel = p.relative_to(root).as_posix()
+        if retrievable(rel):
+            digests[rel] = hashlib.sha256(p.read_bytes()).hexdigest()
+    return digests
 
 
 @app.function(
@@ -80,7 +130,7 @@ def evidence_digests(root: Path) -> dict:
     },
     timeout=7200,
 )
-def run_command_remote(cmd: str):
+def run_command_remote(cmd: str, evidence_dir: str = DEFAULT_EVIDENCE_DIR):
     """Execute a bash command inside the Modal GPU container and commit outputs."""
     # Stage new overlay source files while excluding generated runtime and output directories.
     # Set fixed author/committer timestamps so the overlay commit SHA is deterministic and
@@ -94,7 +144,8 @@ def run_command_remote(cmd: str):
         cwd="/root/open-xtts-trainer",
         check=False,
     )
-    before = evidence_digests(REMOTE_ROOT)
+    before = evidence_digests(REMOTE_ROOT, evidence_dir)
+    before_files = tracked_evidence_files(REMOTE_ROOT, evidence_dir)
     print(f"🔧 Running in Modal container: {cmd}")
     # No check=True: a failing command must still return what it wrote, with its exit code
     proc = subprocess.run(
@@ -111,13 +162,21 @@ def run_command_remote(cmd: str):
     # Return only evidence files the command created or changed, so unchanged copies from the image never
     # replace local files edited during the run
     artifacts = {}
-    after = evidence_digests(REMOTE_ROOT)
-    # Evidence the command deleted is reported, not silently left behind as a stale local copy
-    deleted = sorted(set(before) - set(after))
+    after = evidence_digests(REMOTE_ROOT, evidence_dir)
+    after_files = tracked_evidence_files(REMOTE_ROOT, evidence_dir)
+    # Evidence the command deleted is reported (including any tracked file format), not silently left behind
+    deleted = sorted(before_files - after_files)
     for rel, digest in after.items():
         if before.get(rel) == digest:
             continue
         p = REMOTE_ROOT / rel
+        if p.is_symlink() or not p.is_file():
+            continue
+        try:
+            if not p.resolve().is_relative_to((REMOTE_ROOT / evidence_dir).resolve()):
+                continue
+        except (OSError, RuntimeError, AttributeError):
+            continue
         try:
             artifacts[rel] = p.read_text(encoding="utf-8")
         except UnicodeDecodeError:
@@ -126,10 +185,13 @@ def run_command_remote(cmd: str):
 
 
 @app.local_entrypoint()
-def main(cmd: str = "python scripts/run_run5_pipeline.py", gpu: str = "A100-40GB"):
-    print(f"Submitting job to Modal ({gpu})...")
+def main(cmd: str = "python scripts/run_run5_pipeline.py", gpu: str = "A100-40GB",
+         evidence_dir: str = DEFAULT_EVIDENCE_DIR):
+    if Path(evidence_dir).is_absolute() or ".." in Path(evidence_dir).parts:
+        raise SystemExit(f"--evidence-dir must be a path inside the repository, got {evidence_dir!r}")
+    print(f"Submitting job to Modal ({gpu}); evidence from {evidence_dir}...")
     fn = run_command_remote.with_options(gpu=gpu)
-    res = fn.remote(cmd)
+    res = fn.remote(cmd, evidence_dir)
     if isinstance(res, dict) and "artifacts" in res:
         for rel_path, content in res["artifacts"].items():
             dest = repo_root / rel_path

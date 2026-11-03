@@ -147,6 +147,28 @@ def language_shares(samples: Sequence[Dict[str, Any]]) -> Dict[str, float]:
     return {lang: round(1 / len(langs), 4) for lang in langs}
 
 
+# Parts of the GPT that can be held at their released values during fine-tuning (M1 candidates). The speaker
+# conditioning path turns a reference clip into the 32 latents every voice is cloned from; if fine-tuning on one
+# speaker moves it, zero-shot cloning of other speakers can suffer.
+FREEZABLE_PARTS = {"conditioning": ("conditioning_encoder.", "conditioning_perceiver.")}
+
+
+def freeze_gpt_parts(gpt: torch.nn.Module, parts: Sequence[str]) -> int:
+    """Stop gradients for the named FREEZABLE_PARTS of gpt. Returns the number of frozen parameter tensors."""
+    unknown = sorted(set(parts) - set(FREEZABLE_PARTS))
+    if unknown:
+        raise ValueError(f"unknown parts to freeze {unknown}; choose from {sorted(FREEZABLE_PARTS)}")
+    frozen = 0
+    for part in dict.fromkeys(parts):  # a part named twice is frozen, and counted, once
+        matched = [p for name, p in gpt.named_parameters() if name.startswith(FREEZABLE_PARTS[part])]
+        if not matched:
+            raise ValueError(f"no parameters match {part!r} ({FREEZABLE_PARTS[part]}); the architecture lacks it")
+        for p in matched:
+            p.requires_grad_(False)
+        frozen += len(matched)
+    return frozen
+
+
 # --------------------------------------------------------------------------- config and model
 
 def build_gpt_trainer_config(
