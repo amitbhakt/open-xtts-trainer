@@ -60,5 +60,13 @@ def test_tracked_evidence_files_tracks_deletions_for_all_suffixes(tmp_path):
     (dir_path / "report.json").write_text("{}")
     (dir_path / "data.npz").write_text("data")
     (dir_path / "weights.bin").write_text("bin")
+    (dir_path / "symlink.txt").symlink_to(dir_path / "report.json")
+    (dir_path / "broken_link.txt").symlink_to(tmp_path / "nonexistent.txt")
     tracked = runner.tracked_evidence_files(tmp_path, "evidence")
-    assert tracked == {"evidence/report.json", "evidence/data.npz", "evidence/weights.bin"}
+    assert tracked == {
+        "evidence/report.json",
+        "evidence/data.npz",
+        "evidence/weights.bin",
+        "evidence/symlink.txt",
+        "evidence/broken_link.txt",
+    }

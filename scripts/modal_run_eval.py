@@ -84,17 +84,10 @@ def retrievable(rel: str) -> bool:
 
 
 def tracked_evidence_files(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> set:
-    """Set of all non-private file paths under root / evidence_dir, for deletion tracking."""
-    target_dir = (root / evidence_dir).resolve()
+    """Set of all non-private file and symlink paths under root / evidence_dir, for deletion tracking."""
     files = set()
     for p in (root / evidence_dir).rglob("*"):
-        if p.is_symlink() or not p.is_file():
-            continue
-        try:
-            resolved = p.resolve()
-            if not resolved.is_relative_to(target_dir):
-                continue
-        except (OSError, RuntimeError, AttributeError):
+        if not p.is_file() and not p.is_symlink():
             continue
         rel = p.relative_to(root).as_posix()
         path = Path(rel)

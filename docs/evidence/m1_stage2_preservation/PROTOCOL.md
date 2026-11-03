@@ -1,6 +1,6 @@
 # M1: a Stage 2 setting that adapts the voice without costing other voices (protocol)
 
-**Status: FROZEN 2026-10-31 (`78ce960`), AMENDED 2026-10-31 before any M1 training run (section 9).** This is the
+**Status: FROZEN 2026-10-31 (`78ce960`), AMENDED 2026-10-31 – 2026-11-03 before any M1 training run (section 9).** This is the
 pre-registration. Its reference is the amended version; section 9 lists every change from `78ce960` and why. Any
 later change above the results section, or to the code in section 8, is reported as a deviation. Results go in a
 separate section added after the runs; nothing above it changes.
