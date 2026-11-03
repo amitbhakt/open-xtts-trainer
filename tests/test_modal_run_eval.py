@@ -51,3 +51,14 @@ def test_default_folder_is_still_the_held_out_evidence(tmp_path):
     (tmp_path / "docs/evidence/phase6_heldout/report.json").write_text("{}")
     assert list(runner.evidence_digests(tmp_path)) == ["docs/evidence/phase6_heldout/report.json"]
     assert runner.evidence_digests(tmp_path, "runs/missing") == {}
+
+
+def test_tracked_evidence_files_tracks_deletions_for_all_suffixes(tmp_path):
+    runner = _load()
+    dir_path = tmp_path / "evidence"
+    dir_path.mkdir()
+    (dir_path / "report.json").write_text("{}")
+    (dir_path / "data.npz").write_text("data")
+    (dir_path / "weights.bin").write_text("bin")
+    tracked = runner.tracked_evidence_files(tmp_path, "evidence")
+    assert tracked == {"evidence/report.json", "evidence/data.npz", "evidence/weights.bin"}

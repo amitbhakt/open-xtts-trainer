@@ -73,10 +73,9 @@ their channel. Built by `scripts/build_replay_librittsr.py`:
   pass the project's dataset validator (vocabulary, frozen eval-set sentences, reference-voice audio, durations),
   looking through the reader's utterances until 5 pass or none are left.
   75 clips, as many as the target's training clips (50% of C2's training clips). The target training set must have
-  exactly 75 clips (as Moira Fogarty's 95-clip dataset has after holding out 20 evaluation clips) to match the
-  fixed 75-clip replay set and implement the registered 50% replay ratio. The runner enforces this: runs where
-  the target training set does not have 75 clips are rejected under `--replay-librittsr`. Text is the corpus's
-  normalized transcript.
+  exactly 75 clips (as produced for Moira Fogarty) to match the fixed 75-clip replay set and implement the
+  registered 50% replay ratio. The runner enforces this: runs where the target training set does not have 75 clips
+  are rejected under `--replay-librittsr`. Text is the corpus's normalized transcript.
 - **Recorded:** `replay_selection.json` lists the pins, license, rule, every chosen clip (with its SHA-256),
   skipped readers, and every utterance looked at and not chosen, with its reason (including a skipped reader's
   usable clips).
@@ -158,9 +157,9 @@ written).
 - `scripts/modal_run_eval.py --evidence-dir runs/m1/<candidate>`: brings back the run's reports and records, never
   the held-out clips, audio or weights. Tested in `tests/test_modal_run_eval.py`.
 
-## 9. Amendments before the first run (2026-10-31)
+## 9. Amendments before the first run (2026-10-31 – 2026-11-03)
 
-Made after `78ce960` froze the protocol and before any M1 training run, prompted by a review of PR #14. None uses
+Made after `78ce960` froze the protocol and before any M1 training run, prompted by reviews of PR #14. None uses
 any M1 result; there is none yet.
 
 | # | What changed | Why |
@@ -174,3 +173,5 @@ any M1 result; there is none yet.
 | A7 | Each run's results directory follows its `--run-tag`; `--replay-librittsr` refuses other replay files | Candidates could overwrite each other's reports, and C2 could have trained on more than the pre-registered set |
 | A8 | Replay selection: the reader shuffle is described as it is coded (one generator, female queue first); readers are scanned until 5 clips pass; every utterance looked at and not chosen is recorded | The text described a per-gender seed the code never used; a cap could have skipped a reader with usable clips later in its order; a skipped reader's usable clips went unrecorded. The 75 chosen clips are unchanged (no clip ever failed validation) |
 | A9 | Runaway takes are described as a heuristic; every run uses `--subset-size 20`; the budget is 720 takes per run | WER > 1 can't prove a loop; C0 was listed as "(defaults)" though the default subset is 12; the baselines are regenerated per run |
+| A10 | C2 runner enforces exactly 75 target training clips (`--replay-librittsr`) | C2 fixes replay at 75 clips to match the target's 75 clips (50% replay ratio); target splits with another count would alter the registered ratio |
+| A11 | Budget and confirmation: 2 runs per confirmation attempt, and seed 3 still runs if seed 2 fails | A failed confirmation also costs runs; completing seed 3 records full seed-stability data for that candidate |

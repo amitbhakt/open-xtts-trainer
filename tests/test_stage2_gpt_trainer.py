@@ -401,7 +401,7 @@ def test_same_language_replay_must_come_from_other_speakers(tmp_path):
 def test_added_language_replay_must_be_base_languages(tmp_path, sw_vocab):
     from xtts_trainer.stage2_gpt.train import train_gpt
 
-    def ds(name, spk):
+    def ds(name, spk, lang="sw", texts=None):
         d = tmp_path / name
         d.mkdir(parents=True, exist_ok=True)
         paths = []
@@ -409,11 +409,18 @@ def test_added_language_replay_must_be_base_languages(tmp_path, sw_vocab):
             p = str(d / f"c{i}.wav")
             sf.write(p, (0.1 * np.random.RandomState(i + len(name)).randn(44100)).astype("float32"), 22050)
             paths.append(p)
-        return write_test_dataset(str(d), paths, texts=["habari ya asubuhi", "rafiki yangu"], lang="sw", speaker=spk)
+        texts = texts or ["habari ya asubuhi", "rafiki yangu"]
+        return write_test_dataset(str(d), paths, texts=texts, lang=lang, speaker=spk)
 
+    # Added-language target with added-language replay
     with pytest.raises(ValueError, match="base languages"):
-        train_gpt(ds("target", "spk1"), str(tmp_path / "run"), str(tmp_path), vocab_path=sw_vocab,
-                  languages=["sw"], replay_paths=[ds("replay", "spk2")])
+        train_gpt(ds("target_sw", "spk1"), str(tmp_path / "run1"), str(tmp_path), vocab_path=sw_vocab,
+                  languages=["sw"], replay_paths=[ds("replay_sw", "spk2")])
+    # Base-language target with added-language replay (when extra languages are registered)
+    with pytest.raises(ValueError, match="base languages"):
+        train_gpt(ds("target_en", "spk3", lang="en", texts=["the sun rose over the hills", "a quiet afternoon in the park"]),
+                  str(tmp_path / "run2"), str(tmp_path), vocab_path=sw_vocab,
+                  languages=["sw"], replay_paths=[ds("replay_sw2", "spk4")])
 
 
 @needs_vocab

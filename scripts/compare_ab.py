@@ -333,7 +333,8 @@ def main():
         if r["n"]:
             ci = r["median_diff_ci95"]
             ci_str = f"[{ci[0]:+.4f}, {ci[1]:+.4f}]" if ci[0] is not None else "[N/A, N/A]"
-            paired_excl = f"  diff excl runaways {r['paired_diff_without_runaway']:+.4f}" if r.get("paired_diff_without_runaway") is not None else ""
+            paired_excl = (f"  diff excl runaways {r['paired_diff_without_runaway']:+.4f} (n={r['pairs_without_runaway']})"
+                           if r.get("paired_diff_without_runaway") is not None else "")
             print(f"  {m} robust: median base {r['base']['median']:.4f}  tuned {r['tuned']['median']:.4f}  "
                   f"median diff {r['median_diff']:+.4f} {ci_str}{paired_excl}; runaway (WER > {RUNAWAY_WER:g}) "
                   f"base {r['base']['runaway']}/{r['n']}  tuned {r['tuned']['runaway']}/{r['n']}")

@@ -83,6 +83,26 @@ def retrievable(rel: str) -> bool:
     return not (PRIVATE_DIRS & set(path.parts)) and path.suffix.lower() not in SKIPPED_SUFFIXES
 
 
+def tracked_evidence_files(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> set:
+    """Set of all non-private file paths under root / evidence_dir, for deletion tracking."""
+    target_dir = (root / evidence_dir).resolve()
+    files = set()
+    for p in (root / evidence_dir).rglob("*"):
+        if p.is_symlink() or not p.is_file():
+            continue
+        try:
+            resolved = p.resolve()
+            if not resolved.is_relative_to(target_dir):
+                continue
+        except (OSError, RuntimeError, AttributeError):
+            continue
+        rel = p.relative_to(root).as_posix()
+        path = Path(rel)
+        if not (PRIVATE_DIRS & set(path.parts)):
+            files.add(rel)
+    return files
+
+
 def evidence_digests(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> dict:
     """SHA-256 of every retrievable file under root / evidence_dir, keyed by path relative to root."""
     target_dir = (root / evidence_dir).resolve()
@@ -132,6 +152,7 @@ def run_command_remote(cmd: str, evidence_dir: str = DEFAULT_EVIDENCE_DIR):
         check=False,
     )
     before = evidence_digests(REMOTE_ROOT, evidence_dir)
+    before_files = tracked_evidence_files(REMOTE_ROOT, evidence_dir)
     print(f"🔧 Running in Modal container: {cmd}")
     # No check=True: a failing command must still return what it wrote, with its exit code
     proc = subprocess.run(
@@ -149,8 +170,9 @@ def run_command_remote(cmd: str, evidence_dir: str = DEFAULT_EVIDENCE_DIR):
     # replace local files edited during the run
     artifacts = {}
     after = evidence_digests(REMOTE_ROOT, evidence_dir)
-    # Evidence the command deleted is reported, not silently left behind as a stale local copy
-    deleted = sorted(set(before) - set(after))
+    after_files = tracked_evidence_files(REMOTE_ROOT, evidence_dir)
+    # Evidence the command deleted is reported (including any tracked file format), not silently left behind
+    deleted = sorted(before_files - after_files)
     for rel, digest in after.items():
         if before.get(rel) == digest:
             continue

@@ -133,15 +133,24 @@ def index_archive(tar: tarfile.TarFile) -> Dict[str, Dict[str, Dict[str, tarfile
 
 def extract_speaker(tar: tarfile.TarFile, index: Dict[str, Dict[str, Dict[str, tarfile.TarInfo]]],
                     spk: str, dest: str) -> List[str]:
-    """Extract only one speaker's regular wav + text files into dest; return sorted utterance ids."""
+    """Extract only one speaker's regular wav + text files into dest; return sorted utterance ids.
+
+    Members are extracted in forward archive order (sorted by TarInfo.offset) so reading a gzip-compressed
+    tar does not seek backward and trigger full archive rewinds.
+    """
     os.makedirs(dest, exist_ok=True)
     utts = set()
+    to_extract = []
     for utt, exts in index.get(spk, {}).items():
         if "wav" in exts and "normalized.txt" in exts:
             for ext in ("wav", "normalized.txt"):
-                with open(os.path.join(dest, f"{utt}.{ext}"), "wb") as out:
-                    out.write(tar.extractfile(exts[ext]).read())
+                member = exts[ext]
+                to_extract.append((member.offset, member, os.path.join(dest, f"{utt}.{ext}")))
             utts.add(utt)
+    to_extract.sort(key=lambda item: item[0])
+    for _, member, target_path in to_extract:
+        with open(target_path, "wb") as out:
+            out.write(tar.extractfile(member).read())
     return sorted(utts)
 
 
