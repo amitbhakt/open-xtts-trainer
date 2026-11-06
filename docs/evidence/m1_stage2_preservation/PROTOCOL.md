@@ -178,9 +178,9 @@ any M1 result; there is none yet.
 
 ## 10. Results (added after the runs; sections 1–9 are unchanged)
 
-**Status: screening round incomplete (2 of 4 candidates run).** C0 and C1 ran on 2026-11-06 on Modal
-(A100-SXM4-40GB). C2 and C3 have not run. No candidate has passed, so nothing has been confirmed. Every file the
-runner returned is in `runs/c0/` and `runs/c1/`, unedited.
+**Status: screening round complete; no candidate passed (rule 5: C4 next).** C0–C3 ran on 2026-11-06 on Modal
+(A100-SXM4-40GB). No candidate passed both gate sets, so nothing has been confirmed. Every file the runner
+returned is in `c0/`, `c1/`, `c2/` and `c3/` beside this file, unedited.
 
 ### 10.1 Screening results (training seed 1)
 
@@ -188,32 +188,41 @@ runner returned is in `runs/c0/` and `runs/c1/`, unedited.
 |---|---|---|---|
 | C0 | All pass. SECS +0.0329 [+0.0191, +0.0477]; WER +0.0084; CER +0.0033; UTMOS −0.040; failures 0 and 0 | **SECS fails**: −0.0243 [−0.0299, −0.0185] against a 0.02 margin. WER −0.0365, CER −0.1318, UTMOS +0.097, failures (tuned 2, stock 6) pass | No |
 | C1 | All pass. SECS +0.0400 [+0.0263, +0.0539]; WER −0.0046; CER +0.0016; UTMOS −0.040; failures 0 and 0 | SECS passes: −0.0113 [−0.0164, −0.0062]. **WER fails**: +0.0163 [−0.027, +0.080]. **CER fails**: +0.0373 [−0.142, +0.291]. UTMOS +0.065 and failures (tuned 5, stock 6) pass | No |
+| C2 | SECS +0.0442 [+0.0293, +0.0592]; WER −0.0017; UTMOS +0.021; failures 0 and 0 pass. **CER fails**: +0.0037 [−0.0033, +0.0143] | **SECS fails**: −0.0322 [−0.0383, −0.0260]. **CER fails**: −0.0793 [−0.199, +0.010]. WER −0.0204, UTMOS +0.132, failures (tuned 3, stock 6) pass | No |
+| C3 | All pass. SECS +0.0266 [+0.0147, +0.0398]; WER −0.0058; CER +0.0013; UTMOS −0.021; failures 0 and 0 | **SECS fails**: −0.0189 [−0.0238, −0.0140]. WER −0.0171, CER −0.0898, UTMOS +0.061, failures (tuned 3, stock 6) pass | No |
 
 Brackets are 95% CIs of the tuned − stock difference, as `compare_ab.py` reports them. C0 reproduces Run 6's
 preservation failure (Run 6: SECS −0.0236 [−0.029, −0.018]).
 
 ### 10.2 Secondary outcomes (section 5; never gates)
 
-| | C0 | C1 |
-|---|---|---|
-| Best step, eval loss before → best | 190, 3.958 → 3.105 | 190, 3.954 → 3.125 |
-| Frozen parameter tensors | 0 | 54 (`conditioning`) |
-| Preservation SECS diff by voice: awb, bdl, clb, ksp, slt | −0.028, −0.008, −0.012, −0.030, −0.044 | −0.018, −0.003, −0.002, −0.010, −0.022 |
-| Preservation runaway takes (WER > 1), stock / tuned | 3 / 0 | 2 / 2 |
-| Preservation median WER difference | 0.0 | 0.0 |
-| Preservation paired mean WER difference without runaway pairs | −0.0133 | −0.0037 |
-| Preservation paired mean CER difference without runaway pairs | −0.0321 | −0.0162 |
+| | C0 | C1 | C2 | C3 |
+|---|---|---|---|---|
+| Best step, eval loss before → best | 190, 3.958 → 3.105 | 190, 3.954 → 3.125 | 380, 3.954 → 3.084 | 190, 3.954 → 3.272 |
+| Training clips (target + replay), eval clips, LR | 75, 8, 5e-6 | 75, 8, 5e-6 | 75 + 75 (15 readers), 8, 5e-6 | 75, 8, 2.5e-6 |
+| Frozen parameter tensors | 0 | 54 (`conditioning`) | 0 | 0 |
+| Preservation SECS diff by voice: awb, bdl, clb, ksp, slt | −0.028, −0.008, −0.012, −0.030, −0.044 | −0.018, −0.003, −0.002, −0.010, −0.022 | −0.030, −0.014, −0.020, −0.064, −0.033 | −0.012, −0.004, −0.019, −0.020, −0.039 |
+| Preservation runaway takes (WER > 1), stock / tuned | 3 / 0 | 2 / 2 | 2 / 0 | 2 / 1 |
+| Preservation median WER difference | 0.0 | 0.0 | 0.0 | 0.0 |
+| Preservation paired mean WER difference without runaway pairs | −0.0133 | −0.0037 | −0.0105 | −0.0105 |
+| Preservation paired mean CER difference without runaway pairs | −0.0321 | −0.0162 | −0.0127 | −0.0267 |
+| Target runaway takes, stock / tuned; target median CER difference | 0 / 0; 0.0 | 0 / 0; 0.0 | 0 / 0; 0.0 | 0 / 0; 0.0 |
 
-Every runaway take in both runs, in either arm, is on sentence `en_53` ("Seven.", a one-word item). C1's
+Every runaway take in all four runs, in either arm, is on sentence `en_53` ("Seven.", a one-word item). C1's
 tuned arm has one take on it (`arctic_awb`, seed 123) at WER 8.0; on its own that take adds 0.027 to the
-300-take mean WER, more than C1's whole WER difference (+0.0163). This is reported, not used: the gates are
-unchanged and C1 fails them.
+300-take mean WER, more than C1's whole WER difference (+0.0163). C2's target CER failure comes from one take:
+the tongue twister `en_12`, seed 123 ("The six sick sheiks' sixth sheep is sick."), at CER 0.286 in the tuned arm
+and 0 in the stock arm; on its own it adds 0.0048 to the 60-take mean, more than C2's whole CER difference
+(+0.0037). Both are reported, not used: the gates are unchanged, and C1 and C2 fail them. C2's replay made
+preservation SECS worse than C0's, not better (−0.032 against −0.024), most of all on `arctic_ksp` (−0.064).
 
 ### 10.3 Deviations and observations
 
 1. **Training data are not byte-identical across runs (section 2, "Same data for every run").** C0 and C1's
    `data_identity.json` differ in `train_dataset_sha256` and `train_clips_sha256`; the held-out reference
-   digest matches. Both runs selected the same 83 clips (75 training, 8 eval, the same eval clip names). The
+   digest matches. C1, C2 and C3 match each other exactly, and the refused first C2 attempt matched C0, so C0 and
+   C1 represent the two versions seen. All runs selected the same 83 clips (75 training, 8 eval, the same eval clip
+   names). The
    difference comes from re-preparing the target data in each run: forced alignment on the GPU moved some cut
    boundaries by about 0.01–0.1 ms and some word scores by 0.01 (`prep_report.json`). By section 2's rule this is
    a deviation, reported here. C1 is still compared, since the clip set is the same and only the sample-level
@@ -222,13 +231,16 @@ unchanged and C1 fails them.
    eval set (`86c0183f…`), reference voices, seeds and batch size (16). Every take's SECS differs slightly between
    C0's and C1's stock runs; WER differs on 3 of 300 preservation takes, one of them a runaway (`arctic_ksp`,
    seed 123, `en_53`: WER 3.0 in C0's stock run, 1.0 in C1's). Stock preservation mean WER is 0.0756 in C0 and
-   0.0697 in C1. Each A/B compares against its own run's stock arm, as section 2 prescribes.
+   0.0697 in C1. C1's, C2's and C3's stock runs are bit-identical take by take (all 60 target and 300
+   preservation takes); only C0's differs. Each A/B compares against its own run's stock arm, as section 2
+   prescribes.
 3. **The recorded git tree does not identify the commit (amendment A4).** Both runs record commit `ba28fe2` and
    tree `7348db7`, which match no commit in the repository (the commit is the container's own, and its tree
    holds more than the repository). The code fingerprint does identify the code: `b0882b43…` (70 files), equal to
    the fingerprint of `8dd17ed` (main after PR #14), recomputed from that commit's files. So both runs ran the
-   frozen, amended protocol code.
-4. The copy of `gates_target.json` in each results directory differs from `eval/gates_target.json` only by a
+   frozen, amended protocol code. C3 records the same fingerprint, `b0882b43…`. C2 records `60f25919…`, the
+   fingerprint of the fixed code (item 5).
+4. The copy of `gates_target.json` in each results directory (all four runs) differs from `eval/gates_target.json` only by a
    missing final newline; the parsed contents are identical, and both reports record gates version 1.
 5. **Code change after freezing: C2's target-clip check (section 8, amendment A10).** On 2026-11-06 at 18:48 UTC
    the first C2 run stopped before training: `--replay-librittsr` refused to train because
@@ -254,6 +266,30 @@ unchanged and C1 fails them.
 
 ### 10.4 Where the decision rule stands (section 4)
 
-No candidate has passed. Next per the rule: screen C2 (`--replay-librittsr`) and C3 (`--lr 2.5e-6`), each with
-`--subset-size 20` and its own `--run-tag`. C3 is running (launched 2026-11-06); C2 is relaunched with the fixed
-check (item 5). If none passes, screen C4 (C1 + C2).
+The screening round is complete and no candidate passed (C0, C1, C2, C3). Rule 5 applies: C4 (C1 + C2:
+`--freeze conditioning --replay-librittsr`, `--subset-size 20`, `--run-tag c4`) is screened next, on the fixed
+code, and confirmed with training seeds 2 and 3 if it passes. If C4 is not screened as passing and confirmed,
+M1 fails (rule 6). This decision follows the rule as written; it was recorded before C4 was run.
+
+### 10.5 Exploratory: do the gates pass the stock model against itself? (not used to choose)
+
+Run on 2026-11-06 at about 20:10 UTC, on stock results only, before C2's preservation results were returned
+(20:16 UTC). No gate, verdict or decision changes because of it; it is reported to help read the verdicts.
+`compare_ab.py`'s own gate code was used unchanged, except that its refusal to compare a checkpoint with itself
+was bypassed in a scratch script.
+
+- **Same seeds** (C0, C1 and C3's stock runs, three pairs, both gate sets): 0 of 27 `not_worse` gates fail. These
+  takes are nearly or exactly identical, so this shows only that rerunning the stock model does not, by itself,
+  fail a gate.
+- **Different seeds** (each of C0's and C1's stock runs compared with itself, its seeds relabelled 42→123→999→42
+  and 42→999→123→42, so each take is paired with the same voice and sentence at another seed; eight comparisons):
+  every target gate passes (CER interval about ±0.005, WER ±0.008, UTMOS ±0.034), and preservation SECS passes
+  (about ±0.005 against a 0.02 margin). **Preservation WER and CER fail in all four preservation comparisons**:
+  their intervals are about ±0.03 (WER, margin 0.02) and ±0.11 (CER, margin 0.01), driven by runaway takes.
+
+Reading: at this test size, a model whose outputs differ from stock only by sampling chance can fail the
+preservation WER and CER gates, so a pass or failure on those two gates says little about the model; C0's passes
+and C1's failures there are consistent with chance. The SECS gate and the target gates are much wider than their
+noise, so their failures (C0 −0.024, C2 −0.032, C3 −0.019 on preservation SECS) are not explained by chance.
+Seed relabelling approximates the noise between two different models; it is not a measured false-failure rate.
+For M2, gates should be checked this way before they are frozen.

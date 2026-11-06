@@ -1,0 +1,7 @@
+{
+  "train_dataset_sha256": "9634d52e23631818f61992eb78d11ec9e9ab552b7025752845e585ce7e72389e",
+  "train_clips": 83,
+  "train_clips_sha256": "b04ed0e13addd9d4077462e0b4ae5d080cd069f840307735bc8e4e1bb42e7307",
+  "target_voices_files": 2,
+  "target_voices_sha256": "996d6646f0b3c54c979787d0fe14b56f0661820a7afcebc231a658e517ed96a7"
+}
