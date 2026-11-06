@@ -175,3 +175,63 @@ any M1 result; there is none yet.
 | A9 | Runaway takes are described as a heuristic; every run uses `--subset-size 20`; the budget is 720 takes per run | WER > 1 can't prove a loop; C0 was listed as "(defaults)" though the default subset is 12; the baselines are regenerated per run |
 | A10 | C2 runner enforces exactly 75 target training clips (`--replay-librittsr`) | C2 fixes replay at 75 clips to match the target's 75 clips (50% replay ratio); target splits with another count would alter the registered ratio |
 | A11 | Budget and confirmation: 2 runs per confirmation attempt, and seed 3 still runs if seed 2 fails | A failed confirmation also costs runs; completing seed 3 records full seed-stability data for that candidate |
+
+## 10. Results (added after the runs; sections 1–9 are unchanged)
+
+**Status: screening round incomplete (2 of 4 candidates run).** C0 and C1 ran on 2026-11-06 on Modal
+(A100-SXM4-40GB). C2 and C3 have not run. No candidate has passed, so nothing has been confirmed. Every file the
+runner returned is in `runs/c0/` and `runs/c1/`, unedited.
+
+### 10.1 Screening results (training seed 1)
+
+| Run | Target gates (`gates_target.json`) | Preservation gates (`gates.json`) | Pass |
+|---|---|---|---|
+| C0 | All pass. SECS +0.0329 [+0.0191, +0.0477]; WER +0.0084; CER +0.0033; UTMOS −0.040; failures 0 and 0 | **SECS fails**: −0.0243 [−0.0299, −0.0185] against a 0.02 margin. WER −0.0365, CER −0.1318, UTMOS +0.097, failures (tuned 2, stock 6) pass | No |
+| C1 | All pass. SECS +0.0400 [+0.0263, +0.0539]; WER −0.0046; CER +0.0016; UTMOS −0.040; failures 0 and 0 | SECS passes: −0.0113 [−0.0164, −0.0062]. **WER fails**: +0.0163 [−0.027, +0.080]. **CER fails**: +0.0373 [−0.142, +0.291]. UTMOS +0.065 and failures (tuned 5, stock 6) pass | No |
+
+Brackets are 95% CIs of the tuned − stock difference, as `compare_ab.py` reports them. C0 reproduces Run 6's
+preservation failure (Run 6: SECS −0.0236 [−0.029, −0.018]).
+
+### 10.2 Secondary outcomes (section 5; never gates)
+
+| | C0 | C1 |
+|---|---|---|
+| Best step, eval loss before → best | 190, 3.958 → 3.105 | 190, 3.954 → 3.125 |
+| Frozen parameter tensors | 0 | 54 (`conditioning`) |
+| Preservation SECS diff by voice: awb, bdl, clb, ksp, slt | −0.028, −0.008, −0.012, −0.030, −0.044 | −0.018, −0.003, −0.002, −0.010, −0.022 |
+| Preservation runaway takes (WER > 1), stock / tuned | 3 / 0 | 2 / 2 |
+| Preservation median WER difference | 0.0 | 0.0 |
+| Preservation paired mean WER difference without runaway pairs | −0.0133 | −0.0037 |
+| Preservation paired mean CER difference without runaway pairs | −0.0321 | −0.0162 |
+
+Every runaway take in both runs, in either arm, is on sentence `en_53` ("Seven.", a one-word item). C1's
+tuned arm has one take on it (`arctic_awb`, seed 123) at WER 8.0; on its own that take adds 0.027 to the
+300-take mean WER, more than C1's whole WER difference (+0.0163). This is reported, not used: the gates are
+unchanged and C1 fails them.
+
+### 10.3 Deviations and observations
+
+1. **Training data are not byte-identical across runs (section 2, "Same data for every run").** C0 and C1's
+   `data_identity.json` differ in `train_dataset_sha256` and `train_clips_sha256`; the held-out reference
+   digest matches. Both runs selected the same 83 clips (75 training, 8 eval, the same eval clip names). The
+   difference comes from re-preparing the target data in each run: forced alignment on the GPU moved some cut
+   boundaries by about 0.01–0.1 ms and some word scores by 0.01 (`prep_report.json`). By section 2's rule this is
+   a deviation, reported here. C1 is still compared, since the clip set is the same and only the sample-level
+   boundaries differ; a reader who rejects that comparison should treat C1 as not compared with C0.
+2. **Stock baselines regenerated per run are not bit-identical.** Same checkpoint (`model.pth` `c7ea2000…`),
+   eval set (`86c0183f…`), reference voices, seeds and batch size (16). Every take's SECS differs slightly between
+   C0's and C1's stock runs; WER differs on 3 of 300 preservation takes, one of them a runaway (`arctic_ksp`,
+   seed 123, `en_53`: WER 3.0 in C0's stock run, 1.0 in C1's). Stock preservation mean WER is 0.0756 in C0 and
+   0.0697 in C1. Each A/B compares against its own run's stock arm, as section 2 prescribes.
+3. **The recorded git tree does not identify the commit (amendment A4).** Both runs record commit `ba28fe2` and
+   tree `7348db7`, which match no commit in the repository (the commit is the container's own, and its tree
+   holds more than the repository). The code fingerprint does identify the code: `b0882b43…` (70 files), equal to
+   the fingerprint of `8dd17ed` (main after PR #14), recomputed from that commit's files. So both runs ran the
+   frozen, amended protocol code.
+4. The copy of `gates_target.json` in each results directory differs from `eval/gates_target.json` only by a
+   missing final newline; the parsed contents are identical, and both reports record gates version 1.
+
+### 10.4 Where the decision rule stands (section 4)
+
+No candidate has passed. Next per the rule: screen C2 (`--replay-librittsr`) and C3 (`--lr 2.5e-6`), each with
+`--subset-size 20` and its own `--run-tag`. If none passes, screen C4 (C1 + C2).

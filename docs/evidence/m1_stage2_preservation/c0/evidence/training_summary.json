@@ -1,0 +1,58 @@
+{
+  "best_checkpoint": "runs/moira_fogarty_finetune_c0/stage2_gpt-November-06-2026_04+55PM-ba28fe2/best_model.pth",
+  "best_step": 190,
+  "eval_loss_before": 3.9581278562545776,
+  "eval_loss_best": 3.105324149131775,
+  "improved": true,
+  "train_clips": 75,
+  "eval_clips": 8,
+  "language_shares": {
+    "en": 1.0
+  },
+  "languages": [
+    "en",
+    "es",
+    "fr",
+    "de",
+    "it",
+    "pt",
+    "pl",
+    "tr",
+    "ru",
+    "nl",
+    "cs",
+    "ar",
+    "zh-cn",
+    "hu",
+    "ko",
+    "ja",
+    "hi"
+  ],
+  "retrain_for_new_dvae": false,
+  "masking_mode": "per_sample",
+  "same_language_replay_clips": 0,
+  "same_language_replay_share": 0.0,
+  "replay_speakers": [],
+  "frozen_parts": [],
+  "frozen_parameter_tensors": 0,
+  "lr": 5e-06,
+  "epochs": 10,
+  "batch_size": 4,
+  "grad_accum_steps": 8,
+  "eval_fraction": 0.1,
+  "seed": 1,
+  "split_seed": 1,
+  "eval_speakers": [
+    "moira_fogarty"
+  ],
+  "eval_audio": [
+    "clips/art_of_war_short_0004.wav",
+    "clips/art_of_war_short_0006.wav",
+    "clips/art_of_war_short_0007.wav",
+    "clips/art_of_war_short_0039.wav",
+    "clips/art_of_war_short_0041.wav",
+    "clips/art_of_war_short_0077.wav",
+    "clips/art_of_war_short_0083.wav",
+    "clips/art_of_war_short_0085.wav"
+  ]
+}
