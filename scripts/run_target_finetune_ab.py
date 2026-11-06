@@ -43,6 +43,10 @@ REPLAY_SELECTION = "docs/evidence/m1_stage2_preservation/replay_selection.json"
 # Run 6's train/eval split. Runs at other training seeds keep it, so every run chooses its checkpoint on the same
 # target clips (M1 confirmation).
 SPLIT_SEED = 1
+# The trainer's eval share of the target clips (passed as --eval_fraction)
+EVAL_FRACTION = 0.1
+# C2's pre-registered replay set has 75 clips, as many as the target's training clips after the eval split (50%)
+C2_TARGET_TRAIN_CLIPS = 75
 
 
 def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
@@ -56,7 +60,7 @@ def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
         "--batch_size", str(args.batch_size),
         "--grad_accum_steps", str(args.grad_accum_steps),
         "--lr", str(args.lr),
-        "--eval_fraction", "0.1",
+        "--eval_fraction", str(EVAL_FRACTION),
     ]
     if args.train_seed != 1:
         cmd += ["--seed", str(args.train_seed), "--split_seed", str(SPLIT_SEED)]
@@ -65,6 +69,28 @@ def train_command(args, train_dataset_path: str, run_dir: str) -> List[str]:
     if args.replay:
         cmd += ["--replay", *args.replay]
     return cmd
+
+
+def target_training_clips(train_dataset_path: str) -> int:
+    """How many target clips the trainer trains on: dataset_train.jsonl minus the eval clips it holds out, split
+    exactly as the trainer splits (split_samples, EVAL_FRACTION, SPLIT_SEED). dataset_train.jsonl itself still
+    holds those eval clips (Run 6 and M1: 83 in the file, 75 trained on, 8 eval)."""
+    from xtts_trainer.data import load_dataset
+    from xtts_trainer.stage2_gpt.train import split_samples
+
+    train, _ = split_samples([{"language": r.lang} for r in load_dataset(train_dataset_path)], EVAL_FRACTION, SPLIT_SEED)
+    return len(train)
+
+
+def check_c2_target_clips(train_dataset_path: str) -> None:
+    """C2 fixes replay at 75 clips for a 50% share, so the target must train on exactly 75 clips."""
+    n = target_training_clips(train_dataset_path)
+    if n != C2_TARGET_TRAIN_CLIPS:
+        raise SystemExit(
+            f"--replay-librittsr implements candidate C2 at 50% replay ratio ({C2_TARGET_TRAIN_CLIPS} clips), "
+            f"requiring exactly {C2_TARGET_TRAIN_CLIPS} target training clips after the eval split, but "
+            f"{train_dataset_path} gives {n}"
+        )
 
 
 def tree_digest(paths: List[str], root: str) -> str:
@@ -347,13 +373,7 @@ def main():
 
     # 6. Stage 2 GPT fine-tuning
     if args.replay_librittsr:
-        from xtts_trainer.data import load_dataset
-        target_clips = len(load_dataset(train_dataset_path))
-        if target_clips != 75:
-            raise SystemExit(
-                f"--replay-librittsr implements candidate C2 at 50% replay ratio (75 clips), "
-                f"requiring exactly 75 target training clips, but {train_dataset_path} has {target_clips}"
-            )
+        check_c2_target_clips(train_dataset_path)
         print("\n🔁 Building the pre-registered LibriTTS-R replay set (M1 C2)...")
         run_cmd(replay_build_command(evidence_dir))
         check_replay_selection(os.path.join(evidence_dir, "replay_selection.json"))

@@ -459,3 +459,36 @@ def test_data_identity_shows_whether_runs_share_their_target_data(tmp_path):
     assert changed["target_voices_sha256"] == first["target_voices_sha256"]
     (target / "ref.wav").write_bytes(b"other")  # a held-out clip changes
     assert data_identity(ds, str(target))["target_voices_sha256"] != first["target_voices_sha256"]
+
+
+def _train_file(tmp_path, n: int) -> str:
+    records = [DatasetRecord(audio=f"clips/c{i:04d}.wav", text=f"sentence {i}", lang="en", speaker="moira_fogarty",
+                             duration_s=5.0, sr=SR, transcript_source="dataset") for i in range(n)]
+    return write_dataset(str(tmp_path / f"dataset_train_{n}.jsonl"), records)
+
+
+def test_c2_counts_target_clips_after_the_trainers_eval_split(tmp_path):
+    """M1 C2 needs 75 target training clips. dataset_train.jsonl still holds the 8 eval clips the trainer splits off
+    (83 lines in C0 and C1), so the check must count after that split, not the file's lines: the first C2 launch
+    was refused because the check counted 83."""
+    from scripts.run_target_finetune_ab import C2_TARGET_TRAIN_CLIPS, check_c2_target_clips, target_training_clips
+
+    assert C2_TARGET_TRAIN_CLIPS == 75
+    assert target_training_clips(_train_file(tmp_path, 83)) == 75
+    check_c2_target_clips(_train_file(tmp_path, 83))
+    for n in (75, 82, 84):  # 75 lines train on 67 clips; 82 and 84 on 74 and 76
+        with pytest.raises(SystemExit, match="exactly 75 target training clips after the eval split"):
+            check_c2_target_clips(_train_file(tmp_path, n))
+
+
+def test_c2_clip_count_matches_what_the_trainer_recorded_in_c0_and_c1():
+    """The committed C0 and C1 evidence: 83 clips in the training file, 75 trained on, 8 eval."""
+    from scripts.run_target_finetune_ab import EVAL_FRACTION, SPLIT_SEED
+    from xtts_trainer.stage2_gpt.train import split_samples
+
+    root = Path(__file__).resolve().parent.parent / "docs" / "evidence" / "m1_stage2_preservation"
+    for run in ("c0", "c1"):
+        identity = json.loads((root / run / "evidence" / "data_identity.json").read_text(encoding="utf-8"))
+        summary = json.loads((root / run / "evidence" / "training_summary.json").read_text(encoding="utf-8"))
+        train, evals = split_samples([{"language": "en"}] * identity["train_clips"], EVAL_FRACTION, SPLIT_SEED)
+        assert (len(train), len(evals)) == (summary["train_clips"], summary["eval_clips"]) == (75, 8)

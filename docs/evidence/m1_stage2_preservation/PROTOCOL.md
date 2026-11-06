@@ -230,8 +230,30 @@ unchanged and C1 fails them.
    frozen, amended protocol code.
 4. The copy of `gates_target.json` in each results directory differs from `eval/gates_target.json` only by a
    missing final newline; the parsed contents are identical, and both reports record gates version 1.
+5. **Code change after freezing: C2's target-clip check (section 8, amendment A10).** On 2026-11-06 at 18:48 UTC
+   the first C2 run stopped before training: `--replay-librittsr` refused to train because
+   `data_moira_fogarty/dataset_train.jsonl` "has 83" clips, not 75. The check, added in A10 (`403538a`), counted
+   the lines of that file, which still hold the 8 eval clips the trainer splits off; the protocol's "75 target
+   training clips" are the clips left after that split (C0 and C1: 83 in the file, 75 trained on, 8 eval). So the
+   check refused every correctly prepared C2 run. It had no test. The fix (`scripts/run_target_finetune_ab.py`,
+   `check_c2_target_clips`) counts the clips the trainer trains on, using the trainer's own `split_samples` with
+   the same eval fraction (0.1) and split seed (1), and still refuses any other count. Nothing else changes:
+   training, the replay set and its checks, evaluation and the gates are the same code, and the training command is
+   unchanged. Two tests cover it: the real 83-clip shape passes and 75, 82 and 84 lines are refused (the old check
+   fails this test), and the split reproduces C0's and C1's recorded 75/8. Run on the real training file from the
+   Modal volume (byte-identical to C1's, by `data_identity.json`'s digest), the fixed check gives 75. The fix was
+   made, tested and committed before any C2 or C3 result was known; C3 was still training on the frozen code. C2
+   therefore runs on code whose fingerprint differs from C0's, C1's and C3's (`b0882b43…`), by this check alone
+   (see the commit diff); the fixed code's fingerprint is `60f25919…` (70 files). Confirmation runs, if any, also run on the fixed code. The failed C2 attempt's partial evidence showed
+   one more thing: its `data_identity.json` equals C0's exactly, so re-preparation sometimes gives byte-identical
+   data (item 1). That attempt's evidence and its refusal message are kept in `c2_attempt1_refused/`.
+6. **Launch history.** C2 and C3 were first launched at about 18:44 UTC without `--detach` and stopped by us within
+   about a minute, before any training, to relaunch them detached (so they survive the local client closing).
+   The only files those launches wrote, one `environment.json` per run on the runs volume, were deleted before
+   relaunching. C3's relaunch is the C3 run reported here.
 
 ### 10.4 Where the decision rule stands (section 4)
 
 No candidate has passed. Next per the rule: screen C2 (`--replay-librittsr`) and C3 (`--lr 2.5e-6`), each with
-`--subset-size 20` and its own `--run-tag`. If none passes, screen C4 (C1 + C2).
+`--subset-size 20` and its own `--run-tag`. C3 is running (launched 2026-11-06); C2 is relaunched with the fixed
+check (item 5). If none passes, screen C4 (C1 + C2).
