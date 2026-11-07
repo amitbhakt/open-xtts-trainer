@@ -800,7 +800,7 @@ bootstrap to check that any effect is not confined to one or two sentences.
 
 | Outcome | Upstream (F2) | Per-sample (fix) | Result |
 | :--- | :---: | :---: | :--- |
-| Runaway takes, 600 new pairs (primary) | 1 | 0 | McNemar $p = 0.50$; sentence-cluster bootstrap one-sided 95% lower bound 0.000; **not confirmed** |
+| Runaway takes, 600 new pairs (primary) | 1 | 0 | McNemar $p = 0.50$; one-sided 95% sentence-cluster bootstrap lower bound for the runaway-rate difference 0.000; **not confirmed** |
 | Short prompts with CER > 0.5, 105 new pairs | 2 | 0 | $p = 0.25$ (secondary) |
 | Runaway takes, all 900 pairs | 5 | 0 | 4 of the 5 are A3's takes on "Seven." and "Yes." |
 | A3's non-regression gates, 900 pairs | | | **All pass**; SECS −0.0094 [−0.0121, −0.0067] (n = 752), UTMOS +0.017, failures 7 vs 15 |
