@@ -222,9 +222,9 @@ they are counted.
 Every runaway take in all five runs, in either arm, is on sentence `en_53` ("Seven.", a one-word item). C1's
 tuned arm has two: `arctic_awb`, seed 123, at WER 8.0, and `arctic_ksp`, seed 999, at WER 2.0. The first alone
 adds 0.027 to the 300-take mean WER, more than C1's whole WER difference (+0.0163). C2's target CER failure comes from one take:
-the tongue twister `en_12`, seed 123 ("The six sick sheiks' sixth sheep is sick."), at CER 0.286 in the tuned arm
-and 0 in the stock arm; on its own it adds 0.0048 to the 60-take mean, more than C2's whole CER difference
-(+0.0037). Both are reported, not used: the gates are unchanged, and C1 and C2 fail them. C2's replay made
+the tongue twister `en_12`, seed 123 ("The six sick sheiks' sixth sheep is sick."), at CER 0.393 in the tuned arm
+and 0.107 in the stock arm, a paired difference of 0.286; on its own that pair adds 0.0048 to the 60-take mean
+difference, more than C2's whole CER difference (+0.0037). Both are reported, not used: the gates are unchanged, and C1 and C2 fail them. C2's replay made
 preservation SECS worse than C0's, not better (−0.032 against −0.024), most of all on `arctic_ksp` (−0.064).
 C4's preservation WER failure comes entirely from `en_53`: that sentence adds +0.0233 to the 300-take mean WER
 difference (+0.0193); the other 295 pairs together give −0.0040. Its tuned arm has four runaway takes on it, three
@@ -291,8 +291,9 @@ on `arctic_bdl` (seeds 42, 123, 999), against three in the stock arm. Reported, 
    train unless the set matched the committed selection, and it did.
 8. **Two evidence files need reading with care (noted after review; the files are unchanged).**
    `evidence/data_identity.json`'s `train_clips` (83) is the number of lines in `dataset_train.jsonl`, eval clips
-   included; the clips actually trained on are `train_clips` in `training_summary.json` (75), the same distinction
-   as item 5. `evidence/identity_canary.xml` is `test_identity_canary_released_model`, run in each container on
+   included. `training_summary.json` records the clips actually trained on: 75 target clips for C0, C1 and C3, and
+   150 for C2 and C4 (75 target + 75 replay, also given as `same_language_replay_clips`), the same distinction as
+   item 5. `evidence/identity_canary.xml` is `test_identity_canary_released_model`, run in each container on
    the **released** XTTS-v2 weights: it checks each run's environment, not the candidate's checkpoint, and is not
    evidence about preservation.
 

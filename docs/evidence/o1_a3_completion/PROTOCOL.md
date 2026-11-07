@@ -2,7 +2,8 @@
 
 **Status: locked before any O1 run.** The lock is the commit that adds this file; it is pushed before the first
 run, so its timestamp is public. Any later change to this file, `scripts/run_o1.py` or `scripts/analyze_o1.py` is
-a deviation and is recorded in section 9 with its reason.
+a deviation and is recorded in section 10 with its reason. Changes made before the first run are amendments,
+listed in section 9.
 
 ## 1. Why
 
@@ -28,7 +29,7 @@ O1 does two things:
 | Generation seed | Equal to the training seed (1, 2, 3), as in A3 |
 | Takes | 5 voices × 60 sentences × 3 seeds = 900 per arm, paired by (voice, sentence, seed) |
 | Scoring | `scripts/run_eval_baseline.py`: Whisper large-v3, batch 16, metrics version 2, ECAPA2, UTMOS |
-| Hardware | Modal A100-40GB for both arms (one container per arm); the GPU name is recorded in `environment_{arm}.json` |
+| Hardware | One Modal A100-40GB container runs both arms, alternating seed by seed (upstream 1, per-sample 1, upstream 2, …) (amendment A1); the GPU name is recorded in `environment.json` |
 
 **Old and new sentences.** A3 already generated and analysed the first 20 sentences (listed in
 `A3_SENTENCE_IDS`, `scripts/analyze_o1.py`; a test checks they are exactly the ones in A3's manifests). The other
@@ -84,15 +85,11 @@ even if F2 is harmful.** O1 tests whether the effect generalises to new sentence
 
 ## 6. Commands
 
-From the repository root, one container per arm, both on the same GPU type, Mac kept awake for the whole run
-(`modal run --detach` does not survive the client shutting down):
+From the repository root, one container for both arms, Mac kept awake for the whole run (`modal run --detach`
+does not survive the client shutting down):
 
 ```bash
-caffeinate -i uvx modal run --detach scripts/modal_run_eval.py --gpu A100-40GB --evidence-dir runs/ablations/o1 --cmd "python scripts/run_o1.py --arm upstream"
-```
-
-```bash
-caffeinate -i uvx modal run --detach scripts/modal_run_eval.py --gpu A100-40GB --evidence-dir runs/ablations/o1 --cmd "python scripts/run_o1.py --arm per_sample"
+caffeinate -i uvx modal run --detach scripts/modal_run_eval.py --gpu A100-40GB --evidence-dir runs/ablations/o1 --cmd "python scripts/run_o1.py"
 ```
 
 Then, locally:
@@ -105,16 +102,24 @@ Results, manifests and the report are copied to this folder. No audio or weights
 
 ## 7. Cost and time
 
-A3 synthesised a take in about 2.5 s on this GPU; with scoring, about 1 hour per arm. Two A100-40GB containers in
-parallel: about 2 GPU-hours, **about $5**, about 1 hour of wall time. The Modal timeout is 4 hours.
+A3 synthesised a take in about 2.5 s on this GPU; with scoring, about 1 hour per arm. One A100-40GB container
+for both arms: about 2 GPU-hours, **about $5**, and about 1.5–2 hours of wall time. The Modal timeout is 4 hours.
 
 ## 8. Conduct
 
 - Every run is reported, including failed or repeated ones. A rerun is a new attempt with its own record; the
-  runner never overwrites a finished arm.
+  runner refuses to start if any O1 result file already exists.
 - Nothing in sections 2–5 changes after a result is seen. The decision is the table in section 3, applied as written.
 - The paper and the upstream issue (idiap/coqui-ai-TTS#601) are updated with the result whatever it is.
 
-## 9. Deviations
+## 9. Amendments before the first run
+
+| ID | Date | Change | Why |
+|---|---|---|---|
+| A1 | 2026-11-07 | Both arms run in one container, alternating seed by seed, instead of one container per arm. `run_o1.py` loses `--arm`; one environment record instead of one per arm. | M1 found that the same stock model gives slightly different results in different containers (M1 PROTOCOL.md §10.3, deviation 2: WER changed on 3 of 300 takes, one of them a runaway). With one container per arm, such a difference would fall on one arm only and could create or hide a discordant runaway pair, which the primary test counts. Raised in review of PR #15, before any O1 run. |
+
+The design as first locked is commit `d46813b`. No O1 result existed when A1 was made.
+
+## 10. Deviations
 
 None yet.

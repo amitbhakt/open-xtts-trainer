@@ -93,6 +93,22 @@ def test_eval_command_scores_sixty_sentences_with_the_training_seed():
     assert cmd[cmd.index("--batch_size") + 1] == "16"
 
 
+def test_both_arms_run_in_one_process_alternating_by_seed():
+    # One container for both arms (amendment A1): a container difference can't fall on one arm only
+    assert run_o1.run_plan() == [("upstream", 1), ("per_sample", 1), ("upstream", 2), ("per_sample", 2),
+                                 ("upstream", 3), ("per_sample", 3)]
+
+
+def test_runner_refuses_to_overwrite_any_earlier_result(tmp_path, monkeypatch):
+    part = Path(run_o1.per_seed_path(str(tmp_path), "per_sample", 2))
+    part.parent.mkdir(parents=True)
+    part.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["run_o1.py", "--output_dir", str(tmp_path)])
+    monkeypatch.setattr(run_o1, "verify_checkpoints", lambda arm: pytest.fail("must refuse before any work"))
+    with pytest.raises(SystemExit, match="never overwrites"):
+        run_o1.main()
+
+
 def test_mcnemar_one_sided_values():
     assert o1.mcnemar_one_sided(0, 0) == 1.0
     assert o1.mcnemar_one_sided(5, 0) == pytest.approx(1 / 32)

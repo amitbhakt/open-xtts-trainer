@@ -5,11 +5,12 @@ Protocol: docs/evidence/o1_a3_completion/PROTOCOL.md (locked before any O1 run).
 A3 trained one Stage 2 model per masking arm and training seed (6 models, on the runs volume) and scored each on the
 first 20 sentences of the frozen eval set. O1 scores the same 6 models on all 60 sentences, with the generation seed
 equal to the training seed, exactly as A3 did, so each seed gets the 300 paired takes A3's pre-registration asked for.
-One arm per call, so the two arms can run in two containers of the same GPU type.
+Both arms run in one process, so in one container: M1 found that separate containers can give slightly different
+results for the same model (M1 PROTOCOL.md §10.3, deviation 2), and that difference must not fall on one arm only.
+The arms alternate seed by seed, so a run that stops early still leaves complete pairs.
 
-Usage (one container per arm):
-    python scripts/run_o1.py --arm upstream
-    python scripts/run_o1.py --arm per_sample
+Usage (one container, both arms):
+    python scripts/run_o1.py
 """
 
 import argparse
@@ -84,6 +85,11 @@ def merged_path(output_dir: str, arm: str) -> str:
     return os.path.join(output_dir, f"manifest_{arm}_s{SUBSET_SIZE}.json")
 
 
+def run_plan() -> list:
+    """(arm, seed) in run order: both arms for seed 1, then seed 2, then seed 3."""
+    return [(arm, seed) for seed in SEEDS for arm in ARMS]
+
+
 def environment() -> dict:
     import torch
     return {"gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
@@ -92,29 +98,31 @@ def environment() -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--arm", required=True, choices=ARMS)
     parser.add_argument("--output_dir", default=OUTPUT_DIR)
     args = parser.parse_args()
 
-    final = merged_path(args.output_dir, args.arm)
-    if os.path.exists(final):
-        raise SystemExit(f"{final} exists; O1 never overwrites a result (record a rerun as a new attempt)")
-    verify_checkpoints(args.arm)
+    existing = [p for p in [merged_path(args.output_dir, a) for a in ARMS]
+                + [per_seed_path(args.output_dir, a, s) for a, s in run_plan()] if os.path.exists(p)]
+    if existing:
+        raise SystemExit(f"{existing} exist; O1 never overwrites a result (record a rerun as a new attempt)")
+    for arm in ARMS:
+        verify_checkpoints(arm)
     os.makedirs(os.path.join(args.output_dir, "per_seed"), exist_ok=True)
-    with open(os.path.join(args.output_dir, f"environment_{args.arm}.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(args.output_dir, "environment.json"), "w", encoding="utf-8") as f:
         json.dump(environment(), f, indent=2)
 
     env = {**os.environ, "PYTHONPATH": f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"}
-    manifests = []
-    for seed in SEEDS:
-        out = per_seed_path(args.output_dir, args.arm, seed)
-        subprocess.run(eval_command(args.arm, seed, out), env=env, cwd=REPO_ROOT, check=True)
+    manifests = {arm: [] for arm in ARMS}
+    for arm, seed in run_plan():
+        out = per_seed_path(args.output_dir, arm, seed)
+        subprocess.run(eval_command(arm, seed, out), env=env, cwd=REPO_ROOT, check=True)
         with open(out, encoding="utf-8") as f:
-            manifests.append(json.load(f))
+            manifests[arm].append(json.load(f))
 
     from scripts.run_ablation_a3 import merge_manifests
-    merge_manifests(manifests, f"o1_{args.arm}", final)
-    print(f"O1 {args.arm}: wrote {final}")
+    for arm in ARMS:
+        merge_manifests(manifests[arm], f"o1_{arm}", merged_path(args.output_dir, arm))
+        print(f"O1 {arm}: wrote {merged_path(args.output_dir, arm)}")
 
 
 if __name__ == "__main__":
