@@ -366,7 +366,7 @@ The confirmatory test used only the 40 sentences A3 had never generated.
 
 | Outcome | Upstream (F2) | Per-sample (fix) | Result |
 |---|:---:|:---:|---|
-| Runaway takes, 600 new pairs (primary) | 1 | 0 | McNemar p = 0.50: **not confirmed** |
+| Runaway takes, 600 new pairs (primary) | 1 | 0 | McNemar p = 0.50, sentence-cluster lower bound 0.000: **not confirmed** |
 | Runaway takes, all 900 pairs | 5 | 0 | 4 of the 5 are A3's takes on "Seven." and "Yes." |
 | A3's non-regression gates, 900 pairs | | | **All pass**, so the fix stays |
 
