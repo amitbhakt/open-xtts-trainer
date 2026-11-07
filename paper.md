@@ -177,6 +177,13 @@ The seven findings are summarised in Table 1 and their consequences are discusse
 | F6 | Vocabulary extension gives new rows unit-variance random values, and copies the old last row (assumed to be `[START]`) onto the new last row. In XTTS-v2 the last row is the `[hi]` language tag. | The newest token, typically the new language's tag, starts as a copy of the Hindi tag. | New rows start at the mean of existing rows plus small noise. |
 | F7 | The fork's `Xtts._load_checkpoint` (`TTS/tts/models/xtts.py:639-652`) converts a pickled `XttsConfig` to a dict and `torch.save`s the result over the original `model.pth`. The released file stores its config that way, so the first load rewrites it. | The released weights file changes on disk (SHA-256 `c7ea2000…` → `3077a05b…` in our runs 1–2), so later measurements can no longer be tied to the locked artifact by hash. | The conversion runs in memory; every loader applies the guard, and a static test fails if one doesn't. |
 
+**F2: prior report and upstream status.** The missing per-sample loop in F2 was first noted in a 2023 issue on the
+original repository [23], which received no maintainer reply and was closed as stale without a fix; it did not
+mention the unit error (256 instead of 1024). We reported both parts to the maintained fork [24], where a
+maintainer confirmed the bug, and submitted a fix with tests [25]. As of 7 November 2026 the fix is unmerged:
+`TTS/tts/layers/xtts/gpt.py` on the fork's `dev` branch (commit `eacbf8b`, release v0.28.0) is identical to our
+pinned commit, so F2 is still present in the maintained library.
+
 The audit also found three other upstream behaviours that the Stage 2 wrapper changes:
 
 - the dataset silently substitutes sample 1 for any sample that fails to load;
@@ -748,7 +755,8 @@ two-sided and exploratory: these comparisons were chosen after seeing the data a
 passes (`passed: true` in `ab_report_base.json`), but on 300 of the pre-registered 900 pairs, so the decision
 stays provisional until the remaining pairs are measured. The per-sample fix is retained either way, because F2's
 demonstrating test shows it is correct regardless of its measured effect. What the data shows about the size of the effect
-is narrower than the means suggest. Per-sample masking produced fewer badly failed short prompts on unseen voices
+is narrower than the means suggest (an earlier upstream report of these numbers [24, 25] quoted the means and
+has since been corrected). Per-sample masking produced fewer badly failed short prompts on unseen voices
 (9 vs 2 of 45, $p = 0.05$) and no runaway takes (4 vs 0, $p = 0.12$); outside those takes, intelligibility is
 about the same (mean WER 0.053 vs 0.042, medians 0). This is consistent with F2 causing occasional runaway
 generation, especially on short prompts, but at $N=300$ it is suggestive, not established. In the target regime
@@ -946,6 +954,12 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 [21] Y. Gu, X. Yin, and Z. Ma, "Evaluating speaker encoders for zero-shot text-to-speech," arXiv:2506.20190, 2025.
 
 [22] B. Ebing, L. Keller, and G. Glavaš, "One script instead of hundreds? On pretraining romanized encoder language models," arXiv:2601.05776, 2026.
+
+[23] asr-pub, "[Bug] XTTS v2 cond_idxs missing a 'for' loop for training," GitHub issue coqui-ai/TTS#3388, Dec. 2023 (closed as stale, Jan. 2024). https://github.com/coqui-ai/TTS/issues/3388
+
+[24] A. Bhakt, "gpt.py: conditioning prompt loss masking only applies to the last sample in a batch," GitHub issue idiap/coqui-ai-TTS#601, Oct. 2026 (impact figures corrected 7 Nov. 2026). https://github.com/idiap/coqui-ai-TTS/issues/601
+
+[25] A. Bhakt, "fix(xtts): apply conditioning prompt loss masking to all batch samples," GitHub pull request idiap/coqui-ai-TTS#602, Oct. 2026 (open as of 7 Nov. 2026). https://github.com/idiap/coqui-ai-TTS/pull/602
 
 ---
 
