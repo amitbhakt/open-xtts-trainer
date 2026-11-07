@@ -125,4 +125,16 @@ The design as first locked is commit `d46813b`. No O1 result existed when A1 or 
 
 ## 10. Deviations
 
-None yet.
+1. **Attempt 1 failed before producing any take; the launch command gained a setup step.** Launched 2026-11-07
+   from `9ed01ca` (main after PR #15). The checkpoint check passed for all 6 models, then the first evaluation
+   (upstream, seed 1) stopped: the container had no reference voice clips (`eval/reference_voices/arctic_*.wav`
+   missing). They are built in each container by `scripts/fetch_reference_voices.py`, which checks them against
+   the committed lock (`eval/dataset/reference_voices.lock.json`); the M1 runner calls it, `run_o1.py` does not, and
+   the pre-run checks missed it. No take was generated or scored, so no result was seen. Attempt 1's record is in
+   `attempt1_failed/` (its `environment.json`: NVIDIA A100-SXM4-40GB; the error); its folder on the runs volume,
+   `ablations/o1/`, is left as it is. Attempt 2 runs in a new folder with the command below, which only adds the
+   reference-voice step; the code, the clips (same lock) and everything in sections 2–5 are unchanged.
+
+   ```bash
+   caffeinate -i uvx modal run --detach scripts/modal_run_eval.py --gpu A100-40GB --evidence-dir runs/ablations/o1_attempt2 --cmd "python scripts/fetch_reference_voices.py && python scripts/run_o1.py --output_dir runs/ablations/o1_attempt2"
+   ```

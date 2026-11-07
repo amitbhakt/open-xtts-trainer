@@ -1,0 +1,21 @@
+🔧 Running in Modal container: python scripts/run_o1.py
+Traceback (most recent call last):
+  File "/root/open-xtts-trainer/scripts/run_eval_baseline.py", line 257, in <module>
+    res = generate_baseline(
+          ^^^^^^^^^^^^^^^^^^
+  File "/root/open-xtts-trainer/scripts/run_eval_baseline.py", line 138, in generate_baseline
+    voices = resolve_reference_voices(eval_data, reference_audio_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/open-xtts-trainer/scripts/run_eval_baseline.py", line 62, in resolve_reference_voices
+    raise FileNotFoundError(
+FileNotFoundError: Missing reference voice audio for 5 of 5 eval-set voices: ['/root/open-xtts-trainer/eval/reference_voices/arctic_slt.wav', '/root/open-xtts-trainer/eval/reference_voices/arctic_clb.wav', '/root/open-xtts-trainer/eval/reference_voices/arctic_bdl.wav', '/root/open-xtts-trainer/eval/reference_voices/arctic_awb.wav', '/root/open-xtts-trainer/eval/reference_voices/arctic_ksp.wav']. Each must be a real, held-out 6-10 s recording never used in training.
+Traceback (most recent call last):
+  File "/root/open-xtts-trainer/scripts/run_o1.py", line 134, in <module>
+    main()
+  File "/root/open-xtts-trainer/scripts/run_o1.py", line 123, in main
+    subprocess.run(eval_command(arm, seed, out), env=env, cwd=REPO_ROOT, check=True)
+  File "/usr/local/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/local/bin/python', 'scripts/run_eval_baseline.py', '--checkpoint_dir', 'runs/ablations/a3/upstream/seed_1/export', '--voices', 'arctic', '--languages', 'en', '--label', 'o1_upstream_s1', '--seeds', '1', '--subset_size', '60', '--batch_size', '16', '--output', 'runs/ablations/o1/per_seed/manifest_upstream_seed_1_s60.json']' returned non-zero exit status 1.
+📥 Retrieved artifact: runs/ablations/o1/environment.json
+remote command failed with exit code 1; retrieved artifacts may be partial
