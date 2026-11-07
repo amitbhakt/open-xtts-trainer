@@ -105,7 +105,15 @@ From the XTTS paper ([arXiv 2406.04904](https://arxiv.org/abs/2406.04904), Inter
 new-language rows below (F4, F6, tokenisation, base-language replay) have their underlying components built and
 unit-tested, while ablations A5 and A7 remain unrun designs with planned alternatives (e.g. A5's BPE and
 romanization variants). No new-language model has been trained or evaluated; they stay at their current evidence levels.
-Same-language replay from other speakers is a speaker-adaptation candidate (M1), unevaluated until its runs.
+Same-language replay from other speakers was a speaker-adaptation candidate (M1, C2); it did not reduce the cost to
+other voices.
+
+**M1 result (2026-11-07):** no Stage 2 setting passed both the target and preservation gate sets
+(`docs/evidence/m1_stage2_preservation/PROTOCOL.md` §10). The default stays Run 6's training, and the recipe states
+the trade-off: a clear target-similarity gain for a measured loss on unseen voices (C0: −0.024 SECS). Freezing the
+speaker-conditioning path (`--freeze conditioning`) brought that loss to −0.011/−0.013, inside the margin, but failed
+the noise-limited preservation WER/CER gates, so it is an option at `[E5]` (exploratory), not the default, until a
+separate pre-registered test.
 
 | Decision | Evidence | Status |
 |---|---|---|
@@ -193,7 +201,7 @@ The phase names used in code comments and in `notebooks/phase0_phase1_colab.ipyn
 | 5 Canaries | Vocoder round trip, export identity, overfit, segment alignment | Done; identity on the released weights verified (Run 6, `test_identity_canary_released_model` in `docs/evidence/run6_target_speaker/evidence/identity_canary.xml`) |
 | 6 Data preparation | Transcribe, force-align, cut at pauses; a cut moved by 1 s must fail validation | Done: real-aligner checks (runs 3–4); sample set prepared and validated with zero edits (run 4) |
 | 7 Training | Stage 2 on upstream `GPTTrainer` with the fixes above; Stages 1 and 3 with validation, resume and best-by-validation checkpoints | Smoke runs on real weights pass all three stages (run 4); target speaker fine-tune completed (Moira Fogarty *Art of War*, 10 epochs on A100, loss 3.947 → 3.102) |
-| 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | Run 6, one fine-tune measured both ways. Target speaker ($N=60$, `eval/gates_target.json`, the rules `eval/gates.json` fixed in `603e0d3`): all 5 gates pass, SECS +0.0329 [+0.019, +0.048]. Preservation on 5 unseen voices ($N=300$, `eval/gates.json`): **fails** its SECS gate, −0.0236 [−0.029, −0.018] against a 0.02 margin. Manifests in `docs/evidence/run6_target_speaker/` |
+| 8 Evaluation | Paired A/B against stock with pre-registered gates; README numbers only from manifests | M1 (five pre-registered Stage 2 candidates, `docs/evidence/m1_stage2_preservation/`): none passes both gate sets, so M1 fails and the recipe states the trade-off. Run 6, one fine-tune measured both ways. Target speaker ($N=60$, `eval/gates_target.json`, the rules `eval/gates.json` fixed in `603e0d3`): all 5 gates pass, SECS +0.0329 [+0.019, +0.048]. Preservation on 5 unseen voices ($N=300$, `eval/gates.json`): **fails** its SECS gate, −0.0236 [−0.029, −0.018] against a 0.02 margin. Manifests in `docs/evidence/run6_target_speaker/` |
 | 9 Automation | CI, pre-commit, PR checklist, fresh-install check | CI: done. On every push it installs from a clean checkout with `uv sync --frozen --extra dev`, runs ruff, and runs the test suite with `vocab.json`, `config.json` and `mel_stats.pth` only, so tests needing the full weights, MMS_FA or the reference voices skip there and run on GPU (Colab/Modal). Pre-commit: `.pre-commit-config.yaml` (ruff and the static-invariant tests) is in place; whether contributors run it isn't enforced. PR checklist: `.github/pull_request_template.md` is in place. Fresh-install script: `scripts/check_fresh_install.sh` exists, but CI does not run it (run it by hand) |
 
 ## §7 Bug-class protocol (for every change)

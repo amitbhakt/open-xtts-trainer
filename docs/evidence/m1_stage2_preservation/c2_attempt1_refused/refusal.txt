@@ -1,0 +1,2 @@
+--replay-librittsr implements candidate C2 at 50% replay ratio (75 clips), requiring exactly 75 target training clips, but data_moira_fogarty/dataset_train.jsonl has 83
+remote command failed with exit code 1; retrieved artifacts may be partial

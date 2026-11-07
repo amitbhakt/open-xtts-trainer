@@ -1,0 +1,16 @@
+{
+  "git": {
+    "commit": "95a75deafd5bd5294cfba09953e03915ec9c9ccd",
+    "tree": "7be36f931aa4b668316ba90cadfc981807bec0a5"
+  },
+  "python": "3.11.12",
+  "torch": "2.14.1+cu130",
+  "torchaudio": "2.11.0+cu130",
+  "transformers": "5.20.2",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "code_fingerprint": {
+    "sha256": "b0882b4396c1b672d0cc3d7b43ebe73c89ac5e34c2ab270fffceb638b3e4e93d",
+    "n_files": 70
+  }
+}

@@ -78,6 +78,21 @@ We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of
 
 All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and no intelligibility regression beyond the gate tolerance (CER $+0.0008$, within the 0.01 tolerance). Details and run manifests are in [docs/evidence/run6_target_speaker/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/run6_target_speaker/).
 
+The same model **fails** the pre-registered preservation gate on five unseen CMU ARCTIC voices ($N=300$): their similarity falls by $0.0236$ SECS (95% CI $[-0.029, -0.018]$, margin 0.02). Adapting to one voice costs some zero-shot cloning of others.
+
+**Measured: M1, a search for a Stage 2 setting without that cost (pre-registered; result: none found)**
+Five candidates were run under a protocol frozen before any of them ([PROTOCOL.md](https://github.com/amitbhakt/open-xtts-trainer/blob/main/docs/evidence/m1_stage2_preservation/PROTOCOL.md)). A candidate passes only if every target gate and every preservation gate passes, unchanged.
+
+| Candidate | Target SECS | Preservation SECS [95% CI] (fails if the CI goes below −0.02) | Fails | Pass |
+|---|---|---|---|---|
+| C0 Run 6 setup | +0.033 | −0.024 [−0.030, −0.019] | preservation SECS | No |
+| C1 freeze speaker-conditioning path | +0.040 | −0.011 [−0.016, −0.006] | preservation WER, CER | No |
+| C2 same-language replay (75 LibriTTS-R clips) | +0.044 | −0.032 [−0.038, −0.026] | target CER; preservation SECS, CER | No |
+| C3 half learning rate | +0.027 | −0.019 [−0.024, −0.014] | preservation SECS | No |
+| C4 freeze + replay | +0.048 | −0.013 [−0.018, −0.008] | preservation WER, CER | No |
+
+**M1 fails, so the recipe is a trade-off:** Stage 2 adaptation clearly improves similarity to the target speaker and costs a small, measured amount of cloning quality on other voices. Freezing the speaker-conditioning path (C1, C4) keeps the loss on other voices inside the margin; those runs fail only the preservation WER and CER gates, because of runaway takes on the one-word sentence "Seven.". A stock-versus-stock check shows those two gates are narrower than sampling noise at this test size (exploratory; it changes no verdict). One speaker, one training seed per candidate; replication is future work. Every report and run record is in [docs/evidence/m1_stage2_preservation/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/m1_stage2_preservation/).
+
 **Calibrated: Alignment Quality Thresholds across 8 Baseline Speakers (Phase 6 Data Preparation)**  
 Calibrated MMS-FA forced alignment quality thresholds (`[E5]`) across **8 distinct baseline speakers**, 2 languages (English, Castilian Spanish), and 5 accent profiles (JFK vintage, CMU ARCTIC SLT/BDL/CLB, ARCTIC KSP Indian accent, ARCTIC AWB Scottish accent, LJSpeech, and LibriVox Cuentos de Hadas):
 - **Clean Baseline Acceptance:** **8/8 (100%)** clean recordings passed with zero false-positive rejections. Tolerances were calibrated in-sample on these recordings: `max_weak_words = 3` accommodates accented non-native speech (`arctic_ksp`, 3 weak words scoring down to $0.062$), while the studio-clean native clips (four ARCTIC voices, LJSpeech) and the Spanish audiobook have a minimum per-word alignment score $\ge 0.54$; JFK's 1961 recording has one weak word (minimum word score 0.122). Unexplained speech was retained at $0.10\text{ s}$, where all clean clips measure $0.00\text{ s}$.
@@ -178,8 +193,8 @@ python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_bas
 > **Scope:** the measured results in this repository are for speaker adaptation in languages XTTS-v2 already
 > supports. The new-language path below (vocabulary extension, a registered tokenizer, replay of other languages) is
 > implemented and unit-tested, but no new-language model has been trained or evaluated with it. Replay is not only a
-> new-language tool: same-language replay from other speakers is an M1 candidate for speaker adaptation
-> (`docs/evidence/m1_stage2_preservation/PROTOCOL.md`), and it too is unevaluated until those runs.
+> new-language tool: same-language replay from other speakers was an M1 candidate for speaker adaptation
+> (`docs/evidence/m1_stage2_preservation/PROTOCOL.md`); it did not reduce the cost to other voices (see M1 below).
 
 1. **Extend Tokenizer for a New Language Script:**
    ```bash
@@ -313,37 +328,35 @@ thresholds without a baseline. They are not harness measurements.
 
 ## Pre-Registered Ablation Studies
 
-The repository includes a suite of 8 pre-registered ablation studies (`eval/pre_registered_ablations.json`) designed to isolate individual architectural and recipe choices against peer-reviewed citations:
+The repository includes 8 pre-registered ablation studies (`eval/pre_registered_ablations.json`), each fixed before it ran. Only A3 has been run. The other defaults are **untested on XTTS-v2**; the last column says what each one actually rests on, using the evidence levels in [docs/recipe_design.md](docs/recipe_design.md) (E1 measured or verified here, E2 peer-reviewed, E3 other domain, E4 practitioner report, E5 our hypothesis).
 
-| ID | Title & Scientific Question | Primary Metrics | Key Peer-Reviewed Citations |
+| ID | Question | Primary metrics | Status and evidence for the current default |
 |---|---|---|---|
-| **A1** | Short-Text Hallucination Mitigation | Short-text CER, duration failures | Casanova et al. (*Interspeech* 2024); Chen et al. (*IEEE/ACM TASLP* 2024) |
-| **A2** | Discrete DVAE Codebook & Representation Plasticity | Perplexity, log-mel L1, end-to-end WER | Zheng et al. (*ICCV* 2023); Casanova et al. (*Interspeech* 2024) |
-| **A3** | Conditioning Masking Impact (F2 Bug Verification) | Short-prompt CER, SECS, duration failures | **Empirically proved by our runs**; Casanova et al. (*Interspeech* 2024) |
-| **A4** | Same-Clip vs. Cross-Clip Reference Conditioning | SECS, CER across held-out speakers | Casanova et al. (*ICML* 2022) |
-| **A5** | Tokenizer Vocabulary Extension & Embedding Init | Tokenizer fertility, CER, OOD regression | Minixhofer et al. (*NAACL* 2022); Dobler et al. (*EMNLP* 2023) |
-| **A6** | Acoustic Pause-Aware Punctuation Normalization | Pause placement accuracy, CER, UTMOS | Saeki et al. (*Interspeech* 2022) |
-| **A7** | Multilingual Replay Regularization | Target language CER, catastrophic forgetting SECS | Yang et al. (*ICASSP* 2022) |
-| **A8** | Stage 3 HiFi-GAN Vocoder Fine-Tuning Utility | Resynthesis UTMOS, SECS, log-mel L1 | Kong et al. (*NeurIPS* 2020); Casanova et al. (*Interspeech* 2024) |
+| **A1** | What fixes short-text hallucination? | Short-text CER, duration failures | Not run. The 0.5 s minimum clip is upstream's value, confirmed in its code (E1), but its effect is untested; short-clip share and 3 s minimum conditioning from practitioner reports (E4) |
+| **A2** | When is DVAE training worth it? | Code usage, reconstruction, end-to-end WER | Not run. Off by default because of finding F1 (E1); the collapse check follows Zheng & Vedaldi (*ICCV* 2023) |
+| **A3** | Does fixing F2 matter? | Short-prompt CER, SECS, duration failures | **Run** (below). Non-regression gates pass on unseen voices; the effect on runaway speech is suggestive, not established |
+| **A4** | Same-clip vs different-clip prompt | SECS, CER on held-out speakers | Not run. Upstream's choice (same clip, F2 fixed); the alternative is E5. No published comparison found |
+| **A5** | New-language tokens and row initialisation | Tokens per sentence, CER, base-language regression | Out of scope (new languages). E3: language-model studies (WECHSEL, FOCUS), none on TTS |
+| **A6** | Should commas match pauses? | Pause placement, CER, UTMOS | Not run. Practitioner reports only (E4); a warning, not a blocking check |
+| **A7** | Replay ratio for new languages | Target CER, base-language CER/SECS | Out of scope (new languages). E2: Yang et al. (*ICASSP* 2022) |
+| **A8** | Is Stage 3 worth it? | UTMOS, SECS, log-mel L1 | Not run; planned with M2. E2 from one study on mel features, not GPT latents (HiFi-GAN, *NeurIPS* 2020); practitioner reports conflict (E4) |
 
-### Ablation A3 Empirical Findings (Conditioning Masking Impact)
+### Ablation A3 findings (prompt masking, F2)
 
-Conducted across 3 random seeds on an NVIDIA A100 GPU using Whisper `openai/whisper-large-v3` (batch size 16) across both target voice adaptation and zero-shot base speaker preservation:
+Two Stage 2 fine-tunes that differ only in prompt masking (upstream's vs per-sample), 3 training seeds each, on an A100, scored with Whisper large-v3. Full tables and caveats: paper §6.1 and `docs/evidence/ablation_a3/`.
 
-1. **Target Voice Adaptation ($N=60$ Paired Takes on Moira Fogarty Held-Out Audio):**
-   * **Short-Prompt CER**: Dropped from **55.56% down to 0.00%** (−55.56% error reduction), completely eliminating short-prompt hallucinations caused by upstream prompt leakage.
-   * **Overall CER**: Reduced from **9.46% to 0.83%** (11× character error reduction).
-   * **Overall WER**: Improved from **5.29% to 3.42%** (−1.87% WER).
-   * **Naturalness (UTMOS)**: Preserved at **4.21** vs 4.24 (well within pre-registered 0.10 tolerance margin).
-   * **Speaker Similarity (SECS)**: Mean shift −0.0170 (within 0.02 tolerance margin), though bootstrap 95% CI lower bound reached −0.0297 on $n=50$ qualifying pairs, marking this gate failed (`passed: false` in `ab_report_target.json`).
+**Mean WER/CER are misleading here.** They are dominated by single runaway takes: one upstream take on `arctic_ksp` has WER 221, and medians are 0 for both versions. The robust picture on 300 paired takes on 5 unseen CMU ARCTIC voices:
 
-2. **Zero-Shot Base Speaker Preservation ($N=300$ Paired Takes on 5 Unseen CMU ARCTIC Voices):**
-   * **Short-Prompt Hallucination Elimination**: Slashing short-prompt CER from **631.11% to 17.41%** and short-prompt WER from **537.78% to 4.44%**.
-   * **Overall Intelligibility**: Slashing overall WER from **84.24% to 4.22%** (−80.02% error drop) and overall CER from **96.01% to 3.74%** (−92.28% error drop).
-   * **Catastrophic Failure Reduction**: Severe synthesis failures reduced from **7 down to 3**.
-   * **Zero-Shot Speaker Similarity Preservation**: SECS preserved at **0.5628** vs 0.5690 ($\Delta = -0.0062$, 95% CI $[-0.0110, -0.0014]$, strictly within 0.02 gate margin).
-   * **Naturalness (UTMOS)**: Slightly improved to **4.13** vs 4.11 (+0.0123).
-   * **A/B Decision**: In the $N=300$ preservation regime, all 7 pre-registered gates passed without regression (`passed: true`). Full evidence manifests and reports archived in `docs/evidence/ablation_a3/`.
+| Statistic | Upstream masking (F2) | Per-sample (fix) | Fisher p (exploratory) |
+|---|:---:|:---:|:---:|
+| Median WER / CER | 0.000 / 0.000 | 0.000 / 0.000 | - |
+| Mean WER without runaway takes | 0.053 | 0.042 | - |
+| Runaway takes (WER > 1) | 4 / 300 | 0 / 300 | 0.12 |
+| Short prompts with CER > 0.5 | 9 / 45 | 2 / 45 | 0.05 |
+
+- **Unseen voices:** all pre-registered non-regression gates pass (`passed: true`), so the fix is kept. It is correct regardless, as its unit test shows.
+- **Effect size:** consistent with F2 causing occasional runaway speech, mostly on short prompts, but at 300 pairs this is suggestive, not established (the pre-registration asked for 900).
+- **Target speaker (60 takes):** no runaway takes in either arm and median WER/CER 0 in both. Mean WER shows no clear difference; mean CER is lower with the fix, but its interval only just reaches zero ([−0.255, +0.0001]), so that is borderline, not a finding. The speaker-similarity gate **fails**: SECS is 0.017 lower with the fix (95% CI [−0.030, −0.004], margin 0.02), on the 50 of 60 pairs where both takes are at least 2 s long.
 
 To run or inspect ablation studies:
 ```bash

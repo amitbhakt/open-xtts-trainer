@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "description": "Pre-registered A/B gates for voice adaptation on target speaker 'moira_fogarty' vs stock XTTS-v2 (Phase 8 exit 1).",
+  "gates": [
+    {
+      "metric": "secs",
+      "rule": "better",
+      "margin": 0.0,
+      "voices": [
+        "target_moira_fogarty"
+      ],
+      "why": "the fine-tune must sound more like the target speaker than stock cloning does on held-out clips"
+    },
+    {
+      "metric": "wer",
+      "rule": "not_worse",
+      "margin": 0.02,
+      "why": "intelligibility on target speaker speech must not regress"
+    },
+    {
+      "metric": "cer",
+      "rule": "not_worse",
+      "margin": 0.01,
+      "why": "same, at character level"
+    },
+    {
+      "metric": "utmos",
+      "rule": "not_worse",
+      "margin": 0.1,
+      "why": "predicted naturalness must not regress"
+    },
+    {
+      "metric": "failures",
+      "rule": "not_worse",
+      "margin": 0,
+      "why": "no more empty, babbling or NaN outputs than stock"
+    }
+  ]
+}
