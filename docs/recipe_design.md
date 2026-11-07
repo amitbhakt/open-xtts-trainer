@@ -118,7 +118,7 @@ separate pre-registered test.
 | Decision | Evidence | Status |
 |---|---|---|
 | A thin wrapper over upstream `GPTTrainer`; don't reimplement the loop. | `[E1]`; `[E4]` community success with it | Built (`stage2_gpt/gpt_trainer.py`) |
-| Mask each sample's own prompt region (F2). | `[E1]` | Built; whether it improves quality is A3 |
+| Mask each sample's own prompt region (F2). | `[E1]` | Built. A3 completed by O1: the fix passes every non-regression gate on 900 pairs; its effect on runaway speech is not confirmed on new sentences |
 | Prompt from the same clip (upstream default, masking fixed); offer a different clip of the same speaker as an option. | `[E1]` default; `[E4]`/`[E5]` alternative | Default built; the option is planned (A4) |
 | Keep `min_conditioning_length` at 3 s. | `[E4]` conflicting reports | Default; A1/A4 |
 | New text rows start at the mean of existing rows plus small noise (F6). | `[E3]`/`[E2]`-adjacent: [CoNLL 2024](https://aclanthology.org/2024.conll-1.8.pdf), [FOCUS](https://arxiv.org/pdf/2305.14481), [WECHSEL](https://arxiv.org/pdf/2112.06598); language-model studies, none on TTS | Built; A5 |
@@ -179,7 +179,7 @@ decision rule fixed before running. Results update the evidence tags above.
 |---|---|---|---|---|
 | A1 | What fixes short-text hallucination? | Share of short clips (0/5/15%) × minimum clip length (0.5/0.3 s) × `min_conditioning_length` (3/1 s) | CER on 1–3-word sentences; SECS on held-out speakers | Cheapest setting that brings short-text CER within the long-text CER's interval without lowering SECS beyond the gate |
 | A2 | When is training the DVAE worth it? | Stock vs trained vs frozen-codebook DVAE, each with a full Stage 2 retrain | Code usage, reconstruction, then end-to-end CER/SECS/UTMOS | Recommend Stage 1 only where end-to-end metrics improve beyond the interval |
-| A3 | Does fixing F2 matter? | Upstream masking vs per-sample masking | Short-text CER, SECS, duration failures | Keep the fix (it is correct either way); report the effect |
+| A3 | Does fixing F2 matter? | Upstream masking vs per-sample masking | Short-text CER, SECS, duration failures | Keep the fix (it is correct either way); report the effect. **Done (O1):** gates pass on 900 pairs; runaway effect not confirmed |
 | A4 | Same-clip vs different-clip prompt | Masked same-clip vs same-speaker different-clip prompt | SECS on held-out speakers; CER | Default to the better one |
 | A5 | Text for a new script, and new-row initialization | BPE merges vs per-character vs romanization; mean vs random new rows | CER; tokens per sentence; no base-language regression | Best CER that passes the base-language check |
 | A6 | Does punctuation/pause consistency matter? | Same data with and without commas added at long pauses (`--fix_pauses`) | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval |

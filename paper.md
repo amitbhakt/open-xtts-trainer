@@ -689,7 +689,7 @@ of the unit error or measurement of the defect's effect.
 |---|---|---|---|---|---|
 | A1 | What fixes short-text hallucination? | Short-clip share (0/5/15%) × minimum clip length (0.5/0.3 s) × minimum conditioning length (3/1 s) | CER on 1–3-word text; SECS on held-out speakers | Cheapest setting bringing short-text CER within the long-text interval without lowering SECS beyond the gate | **Not run**; untested defaults: minimum clip length 0.5 s is upstream's (E1 that upstream uses it), the short-clip share and 3 s minimum conditioning come from practitioner reports (E4). VALL-E 2 [19] reduces repetition at decoding time, not through training data, so it does not support these defaults |
 | A2 | When is DVAE training worth it? | Stock vs trained vs frozen-codebook DVAE, each with a full Stage 2 retrain | Code usage, reconstruction, then end-to-end CER/SECS/UTMOS | Recommend Stage 1 only where end-to-end metrics improve beyond the interval | **Not run**; off by default because of our finding F1 (E1: DVAE training changes 81% of codes and forces a Stage 2 retrain), plus practitioner reports (E4). Only the codebook-collapse check follows the literature [5] |
-| A3 | Does fixing F2 matter? | Upstream vs per-sample prompt masking | Short-text CER, SECS, duration failures | Retain the fix when the pre-registered non-regression gates pass; report the effect either way | **Run (§6.1)**: non-regression gates pass on unseen voices; the fix is retained |
+| A3 | Does fixing F2 matter? | Upstream vs per-sample prompt masking | Short-text CER, SECS, duration failures | Retain the fix when the pre-registered non-regression gates pass; report the effect either way | **Run (§6.1), completed on the pre-registered 900 pairs by O1 (§6.2)**: every non-regression gate passes; the fix is retained. Its effect on runaway speech is not confirmed on new sentences |
 | A4 | Same-clip vs different-clip prompt | Masked same-clip vs same-speaker different-clip prompt | SECS (held-out speakers), CER | Adopt the better default | **Not run**; the default is upstream's choice (same clip, with the F2 fix); the alternative is our hypothesis (E5). We found no published comparison |
 | A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | **Out of scope** (new languages; Section 1, Scope). Not run; E3: row initialisation and romanisation results from language-model studies [6, 7, 22], none on TTS |
 | A6 | Does punctuation–pause consistency matter? | With vs without commas inserted at long pauses | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval | **Not run**; practitioner reports only (E4); built as a warning, not a blocking check |
@@ -752,9 +752,8 @@ two-sided and exploratory: these comparisons were chosen after seeing the data a
 | Unseen voices | Short prompts with CER > 0.5 | 9 / 45 | 2 / 45 | 0.05 |
 | Target speaker | Short prompts with CER > 0.5 | 1 / 9 | 0 / 9 | 1.00 |
 
-**Conclusion.** The pre-registered decision is only partly evaluated: on unseen voices every non-regression gate
-passes (`passed: true` in `ab_report_base.json`), but on 300 of the pre-registered 900 pairs, so the decision
-stays provisional until the remaining pairs are measured. The per-sample fix is retained either way, because F2's
+**Conclusion.** On these 300 pairs every non-regression gate passes on unseen voices (`passed: true` in
+`ab_report_base.json`); the decision on the full pre-registered 900 pairs is in §6.2. The per-sample fix is retained either way, because F2's
 demonstrating test shows it is correct regardless of its measured effect. What the data shows about the size of the effect
 is narrower than the means suggest (an earlier upstream report of these numbers [24, 25] quoted the means and
 has since been corrected). Per-sample masking produced fewer badly failed short prompts on unseen voices
@@ -764,9 +763,8 @@ generation, especially on short prompts, but at $N=300$ it is suggestive, not es
 neither arm has a runaway take and median WER/CER are 0 in both; mean CER is lower with the fix, but its interval
 only just reaches zero ($[-0.255, +0.0001]$), so the difference is borderline. The SECS gate **fails**: similarity
 to the target speaker is 0.017 lower with the fix (95% CI $[-0.030, -0.004]$, margin 0.02, on the 50 of 60 pairs
-where both takes are at least 2 s long). Establishing the effect on runaway
-generation needs the pre-registered 900 pairs, which requires re-evaluating the existing checkpoints, not
-retraining.
+where both takes are at least 2 s long). Whether F2 causes runaway generation on sentences these comparisons did
+not generate is tested in §6.2.
 
 ### 6.1.1 Loss Decomposition and The Evaluation-Loss Metric
 
@@ -788,6 +786,32 @@ These measurements clarify the relationship between prompt masking and evaluatio
 - **Partition Trade-off:** The upstream model exhibits lower prompt-region loss ($3.170$ vs. $3.372$) but higher generation-region loss ($3.550$ vs. $3.470$). This observation is consistent with the hypothesis that unmasking prompt-region targets for samples $0 \dots N-2$ during upstream training allowed the model to optimize against prompt tokens present in the conditioning prefix. Under per-sample masking, the conditioning-prompt region is excluded from the loss for every sample; the fixed model yields lower loss on the remaining generation-region tokens ($3.470$ vs. $3.550$).
 - **Metric Confounding:** In the evaluation set, prompt tokens account for 69.0% of all active tokens (559 of 810 tokens). Because upstream evaluation similarly disables prompt masking (`cond_idxs = None`), prompt tokens dominate the unmasked aggregate metric. The lower prompt-region loss pulls the overall unmasked loss down to 3.288 (and 3.309 under batch-level reduction), creating the appearance of lower evaluation loss despite higher loss on actual speech generation. When evaluation is restricted strictly to non-prompt generation tokens ($\mathcal{L}_{\text{gen}}$), the per-sample model demonstrates superior predictive performance.
 
+### 6.2 O1: completing A3 and testing the runaway hypothesis
+
+A3's exploratory runaway result suggested a hypothesis, so we tested it on data that had not produced it. O1
+re-scored A3's six checkpoints (hashes checked against A3's) on all 60 English sentences, giving the 900 pairs per
+arm A3 pre-registered, with both arms in one container. Its protocol, including the decision rule and a power
+analysis, was public before the run (`docs/evidence/o1_a3_completion/PROTOCOL.md`; one amendment and one failed
+attempt that produced no takes are recorded there). The confirmatory test used only the 40 sentences A3 had never
+generated (600 pairs): an exact one-sided McNemar test on runaway takes (WER above 1.0), with a sentence-cluster
+bootstrap to check that any effect is not confined to one or two sentences.
+
+**Table 7e.** O1 results (both arms on one NVIDIA A100-SXM4-40GB container).
+
+| Outcome | Upstream (F2) | Per-sample (fix) | Result |
+| :--- | :---: | :---: | :--- |
+| Runaway takes, 600 new pairs (primary) | 1 | 0 | McNemar $p = 0.50$; one-sided 95% sentence-cluster bootstrap lower bound for the runaway-rate difference 0.000; **not confirmed** |
+| Short prompts with CER > 0.5, 105 new pairs | 2 | 0 | $p = 0.25$ (secondary) |
+| Runaway takes, all 900 pairs | 5 | 0 | 4 of the 5 are A3's takes on "Seven." and "Yes." |
+| A3's non-regression gates, 900 pairs | | | **All pass**; SECS −0.0094 [−0.0121, −0.0067] (n = 752), UTMOS +0.017, failures 7 vs 15 |
+| A3's takes re-scored under current code | 299/300 identical | 300/300 identical | the same 4 runaway takes recur |
+
+The fix is therefore retained on the pre-registered 900 pairs. The hypothesis that F2 causes runaway generation
+was **not confirmed**: on new sentences a runaway take occurred once in 600 upstream takes. The runaway takes seen
+so far sit almost entirely on two one-word prompts, where they recur for the same seeds. As the protocol stated in
+advance, power was low if the effect is confined to one-word prompts, so this does not show that F2 is harmless;
+it shows that its effect, if any, is rare outside them.
+
 With A3 run, the remaining defaults (A1, A2, A4–A8) are untested on this model. Their evidence levels are in Table 6: A7 rests on a peer-reviewed TTS result, A5 and A8 on results from another domain or other inputs, A2 on our own finding F1, and A1, A4 and A6 on upstream's choices, practitioner reports or our own hypotheses.
 
 ## 7 Discussion and limitations
@@ -803,7 +827,7 @@ cloning other speakers. Freezing the speaker-conditioning path is the most promi
 about half, inside its margin), but it is supported only by exploratory analysis and needs its own pre-registered
 test.
 
-**What has not been shown.** Adapting the model to a new language is outside this paper's scope and has not been evaluated. A3 shows the F2 fix passes its non-regression gates and suggests, without establishing, that F2 causes occasional runaway generation on short prompts (§6.1). Ablations A1, A2 and A4–A8 have not been run.
+**What has not been shown.** Adapting the model to a new language is outside this paper's scope and has not been evaluated. A3 and O1 show the F2 fix passes every pre-registered non-regression gate on 900 pairs, but O1 did not confirm that F2 causes runaway generation on new sentences; the runaway takes observed sit almost entirely on two one-word prompts (§6.1–6.2). Ablations A1, A2 and A4–A8 have not been run.
 
 **Limitations.**
 
@@ -970,6 +994,7 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 
 | Claim (section) | Evidence in this repository |
 |---|---|
+| O1: the F2 fix passes A3's gates on 900 pairs; F2's effect on runaway takes is not confirmed on new sentences (6.2) | `docs/evidence/o1_a3_completion/` (`PROTOCOL.md`, `attempt2/o1_report.json`, `SHA256SUMS`); `tests/test_o1.py` re-derives the report from the committed manifests |
 | F7: the fork's loader rewrites `model.pth` (3.2, 5.1) | `tests/test_checkpoint_loading.py` (upstream rewrites a legacy checkpoint; the guarded loader doesn't; every loader applies the guard); `docs/evidence/upstream/coqui_tts_v0.22.0_check.md` (absent in v0.22.0) |
 | F1–F6 exist in the pinned fork (3.2, 5.1) | `docs/recipe_design.md` §2; tests named there, e.g. `test_upstream_f2_masks_only_the_last_sample_in_the_wrong_units`, `test_new_text_rows_mean_init_and_upstream_f6`, `test_whisper_word_timestamps_have_no_gaps` |
 | Findings present in coqui-ai/TTS v0.22.0 (5.1) | `docs/evidence/upstream/coqui_tts_v0.22.0_check.md` |

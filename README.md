@@ -334,7 +334,7 @@ The repository includes 8 pre-registered ablation studies (`eval/pre_registered_
 |---|---|---|---|
 | **A1** | What fixes short-text hallucination? | Short-text CER, duration failures | Not run. The 0.5 s minimum clip is upstream's value, confirmed in its code (E1), but its effect is untested; short-clip share and 3 s minimum conditioning from practitioner reports (E4) |
 | **A2** | When is DVAE training worth it? | Code usage, reconstruction, end-to-end WER | Not run. Off by default because of finding F1 (E1); the collapse check follows Zheng & Vedaldi (*ICCV* 2023) |
-| **A3** | Does fixing F2 matter? | Short-prompt CER, SECS, duration failures | **Run** (below). Non-regression gates pass on unseen voices; the effect on runaway speech is suggestive, not established |
+| **A3** | Does fixing F2 matter? | Short-prompt CER, SECS, duration failures | **Run** (below), completed on 900 pairs by O1. All non-regression gates pass; the effect on runaway speech is **not confirmed** on new sentences |
 | **A4** | Same-clip vs different-clip prompt | SECS, CER on held-out speakers | Not run. Upstream's choice (same clip, F2 fixed); the alternative is E5. No published comparison found |
 | **A5** | New-language tokens and row initialisation | Tokens per sentence, CER, base-language regression | Out of scope (new languages). E3: language-model studies (WECHSEL, FOCUS), none on TTS |
 | **A6** | Should commas match pauses? | Pause placement, CER, UTMOS | Not run. Practitioner reports only (E4); a warning, not a blocking check |
@@ -355,8 +355,24 @@ Two Stage 2 fine-tunes that differ only in prompt masking (upstream's vs per-sam
 | Short prompts with CER > 0.5 | 9 / 45 | 2 / 45 | 0.05 |
 
 - **Unseen voices:** all pre-registered non-regression gates pass (`passed: true`), so the fix is kept. It is correct regardless, as its unit test shows.
-- **Effect size:** consistent with F2 causing occasional runaway speech, mostly on short prompts, but at 300 pairs this is suggestive, not established (the pre-registration asked for 900).
+- **Effect size:** consistent with F2 causing occasional runaway speech, mostly on short prompts, but at 300 pairs this was only suggestive. O1 (below) tested it.
 - **Target speaker (60 takes):** no runaway takes in either arm and median WER/CER 0 in both. Mean WER shows no clear difference; mean CER is lower with the fix, but its interval only just reaches zero ([−0.255, +0.0001]), so that is borderline, not a finding. The speaker-similarity gate **fails**: SECS is 0.017 lower with the fix (95% CI [−0.030, −0.004], margin 0.02), on the 50 of 60 pairs where both takes are at least 2 s long.
+
+### O1: A3 completed, and the runaway hypothesis tested
+
+O1 re-scored A3's six checkpoints on all 60 English sentences (900 pairs per arm, as A3 pre-registered), both arms in
+one container, under a protocol public before the run ([PROTOCOL.md](docs/evidence/o1_a3_completion/PROTOCOL.md)).
+The confirmatory test used only the 40 sentences A3 had never generated.
+
+| Outcome | Upstream (F2) | Per-sample (fix) | Result |
+|---|:---:|:---:|---|
+| Runaway takes, 600 new pairs (primary) | 1 | 0 | McNemar p = 0.50; one-sided 95% sentence-cluster bootstrap lower bound for the runaway-rate difference = 0.000: **not confirmed** |
+| Runaway takes, all 900 pairs | 5 | 0 | 4 of the 5 are A3's takes on "Seven." and "Yes." |
+| A3's non-regression gates, 900 pairs | | | **All pass**, so the fix stays |
+
+So F2 is a real bug and the fix is safe, but "F2 causes runaway speech" is not established: the runaway takes sit
+almost entirely on two one-word prompts. A3's takes reproduced almost exactly under current code (599 of 600
+transcripts identical). Evidence and checksums: [docs/evidence/o1_a3_completion/](docs/evidence/o1_a3_completion/).
 
 To run or inspect ablation studies:
 ```bash

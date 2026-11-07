@@ -125,4 +125,64 @@ The design as first locked is commit `d46813b`. No O1 result existed when A1 or 
 
 ## 10. Deviations
 
-None yet.
+1. **Attempt 1 failed before producing any take; the launch command gained a setup step.** Launched 2026-11-07
+   from `9ed01ca` (main after PR #15). The checkpoint check passed for all 6 models, then the first evaluation
+   (upstream, seed 1) stopped: the container had no reference voice clips (`eval/reference_voices/arctic_*.wav`
+   missing). They are built in each container by `scripts/fetch_reference_voices.py`, which checks them against
+   the committed lock (`eval/dataset/reference_voices.lock.json`); the M1 runner calls it, `run_o1.py` does not, and
+   the pre-run checks missed it. No take was generated or scored, so no result was seen. Attempt 1's record is in
+   `attempt1_failed/` (its `environment.json`: NVIDIA A100-SXM4-40GB; the error); its folder on the runs volume,
+   `ablations/o1/`, is left as it is. Attempt 2 runs in a new folder with the command below, which only adds the
+   reference-voice step; the code, the clips (same lock) and everything in sections 2–5 are unchanged.
+
+   ```bash
+   caffeinate -i uvx modal run --detach scripts/modal_run_eval.py --gpu A100-40GB --evidence-dir runs/ablations/o1_attempt2 --cmd "python scripts/fetch_reference_voices.py && python scripts/run_o1.py --output_dir runs/ablations/o1_attempt2"
+   ```
+
+## 11. Results (added after the run; sections 1–10 are unchanged)
+
+Attempt 2 ran on 2026-11-07 from about 17:20 to 18:47 UTC, in one Modal container (NVIDIA A100-SXM4-40GB), on the
+locked code (code fingerprint `bf3163b7…` in both manifests) and the 6 checkpoints A3 scored (hashes checked by the
+runner). The analysis is `scripts/analyze_o1.py` as locked, run once. All files are in `attempt2/`, unedited;
+the report is `attempt2/o1_report.json`.
+
+### 11.1 Primary (section 3): **not confirmed**
+
+| | Upstream (F2) | Per-sample (fix) |
+|---|---|---|
+| Runaway takes on the 600 new pairs | 1 | 0 |
+| Discordant pairs | 1 | 0 |
+| Exact one-sided McNemar p | 0.50 | |
+| Sentence-cluster bootstrap, one-sided 95% lower bound | 0.000 | |
+
+The one new runaway is `en_56` ("Good morning.", a short prompt), `arctic_awb`, seed 1, WER 1.5. By the rule in
+section 3 the decision is **not confirmed**: on sentences A3 never generated, runaway takes were too rare to show a
+difference. As section 5 says, this is not evidence that F2 is harmless.
+
+### 11.2 Other outcomes (section 4; no decision attached)
+
+1. **Short prompts, new sentences:** CER above 0.5 in 2 of 105 upstream takes and 0 of 105 per-sample takes
+   (McNemar p = 0.25).
+2. **Where runaways occur, all 900 pairs:** 5 upstream, 0 per-sample. Four are the takes A3 already reported, on
+   the one-word prompts `en_53` ("Seven.", 3) and `en_51` ("Yes.", 1); the fifth is the new `en_56` take. The 900-pair
+   counts mix the sentences that generated the hypothesis with new ones, so they are not a test of it.
+3. **A3 completed (900 pairs per arm, A3's pre-registered gates): every gate passes.** The fix is not worse than
+   upstream masking: WER −0.269 [−0.776, −0.007]; CER −0.310 [−0.844, −0.014]; short-prompt CER −1.856 [−5.125,
+   −0.081] (n = 150); SECS −0.0094 [−0.0121, −0.0067] (n = 752, takes of at least 2 s), inside the 0.02 margin;
+   UTMOS +0.017 [−0.001, +0.035]; failures 7 vs 15. Mean WER and CER are again dominated by the runaway takes:
+   medians are 0 in both arms, and without runaway takes mean WER is 0.023 (upstream) vs 0.019 (per-sample).
+   300 of these pairs repeat the sentences A3 already analysed. The fix therefore stays, now with A3's decision made
+   on the pre-registered 900 pairs.
+4. **Reproduction of A3 (exploratory):** on the 20 sentences A3 scored, 299 of 300 upstream transcripts and 300
+   of 300 per-sample transcripts are identical to A3's, under code changed since A3 (`f642df08…` then), and the same
+   4 runaway takes recur. The harness reproduces A3's takes almost exactly.
+
+### 11.3 What this means
+
+- F2 is a real bug (its unit test shows it) and the fix is safe: on 900 pre-registered pairs it is not worse on
+  any gate.
+- The claim that F2 causes runaway speech is **not confirmed** on new sentences. The runaway takes seen so far sit
+  almost entirely on two one-word prompts, where they recur deterministically for the same seeds; on 40 new
+  sentences they occurred once in 600 takes. The paper should describe F2's measured effect as "rare runaway takes,
+  concentrated on one-word prompts, not confirmed in general", not as a general cause of runaway speech.
+- Cost: about 1.5 GPU-hours on one A100-40GB (about $3.5), plus a few minutes for attempt 1.
