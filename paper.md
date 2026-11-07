@@ -677,23 +677,24 @@ Each experiment runs through the evaluation harness against stock XTTS-v2, with 
 bootstrap intervals. Each decision rule below is fixed before the experiment runs.
 
 **Status of the suite.** All eight ablations were pre-registered (`eval/pre_registered_ablations.json`, version 2,
-committed before any of them ran). Only A3 has been run. For A1, A2 and A4–A8 the recipe uses defaults supported by
-the literature cited in Table 6; those choices stay at evidence level E2/E3 (§3.1) until the ablation runs on this
-model. A3 differs from the others because it tests a defect we found (F2), not a design choice; we know of no
-earlier report of this defect or measurement of its effect.
+committed before any of them ran). Only A3 has been run. For A1, A2 and A4–A8 the recipe uses defaults that are
+untested on this model. Table 6 gives each one's actual evidence level (§3.1): most are upstream's own choices or
+practitioner reports (E4), not published results. A3 differs from the others because it tests a defect we found (F2),
+not a design choice. The missing per-sample loop was noted in an earlier issue [23], but we know of no earlier report
+of the unit error or measurement of the defect's effect.
 
 **Table 6.** Pre-registered ablation study designs (A1–A8).
 
 | ID | Question | Design | Primary metric | Decision rule | Status |
 |---|---|---|---|---|---|
-| A1 | What fixes short-text hallucination? | Short-clip share (0/5/15%) × minimum clip length (0.5/0.3 s) × minimum conditioning length (3/1 s) | CER on 1–3-word text; SECS on held-out speakers | Cheapest setting bringing short-text CER within the long-text interval without lowering SECS beyond the gate | **Not run**; default from Casanova et al. (*Interspeech* 2024) [1]; Chen et al. (2024) [19] |
-| A2 | When is DVAE training worth it? | Stock vs trained vs frozen-codebook DVAE, each with a full Stage 2 retrain | Code usage, reconstruction, then end-to-end CER/SECS/UTMOS | Recommend Stage 1 only where end-to-end metrics improve beyond the interval | **Not run**; default from Zheng et al. (*ICCV* 2023) [5]; Casanova et al. (*Interspeech* 2024) [1] |
+| A1 | What fixes short-text hallucination? | Short-clip share (0/5/15%) × minimum clip length (0.5/0.3 s) × minimum conditioning length (3/1 s) | CER on 1–3-word text; SECS on held-out speakers | Cheapest setting bringing short-text CER within the long-text interval without lowering SECS beyond the gate | **Not run**; untested defaults: minimum clip length 0.5 s is upstream's (E1 that upstream uses it), the short-clip share and 3 s minimum conditioning come from practitioner reports (E4). VALL-E 2 [19] reduces repetition at decoding time, not through training data, so it does not support these defaults |
+| A2 | When is DVAE training worth it? | Stock vs trained vs frozen-codebook DVAE, each with a full Stage 2 retrain | Code usage, reconstruction, then end-to-end CER/SECS/UTMOS | Recommend Stage 1 only where end-to-end metrics improve beyond the interval | **Not run**; off by default because of our finding F1 (E1: DVAE training changes 81% of codes and forces a Stage 2 retrain), plus practitioner reports (E4). Only the codebook-collapse check follows the literature [5] |
 | A3 | Does fixing F2 matter? | Upstream vs per-sample prompt masking | Short-text CER, SECS, duration failures | Retain the fix when the pre-registered non-regression gates pass; report the effect either way | **Run (§6.1)**: non-regression gates pass on unseen voices; the fix is retained |
-| A4 | Same-clip vs different-clip prompt | Masked same-clip vs same-speaker different-clip prompt | SECS (held-out speakers), CER | Adopt the better default | **Not run**; default from Casanova et al. (*ICML* 2022) [9] |
-| A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | **Out of scope** (new languages; Section 1, Scope). Not run; default from Minixhofer et al. (*NAACL* 2022) [7]; Dobler et al. (*EMNLP* 2023) [6]; Ebing et al. (2026) [22] |
-| A6 | Does punctuation–pause consistency matter? | With vs without commas inserted at long pauses | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval | **Not run**; default from Saeki et al. (*Interspeech* 2022) [14] |
-| A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate | **Out of scope** (new languages; Section 1, Scope). Not run; default from Yang et al. (*ICASSP* 2022) [8] |
-| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a speaker-adaptation GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats stock beyond the interval | **Not run**; default from Kong et al. (*NeurIPS* 2020) [3]; Casanova et al. (*Interspeech* 2024) [1] |
+| A4 | Same-clip vs different-clip prompt | Masked same-clip vs same-speaker different-clip prompt | SECS (held-out speakers), CER | Adopt the better default | **Not run**; the default is upstream's choice (same clip, with the F2 fix); the alternative is our hypothesis (E5). We found no published comparison |
+| A5 | New-script tokenisation and row initialisation | BPE vs per-character vs romanisation; mean vs random rows | CER; tokens per sentence; base-language regression | Best CER that passes the base-language check | **Out of scope** (new languages; Section 1, Scope). Not run; E3: row initialisation and romanisation results from language-model studies [6, 7, 22], none on TTS |
+| A6 | Does punctuation–pause consistency matter? | With vs without commas inserted at long pauses | Pause placement, CER, UTMOS | Make the check blocking if the effect exceeds the interval | **Not run**; practitioner reports only (E4); built as a warning, not a blocking check |
+| A7 | Replay ratio for new languages | 0/10/25% base-language replay | Target CER; base-language CER/SECS | Smallest ratio with no base-language regression beyond the gate | **Out of scope** (new languages; Section 1, Scope). Not run; E2: replay prevents forgetting in multilingual TTS [8] |
+| A8 | Is Stage 3 worth it? | Stock vs fine-tuned decoder (± SCL, ± full-band loss) after a speaker-adaptation GPT run | UTMOS, SECS, CER | Keep Stage 3 only if it beats stock beyond the interval | **Not run** (planned inside M2); optional and off by default. E2 from a single study that fine-tuned on mel features, not GPT latents [3]; practitioner reports conflict (E4) |
 
 ### 6.1 Ablation A3: upstream vs per-sample prompt masking (F2)
 
@@ -785,7 +786,7 @@ These measurements clarify the relationship between prompt masking and evaluatio
 - **Partition Trade-off:** The upstream model exhibits lower prompt-region loss ($3.170$ vs. $3.372$) but higher generation-region loss ($3.550$ vs. $3.470$). This observation is consistent with the hypothesis that unmasking prompt-region targets for samples $0 \dots N-2$ during upstream training allowed the model to optimize against prompt tokens present in the conditioning prefix. Under per-sample masking, the conditioning-prompt region is excluded from the loss for every sample; the fixed model yields lower loss on the remaining generation-region tokens ($3.470$ vs. $3.550$).
 - **Metric Confounding:** In the evaluation set, prompt tokens account for 69.0% of all active tokens (559 of 810 tokens). Because upstream evaluation similarly disables prompt masking (`cond_idxs = None`), prompt tokens dominate the unmasked aggregate metric. The lower prompt-region loss pulls the overall unmasked loss down to 3.288 (and 3.309 under batch-level reduction), creating the appearance of lower evaluation loss despite higher loss on actual speech generation. When evaluation is restricted strictly to non-prompt generation tokens ($\mathcal{L}_{\text{gen}}$), the per-sample model demonstrates superior predictive performance.
 
-With A3 run, the remaining defaults (A1, A2, A4–A8) rest on the peer-reviewed literature summarized in Table 6 and Section 3.3. They have not been tested on this model, so they stay at evidence level E2/E3.
+With A3 run, the remaining defaults (A1, A2, A4–A8) are untested on this model. Their evidence levels are in Table 6: A7 rests on a peer-reviewed TTS result, A5 and A8 on results from another domain or other inputs, A2 on our own finding F1, and A1, A4 and A6 on upstream's choices, practitioner reports or our own hypotheses.
 
 ## 7 Discussion and limitations
 

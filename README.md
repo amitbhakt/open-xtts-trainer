@@ -328,37 +328,35 @@ thresholds without a baseline. They are not harness measurements.
 
 ## Pre-Registered Ablation Studies
 
-The repository includes a suite of 8 pre-registered ablation studies (`eval/pre_registered_ablations.json`) designed to isolate individual architectural and recipe choices against peer-reviewed citations:
+The repository includes 8 pre-registered ablation studies (`eval/pre_registered_ablations.json`), each fixed before it ran. Only A3 has been run. The other defaults are **untested on XTTS-v2**; the last column says what each one actually rests on, using the evidence levels in [docs/recipe_design.md](docs/recipe_design.md) (E1 measured or verified here, E2 peer-reviewed, E3 other domain, E4 practitioner report, E5 our hypothesis).
 
-| ID | Title & Scientific Question | Primary Metrics | Key Peer-Reviewed Citations |
+| ID | Question | Primary metrics | Status and evidence for the current default |
 |---|---|---|---|
-| **A1** | Short-Text Hallucination Mitigation | Short-text CER, duration failures | Casanova et al. (*Interspeech* 2024); Chen et al. (*IEEE/ACM TASLP* 2024) |
-| **A2** | Discrete DVAE Codebook & Representation Plasticity | Perplexity, log-mel L1, end-to-end WER | Zheng et al. (*ICCV* 2023); Casanova et al. (*Interspeech* 2024) |
-| **A3** | Conditioning Masking Impact (F2 Bug Verification) | Short-prompt CER, SECS, duration failures | **Empirically proved by our runs**; Casanova et al. (*Interspeech* 2024) |
-| **A4** | Same-Clip vs. Cross-Clip Reference Conditioning | SECS, CER across held-out speakers | Casanova et al. (*ICML* 2022) |
-| **A5** | Tokenizer Vocabulary Extension & Embedding Init | Tokenizer fertility, CER, OOD regression | Minixhofer et al. (*NAACL* 2022); Dobler et al. (*EMNLP* 2023) |
-| **A6** | Acoustic Pause-Aware Punctuation Normalization | Pause placement accuracy, CER, UTMOS | Saeki et al. (*Interspeech* 2022) |
-| **A7** | Multilingual Replay Regularization | Target language CER, catastrophic forgetting SECS | Yang et al. (*ICASSP* 2022) |
-| **A8** | Stage 3 HiFi-GAN Vocoder Fine-Tuning Utility | Resynthesis UTMOS, SECS, log-mel L1 | Kong et al. (*NeurIPS* 2020); Casanova et al. (*Interspeech* 2024) |
+| **A1** | What fixes short-text hallucination? | Short-text CER, duration failures | Not run. Upstream's 0.5 s minimum clip (E1 that upstream uses it); short-clip share and 3 s minimum conditioning from practitioner reports (E4) |
+| **A2** | When is DVAE training worth it? | Code usage, reconstruction, end-to-end WER | Not run. Off by default because of finding F1 (E1); the collapse check follows Zheng & Vedaldi (*ICCV* 2023) |
+| **A3** | Does fixing F2 matter? | Short-prompt CER, SECS, duration failures | **Run** (below). Non-regression gates pass on unseen voices; the effect on runaway speech is suggestive, not established |
+| **A4** | Same-clip vs different-clip prompt | SECS, CER on held-out speakers | Not run. Upstream's choice (same clip, F2 fixed); the alternative is E5. No published comparison found |
+| **A5** | New-language tokens and row initialisation | Tokens per sentence, CER, base-language regression | Out of scope (new languages). E3: language-model studies (WECHSEL, FOCUS), none on TTS |
+| **A6** | Should commas match pauses? | Pause placement, CER, UTMOS | Not run. Practitioner reports only (E4); a warning, not a blocking check |
+| **A7** | Replay ratio for new languages | Target CER, base-language CER/SECS | Out of scope (new languages). E2: Yang et al. (*ICASSP* 2022) |
+| **A8** | Is Stage 3 worth it? | UTMOS, SECS, log-mel L1 | Not run; planned with M2. E2 from one study on mel features, not GPT latents (HiFi-GAN, *NeurIPS* 2020); practitioner reports conflict (E4) |
 
-### Ablation A3 Empirical Findings (Conditioning Masking Impact)
+### Ablation A3 findings (prompt masking, F2)
 
-Conducted across 3 random seeds on an NVIDIA A100 GPU using Whisper `openai/whisper-large-v3` (batch size 16) across both target voice adaptation and zero-shot base speaker preservation:
+Two Stage 2 fine-tunes that differ only in prompt masking (upstream's vs per-sample), 3 training seeds each, on an A100, scored with Whisper large-v3. Full tables and caveats: paper §6.1 and `docs/evidence/ablation_a3/`.
 
-1. **Target Voice Adaptation ($N=60$ Paired Takes on Moira Fogarty Held-Out Audio):**
-   * **Short-Prompt CER**: Dropped from **55.56% down to 0.00%** (−55.56% error reduction), completely eliminating short-prompt hallucinations caused by upstream prompt leakage.
-   * **Overall CER**: Reduced from **9.46% to 0.83%** (11× character error reduction).
-   * **Overall WER**: Improved from **5.29% to 3.42%** (−1.87% WER).
-   * **Naturalness (UTMOS)**: Preserved at **4.21** vs 4.24 (well within pre-registered 0.10 tolerance margin).
-   * **Speaker Similarity (SECS)**: Mean shift −0.0170 (within 0.02 tolerance margin), though bootstrap 95% CI lower bound reached −0.0297 on $n=50$ qualifying pairs, marking this gate failed (`passed: false` in `ab_report_target.json`).
+**Mean WER/CER are misleading here.** They are dominated by single runaway takes: one upstream take on `arctic_ksp` has WER 221, and medians are 0 for both versions. The robust picture on 300 paired takes on 5 unseen CMU ARCTIC voices:
 
-2. **Zero-Shot Base Speaker Preservation ($N=300$ Paired Takes on 5 Unseen CMU ARCTIC Voices):**
-   * **Short-Prompt Hallucination Elimination**: Slashing short-prompt CER from **631.11% to 17.41%** and short-prompt WER from **537.78% to 4.44%**.
-   * **Overall Intelligibility**: Slashing overall WER from **84.24% to 4.22%** (−80.02% error drop) and overall CER from **96.01% to 3.74%** (−92.28% error drop).
-   * **Catastrophic Failure Reduction**: Severe synthesis failures reduced from **7 down to 3**.
-   * **Zero-Shot Speaker Similarity Preservation**: SECS preserved at **0.5628** vs 0.5690 ($\Delta = -0.0062$, 95% CI $[-0.0110, -0.0014]$, strictly within 0.02 gate margin).
-   * **Naturalness (UTMOS)**: Slightly improved to **4.13** vs 4.11 (+0.0123).
-   * **A/B Decision**: In the $N=300$ preservation regime, all 7 pre-registered gates passed without regression (`passed: true`). Full evidence manifests and reports archived in `docs/evidence/ablation_a3/`.
+| Statistic | Upstream masking (F2) | Per-sample (fix) | Fisher p (exploratory) |
+|---|:---:|:---:|:---:|
+| Median WER / CER | 0.000 / 0.000 | 0.000 / 0.000 | - |
+| Mean WER without runaway takes | 0.053 | 0.042 | - |
+| Runaway takes (WER > 1) | 4 / 300 | 0 / 300 | 0.12 |
+| Short prompts with CER > 0.5 | 9 / 45 | 2 / 45 | 0.05 |
+
+- **Unseen voices:** all pre-registered non-regression gates pass (`passed: true`), so the fix is kept. It is correct regardless, as its unit test shows.
+- **Effect size:** consistent with F2 causing occasional runaway speech, mostly on short prompts, but at 300 pairs this is suggestive, not established (the pre-registration asked for 900).
+- **Target speaker (60 takes):** no detectable intelligibility difference, and the speaker-similarity gate **fails**: SECS is 0.017 lower with the fix (95% CI [−0.030, −0.004], margin 0.02).
 
 To run or inspect ablation studies:
 ```bash
