@@ -164,3 +164,47 @@ def test_unpaired_or_incomplete_arms_are_refused():
         o1.analyze(up, ps)
     with pytest.raises(ValueError, match="expected 600 new pairs"):
         o1.new_pairs({("en", "v", "en_54", 1): (None, None)})
+
+
+# --- The committed O1 evidence (docs/evidence/o1_a3_completion) -----------------------------------------------------
+O1 = ROOT / "docs" / "evidence" / "o1_a3_completion"
+RUN = O1 / "attempt2"
+
+
+def _sums():
+    out = {}
+    for line in (O1 / "SHA256SUMS").read_text(encoding="utf-8").splitlines():
+        digest, rel = line.split("  ", 1)
+        out[rel] = digest
+    return out
+
+
+def test_o1_evidence_matches_its_checksums_and_every_file_is_listed():
+    sums = _sums()
+    on_disk = {p.relative_to(O1).as_posix() for d in ("attempt1_failed", "attempt2") for p in (O1 / d).rglob("*")
+               if p.is_file()}
+    assert on_disk == set(sums)
+    for rel, digest in sums.items():
+        assert hashlib.sha256((O1 / rel).read_bytes()).hexdigest() == digest, rel
+
+
+def test_o1_inputs_match_their_locks():
+    lock = json.loads((ROOT / "eval" / "dataset" / "reference_voices.lock.json").read_text(encoding="utf-8"))
+    for path in sorted((RUN / "per_seed").glob("*.json")):
+        m = json.loads(path.read_text(encoding="utf-8"))
+        arm = "per_sample" if "per_sample" in path.name else "upstream"
+        assert m["checkpoint_sha256"]["model.pth"] == run_o1.EXPECTED_MODEL_SHA256[(arm, m["seeds"][0])]
+        assert m["eval_set_sha256"] == lock["eval_set_sha256"]
+        assert {v["speaker_id"]: v["sha256"] for v in m["reference_voices"]} == {
+            k: v["clip_sha256"] for k, v in lock["voices"].items()}
+        assert m["subset_size"] == run_o1.SUBSET_SIZE and not m["git"]["is_dirty"]
+
+
+def test_o1_report_reproduces_from_the_committed_manifests():
+    def load(p):
+        return json.loads(p.read_text(encoding="utf-8"))
+
+    again = o1.analyze(load(RUN / "manifest_upstream_s60.json"), load(RUN / "manifest_per_sample_s60.json"),
+                       load(A3 / "manifest_upstream_s20_base.json"), load(A3 / "manifest_per_sample_s20_base.json"))
+    assert json.loads(json.dumps(again)) == load(RUN / "o1_report.json")
+    assert again["primary_new_sentences"]["decision"] == "not confirmed"
