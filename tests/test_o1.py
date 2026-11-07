@@ -206,5 +206,23 @@ def test_o1_report_reproduces_from_the_committed_manifests():
 
     again = o1.analyze(load(RUN / "manifest_upstream_s60.json"), load(RUN / "manifest_per_sample_s60.json"),
                        load(A3 / "manifest_upstream_s20_base.json"), load(A3 / "manifest_per_sample_s20_base.json"))
-    assert json.loads(json.dumps(again)) == load(RUN / "o1_report.json")
+    _assert_same(json.loads(json.dumps(again)), load(RUN / "o1_report.json"))
     assert again["primary_new_sentences"]["decision"] == "not confirmed"
+
+
+def _assert_same(got, want, path="report"):
+    """Equal structure, keys, strings, booleans and counts; floats equal to 1e-9 relative, because Linux and macOS
+    maths libraries can differ in the last bit of an interval bound (seen in CI), which changes no result."""
+    assert type(got) is type(want) or {type(got), type(want)} <= {int, float}, path
+    if isinstance(want, dict):
+        assert got.keys() == want.keys(), path
+        for k in want:
+            _assert_same(got[k], want[k], f"{path}.{k}")
+    elif isinstance(want, list):
+        assert len(got) == len(want), path
+        for i, (g, w) in enumerate(zip(got, want)):
+            _assert_same(g, w, f"{path}[{i}]")
+    elif isinstance(want, float):
+        assert got == pytest.approx(want, rel=1e-9, abs=1e-12), path
+    else:
+        assert got == want, path
