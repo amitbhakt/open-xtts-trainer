@@ -43,7 +43,7 @@ We also release an evaluation protocol: a frozen 180-sentence, five-language tes
 with bootstrap intervals, pre-registered gates, and target-speaker reference clips that training is barred from
 using.
 
-On the stock model, the English baseline is WER 0.060, CER 0.020, SECS 0.575 and UTMOS 4.04 across five reference speakers. On one real recording, a cut misplaced by ±1 s lowers the worst forced-alignment word score from ≥ 0.54 to ≤ 0.02, so such a cut is detectable. In smoke-scale runs, DVAE fine-tuning changes 81% of the discrete codes for identical audio, and freezing the codebook does not reduce this, demonstrating that DVAE fine-tuning invalidates the pretrained GPT. In target speaker adaptation with 6.4 minutes of aligned speech, Stage 2 GPT fine-tuning yields a statistically significant speaker similarity gain of +0.033 SECS (0.555 → 0.588, 95% CI [+0.019, +0.048], n=51) on held-out reference audio, passing all five pre-registered target-speaker gates. The same model fails its pre-registered preservation gate on five unseen voices: their similarity falls by 0.024 SECS (95% CI [−0.029, −0.018], margin 0.02), so the adaptation costs zero-shot cloning of other speakers.
+On the stock model, the English baseline is WER 0.060, CER 0.020, SECS 0.575 and UTMOS 4.04 across five reference speakers. On one real recording, a cut misplaced by ±1 s lowers the worst forced-alignment word score from ≥ 0.54 to ≤ 0.02, so such a cut is detectable. In smoke-scale runs, DVAE fine-tuning changes 81% of the discrete codes for identical audio, and freezing the codebook does not reduce this, demonstrating that DVAE fine-tuning invalidates the pretrained GPT. In target speaker adaptation with 6.4 minutes of aligned speech, Stage 2 GPT fine-tuning yields a statistically significant speaker similarity gain of +0.033 SECS (0.555 → 0.588, 95% CI [+0.019, +0.048], n=51) on held-out reference audio, passing all five pre-registered target-speaker gates. The same model fails its pre-registered preservation gate on five unseen voices: their similarity falls by 0.024 SECS (95% CI [−0.029, −0.018], margin 0.02), so the adaptation costs zero-shot cloning of other speakers. A pre-registered search for a Stage 2 setting that avoids this cost (five candidates: the unchanged recipe, a frozen speaker-conditioning path, same-language replay of other speakers, half the learning rate, and conditioning freeze with replay) found none that passes both gate sets, so the recipe states the trade-off. Every candidate improved target similarity (+0.027 to +0.048 SECS); freezing the conditioning path halved the loss on unseen voices (−0.011 and −0.013 SECS, inside the margin), but those runs failed the preservation WER and CER gates, which a stock-versus-stock check shows are narrower than sampling noise at this test size.
 
 **Index terms:** text-to-speech, voice cloning, fine-tuning, reproducibility, vector quantization, software
 audit, evaluation methodology.
@@ -88,8 +88,8 @@ contributions are:
 already supports. Adding a new language is a different and larger study. Its parts of the recipe (F4, F6, replay
 of the base languages) have their underlying components described and unit-tested, while ablations A5 and A7 remain
 unrun designs with planned alternatives; no new-language model is trained or evaluated, and we make no claim about how
-well the recipe adds a language. Replay of *other speakers in the same language* is different: it is one of the
-speaker-adaptation candidates in the next experiment.
+well the recipe adds a language. Replay of *other speakers in the same language* is different: it was one of the
+speaker-adaptation candidates in the pre-registered M1 experiment (Section 5.7).
 
 The repository that accompanies this paper is the evidence for every claim in it. Appendix A maps each claim to
 the file or test that supports it.
@@ -290,7 +290,8 @@ is computed per category and per voice.
 - it may produce no more failures than stock.
 
 The margins were sized against the seed noise in the baseline, whose 95% interval half-widths were about 0.02 for
-WER and SECS and 0.07 for UTMOS.
+WER and SECS and 0.07 for UTMOS. A later check (Section 5.7) shows that on the five unseen voices the WER and CER
+margins are narrower than the noise between two stock runs at different seeds; the gates were not changed.
 
 **Target-speaker evaluation.** For voice adaptation, the question is whether the fine-tune sounds more like the
 target speaker than stock cloning does. Whole clips of each target speaker are held out (seeded) and assembled
@@ -605,9 +606,63 @@ Excluding takes with WER above 1.0, mean WER is 0.057 (stock) and 0.042 (tuned).
 fewer runaway takes (3 failures vs 6) on these voices; that is the substance of those three results.
 
 In short: 6.4 minutes of aligned speech produced a statistically significant gain in similarity to the target
-speaker, at a measurable cost in similarity to unseen speakers. A recipe change that keeps the target gain while
-passing the preservation gate (for example, replaying other speakers' data during fine-tuning, fewer adaptation
-steps or a lower learning rate, or freezing part of the GPT) is the next experiment.
+speaker, at a measurable cost in similarity to unseen speakers. Whether a recipe change keeps the target gain while
+passing the preservation gate was tested next, in a pre-registered experiment (Section 5.7).
+
+### 5.7 Searching for a Stage 2 setting that passes both gate sets (M1)
+
+**Protocol.** Before any run, we froze a protocol (`docs/evidence/m1_stage2_preservation/PROTOCOL.md`, commit
+`78ce960`, amended before the first run) with four screening candidates, each one change from Run 6: C0, Run 6's
+training unchanged (the control); C1, the speaker-conditioning path (`conditioning_encoder`,
+`conditioning_perceiver`) frozen at its released values; C2, same-language replay of 75 LibriTTS-R `dev-clean`
+clips from 15 other readers (50% of training clips, at equal expected target exposure, which doubles the steps);
+C3, half the learning rate. A second round, C4 = C1 + C2, runs only if no screening candidate is confirmed. A
+candidate passes only if every gate in both unchanged sets passes (`eval/gates_target.json`, `eval/gates.json`);
+a passing candidate must then pass again at two more training seeds. If none is confirmed, M1 fails and the recipe
+states the trade-off. Every run regenerates its stock baselines and uses training seed 1 with Run 6's split, so all
+choose their checkpoint on the same 8 target clips.
+
+**Table 5c.** M1 candidates (training seed 1; tuned − stock differences with paired bootstrap 95% intervals;
+target $N=60$, preservation $N=300$).
+
+| Run | Target SECS | Target gates | Preservation SECS | Preservation gates failed | Pass |
+|---|---|---|---|---|---|
+| C0 Run 6 setup | +0.0329 [+0.019, +0.048] | all pass | −0.0243 [−0.030, −0.019] | SECS | No |
+| C1 freeze conditioning | +0.0400 [+0.026, +0.054] | all pass | −0.0113 [−0.016, −0.006] | WER, CER | No |
+| C2 same-language replay | +0.0442 [+0.029, +0.059] | CER fails | −0.0322 [−0.038, −0.026] | SECS, CER | No |
+| C3 half learning rate | +0.0266 [+0.015, +0.040] | all pass | −0.0189 [−0.024, −0.014] | SECS | No |
+| C4 freeze + replay | +0.0480 [+0.034, +0.063] | all pass | −0.0127 [−0.018, −0.008] | WER, CER | No |
+
+**Verdict: M1 fails.** No candidate passes both gate sets, so none is confirmed, and, as pre-registered, the
+recipe states that Stage 2 adaptation on this speaker costs zero-shot cloning of other voices. C0 reproduces Run
+6's failure. Halving the learning rate reduces the loss on unseen voices but not enough, and also reduces the
+target gain. Replay made the loss on unseen voices larger, not smaller. Freezing the conditioning path keeps the
+target gain and brings the loss on unseen voices well inside the 0.02 margin (C1, C4).
+
+**Where C1 and C4 fail.** Both fail only the preservation WER and CER gates, and in both the failure comes from
+runaway takes on one test sentence, the one-word "Seven.": in C4 it contributes +0.023 of the +0.019 mean WER
+difference, and the other 295 pairs give −0.004; in C1 one take at WER 8.0 contributes 0.027. Median WER and CER
+differences are 0 in every run. C2's target CER failure likewise comes from one take of a tongue twister.
+
+**The noisy gates (exploratory).** After the screening runs, we compared the stock model with itself, pairing each
+take with the same voice and sentence at another seed and applying the gates unchanged. Every target gate and the
+preservation SECS gate pass, with intervals far inside their margins (preservation SECS about ±0.005). The
+preservation WER and CER gates fail in all four comparisons: their intervals are about ±0.03 and ±0.11 against
+margins of 0.02 and 0.01. At this test size, then, those two gates cannot tell a model that differs from stock only
+by chance from one that is worse, and C1's and C4's failures on them are consistent with chance. The SECS failures
+of C0, C2 and C3 are not. This check was run after the screening results were known and changes no verdict.
+
+**Conduct.** All five runs were reported, including C0 and the runs that failed. Seven deviations are recorded in
+the protocol (Section 10.3 there); none changes a gate, a candidate or a verdict. The main ones: the check that C2
+trains on exactly 75 target clips counted the clips before the eval split (83), refused every C2 run, and was fixed,
+with a test, before any C2 or C3 result was known; C4's first attempt was cancelled during evaluation and was rerun
+in full; and re-preparing the data in each run gave one of two near-identical versions (cut boundaries differing by
+0.01–0.1 ms), with matching stock outcomes (C0 and C4; C1, C2 and C3).
+
+**What follows.** One speaker and one training seed per candidate cannot show generality, and the comparison was
+judged on gates that are partly noise-limited. A separately pre-registered follow-up (M2) would test the frozen
+conditioning path on more speakers and seeds, with gates checked against stock-versus-stock noise before they are
+frozen. Its result cannot change M1's verdict.
 
 ## 6 Planned experiments (pre-registered)
 
@@ -731,6 +786,12 @@ established by tests rather than by measurement noise. F1 and the drift measurem
 DVAE–GPT code interface is fragile. The community consensus that the DVAE should not be trained has the right
 default for the wrong reason: the reason is coupling, not universality.
 
+**What M1 shows.** Under the pre-registered gates, no Stage 2 setting we tried adapts a voice without a cost to
+other voices, so the recipe is a trade-off: a clear gain in target similarity for a small, measured loss in
+cloning other speakers. Freezing the speaker-conditioning path is the most promising setting (the loss falls to
+about half, inside its margin), but it is supported only by exploratory analysis and needs its own pre-registered
+test.
+
 **What has not been shown.** Adapting the model to a new language is outside this paper's scope and has not been evaluated. A3 shows the F2 fix passes its non-regression gates and suggests, without establishing, that F2 causes occasional runaway generation on short prompts (§6.1). Ablations A1, A2 and A4–A8 have not been run.
 
 **Limitations.**
@@ -744,8 +805,11 @@ default for the wrong reason: the reason is coupling, not universality.
    English listening tests and is used only relative to the baseline. SECS is unreliable below about 2 s. No
    human listening test has been run; *[a MUSHRA or MOS study is planned]*.
 5. **Gate margins.** The gate margins are judgements (E5) sized against observed seed noise. They are not derived
-   from perceptual thresholds.
-6. **Licensing.** The XTTS-v2 weights are under the Coqui Public Model License, and the MMS forced-alignment
+   from perceptual thresholds. On the five unseen voices, the WER and CER margins are narrower than the noise
+   between two stock runs at different seeds (Section 5.7), so those two gates have little power at $N=300$.
+6. **One speaker.** The adaptation results (Run 6, M1) come from one target speaker, one recording and, per
+   candidate, one training seed.
+7. **Licensing.** The XTTS-v2 weights are under the Coqui Public Model License, and the MMS forced-alignment
    model under CC BY-NC 4.0. Results apply to non-commercial use of these components.
 
 **Threats to validity.** Our audit covers the training path we use; untested code paths may contain further
@@ -762,8 +826,7 @@ four in the training code present since the original release, and a seventh, int
 that silently rewrites the released weights file. We built a three-stage recipe in which every decision carries its evidence
 level and every repair is guarded by a test, together with a data pipeline whose forced-alignment validator
 detects misplaced cuts on real audio. We also built an evaluation protocol designed so that a fine-tune can be
-judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline is deterministic per seed within an environment and agrees within intervals across environments, DVAE fine-tuning breaks the code interface the pretrained GPT depends on, and Stage 2 GPT fine-tuning adapts to a target speaker on held-out speech (all five target gates pass) at a measurable cost to unseen speakers (the pre-registered preservation SECS gate fails). The next experiments find a Stage 2 setting that keeps the target gain without the cost to unseen speakers,
-replicate it across speakers and training seeds, and add a listening test. Adding a new language is left to
+judged only against pre-registered gates on a frozen test set. Measurements so far show that the stock baseline is deterministic per seed within an environment and agrees within intervals across environments, DVAE fine-tuning breaks the code interface the pretrained GPT depends on, and Stage 2 GPT fine-tuning adapts to a target speaker on held-out speech (all five target gates pass) at a measurable cost to unseen speakers (the pre-registered preservation SECS gate fails). A pre-registered search over five Stage 2 settings found none that passes both gate sets, so the recipe states this trade-off; freezing the speaker-conditioning path brought the cost inside its margin and failed only on gates that a stock-versus-stock check shows are noise-limited. The next experiments test that setting across speakers and training seeds under a new pre-registration, and add a listening test. Adding a new language is left to
 future work. *[To be completed with those results.]*
 
 ---
@@ -905,5 +968,7 @@ Workshop (SSW5)*, 2004, pp. 223–224.
 | Paired A/B and gates (3.5) | `scripts/compare_ab.py`; `eval/gates.json`; `tests/test_compare_ab.py` |
 | Target-speaker hold-out guard (3.5) | `eval/target_voices.py`; `xtts_trainer/data/validate.py`; `tests/test_target_voices.py` |
 | Preservation on unseen voices, Table 5b (§5.6, Run 6): SECS gate failed | `eval/gates.json` (pre-registered, `603e0d3`); `docs/evidence/run6_target_speaker/ab_report_preservation.json`; `eval/baselines/base_xtts_s20_en.json`; `docs/evidence/run6_target_speaker/tuned_xtts_s20_arctic_en.json` |
+| M1 candidates and verdict, Table 5c (§5.7) | `docs/evidence/m1_stage2_preservation/PROTOCOL.md` (frozen protocol, amendments, results, deviations, verdict); `docs/evidence/m1_stage2_preservation/c0/` … `c4/` (every A/B report, manifest and run record); `docs/evidence/m1_stage2_preservation/replay_selection.json` |
+| Stock-versus-stock check of the gates (§5.7) | `docs/evidence/m1_stage2_preservation/PROTOCOL.md` §10.5; stock manifests in `c0/` and `c1/` |
 | Target speaker adaptation, Table 5 (§5.6, Run 6) | `eval/gates_target.json`; `docs/evidence/run6_target_speaker/ab_report_target.json`; `docs/evidence/run6_target_speaker/evidence/prep_report.json`; `docs/evidence/run6_target_speaker/evidence/validation_report.json`; `docs/evidence/run6_target_speaker/evidence/training_summary.json` |
 | Source pinning (3.6) | `xtts_trainer/speech_data.py`; `docs/evidence/source_pins.md` (SHA-256 pins, with the SHA-1 cross-check) |

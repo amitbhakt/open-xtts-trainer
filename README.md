@@ -78,6 +78,21 @@ We evaluate target speaker voice adaptation on Moira Fogarty reading *The Art of
 
 All 5 pre-registered adaptation gates passed with statistically significant speaker similarity gain and no intelligibility regression beyond the gate tolerance (CER $+0.0008$, within the 0.01 tolerance). Details and run manifests are in [docs/evidence/run6_target_speaker/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/run6_target_speaker/).
 
+The same model **fails** the pre-registered preservation gate on five unseen CMU ARCTIC voices ($N=300$): their similarity falls by $0.0236$ SECS (95% CI $[-0.029, -0.018]$, margin 0.02). Adapting to one voice costs some zero-shot cloning of others.
+
+**Measured: M1, a search for a Stage 2 setting without that cost (pre-registered; result: none found)**
+Five candidates were run under a protocol frozen before any of them ([PROTOCOL.md](https://github.com/amitbhakt/open-xtts-trainer/blob/main/docs/evidence/m1_stage2_preservation/PROTOCOL.md)). A candidate passes only if every target gate and every preservation gate passes, unchanged.
+
+| Candidate | Target SECS | Preservation SECS (margin 0.02) | Fails | Pass |
+|---|---|---|---|---|
+| C0 Run 6 setup | +0.033 | −0.024 | preservation SECS | No |
+| C1 freeze speaker-conditioning path | +0.040 | −0.011 | preservation WER, CER | No |
+| C2 same-language replay (75 LibriTTS-R clips) | +0.044 | −0.032 | target CER; preservation SECS, CER | No |
+| C3 half learning rate | +0.027 | −0.019 | preservation SECS | No |
+| C4 freeze + replay | +0.048 | −0.013 | preservation WER, CER | No |
+
+**M1 fails, so the recipe is a trade-off:** Stage 2 adaptation clearly improves similarity to the target speaker and costs a small, measured amount of cloning quality on other voices. Freezing the speaker-conditioning path (C1, C4) keeps the loss on other voices inside the margin; those runs fail only the preservation WER and CER gates, because of runaway takes on the one-word sentence "Seven.". A stock-versus-stock check shows those two gates are narrower than sampling noise at this test size (exploratory; it changes no verdict). One speaker, one training seed per candidate; replication is future work. Every report and run record is in [docs/evidence/m1_stage2_preservation/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/m1_stage2_preservation/).
+
 **Calibrated: Alignment Quality Thresholds across 8 Baseline Speakers (Phase 6 Data Preparation)**  
 Calibrated MMS-FA forced alignment quality thresholds (`[E5]`) across **8 distinct baseline speakers**, 2 languages (English, Castilian Spanish), and 5 accent profiles (JFK vintage, CMU ARCTIC SLT/BDL/CLB, ARCTIC KSP Indian accent, ARCTIC AWB Scottish accent, LJSpeech, and LibriVox Cuentos de Hadas):
 - **Clean Baseline Acceptance:** **8/8 (100%)** clean recordings passed with zero false-positive rejections. Tolerances were calibrated in-sample on these recordings: `max_weak_words = 3` accommodates accented non-native speech (`arctic_ksp`, 3 weak words scoring down to $0.062$), while the studio-clean native clips (four ARCTIC voices, LJSpeech) and the Spanish audiobook have a minimum per-word alignment score $\ge 0.54$; JFK's 1961 recording has one weak word (minimum word score 0.122). Unexplained speech was retained at $0.10\text{ s}$, where all clean clips measure $0.00\text{ s}$.
@@ -178,8 +193,8 @@ python -m xtts_trainer.data.validate sample_audio/dataset.jsonl --vocab xtts_bas
 > **Scope:** the measured results in this repository are for speaker adaptation in languages XTTS-v2 already
 > supports. The new-language path below (vocabulary extension, a registered tokenizer, replay of other languages) is
 > implemented and unit-tested, but no new-language model has been trained or evaluated with it. Replay is not only a
-> new-language tool: same-language replay from other speakers is an M1 candidate for speaker adaptation
-> (`docs/evidence/m1_stage2_preservation/PROTOCOL.md`), and it too is unevaluated until those runs.
+> new-language tool: same-language replay from other speakers was an M1 candidate for speaker adaptation
+> (`docs/evidence/m1_stage2_preservation/PROTOCOL.md`); it did not reduce the cost to other voices (see M1 below).
 
 1. **Extend Tokenizer for a New Language Script:**
    ```bash
