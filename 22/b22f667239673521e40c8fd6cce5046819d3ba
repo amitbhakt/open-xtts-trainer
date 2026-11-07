@@ -1,0 +1,21 @@
+paper.md
+  s_9a9d40b47ff72e::t_563c04b9e81223 180-186
+  s_9a9d40b47ff72e::t_0fb1f8e8d7fd87 758-759
+  s_9a9d40b47ff72e::t_81c007ac187fc8 958-963
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "22b22f667239673521e40c8fd6cce5046819d3ba",
+  "prompts": {},
+  "sessions": {
+    "s_9a9d40b47ff72e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e1cd3805-a2bb-45b4-ba09-d7045129d5b9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
