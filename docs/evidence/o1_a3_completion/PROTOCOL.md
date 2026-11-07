@@ -1,9 +1,9 @@
 # O1: finishing ablation A3 (does F2 cause runaway speech?)
 
-**Status: locked before any O1 run.** The lock is the commit that adds this file; it is pushed before the first
-run, so its timestamp is public. Any later change to this file, `scripts/run_o1.py` or `scripts/analyze_o1.py` is
-a deviation and is recorded in section 10 with its reason. Changes made before the first run are amendments,
-listed in section 9.
+**Status: locked before any O1 run.** The lock is commit `d46813b`, which added this file and was pushed before
+any run, so its timestamp is public. After the lock, a change to this file, `scripts/run_o1.py` or
+`scripts/analyze_o1.py` is an **amendment** if it is made before the first O1 run (listed in section 9) and a
+**deviation** if it is made after (section 10). Both are recorded with their reason.
 
 ## 1. Why
 
@@ -107,8 +107,10 @@ for both arms: about 2 GPU-hours, **about $5**, and about 1.5–2 hours of wall 
 
 ## 8. Conduct
 
-- Every run is reported, including failed or repeated ones. A rerun is a new attempt with its own record; the
-  runner refuses to start if any O1 result file already exists.
+- Every run is reported, including failed or repeated ones. The runner refuses to start if any O1 file already
+  exists in its output folder (results or `environment.json`), so it never overwrites or resumes. If a run stops
+  early, its folder is kept as it is and the whole run is repeated as a new attempt in a new folder
+  (`--output_dir runs/ablations/o1_attempt2`, and `--evidence-dir` to match); the failed attempt is reported.
 - Nothing in sections 2–5 changes after a result is seen. The decision is the table in section 3, applied as written.
 - The paper and the upstream issue (idiap/coqui-ai-TTS#601) are updated with the result whatever it is.
 
@@ -117,8 +119,9 @@ for both arms: about 2 GPU-hours, **about $5**, and about 1.5–2 hours of wall 
 | ID | Date | Change | Why |
 |---|---|---|---|
 | A1 | 2026-11-07 | Both arms run in one container, alternating seed by seed, instead of one container per arm. `run_o1.py` loses `--arm`; one environment record instead of one per arm. | M1 found that the same stock model gives slightly different results in different containers (M1 PROTOCOL.md §10.3, deviation 2: WER changed on 3 of 300 takes, one of them a runaway). With one container per arm, such a difference would fall on one arm only and could create or hide a discordant runaway pair, which the primary test counts. Raised in review of PR #15, before any O1 run. |
+| A2 | 2026-11-07 | The no-overwrite check also covers `environment.json`; a stopped run is repeated in full in a new output folder, never resumed (section 8); the lock commit is named and the amendment/deviation rule stated once; wording fixes in `run_o1.py`. | Review of PR #15. No change to what is measured or how it is analysed. |
 
-The design as first locked is commit `d46813b`. No O1 result existed when A1 was made.
+The design as first locked is commit `d46813b`. No O1 result existed when A1 or A2 was made.
 
 ## 10. Deviations
 

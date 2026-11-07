@@ -5,9 +5,10 @@ Protocol: docs/evidence/o1_a3_completion/PROTOCOL.md (locked before any O1 run).
 A3 trained one Stage 2 model per masking arm and training seed (6 models, on the runs volume) and scored each on the
 first 20 sentences of the frozen eval set. O1 scores the same 6 models on all 60 sentences, with the generation seed
 equal to the training seed, exactly as A3 did, so each seed gets the 300 paired takes A3's pre-registration asked for.
-Both arms run in one process, so in one container: M1 found that separate containers can give slightly different
-results for the same model (M1 PROTOCOL.md §10.3, deviation 2), and that difference must not fall on one arm only.
-The arms alternate seed by seed, so a run that stops early still leaves complete pairs.
+Both arms run in one container (one eval subprocess per arm and seed): M1 found that separate containers can give
+slightly different results for the same model (M1 PROTOCOL.md §10.3, deviation 2), and that difference must not
+fall on one arm only. The arms alternate seed by seed, so a run that stops early leaves complete pairs for every seed
+it finished. It never resumes: a stopped run is repeated in full in a new --output_dir.
 
 Usage (one container, both arms):
     python scripts/run_o1.py
@@ -85,6 +86,10 @@ def merged_path(output_dir: str, arm: str) -> str:
     return os.path.join(output_dir, f"manifest_{arm}_s{SUBSET_SIZE}.json")
 
 
+def environment_path(output_dir: str) -> str:
+    return os.path.join(output_dir, "environment.json")
+
+
 def run_plan() -> list:
     """(arm, seed) in run order: both arms for seed 1, then seed 2, then seed 3."""
     return [(arm, seed) for seed in SEEDS for arm in ARMS]
@@ -101,14 +106,14 @@ def main() -> None:
     parser.add_argument("--output_dir", default=OUTPUT_DIR)
     args = parser.parse_args()
 
-    existing = [p for p in [merged_path(args.output_dir, a) for a in ARMS]
+    existing = [p for p in [environment_path(args.output_dir)] + [merged_path(args.output_dir, a) for a in ARMS]
                 + [per_seed_path(args.output_dir, a, s) for a, s in run_plan()] if os.path.exists(p)]
     if existing:
         raise SystemExit(f"{existing} exist; O1 never overwrites a result (record a rerun as a new attempt)")
     for arm in ARMS:
         verify_checkpoints(arm)
     os.makedirs(os.path.join(args.output_dir, "per_seed"), exist_ok=True)
-    with open(os.path.join(args.output_dir, "environment.json"), "w", encoding="utf-8") as f:
+    with open(environment_path(args.output_dir), "w", encoding="utf-8") as f:
         json.dump(environment(), f, indent=2)
 
     env = {**os.environ, "PYTHONPATH": f"{REPO_ROOT}:{os.environ.get('PYTHONPATH', '')}"}
