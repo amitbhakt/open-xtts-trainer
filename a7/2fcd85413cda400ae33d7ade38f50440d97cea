@@ -1,0 +1,19 @@
+tests/test_o1.py
+  s_9a9d40b47ff72e::t_f3a3e0e2f679a1 96-111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "a72fcd85413cda400ae33d7ade38f50440d97cea",
+  "prompts": {},
+  "sessions": {
+    "s_9a9d40b47ff72e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e1cd3805-a2bb-45b4-ba09-d7045129d5b9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Amit Bhakt <yashubhakt@gmail.com>"
+    }
+  }
+}
