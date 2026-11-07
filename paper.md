@@ -761,8 +761,10 @@ has since been corrected). Per-sample masking produced fewer badly failed short 
 (9 vs 2 of 45, $p = 0.05$) and no runaway takes (4 vs 0, $p = 0.12$); outside those takes, intelligibility is
 about the same (mean WER 0.053 vs 0.042, medians 0). This is consistent with F2 causing occasional runaway
 generation, especially on short prompts, but at $N=300$ it is suggestive, not established. In the target regime
-there is no detectable intelligibility difference, and the SECS gate **fails**: similarity to the target speaker
-is 0.017 lower with the fix (95% CI $[-0.030, -0.004]$, margin 0.02). Establishing the effect on runaway
+neither arm has a runaway take and median WER/CER are 0 in both; mean CER is lower with the fix, but its interval
+only just reaches zero ($[-0.255, +0.0001]$), so the difference is borderline. The SECS gate **fails**: similarity
+to the target speaker is 0.017 lower with the fix (95% CI $[-0.030, -0.004]$, margin 0.02, on the 50 of 60 pairs
+where both takes are at least 2 s long). Establishing the effect on runaway
 generation needs the pre-registered 900 pairs, which requires re-evaluating the existing checkpoints, not
 retraining.
 

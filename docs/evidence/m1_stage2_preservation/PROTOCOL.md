@@ -192,8 +192,18 @@ runner returned is in `c0/`, `c1/`, `c2/`, `c3/` and `c4/` beside this file, une
 | C3 | All pass. SECS +0.0266 [+0.0147, +0.0398]; WER −0.0058; CER +0.0013; UTMOS −0.021; failures 0 and 0 | **SECS fails**: −0.0189 [−0.0238, −0.0140]. WER −0.0171, CER −0.0898, UTMOS +0.061, failures (tuned 3, stock 6) pass | No |
 | C4 (second round) | All pass. SECS +0.0480 [+0.0338, +0.0631]; WER −0.0058; CER +0.0013; UTMOS −0.019; failures 0 and 0 | SECS passes: −0.0127 [−0.0177, −0.0076]. **WER fails**: +0.0193 [−0.0225, +0.0676]. **CER fails**: +0.0827 [−0.113, +0.319]. UTMOS +0.056 and failures (tuned 6, stock 6) pass | No |
 
-Brackets are 95% CIs of the tuned − stock difference, as `compare_ab.py` reports them. C0 reproduces Run 6's
+Brackets are 95% CIs of the tuned − stock difference, as `compare_ab.py` reports them; a `not_worse` gate fails
+when the CI's worse end crosses the margin, which is why C3 fails at a mean of −0.0189. C0 reproduces Run 6's
 preservation failure (Run 6: SECS −0.0236 [−0.029, −0.018]).
+
+**What the SECS gates cover.** Headline SECS pairs only takes at least 2 s long in both arms
+(`HEADLINE_SECS_MIN_S`, `eval/harness.py`), because ECAPA2 is unreliable on shorter speech. On the preservation
+set that keeps 253–256 of the 300 pairs, and almost no short prompts (0–2 of 45 per run). So the preservation SECS
+gate says nothing about forgetting on short utterances; those are covered only by the WER, CER and failure gates.
+
+**Data versions.** C1, C2 and C3 ran on the second of the two data versions (section 10.3, deviation 1), so their
+comparisons with C0 and C4 carry that deviation. No candidate passed, so the verdict is the same whether or not
+they are counted.
 
 ### 10.2 Secondary outcomes (section 5; never gates)
 
@@ -209,9 +219,9 @@ preservation failure (Run 6: SECS −0.0236 [−0.029, −0.018]).
 | Preservation paired mean CER difference without runaway pairs | −0.0321 | −0.0162 | −0.0127 | −0.0267 | −0.0109 |
 | Target runaway takes, stock / tuned; target median CER difference | 0 / 0; 0.0 | 0 / 0; 0.0 | 0 / 0; 0.0 | 0 / 0; 0.0 | 0 / 0; 0.0 |
 
-Every runaway take in all four runs, in either arm, is on sentence `en_53` ("Seven.", a one-word item). C1's
-tuned arm has one take on it (`arctic_awb`, seed 123) at WER 8.0; on its own that take adds 0.027 to the
-300-take mean WER, more than C1's whole WER difference (+0.0163). C2's target CER failure comes from one take:
+Every runaway take in all five runs, in either arm, is on sentence `en_53` ("Seven.", a one-word item). C1's
+tuned arm has two: `arctic_awb`, seed 123, at WER 8.0, and `arctic_ksp`, seed 999, at WER 2.0. The first alone
+adds 0.027 to the 300-take mean WER, more than C1's whole WER difference (+0.0163). C2's target CER failure comes from one take:
 the tongue twister `en_12`, seed 123 ("The six sick sheiks' sixth sheep is sick."), at CER 0.286 in the tuned arm
 and 0 in the stock arm; on its own it adds 0.0048 to the 60-take mean, more than C2's whole CER difference
 (+0.0037). Both are reported, not used: the gates are unchanged, and C1 and C2 fail them. C2's replay made
@@ -230,7 +240,8 @@ on `arctic_bdl` (seeds 42, 123, 999), against three in the stock arm. Reported, 
    in each run: forced alignment on the GPU moved some cut boundaries by about 0.01–0.1 ms and some word scores
    by 0.01 (`prep_report.json`). By section 2's rule this is
    a deviation, reported here. C1 is still compared, since the clip set is the same and only the sample-level
-   boundaries differ; a reader who rejects that comparison should treat C1 as not compared with C0.
+   boundaries differ; a reader who rejects that comparison should treat C1, C2 and C3 (the runs on the second
+   version) as not compared with C0. The verdict does not depend on it: no candidate passed either way.
 2. **Stock baselines regenerated per run are not bit-identical.** Same checkpoint (`model.pth` `c7ea2000…`),
    eval set (`86c0183f…`), reference voices, seeds and batch size (16). Every take's SECS differs slightly between
    C0's and C1's stock runs; WER differs on 3 of 300 preservation takes, one of them a runaway (`arctic_ksp`,
@@ -278,6 +289,12 @@ on `arctic_bdl` (seeds 42, 123, 999), against three in the stock arm. Reported, 
    (`60f25919…`) and command, the local machine kept awake. That rerun is the C4 reported here. The replay set was
    built faster than in C2 because C2 had left the archive cached on the runs volume; the runner still refused to
    train unless the set matched the committed selection, and it did.
+8. **Two evidence files need reading with care (noted after review; the files are unchanged).**
+   `evidence/data_identity.json`'s `train_clips` (83) is the number of lines in `dataset_train.jsonl`, eval clips
+   included; the clips actually trained on are `train_clips` in `training_summary.json` (75), the same distinction
+   as item 5. `evidence/identity_canary.xml` is `test_identity_canary_released_model`, run in each container on
+   the **released** XTTS-v2 weights: it checks each run's environment, not the candidate's checkpoint, and is not
+   evidence about preservation.
 
 ### 10.4 Where the decision rule stands (section 4)
 

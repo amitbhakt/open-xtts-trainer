@@ -83,13 +83,13 @@ The same model **fails** the pre-registered preservation gate on five unseen CMU
 **Measured: M1, a search for a Stage 2 setting without that cost (pre-registered; result: none found)**
 Five candidates were run under a protocol frozen before any of them ([PROTOCOL.md](https://github.com/amitbhakt/open-xtts-trainer/blob/main/docs/evidence/m1_stage2_preservation/PROTOCOL.md)). A candidate passes only if every target gate and every preservation gate passes, unchanged.
 
-| Candidate | Target SECS | Preservation SECS (margin 0.02) | Fails | Pass |
+| Candidate | Target SECS | Preservation SECS [95% CI] (fails if the CI goes below −0.02) | Fails | Pass |
 |---|---|---|---|---|
-| C0 Run 6 setup | +0.033 | −0.024 | preservation SECS | No |
-| C1 freeze speaker-conditioning path | +0.040 | −0.011 | preservation WER, CER | No |
-| C2 same-language replay (75 LibriTTS-R clips) | +0.044 | −0.032 | target CER; preservation SECS, CER | No |
-| C3 half learning rate | +0.027 | −0.019 | preservation SECS | No |
-| C4 freeze + replay | +0.048 | −0.013 | preservation WER, CER | No |
+| C0 Run 6 setup | +0.033 | −0.024 [−0.030, −0.019] | preservation SECS | No |
+| C1 freeze speaker-conditioning path | +0.040 | −0.011 [−0.016, −0.006] | preservation WER, CER | No |
+| C2 same-language replay (75 LibriTTS-R clips) | +0.044 | −0.032 [−0.038, −0.026] | target CER; preservation SECS, CER | No |
+| C3 half learning rate | +0.027 | −0.019 [−0.024, −0.014] | preservation SECS | No |
+| C4 freeze + replay | +0.048 | −0.013 [−0.018, −0.008] | preservation WER, CER | No |
 
 **M1 fails, so the recipe is a trade-off:** Stage 2 adaptation clearly improves similarity to the target speaker and costs a small, measured amount of cloning quality on other voices. Freezing the speaker-conditioning path (C1, C4) keeps the loss on other voices inside the margin; those runs fail only the preservation WER and CER gates, because of runaway takes on the one-word sentence "Seven.". A stock-versus-stock check shows those two gates are narrower than sampling noise at this test size (exploratory; it changes no verdict). One speaker, one training seed per candidate; replication is future work. Every report and run record is in [docs/evidence/m1_stage2_preservation/](https://github.com/amitbhakt/open-xtts-trainer/tree/main/docs/evidence/m1_stage2_preservation/).
 
@@ -332,7 +332,7 @@ The repository includes 8 pre-registered ablation studies (`eval/pre_registered_
 
 | ID | Question | Primary metrics | Status and evidence for the current default |
 |---|---|---|---|
-| **A1** | What fixes short-text hallucination? | Short-text CER, duration failures | Not run. Upstream's 0.5 s minimum clip (E1 that upstream uses it); short-clip share and 3 s minimum conditioning from practitioner reports (E4) |
+| **A1** | What fixes short-text hallucination? | Short-text CER, duration failures | Not run. The 0.5 s minimum clip is upstream's value, confirmed in its code (E1), but its effect is untested; short-clip share and 3 s minimum conditioning from practitioner reports (E4) |
 | **A2** | When is DVAE training worth it? | Code usage, reconstruction, end-to-end WER | Not run. Off by default because of finding F1 (E1); the collapse check follows Zheng & Vedaldi (*ICCV* 2023) |
 | **A3** | Does fixing F2 matter? | Short-prompt CER, SECS, duration failures | **Run** (below). Non-regression gates pass on unseen voices; the effect on runaway speech is suggestive, not established |
 | **A4** | Same-clip vs different-clip prompt | SECS, CER on held-out speakers | Not run. Upstream's choice (same clip, F2 fixed); the alternative is E5. No published comparison found |
@@ -356,7 +356,7 @@ Two Stage 2 fine-tunes that differ only in prompt masking (upstream's vs per-sam
 
 - **Unseen voices:** all pre-registered non-regression gates pass (`passed: true`), so the fix is kept. It is correct regardless, as its unit test shows.
 - **Effect size:** consistent with F2 causing occasional runaway speech, mostly on short prompts, but at 300 pairs this is suggestive, not established (the pre-registration asked for 900).
-- **Target speaker (60 takes):** no detectable intelligibility difference, and the speaker-similarity gate **fails**: SECS is 0.017 lower with the fix (95% CI [−0.030, −0.004], margin 0.02).
+- **Target speaker (60 takes):** no runaway takes in either arm and median WER/CER 0 in both. Mean WER shows no clear difference; mean CER is lower with the fix, but its interval only just reaches zero ([−0.255, +0.0001]), so that is borderline, not a finding. The speaker-similarity gate **fails**: SECS is 0.017 lower with the fix (95% CI [−0.030, −0.004], margin 0.02), on the 50 of 60 pairs where both takes are at least 2 s long.
 
 To run or inspect ablation studies:
 ```bash
