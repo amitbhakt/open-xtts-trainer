@@ -1,0 +1,1504 @@
+{
+  "protocol": "docs/evidence/o1_a3_completion/PROTOCOL.md",
+  "primary_new_sentences": {
+    "pairs": 600,
+    "runaways": {
+      "upstream": 1,
+      "per_sample": 0
+    },
+    "discordant": {
+      "upstream_only": 1,
+      "per_sample_only": 0
+    },
+    "mcnemar_one_sided_p": 0.5,
+    "cluster_bootstrap_lower_95": 0.0,
+    "decision": "not confirmed",
+    "by_sentence": {
+      "en_05": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_06": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_07": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_08": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_09": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_10": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_15": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_16": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_17": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_18": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_19": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_20": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_24": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_25": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_26": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_27": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_28": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_29": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_30": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_34": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_35": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_36": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_37": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_38": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_39": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_40": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_44": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_45": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_46": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_47": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_48": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_49": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_50": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_54": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_55": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_56": {
+        "upstream": 1,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_57": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_58": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_59": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      },
+      "en_60": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 15
+      }
+    },
+    "by_seed": {
+      "1": {
+        "upstream": 1,
+        "per_sample": 0,
+        "pairs": 200
+      },
+      "2": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 200
+      },
+      "3": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 200
+      }
+    },
+    "by_voice": {
+      "arctic_awb": {
+        "upstream": 1,
+        "per_sample": 0,
+        "pairs": 120
+      },
+      "arctic_bdl": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 120
+      },
+      "arctic_clb": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 120
+      },
+      "arctic_ksp": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 120
+      },
+      "arctic_slt": {
+        "upstream": 0,
+        "per_sample": 0,
+        "pairs": 120
+      }
+    }
+  },
+  "secondary_short_new_sentences": {
+    "pairs": 105,
+    "bad": {
+      "upstream": 2,
+      "per_sample": 0
+    },
+    "discordant": {
+      "upstream_only": 2,
+      "per_sample_only": 0
+    },
+    "mcnemar_one_sided_p": 0.25
+  },
+  "a3_gates_all_pairs": {
+    "base": {
+      "label": "o1_upstream",
+      "checkpoint_sha256": {
+        "model.pth": "4a4666bbb82924d5098c42af19da9116187f0413f4da04c98c0e78567257522b",
+        "config.json": "c489449630c6bf4a6a6de700d31a580c5034e1f49ae22179f675f633e83bd843",
+        "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+      }
+    },
+    "tuned": {
+      "label": "o1_per_sample",
+      "checkpoint_sha256": {
+        "model.pth": "8c26801f9e4fa28af32b9f2e095826eb528e70253d961fc878c25e95e842a48a",
+        "config.json": "c489449630c6bf4a6a6de700d31a580c5034e1f49ae22179f675f633e83bd843",
+        "vocab.json": "928260878a59da8a72a2a5b7687fea29d5106137669d90945430fe17e415304a"
+      }
+    },
+    "pairs": 900,
+    "overall": {
+      "wer": {
+        "n": 900,
+        "base": 0.28830652988986316,
+        "tuned": 0.019262546095879428,
+        "diff": -0.2690439837939838,
+        "ci95": [
+          -0.7757576066294815,
+          -0.006695631837298504
+        ]
+      },
+      "cer": {
+        "n": 900,
+        "base": 0.32596051757590766,
+        "tuned": 0.01637886476916703,
+        "diff": -0.30958165280674066,
+        "ci95": [
+          -0.8444270583570319,
+          -0.014182583288935863
+        ]
+      },
+      "secs": {
+        "n": 752,
+        "base": 0.580948219178839,
+        "tuned": 0.5715649061578703,
+        "diff": -0.009383313020968691,
+        "ci95": [
+          -0.012085322677554126,
+          -0.00667915353204738
+        ]
+      },
+      "utmos": {
+        "n": 900,
+        "base": 4.098131914668613,
+        "tuned": 4.115380676057604,
+        "diff": 0.017248761388990615,
+        "ci95": [
+          -0.0006465912726190351,
+          0.03498199522495269
+        ]
+      },
+      "duration_ratio": {
+        "n": 900,
+        "base": 1.127466642854466,
+        "tuned": 1.0711128742864258,
+        "diff": -0.056353768568039996,
+        "ci95": [
+          -0.09069393099513982,
+          -0.025492742862126244
+        ]
+      }
+    },
+    "failures": {
+      "base": 15,
+      "tuned": 7
+    },
+    "by_category": {
+      "harvard": {
+        "wer": {
+          "n": 150,
+          "base": 0.009074074074074075,
+          "tuned": 0.008285714285714285,
+          "diff": -0.0007883597883597886,
+          "ci95": [
+            -0.008955026455026455,
+            0.006711640211640211
+          ]
+        },
+        "cer": {
+          "n": 150,
+          "base": 0.004807788702525545,
+          "tuned": 0.003431709767996733,
+          "diff": -0.0013760789345288115,
+          "ci95": [
+            -0.006784108813146924,
+            0.002699454218841428
+          ]
+        },
+        "secs": {
+          "n": 149,
+          "base": 0.5503296574090151,
+          "tuned": 0.5434079454249183,
+          "diff": -0.006921711984096758,
+          "ci95": [
+            -0.01358362948334457,
+            -0.0004901481954843445
+          ]
+        },
+        "utmos": {
+          "n": 150,
+          "base": 4.103271360397339,
+          "tuned": 4.177271052996318,
+          "diff": 0.07399969259897868,
+          "ci95": [
+            0.025510936339696248,
+            0.12490089797973633
+          ]
+        },
+        "duration_ratio": {
+          "n": 150,
+          "base": 1.0884633679366236,
+          "tuned": 1.0203458026969332,
+          "diff": -0.06811756523969029,
+          "ci95": [
+            -0.11088628388817952,
+            -0.031181263713670537
+          ]
+        }
+      },
+      "sibilant": {
+        "wer": {
+          "n": 150,
+          "base": 0.0525,
+          "tuned": 0.050611111111111114,
+          "diff": -0.0018888888888888885,
+          "ci95": [
+            -0.01361111111111111,
+            0.009592592592592592
+          ]
+        },
+        "cer": {
+          "n": 150,
+          "base": 0.022777777777777775,
+          "tuned": 0.02084579180509413,
+          "diff": -0.0019319859726836467,
+          "ci95": [
+            -0.011570078903654484,
+            0.007552267903285343
+          ]
+        },
+        "secs": {
+          "n": 150,
+          "base": 0.5556738972663879,
+          "tuned": 0.5371188574035962,
+          "diff": -0.018555039862791698,
+          "ci95": [
+            -0.02670674433062474,
+            -0.010654072836041454
+          ]
+        },
+        "utmos": {
+          "n": 150,
+          "base": 4.176615389188131,
+          "tuned": 4.172228816350301,
+          "diff": -0.00438657283782959,
+          "ci95": [
+            -0.04864164094130198,
+            0.0395071119070053
+          ]
+        },
+        "duration_ratio": {
+          "n": 150,
+          "base": 1.0805236885457317,
+          "tuned": 1.0878614857885618,
+          "diff": 0.007337797242830028,
+          "ci95": [
+            -0.02851404797517926,
+            0.04639942880828854
+          ]
+        }
+      },
+      "numbers": {
+        "wer": {
+          "n": 150,
+          "base": 0.032590909090909094,
+          "tuned": 0.03625252525252526,
+          "diff": 0.003661616161616162,
+          "ci95": [
+            -0.004353787878787879,
+            0.012252525252525253
+          ]
+        },
+        "cer": {
+          "n": 150,
+          "base": 0.01929170738982237,
+          "tuned": 0.019406509639428894,
+          "diff": 0.00011480224960652412,
+          "ci95": [
+            -0.007556995026616217,
+            0.007846900702095342
+          ]
+        },
+        "secs": {
+          "n": 150,
+          "base": 0.5982167116800944,
+          "tuned": 0.5893428744872411,
+          "diff": -0.008873837192853291,
+          "ci95": [
+            -0.013713131392995516,
+            -0.00386693493028482
+          ]
+        },
+        "utmos": {
+          "n": 150,
+          "base": 4.246086441675822,
+          "tuned": 4.244137787818909,
+          "diff": -0.0019486538569132488,
+          "ci95": [
+            -0.03552683623631795,
+            0.03158195102214813
+          ]
+        },
+        "duration_ratio": {
+          "n": 150,
+          "base": 0.9304403988219941,
+          "tuned": 0.9255303421495765,
+          "diff": -0.004910056672417468,
+          "ci95": [
+            -0.029064780791614724,
+            0.01941884019898765
+          ]
+        }
+      },
+      "long_complex": {
+        "wer": {
+          "n": 150,
+          "base": 0.002018518518518519,
+          "tuned": 0.0030925925925925925,
+          "diff": 0.0010740740740740739,
+          "ci95": [
+            -0.0013983796296296292,
+            0.003602314814814808
+          ]
+        },
+        "cer": {
+          "n": 150,
+          "base": 0.0002809596153675735,
+          "tuned": 0.001489762197804057,
+          "diff": 0.0012088025824364835,
+          "ci95": [
+            0.00020981935396390366,
+            0.002430786905789062
+          ]
+        },
+        "secs": {
+          "n": 150,
+          "base": 0.6112822167078654,
+          "tuned": 0.605166363120079,
+          "diff": -0.006115853587786357,
+          "ci95": [
+            -0.010269478157162667,
+            -0.0019230783780415856
+          ]
+        },
+        "utmos": {
+          "n": 150,
+          "base": 4.137387531598409,
+          "tuned": 4.141273694038391,
+          "diff": 0.003886162439982096,
+          "ci95": [
+            -0.03223456108570099,
+            0.04170577144622802
+          ]
+        },
+        "duration_ratio": {
+          "n": 150,
+          "base": 1.004451630539834,
+          "tuned": 1.0090573066904396,
+          "diff": 0.004605676150605373,
+          "ci95": [
+            -0.015666116654857187,
+            0.023098496813624914
+          ]
+        }
+      },
+      "prosody_questions": {
+        "wer": {
+          "n": 150,
+          "base": 0.0036556776556776554,
+          "tuned": 0.004000000000000001,
+          "diff": 0.0003443223443223444,
+          "ci95": [
+            -0.004131868131868132,
+            0.005333333333333334
+          ]
+        },
+        "cer": {
+          "n": 150,
+          "base": 0.0007866901517709654,
+          "tuned": 0.0008771929824561403,
+          "diff": 9.050283068517484e-05,
+          "ci95": [
+            -0.0010426793096839548,
+            0.001325782811459027
+          ]
+        },
+        "secs": {
+          "n": 150,
+          "base": 0.5884914102156957,
+          "tuned": 0.5828819207350413,
+          "diff": -0.005609489480654399,
+          "ci95": [
+            -0.010645357578992843,
+            -0.0003723594794670758
+          ]
+        },
+        "utmos": {
+          "n": 150,
+          "base": 4.157966119448344,
+          "tuned": 4.140377035140991,
+          "diff": -0.0175890843073527,
+          "ci95": [
+            -0.06191278549035391,
+            0.025289321541786175
+          ]
+        },
+        "duration_ratio": {
+          "n": 150,
+          "base": 0.944662724144564,
+          "tuned": 0.9311447999755349,
+          "diff": -0.013517924169028908,
+          "ci95": [
+            -0.03172298039822962,
+            0.004976744624562744
+          ]
+        }
+      },
+      "short": {
+        "wer": {
+          "n": 150,
+          "base": 1.63,
+          "tuned": 0.013333333333333334,
+          "diff": -1.6166666666666667,
+          "ci95": [
+            -4.663333333333333,
+            -0.043333333333333335
+          ]
+        },
+        "cer": {
+          "n": 150,
+          "base": 1.9078181818181819,
+          "tuned": 0.05222222222222222,
+          "diff": -1.8555959595959595,
+          "ci95": [
+            -5.124574242424242,
+            -0.0814469696969698
+          ]
+        },
+        "secs": {
+          "n": 3,
+          "base": 0.6081021626790365,
+          "tuned": 0.5575077335039774,
+          "diff": -0.050594429175059,
+          "ci95": [
+            -0.10579591989517212,
+            -0.020707130432128906
+          ]
+        },
+        "utmos": {
+          "n": 150,
+          "base": 3.7674646457036336,
+          "tuned": 3.816995670000712,
+          "diff": 0.04953102429707845,
+          "ci95": [
+            -0.002591843446095784,
+            0.10031017843882242
+          ]
+        },
+        "duration_ratio": {
+          "n": 150,
+          "base": 1.7162580471380473,
+          "tuned": 1.4527375084175087,
+          "diff": -0.26352053872053877,
+          "ci95": [
+            -0.4554353872053871,
+            -0.09220855218855219
+          ]
+        }
+      }
+    },
+    "by_voice": {
+      "arctic_awb": {
+        "wer": {
+          "n": 180,
+          "base": 0.05180555555555555,
+          "tuned": 0.0250729517396184,
+          "diff": -0.026732603815937145,
+          "ci95": [
+            -0.07141045875420875,
+            0.004298505892255873
+          ]
+        },
+        "cer": {
+          "n": 180,
+          "base": 0.09229645701634098,
+          "tuned": 0.04894767682562474,
+          "diff": -0.043348780190716245,
+          "ci95": [
+            -0.14335277394554663,
+            0.014452227260590802
+          ]
+        },
+        "secs": {
+          "n": 152,
+          "base": 0.66373912637171,
+          "tuned": 0.6539400890469551,
+          "diff": -0.009799037324754815,
+          "ci95": [
+            -0.015473536451004053,
+            -0.004052841937855673
+          ]
+        },
+        "utmos": {
+          "n": 180,
+          "base": 3.9495946526527406,
+          "tuned": 3.9712467392285666,
+          "diff": 0.02165208657582601,
+          "ci95": [
+            -0.01877032111088435,
+            0.06055788202418219
+          ]
+        },
+        "duration_ratio": {
+          "n": 180,
+          "base": 1.3353207643743272,
+          "tuned": 1.231486756279768,
+          "diff": -0.10383400809455925,
+          "ci95": [
+            -0.21202557987934498,
+            0.0020042904110472836
+          ]
+        }
+      },
+      "arctic_bdl": {
+        "wer": {
+          "n": 180,
+          "base": 0.08574424803591471,
+          "tuned": 0.01476010101010101,
+          "diff": -0.07098414702581368,
+          "ci95": [
+            -0.20181248246352415,
+            -0.0017091750841750882
+          ]
+        },
+        "cer": {
+          "n": 180,
+          "base": 0.21026662599624374,
+          "tuned": 0.006820986111516304,
+          "diff": -0.20344563988472744,
+          "ci95": [
+            -0.6000835064866727,
+            -0.0017325502305072474
+          ]
+        },
+        "secs": {
+          "n": 151,
+          "base": 0.6307941282427074,
+          "tuned": 0.6233375615236775,
+          "diff": -0.007456566719029913,
+          "ci95": [
+            -0.014078248533981525,
+            -0.0011941110949642627
+          ]
+        },
+        "utmos": {
+          "n": 180,
+          "base": 4.189862917529212,
+          "tuned": 4.232866679297553,
+          "diff": 0.043003761768341066,
+          "ci95": [
+            0.0023576119210985003,
+            0.08313789890872107
+          ]
+        },
+        "duration_ratio": {
+          "n": 180,
+          "base": 1.07710912272964,
+          "tuned": 0.9592595524008302,
+          "diff": -0.11784957032881016,
+          "ci95": [
+            -0.23054143648988115,
+            -0.045490375038752
+          ]
+        }
+      },
+      "arctic_clb": {
+        "wer": {
+          "n": 180,
+          "base": 0.020370370370370372,
+          "tuned": 0.018116181657848323,
+          "diff": -0.0022541887125220464,
+          "ci95": [
+            -0.016802551807760142,
+            0.008194058641975296
+          ]
+        },
+        "cer": {
+          "n": 180,
+          "base": 0.034266876669696224,
+          "tuned": 0.007439196078571269,
+          "diff": -0.026827680591124947,
+          "ci95": [
+            -0.08581813223026306,
+            0.004572523314515865
+          ]
+        },
+        "secs": {
+          "n": 149,
+          "base": 0.6388042755174956,
+          "tuned": 0.6251958596626385,
+          "diff": -0.013608415854857272,
+          "ci95": [
+            -0.01950836536168252,
+            -0.007642263079049604
+          ]
+        },
+        "utmos": {
+          "n": 180,
+          "base": 4.090431439876556,
+          "tuned": 4.100294090641869,
+          "diff": 0.009862650765313043,
+          "ci95": [
+            -0.023884385592407652,
+            0.04529277271694607
+          ]
+        },
+        "duration_ratio": {
+          "n": 180,
+          "base": 1.0224025489829347,
+          "tuned": 1.0313860495867913,
+          "diff": 0.008983500603856564,
+          "ci95": [
+            -0.00813717187600706,
+            0.02514395838558993
+          ]
+        }
+      },
+      "arctic_ksp": {
+        "wer": {
+          "n": 180,
+          "base": 1.261638407888408,
+          "tuned": 0.01501543209876543,
+          "diff": -1.2466229757896425,
+          "ci95": [
+            -3.715007275132275,
+            -0.004399235409652101
+          ]
+        },
+        "cer": {
+          "n": 180,
+          "base": 1.2743557968507577,
+          "tuned": 0.005878349223202358,
+          "diff": -1.2684774476275555,
+          "ci95": [
+            -3.760924344854268,
+            -0.005467487201795216
+          ]
+        },
+        "secs": {
+          "n": 150,
+          "base": 0.5025683991114298,
+          "tuned": 0.4872875569264094,
+          "diff": -0.015280842185020446,
+          "ci95": [
+            -0.021251038124163946,
+            -0.0093281946827968
+          ]
+        },
+        "utmos": {
+          "n": 180,
+          "base": 4.060174424118466,
+          "tuned": 4.108168335755666,
+          "diff": 0.04799391163720025,
+          "ci95": [
+            0.005371902750598061,
+            0.09147330611944197
+          ]
+        },
+        "duration_ratio": {
+          "n": 180,
+          "base": 1.205104498687118,
+          "tuned": 1.1368015094056538,
+          "diff": -0.0683029892814644,
+          "ci95": [
+            -0.14554053786934018,
+            -0.00918752769953691
+          ]
+        }
+      },
+      "arctic_slt": {
+        "wer": {
+          "n": 180,
+          "base": 0.0219740675990676,
+          "tuned": 0.023348063973063972,
+          "diff": 0.0013739963739963742,
+          "ci95": [
+            -0.01505487567987568,
+            0.017485374579124576
+          ]
+        },
+        "cer": {
+          "n": 180,
+          "base": 0.018616831346499663,
+          "tuned": 0.012808115606920483,
+          "diff": -0.005808715739579178,
+          "ci95": [
+            -0.03318931673243113,
+            0.013186990270012893
+          ]
+        },
+        "secs": {
+          "n": 150,
+          "base": 0.4677846888701121,
+          "tuned": 0.4669775165120761,
+          "diff": -0.0008071723580360412,
+          "ci95": [
+            -0.006402718926469485,
+            0.00484424148996671
+          ]
+        },
+        "utmos": {
+          "n": 180,
+          "base": 4.20059613916609,
+          "tuned": 4.164327535364363,
+          "diff": -0.03626860380172729,
+          "ci95": [
+            -0.07685529384348128,
+            0.004317936963505188
+          ]
+        },
+        "duration_ratio": {
+          "n": 180,
+          "base": 0.9973962794983087,
+          "tuned": 0.9966305037590858,
+          "diff": -0.0007657757392227306,
+          "ci95": [
+            -0.02211388089932544,
+            0.01730537053007682
+          ]
+        }
+      }
+    },
+    "robust": {
+      "overall": {
+        "wer": {
+          "n": 900,
+          "runaway_wer": 1.0,
+          "base": {
+            "median": 0.0,
+            "mean": 0.28830652988986316,
+            "runaway": 5,
+            "runaway_rate": 0.005555555555555556,
+            "runaway_rate_ci95": [
+              0.0018062608953421351,
+              0.012916842074943084
+            ],
+            "mean_without_runaway": 0.023436733967460224
+          },
+          "tuned": {
+            "median": 0.0,
+            "mean": 0.019262546095879428,
+            "runaway": 0,
+            "runaway_rate": 0.0,
+            "runaway_rate_ci95": [
+              0.0,
+              0.004090366517571226
+            ],
+            "mean_without_runaway": 0.019262546095879428
+          },
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.0
+          ],
+          "paired_diff_without_runaway": -0.00518389431797253,
+          "pairs_without_runaway": 895,
+          "runaway_base_only": 5,
+          "runaway_tuned_only": 0
+        },
+        "cer": {
+          "n": 900,
+          "runaway_wer": 1.0,
+          "base": {
+            "median": 0.0,
+            "mean": 0.32596051757590766,
+            "runaway": 5,
+            "runaway_rate": 0.005555555555555556,
+            "runaway_rate_ci95": [
+              0.0018062608953421351,
+              0.012916842074943084
+            ],
+            "mean_without_runaway": 0.024683506754848754
+          },
+          "tuned": {
+            "median": 0.0,
+            "mean": 0.01637886476916703,
+            "runaway": 0,
+            "runaway_rate": 0.0,
+            "runaway_rate_ci95": [
+              0.0,
+              0.004090366517571226
+            ],
+            "mean_without_runaway": 0.01637886476916703
+          },
+          "median_diff": 0.0,
+          "median_diff_ci95": [
+            0.0,
+            0.0
+          ],
+          "paired_diff_without_runaway": -0.016034368998144477,
+          "pairs_without_runaway": 895,
+          "runaway_base_only": 5,
+          "runaway_tuned_only": 0
+        }
+      },
+      "by_voice": {
+        "arctic_awb": {
+          "wer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.05180555555555555,
+              "runaway": 3,
+              "runaway_rate": 0.016666666666666666,
+              "runaway_rate_ci95": [
+                0.003450344196972936,
+                0.047932200496390846
+              ],
+              "mean_without_runaway": 0.01596045197740113
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.0250729517396184,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.0250729517396184
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": 0.0038877475318153274,
+            "pairs_without_runaway": 177,
+            "runaway_base_only": 3,
+            "runaway_tuned_only": 0
+          },
+          "cer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.09229645701634098,
+              "runaway": 3,
+              "runaway_rate": 0.016666666666666666,
+              "runaway_rate_ci95": [
+                0.003450344196972936,
+                0.047932200496390846
+              ],
+              "mean_without_runaway": 0.007574208984260458
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.04894767682562474,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.04894767682562474
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": 0.0026550668836065015,
+            "pairs_without_runaway": 177,
+            "runaway_base_only": 3,
+            "runaway_tuned_only": 0
+          }
+        },
+        "arctic_bdl": {
+          "wer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.08574424803591471,
+              "runaway": 1,
+              "runaway_rate": 0.005555555555555556,
+              "runaway_rate_ci95": [
+                0.00014064459742276156,
+                0.030563341008136593
+              ],
+              "mean_without_runaway": 0.024770752214886293
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.01476010101010101,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.01476010101010101
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.009928192539924384,
+            "pairs_without_runaway": 179,
+            "runaway_base_only": 1,
+            "runaway_tuned_only": 0
+          },
+          "cer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.21026662599624374,
+              "runaway": 1,
+              "runaway_rate": 0.005555555555555556,
+              "runaway_rate_ci95": [
+                0.00014064459742276156,
+                0.030563341008136593
+              ],
+              "mean_without_runaway": 0.015910573627507665
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.006820986111516304,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.006820986111516304
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.009051481448329258,
+            "pairs_without_runaway": 179,
+            "runaway_base_only": 1,
+            "runaway_tuned_only": 0
+          }
+        },
+        "arctic_clb": {
+          "wer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.020370370370370372,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.020370370370370372
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.018116181657848323,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.018116181657848323
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.0022541887125220464,
+            "pairs_without_runaway": 180,
+            "runaway_base_only": 0,
+            "runaway_tuned_only": 0
+          },
+          "cer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.034266876669696224,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.034266876669696224
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.007439196078571269,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.007439196078571269
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.026827680591124947,
+            "pairs_without_runaway": 180,
+            "runaway_base_only": 0,
+            "runaway_tuned_only": 0
+          }
+        },
+        "arctic_ksp": {
+          "wer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 1.261638407888408,
+              "runaway": 1,
+              "runaway_rate": 0.005555555555555556,
+              "runaway_rate_ci95": [
+                0.00014064459742276156,
+                0.030563341008136593
+              ],
+              "mean_without_runaway": 0.03404979564197441
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.01501543209876543,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.01501543209876543
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.01895047844768515,
+            "pairs_without_runaway": 179,
+            "runaway_base_only": 1,
+            "runaway_tuned_only": 0
+          },
+          "cer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 1.2743557968507577,
+              "runaway": 1,
+              "runaway_rate": 0.005555555555555556,
+              "runaway_rate_ci95": [
+                0.00014064459742276156,
+                0.030563341008136593
+              ],
+              "mean_without_runaway": 0.046838231470035775
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.005878349223202358,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.005878349223202358
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.04092704230703899,
+            "pairs_without_runaway": 179,
+            "runaway_base_only": 1,
+            "runaway_tuned_only": 0
+          }
+        },
+        "arctic_slt": {
+          "wer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.0219740675990676,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.0219740675990676
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.023348063973063972,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.023348063973063972
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": 0.0013739963739963742,
+            "pairs_without_runaway": 180,
+            "runaway_base_only": 0,
+            "runaway_tuned_only": 0
+          },
+          "cer": {
+            "n": 180,
+            "runaway_wer": 1.0,
+            "base": {
+              "median": 0.0,
+              "mean": 0.018616831346499663,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.018616831346499663
+            },
+            "tuned": {
+              "median": 0.0,
+              "mean": 0.012808115606920483,
+              "runaway": 0,
+              "runaway_rate": 0.0,
+              "runaway_rate_ci95": [
+                0.0,
+                0.020285204570112986
+              ],
+              "mean_without_runaway": 0.012808115606920483
+            },
+            "median_diff": 0.0,
+            "median_diff_ci95": [
+              0.0,
+              0.0
+            ],
+            "paired_diff_without_runaway": -0.005808715739579178,
+            "pairs_without_runaway": 180,
+            "runaway_base_only": 0,
+            "runaway_tuned_only": 0
+          }
+        }
+      }
+    },
+    "gates_version": 2,
+    "gates": [
+      {
+        "metric": "wer",
+        "rule": "not_worse",
+        "margin": 0.02,
+        "why": "General intelligibility on held-out evaluation voices must not regress beyond the 95% CI noise floor.",
+        "n": 900,
+        "base": 0.28830652988986316,
+        "tuned": 0.019262546095879428,
+        "diff": -0.2690439837939838,
+        "ci95": [
+          -0.7757576066294815,
+          -0.006695631837298504
+        ],
+        "improvement_ci95": [
+          0.006695631837298504,
+          0.7757576066294815
+        ],
+        "passed": true
+      },
+      {
+        "metric": "cer",
+        "rule": "not_worse",
+        "margin": 0.01,
+        "why": "Character-level error rate must not regress.",
+        "n": 900,
+        "base": 0.32596051757590766,
+        "tuned": 0.01637886476916703,
+        "diff": -0.30958165280674066,
+        "ci95": [
+          -0.8444270583570319,
+          -0.014182583288935863
+        ],
+        "improvement_ci95": [
+          0.014182583288935863,
+          0.8444270583570319
+        ],
+        "passed": true
+      },
+      {
+        "metric": "secs",
+        "rule": "not_worse",
+        "margin": 0.02,
+        "why": "Speaker similarity across unseen held-out voices must not regress (catastrophic forgetting check).",
+        "n": 752,
+        "base": 0.580948219178839,
+        "tuned": 0.5715649061578703,
+        "diff": -0.009383313020968691,
+        "ci95": [
+          -0.012085322677554126,
+          -0.00667915353204738
+        ],
+        "improvement_ci95": [
+          -0.012085322677554126,
+          -0.00667915353204738
+        ],
+        "passed": true
+      },
+      {
+        "metric": "utmos",
+        "rule": "not_worse",
+        "margin": 0.1,
+        "why": "Predicted naturalness relative to paired baseline must not regress beyond the subjective noise floor.",
+        "n": 900,
+        "base": 4.098131914668613,
+        "tuned": 4.115380676057604,
+        "diff": 0.017248761388990615,
+        "ci95": [
+          -0.0006465912726190351,
+          0.03498199522495269
+        ],
+        "improvement_ci95": [
+          -0.0006465912726190351,
+          0.03498199522495269
+        ],
+        "passed": true
+      },
+      {
+        "metric": "failures",
+        "rule": "not_worse",
+        "margin": 0,
+        "why": "Candidate must produce zero additional empty audio, babbling loops (>2.2x duration & >=1.0s excess), or NaNs.",
+        "base": 15,
+        "tuned": 7,
+        "passed": true
+      },
+      {
+        "metric": "cer",
+        "rule": "not_worse",
+        "margin": 0.022,
+        "category": "short",
+        "why": "Per-sample conditioning masking must not regress short-prompt character error rate beyond the empirical slice-specific noise floor (margin 0.022, calibrated from baseline short-category 95% CI half-width in base_xtts_s12_en.json).",
+        "n": 150,
+        "base": 1.9078181818181819,
+        "tuned": 0.05222222222222222,
+        "diff": -1.8555959595959595,
+        "ci95": [
+          -5.124574242424242,
+          -0.0814469696969698
+        ],
+        "improvement_ci95": [
+          0.0814469696969698,
+          5.124574242424242
+        ],
+        "passed": true
+      },
+      {
+        "metric": "secs",
+        "rule": "not_worse",
+        "margin": 0.02,
+        "why": "Per-sample conditioning masking must preserve speaker similarity within the 95% CI noise floor margin.",
+        "n": 752,
+        "base": 0.580948219178839,
+        "tuned": 0.5715649061578703,
+        "diff": -0.009383313020968691,
+        "ci95": [
+          -0.012085322677554126,
+          -0.00667915353204738
+        ],
+        "improvement_ci95": [
+          -0.012085322677554126,
+          -0.00667915353204738
+        ],
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "exploratory_reproduction_of_a3": {
+    "upstream": {
+      "takes": 300,
+      "identical_transcripts": 299,
+      "old_runaways": 4,
+      "new_runaways": 4
+    },
+    "per_sample": {
+      "takes": 300,
+      "identical_transcripts": 300,
+      "old_runaways": 0,
+      "new_runaways": 0
+    }
+  }
+}

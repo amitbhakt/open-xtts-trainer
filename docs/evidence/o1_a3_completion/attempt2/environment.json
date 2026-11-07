@@ -1,0 +1,5 @@
+{
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "torch": "2.14.1+cu130",
+  "python": "3.11.12"
+}
