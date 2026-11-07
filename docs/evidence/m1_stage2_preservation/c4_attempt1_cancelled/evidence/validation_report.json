@@ -1,0 +1,53 @@
+{
+  "dataset": "data_moira_fogarty/dataset_train.jsonl",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "only 0/83 clips are under 1.5s; short-utterance coverage helps avoid short-text hallucination (docs/recipe_design.md §3, ablation A1)",
+    "punctuation/pause disagreements {'unpunctuated_pause': 17, 'punctuation_without_pause': 9} (e.g. line 3 unpunctuated_pause after 'LibriVox' gap 0.541s; line 5 punctuation_without_pause after '1.' gap 0.0s; line 7 unpunctuated_pause after 'safety' gap 0.32s); [E4] check, set strict_pauses to make it blocking (docs/recipe_design.md A6)",
+    "dataset has ASR transcripts but no ASR cross-check was run (set asr_cer_max)"
+  ],
+  "stats": {
+    "clips": 83,
+    "hours": 0.1061,
+    "speakers": {
+      "moira_fogarty": 83
+    },
+    "languages": {
+      "en": 83
+    },
+    "transcript_sources": {
+      "asr": 83
+    },
+    "duration_s": {
+      "min": 3.003,
+      "max": 9.026,
+      "histogram": {
+        "5-6s": 17,
+        "3-4s": 32,
+        "4-5s": 22,
+        "6-7s": 6,
+        "7-8s": 5,
+        "9-10s": 1
+      }
+    },
+    "short_clip_fraction": 0.0,
+    "single_word_fraction": 0.0,
+    "eval_overlap_checked": true,
+    "reference_overlap_checked": true,
+    "target_holdout_checked": true,
+    "asr_checked": false,
+    "realigned": false,
+    "aligned_clips": 83,
+    "pause_issues": {
+      "unpunctuated_pause": 17,
+      "punctuation_without_pause": 9
+    },
+    "text_checked": true,
+    "limits": {
+      "min_duration_s": 0.5,
+      "max_duration_s": 11.61,
+      "max_text_tokens": 200
+    }
+  }
+}

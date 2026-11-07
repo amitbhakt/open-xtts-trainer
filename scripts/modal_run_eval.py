@@ -128,7 +128,8 @@ def evidence_digests(root: Path, evidence_dir: str = DEFAULT_EVIDENCE_DIR) -> di
         "/root/open-xtts-trainer/checkpoints": volume_checkpoints,
         "/root/open-xtts-trainer/eval/baselines": volume_baselines,
     },
-    timeout=7200,
+    # 4 h: well above any planned run (O1 ~1 h per arm), so a slow download or a long eval never kills the container
+    timeout=14400,
 )
 def run_command_remote(cmd: str, evidence_dir: str = DEFAULT_EVIDENCE_DIR):
     """Execute a bash command inside the Modal GPU container and commit outputs."""
